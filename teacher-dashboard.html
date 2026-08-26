@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACCESS UG — Teacher Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --navy:#061a38;--blue:#0b3d82;--blue2:#1457a6;--bg:#f3f6fb;
+  --text:#13233a;--muted:#6d7b8e;--white:#fff;--border:#e3e9f2;
+  --success:#15966b;--warning:#e7a72d;--danger:#d9534f;
+  --shadow:0 10px 30px rgba(9,35,75,.08);--radius:16px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.sidebar{position:fixed;z-index:50;left:0;top:0;bottom:0;width:250px;padding:22px 14px;background:linear-gradient(180deg,var(--navy),#092d63 62%,#0b3d82);color:#fff;transition:.25s;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 10px 26px}
+.logo{width:44px;height:44px;border-radius:12px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:900}
+.brand h1{font-size:17px;margin:0;letter-spacing:.5px}.brand small{opacity:.72}
+.nav{display:grid;gap:7px}
+.nav button{border:0;background:transparent;color:#dbe7f7;text-align:left;padding:13px 14px;border-radius:11px;display:flex;gap:12px;align-items:center;font-weight:600}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.13);color:#fff}
+.nav-icon{width:23px;text-align:center;font-size:18px}
+.sidebar-bottom{position:absolute;left:14px;right:14px;bottom:18px}
+.logout{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;padding:12px;border-radius:11px;font-weight:700}
+.main{margin-left:250px;min-height:100vh}
+.top{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}
+.title-wrap{display:flex;align-items:center;gap:12px}.top h2{font-size:20px;margin:0}
+.menu-btn{display:none;border:0;background:#edf3fb;border-radius:10px;width:40px;height:40px}
+.user-mini{display:flex;align-items:center;gap:11px}.avatar{width:38px;height:38px;border-radius:50%;background:#e5eefb;color:var(--blue);display:grid;place-items:center;font-weight:800}
+.user-mini span{font-size:13px;color:var(--muted)}
+.content{padding:28px;max-width:1500px;margin:auto}
+.page{display:none}.page.active{display:block}
+.hero{margin-bottom:22px}.hero h1{margin:0 0 7px;font-size:28px}.hero p{margin:0;color:var(--muted)}
+.grid{display:grid;gap:18px}.two{grid-template-columns:1.25fr .9fr}.three{grid-template-columns:repeat(3,1fr)}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+.card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}
+.profile{display:flex;gap:20px;align-items:center}.profile-avatar{width:78px;height:78px;border-radius:20px;background:linear-gradient(135deg,#e9f1fd,#c9dbf5);display:grid;place-items:center;color:var(--blue);font-size:27px;font-weight:900}
+.profile-info h2{margin:0 0 5px;font-size:21px}.profile-info p{margin:3px 0;color:var(--muted)}
+.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}
+.chart-wrap{height:230px;position:relative}
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}
+.field{display:grid;gap:6px;min-width:190px;flex:1}.field label{font-size:12px;font-weight:700;color:#566579}
+input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}
+input:focus,select:focus,textarea:focus{border-color:#4f84c5;box-shadow:0 0 0 3px rgba(20,87,166,.1)}
+textarea{min-height:110px;resize:vertical}
+.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}
+.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.success{background:var(--success)}
+.btn.danger{background:var(--danger)}.btn.small{padding:8px 11px;font-size:12px}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:720px;background:#fff}
+th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
+th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
+tr:last-child td{border-bottom:0}
+.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.active{background:#e7f7f0;color:#117052}
+.notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}
+.subject-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.subject-chip{padding:12px;border:1px solid var(--border);border-radius:11px;background:#fafcff;text-align:left}.subject-chip:hover,.subject-chip.active{border-color:#79a5d8;background:#edf4fd}
+.empty{text-align:center;padding:35px;color:var(--muted)}
+.loading{text-align:center;padding:35px;color:var(--muted)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,17,37,.45);z-index:45}.overlay.show{display:block}
+.modal{display:none;position:fixed;z-index:60;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,calc(100% - 28px));background:#fff;border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25);padding:22px}.modal.show{display:block}.modal h3{margin:0}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.close{border:0;background:#eef3f9;border-radius:9px;width:36px;height:36px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:360px}.toast.show{display:block}
+@media(max-width:1000px){.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.subject-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:750px){
+ .sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}
+ .main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:16px}.three{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.hero h1{font-size:24px}.subject-grid{grid-template-columns:1fr 1fr}.card{padding:17px}
+}
+@media(max-width:430px){.subject-grid{grid-template-columns:1fr}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar" id="sidebar">
+  <div class="brand"><div class="logo">AU</div><div><h1>ACCESS UG</h1><small>Teacher Portal</small></div></div>
+  <nav class="nav">
+    <button class="active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+    <button data-page="attendance"><span class="nav-icon">◷</span>Attendance</button>
+    <button data-page="behaviour"><span class="nav-icon">◉</span>Behaviour</button>
+    <button data-page="assessments"><span class="nav-icon">▤</span>Assessments</button>
+    <button data-page="endterm"><span class="nav-icon">▥</span>End of Term</button>
+    <button data-page="reports"><span class="nav-icon">⚠</span>Reports / Issues</button>
+  </nav>
+  <div class="sidebar-bottom"><button class="logout" id="logoutBtn">↪ &nbsp; Log out</button></div>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+<main class="main">
+<header class="top">
+  <div class="title-wrap"><button class="menu-btn" id="menuBtn">☰</button><h2 id="pageTitle">Teacher Dashboard</h2></div>
+  <div class="user-mini"><span id="topEmail">Loading...</span><div class="avatar" id="topAvatar">T</div></div>
+</header>
+
+<div class="content">
+<section id="dashboard" class="page active">
+  <div class="hero"><h1 id="welcome">Welcome, Teacher</h1><p id="welcomeSub">Your teaching overview for today.</p></div>
+  <div id="dashboardNotice" class="notice"></div>
+
+  <div class="grid two">
+    <div class="card">
+      <div class="card-head"><div><h3>Teacher Profile</h3><div class="muted">Your registered ACCESS UG profile</div></div><span class="badge active">Active</span></div>
+      <div class="profile">
+        <div class="profile-avatar" id="profileAvatar">T</div>
+        <div class="profile-info">
+          <h2 id="teacherName">Loading...</h2>
+          <p id="teacherSchool">Loading school...</p>
+          <p id="teacherEmployee">Employee number: —</p>
+          <p id="teacherPhone">Phone: —</p>
+        </div>
+      </div>
+      <div style="margin-top:18px" class="muted"><strong>Assigned classes:</strong> <span id="assignedClasses">Loading...</span></div>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Teacher Attendance</h3><div class="muted">Your attendance overview</div></div><span id="clockStatus" class="badge active">Checking</span></div>
+      <div class="chart-wrap"><canvas id="teacherAttendanceChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid three" style="margin-top:18px">
+    <div class="card stat"><div class="kpi-icon">◷</div><div class="label" style="margin-top:12px">Present days</div><div class="value" id="presentDays">—</div><div class="sub">Current academic records</div></div>
+    <div class="card stat"><div class="kpi-icon">▣</div><div class="label" style="margin-top:12px">Assigned classes</div><div class="value" id="classCount">—</div><div class="sub">Classes you can access</div></div>
+    <div class="card stat"><div class="kpi-icon">✓</div><div class="label" style="margin-top:12px">Today's status</div><div class="value" id="todayStatus">—</div><div class="sub">Automatic morning check-in</div></div>
+  </div>
+
+  <div class="card" style="margin-top:18px">
+    <div class="card-head"><div><h3>Quick Actions</h3><div class="muted">Go directly to your daily teaching tasks</div></div></div>
+    <div class="grid three">
+      <button class="btn" data-go="attendance">Record Attendance</button>
+      <button class="btn" data-go="behaviour">Record Behaviour</button>
+      <button class="btn" data-go="assessments">Enter Assessment</button>
+    </div>
+  </div>
+</section>
+
+<section id="attendance" class="page">
+  <div class="hero"><h1>Attendance</h1><p>Record student attendance for your assigned classes.</p></div>
+  <div id="attendanceNotice" class="notice"></div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="field"><label>Class</label><select id="attendanceClass"></select></div>
+      <div class="field"><label>Date</label><input type="date" id="attendanceDate"></div>
+      <button class="btn" id="loadAttendance">Load Students</button>
+    </div>
+    <div id="attendanceTable" class="empty">Choose a class and date, then load students.</div>
+    <div class="actions"><button class="btn success" id="saveAttendance" style="display:none">Save Attendance</button></div>
+  </div>
+</section>
+
+<section id="behaviour" class="page">
+  <div class="hero"><h1>Behaviour</h1><p>Record behaviour grades and observations for students in your assigned classes.</p></div>
+  <div id="behaviourNotice" class="notice"></div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="field"><label>Class</label><select id="behaviourClass"></select></div>
+      <div class="field"><label>Term</label><select id="behaviourTerm"></select></div>
+      <button class="btn" id="loadBehaviour">Load Students</button>
+    </div>
+    <div class="muted" style="margin-bottom:12px">A = 15 points · B = 12 · C = 9 · D = 6 · E = 0. E flags a behaviour concern for school review.</div>
+    <div id="behaviourTable" class="empty">Choose a class and term, then load students.</div>
+    <div class="actions"><button class="btn success" id="saveBehaviour" style="display:none">Save Behaviour</button></div>
+  </div>
+</section>
+
+<section id="assessments" class="page">
+  <div class="hero"><h1>Assessments</h1><p>Enter continuous assessment marks out of 20.</p></div>
+  <div id="assessmentNotice" class="notice"></div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="field"><label>Class</label><select id="assessmentClass"></select></div>
+      <div class="field"><label>Subject</label><select id="assessmentSubject"></select></div>
+      <div class="field"><label>Term</label><select id="assessmentTerm"></select></div>
+      <button class="btn" id="loadAssessments">Load Students</button>
+    </div>
+    <div id="assessmentTable" class="empty">Choose class, subject and term.</div>
+    <div class="actions"><button class="btn success" id="saveAssessments" style="display:none">Save Assessment Marks</button></div>
+  </div>
+</section>
+
+<section id="endterm" class="page">
+  <div class="hero"><h1>End of Term</h1><p>Enter end-of-term marks out of 80. Assessment marks are carried automatically and the final mark is calculated out of 100.</p></div>
+  <div id="endtermNotice" class="notice"></div>
+  <div class="card">
+    <div class="toolbar">
+      <div class="field"><label>Class</label><select id="endClass"></select></div>
+      <div class="field"><label>Subject</label><select id="endSubject"></select></div>
+      <div class="field"><label>Term</label><select id="endTerm"></select></div>
+      <button class="btn" id="loadEndTerm">Load Students</button>
+    </div>
+    <div id="endtermTable" class="empty">Choose class, subject and term.</div>
+    <div class="actions"><button class="btn success" id="saveEndTerm" style="display:none">Save End-Term Marks</button></div>
+  </div>
+</section>
+
+<section id="reports" class="page">
+  <div class="hero"><h1>Reports / Issues</h1><p>Report an absence, student concern or other issue to the school.</p></div>
+  <div id="reportNotice" class="notice"></div>
+  <div class="card">
+    <div class="grid two">
+      <div class="field"><label>Report type</label><select id="reportType"><option value="teacher_absence">Teacher absence</option><option value="student_issue">Student issue</option><option value="attendance_issue">Attendance issue</option><option value="academic_issue">Academic issue</option><option value="other">Other</option></select></div>
+      <div class="field"><label>Priority</label><select id="reportPriority"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></div>
+    </div>
+    <div class="grid two" style="margin-top:16px">
+      <div class="field"><label>Student (optional)</label><select id="reportStudent"></select></div>
+      <div class="field"><label>Subject (optional)</label><input id="reportSubject" placeholder="e.g. Mathematics"></div>
+    </div>
+    <div class="field" style="margin-top:16px"><label>Description</label><textarea id="reportDescription" placeholder="Describe the issue clearly..."></textarea></div>
+    <div class="actions"><button class="btn" id="submitReport">Submit Report</button></div>
+  </div>
+  <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>My submitted reports</h3><div class="muted">Reports submitted by your teacher account</div></div></div><div id="reportsTable" class="empty">Loading...</div></div>
+</section>
+</div>
+</main>
+</div>
+
+<div class="modal" id="errorModal">
+  <div class="modal-head"><h3>Teacher account not found</h3><button class="close" id="closeError">×</button></div>
+  <p id="errorText" class="muted">Your authenticated email could not be matched to a teacher record.</p>
+  <div class="actions"><button class="btn" id="errorLogout">Return to Login</button></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+});
+
+let session=null, teacher=null, school=null, assignments=[], classes=[], terms=[], subjects=[];
+let attendanceRows=[], behaviourRows=[], assessmentRows=[], endRows=[];
+let chart=null;
+
+const $ = id => document.getElementById(id);
+const todayISO = () => new Date().toISOString().slice(0,10);
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3200);}
+function notice(id,msg,type="ok"){const n=$(id);n.textContent=msg;n.className="notice show "+type;}
+function clearNotice(id){$(id).className="notice";}
+function initials(name){return String(name||"Teacher").split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"T";}
+function teacherDisplayName(){return [teacher?.first_name,teacher?.last_name].filter(Boolean).join(" ")||teacher?.name||teacher?.full_name||"Teacher";}
+function className(c){return c?.name || [c?.level,c?.stream].filter(Boolean).join(" ") || "Class";}
+
+async function init(){
+  $("attendanceDate").value=todayISO();
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(error){return fail("Could not read the Supabase session: "+error.message);}
+  session=data?.session;
+  if(!session){return redirectLogin();}
+  const email=(session.user.email||"").trim().toLowerCase();
+  if(!email){return fail("Your Supabase session has no email address.");}
+
+  const {data:td,error:te}=await supabaseClient.from("teachers").select("*").ilike("email",email).maybeSingle();
+  if(te){return fail("Teacher lookup failed: "+te.message);}
+  if(!td){return fail("No teacher record was found for "+email+". Make sure the email in the teachers table exactly matches the authenticated login email.");}
+  teacher=td;
+  // In ACCESS UG the teachers table stores the school reference in `school`.
+  // Some older dashboard code incorrectly assumed `school_id`.
+  teacherSchoolId = teacher.school || teacher.school_id || null;
+
+  if(teacher.status && String(teacher.status).toLowerCase()!=="active"){return fail("This teacher account is not active.");}
+  await loadSchool();
+  await loadAssignments();
+  await loadTerms();
+  await loadSubjects();
+  renderIdentity();
+  populateSelectors();
+  await automaticTeacherAttendance();
+  await loadTeacherAttendance();
+  await loadReports();
+}
+
+async function loadSchool(){
+  school=null;
+  if(!teacherSchoolId){
+    console.warn("Teacher record has no school_id.");
+    return;
+  }
+  const {data,error}=await supabaseClient
+    .from("schools")
+    .select("*")
+    .eq("id",teacherSchoolId)
+    .maybeSingle();
+  if(error){
+    console.warn("School lookup failed:",error);
+    return;
+  }
+  school=data||null;
+}
+async function loadAssignments(){
+  const {data,error}=await supabaseClient.from("teacher_class_assignments")
+    .select("id,teacher_id,class_id,subject_id,academic_year,status")
+    .eq("teacher_id",teacher.id).eq("status","active");
+  if(error){console.warn(error);assignments=[];return;}
+  assignments=data||[];
+  const classIds=[...new Set(assignments.map(a=>a.class_id).filter(Boolean))];
+  const subjectIds=[...new Set(assignments.map(a=>a.subject_id).filter(Boolean))];
+  if(classIds.length){
+    const r=await supabaseClient.from("classes").select("*").in("id",classIds);
+    classes=r.data||[];
+  }
+  if(subjectIds.length){
+    const r=await supabaseClient.from("subjects").select("*").in("id",subjectIds);
+    subjects=r.data||[];
+  }
+}
+async function loadTerms(){
+  if(!teacherSchoolId)return;
+  const {data,error}=await supabaseClient.from("academic_terms").select("*").eq("school_id",teacherSchoolId).order("academic_year",{ascending:false}).order("term_number");
+  terms=data||[];
+  if(error)console.warn(error);
+}
+async function loadSubjects(){
+  if(!subjects.length){
+    const {data}=await supabaseClient.from("subjects").select("*").eq("active",true).order("name");
+    subjects=data||[];
+  }
+}
+function renderIdentity(){
+  const name=teacherDisplayName(), ini=initials(name);
+  $("welcome").textContent="Welcome, "+name;
+  $("welcomeSub").textContent="Here's your teaching overview for today.";
+  $("teacherName").textContent=name;
+  const schoolName=school?.name||school?.school_name||school?.school||school?.title||"School not found";
+  $("teacherSchool").textContent=schoolName;
+  $("teacherEmployee").textContent="Employee number: "+(teacher.employee_number||"—");
+  $("teacherPhone").textContent="Phone: "+(teacher.phone||"—");
+  $("profileAvatar").textContent=ini;$("topAvatar").textContent=ini;
+  $("topEmail").textContent=session.user.email||"";
+  $("assignedClasses").textContent=classes.length?classes.map(className).join(", "):"No active class assignments";
+  $("classCount").textContent=classes.length;
+}
+function optionHTML(items,placeholder="Select"){
+  return '<option value="">'+esc(placeholder)+'</option>'+items.map(x=>`<option value="${esc(x.id)}">${esc(x.name||className(x))}</option>`).join("");
+}
+function populateSelectors(){
+  const classOpts=optionHTML(classes,"Select class");
+  ["attendanceClass","behaviourClass","assessmentClass","endClass"].forEach(id=>$(id).innerHTML=classOpts);
+  const termOpts=optionHTML(terms.map(t=>({...t,name:t.name||`Term ${t.term_number} — ${t.academic_year}`})),"Select term");
+  $("behaviourTerm").innerHTML=termOpts;$("assessmentTerm").innerHTML=termOpts;$("endTerm").innerHTML=termOpts;
+  const subjectOpts=optionHTML(subjects,"Select subject");
+  $("assessmentSubject").innerHTML=subjectOpts;$("endSubject").innerHTML=subjectOpts;
+}
+function redirectLogin(){window.location.href="Access.html";}
+function fail(msg){
+  $("errorText").textContent=msg;$("errorModal").classList.add("show");
+}
+async function logout(){
+  await supabaseClient.auth.signOut();
+  window.location.href="Access.html";
+}
+$("logoutBtn").onclick=logout;$("errorLogout").onclick=logout;$("closeError").onclick=()=>$("errorModal").classList.remove("show");
+
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+$("menuBtn").onclick=()=>{ $("sidebar").classList.toggle("open"); $("overlay").classList.toggle("show",$("sidebar").classList.contains("open")); };
+$("overlay").onclick=()=>{ $("sidebar").classList.remove("open");$("overlay").classList.remove("show"); };
+
+function showPage(page){
+  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+  $(page)?.classList.add("active");
+  document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
+  const titles={dashboard:"Teacher Dashboard",attendance:"Attendance",behaviour:"Behaviour",assessments:"Assessments",endterm:"End of Term",reports:"Reports / Issues"};
+  $("pageTitle").textContent=titles[page]||"ACCESS UG";
+  $("sidebar").classList.remove("open");$("overlay").classList.remove("show");
+  if(page==="reports")loadReports();
+}
+
+async function automaticTeacherAttendance(){
+  const now=new Date(), hour=now.getHours();
+  // Automatic morning window: 06:00 through 10:00 local device time.
+  // The database unique constraint prevents duplicate daily records.
+  if(hour<6 || hour>=10){$("clockStatus").textContent="Outside window";$("todayStatus").textContent="—";return;}
+  const {data:existing}=await supabaseClient.from("teacher_attendance").select("*").eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
+  if(existing){$("clockStatus").textContent="Present";$("todayStatus").textContent="Present";return;}
+  const payload={teacher_id:teacher.id,school_id:teacherSchoolId,attendance_date:todayISO(),clock_in:now.toISOString(),status:"present",method:"automatic_login"};
+  const {data,error}=await supabaseClient.from("teacher_attendance").insert(payload).select().single();
+  if(error){
+    if(String(error.message).toLowerCase().includes("duplicate")){$("clockStatus").textContent="Present";$("todayStatus").textContent="Present";}
+    else {console.warn(error);$("clockStatus").textContent="Not recorded";$("todayStatus").textContent="—";}
+  }else{$("clockStatus").textContent="Present";$("todayStatus").textContent="Present";toast("Your morning attendance has been recorded.");}
+}
+
+async function loadTeacherAttendance(){
+  const since=new Date();since.setDate(since.getDate()-90);
+  const {data,error}=await supabaseClient.from("teacher_attendance").select("attendance_date,status").eq("teacher_id",teacher.id).gte("attendance_date",since.toISOString().slice(0,10));
+  if(error)return;
+  const rows=data||[], present=rows.filter(x=>x.status==="present").length, absent=rows.filter(x=>x.status==="absent").length, auth=rows.filter(x=>x.status==="authorized_absence").length;
+  $("presentDays").textContent=present;
+  if(chart)chart.destroy();
+  chart=new Chart($("teacherAttendanceChart"),{type:"doughnut",data:{labels:["Present","Absent","Authorized"],datasets:[{data:[present,absent,auth]}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom"}}}});
+}
+
+async function getStudents(classId){
+  if(!classId) return [];
+  if(!teacherSchoolId) throw new Error("Your teacher account has no school assigned.");
+
+  const selectedClass=classes.find(c=>String(c.id)===String(classId));
+  if(!selectedClass) throw new Error("The selected class could not be found in your assignments.");
+
+  const selectedName=String(selectedClass.name||"").trim();
+  const selectedLevel=String(selectedClass.level||"").trim();
+  const selectedStream=String(selectedClass.stream||"").trim();
+
+  // Students are linked in this database by school_id + class_level, NOT class_id.
+  // Fetch only this teacher's school. This is also the exact structure confirmed in Supabase.
+  const {data,error}=await supabaseClient
+    .from("students")
+    .select("*")
+    .eq("school_id",teacherSchoolId);
+
+  if(error) throw new Error("Could not load students: "+error.message);
+
+  const norm=v=>String(v??"").trim().toLowerCase().replace(/\s+/g," ");
+  const wantedName=norm(selectedName);
+  const wantedLevel=norm(selectedLevel);
+  const wantedStream=norm(selectedStream);
+  const wantedCombined=norm([selectedLevel,selectedStream].filter(Boolean).join(" "));
+
+  const matched=(data||[]).filter(s=>{
+    const value=norm(s.class_level);
+    return value===wantedName || value===wantedCombined ||
+      (wantedLevel && wantedStream && value===wantedLevel+" "+wantedStream);
+  });
+
+  return matched.sort((a,b)=>studentName(a).localeCompare(studentName(b)));
+}
+function studentName(s){return [s.first_name,s.last_name].filter(Boolean).join(" ")||s.full_name||s.name||s.student_name||"Unnamed student";}
+
+$("loadAttendance").onclick=async()=>{
+  clearNotice("attendanceNotice");
+  try{
+    const classId=$("attendanceClass").value,date=$("attendanceDate").value;
+    if(!classId||!date)return notice("attendanceNotice","Select a class and date.","err");
+    const students=await getStudents(classId);
+    if(!students.length){$("attendanceTable").innerHTML='<div class="empty">No students are registered in this class.</div>';return;}
+    const {data:old}=await supabaseClient.from("student_attendance").select("student_id,status,notes").eq("class_id",classId).eq("attendance_date",date);
+    const map=new Map((old||[]).map(x=>[x.student_id,x]));
+    attendanceRows=students.map(s=>({student:s,status:map.get(s.id)?.status||"present",notes:map.get(s.id)?.notes||""}));
+    $("attendanceTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Status</th><th>Notes</th></tr></thead><tbody>${attendanceRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td><select data-att-status="${i}"><option value="present" ${r.status==="present"?"selected":""}>Present</option><option value="absent" ${r.status==="absent"?"selected":""}>Absent</option><option value="authorized_absence" ${r.status==="authorized_absence"?"selected":""}>Authorized absence</option></select></td><td><input data-att-note="${i}" value="${esc(r.notes)}" placeholder="Optional note"></td></tr>`).join("")}</tbody></table></div>`;
+    $("saveAttendance").style.display="inline-block";
+  }catch(e){notice("attendanceNotice",e.message,"err");}
+};
+$("saveAttendance").onclick=async()=>{
+  clearNotice("attendanceNotice");
+  const classId=$("attendanceClass").value,date=$("attendanceDate").value;
+  const payload=attendanceRows.map((r,i)=>({student_id:r.student.id,class_id:classId,school_id:teacherSchoolId,attendance_date:date,status:$(`[data-att-status="${i}"]`).value,recorded_by:teacher.id,notes:$(`[data-att-note="${i}"]`).value||null}));
+  const {error}=await supabaseClient.from("student_attendance").upsert(payload,{onConflict:"student_id,attendance_date"});
+  if(error)return notice("attendanceNotice","Attendance could not be saved: "+error.message,"err");
+  notice("attendanceNotice","Attendance saved successfully.","ok");toast("Attendance saved.");
+};
+
+const behaviourPoints={A:15,B:12,C:9,D:6,E:0};
+$("loadBehaviour").onclick=async()=>{
+  clearNotice("behaviourNotice");
+  try{
+    const classId=$("behaviourClass").value,termId=$("behaviourTerm").value;
+    if(!classId||!termId)return notice("behaviourNotice","Select a class and term.","err");
+    const students=await getStudents(classId);
+    const {data:old}=await supabaseClient.from("behaviour_records").select("*").eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id);
+    const map=new Map((old||[]).map(x=>[x.student_id,x]));
+    behaviourRows=students.map(s=>({student:s,record:map.get(s.id)||{grade:"A",comment:""}}));
+    $("behaviourTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Grade</th><th>Points</th><th>Comment</th></tr></thead><tbody>${behaviourRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td><select data-beh-grade="${i}">${["A","B","C","D","E"].map(g=>`<option value="${g}" ${r.record.grade===g?"selected":""}>${g}</option>`).join("")}</select></td><td><strong id="beh-point-${i}">${behaviourPoints[r.record.grade]??15}</strong></td><td><input data-beh-comment="${i}" value="${esc(r.record.comment||"")}" placeholder="Optional observation"></td></tr>`).join("")}</tbody></table></div>`;
+    behaviourRows.forEach((_,i)=>$(`[data-beh-grade="${i}"]`).addEventListener("change",e=>$(`beh-point-${i}`).textContent=behaviourPoints[e.target.value]));
+    $("saveBehaviour").style.display="inline-block";
+  }catch(e){notice("behaviourNotice",e.message,"err");}
+};
+$("saveBehaviour").onclick=async()=>{
+  clearNotice("behaviourNotice");
+  const classId=$("behaviourClass").value,termId=$("behaviourTerm").value;
+  const payload=behaviourRows.map((r,i)=>{const grade=$(`[data-beh-grade="${i}"]`).value;return {student_id:r.student.id,teacher_id:teacher.id,school_id:teacherSchoolId,class_id:classId,term_id:termId,grade,points:behaviourPoints[grade],comment:$(`[data-beh-comment="${i}"]`).value||null};});
+  const {error}=await supabaseClient.from("behaviour_records").upsert(payload,{onConflict:"student_id,term_id"});
+  if(error){
+    // If the table has no unique key for upsert, fall back to inserts.
+    const ins=await supabaseClient.from("behaviour_records").insert(payload);
+    if(ins.error)return notice("behaviourNotice","Behaviour could not be saved: "+error.message,"err");
+  }
+  notice("behaviourNotice","Behaviour records saved.","ok");toast("Behaviour saved.");
+};
+
+function assignedSubjectIds(classId){return [...new Set(assignments.filter(a=>a.class_id===classId&&a.subject_id).map(a=>a.subject_id))];}
+function updateSubjectForClass(selectId,classId){
+  const allowed=assignedSubjectIds(classId);
+  const list=allowed.length?subjects.filter(s=>allowed.includes(s.id)):subjects;
+  $(selectId).innerHTML=optionHTML(list,"Select subject");
+}
+$("assessmentClass").onchange=()=>updateSubjectForClass("assessmentSubject",$("assessmentClass").value);
+$("endClass").onchange=()=>updateSubjectForClass("endSubject",$("endClass").value);
+
+$("loadAssessments").onclick=async()=>{
+  clearNotice("assessmentNotice");
+  try{
+    const classId=$("assessmentClass").value,subjectId=$("assessmentSubject").value,termId=$("assessmentTerm").value;
+    if(!classId||!subjectId||!termId)return notice("assessmentNotice","Select class, subject and term.","err");
+    const students=await getStudents(classId);
+    const {data:old}=await supabaseClient.from("assessments").select("*").eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    const map=new Map((old||[]).map(x=>[x.student_id,x]));
+    assessmentRows=students.map(s=>({student:s,record:map.get(s.id)}));
+    $("assessmentTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Assessment mark / 20</th></tr></thead><tbody>${assessmentRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td><input type="number" min="0" max="20" step="0.01" data-assess="${i}" value="${r.record?.mark??""}" placeholder="0–20"></td></tr>`).join("")}</tbody></table></div>`;
+    $("saveAssessments").style.display="inline-block";
+  }catch(e){notice("assessmentNotice",e.message,"err");}
+};
+$("saveAssessments").onclick=async()=>{
+  clearNotice("assessmentNotice");
+  const classId=$("assessmentClass").value,subjectId=$("assessmentSubject").value,termId=$("assessmentTerm").value;
+  const payload=[];
+  for(let i=0;i<assessmentRows.length;i++){const v=Number($(`[data-assess="${i}"]`).value);if(!Number.isFinite(v)||v<0||v>20)return notice("assessmentNotice","Every assessment mark must be between 0 and 20.","err");payload.push({student_id:assessmentRows[i].student.id,subject_id:subjectId,class_id:classId,school_id:teacherSchoolId,term_id:termId,teacher_id:teacher.id,mark:v,max_mark:20,updated_at:new Date().toISOString()});}
+  const {error}=await supabaseClient.from("assessments").upsert(payload,{onConflict:"student_id,subject_id,term_id"});
+  if(error)return notice("assessmentNotice","Assessment could not be saved: "+error.message,"err");
+  notice("assessmentNotice","Assessment marks saved successfully.","ok");toast("Assessment marks saved.");
+};
+
+$("loadEndTerm").onclick=async()=>{
+  clearNotice("endtermNotice");
+  try{
+    const classId=$("endClass").value,subjectId=$("endSubject").value,termId=$("endTerm").value;
+    if(!classId||!subjectId||!termId)return notice("endtermNotice","Select class, subject and term.","err");
+    const students=await getStudents(classId);
+    const {data:ass}=await supabaseClient.from("assessments").select("student_id,mark").eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    const {data:old}=await supabaseClient.from("end_term_results").select("*").eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    const amap=new Map((ass||[]).map(x=>[x.student_id,x.mark]));
+    const emap=new Map((old||[]).map(x=>[x.student_id,x]));
+    endRows=students.map(s=>({student:s,assessment:amap.get(s.id)??0,record:emap.get(s.id)}));
+    $("endtermTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th></tr></thead><tbody>${endRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td>${Number(r.assessment).toFixed(2)}</td><td><input type="number" min="0" max="80" step="0.01" data-end="${i}" value="${r.record?.end_term_mark??""}" placeholder="0–80"></td><td id="final-${i}">${r.record?.final_mark!=null?Number(r.record.final_mark).toFixed(2):Number(r.assessment).toFixed(2)}</td></tr>`).join("")}</tbody></table></div>`;
+    endRows.forEach((r,i)=>$(`[data-end="${i}"]`).addEventListener("input",e=>{const v=Number(e.target.value);$(`final-${i}`).textContent=(Number(r.assessment)+(Number.isFinite(v)?v:0)).toFixed(2)}));
+    $("saveEndTerm").style.display="inline-block";
+  }catch(e){notice("endtermNotice",e.message,"err");}
+};
+$("saveEndTerm").onclick=async()=>{
+  clearNotice("endtermNotice");
+  const classId=$("endClass").value,subjectId=$("endSubject").value,termId=$("endTerm").value;
+  const payload=[];
+  for(let i=0;i<endRows.length;i++){const v=Number($(`[data-end="${i}"]`).value);if(!Number.isFinite(v)||v<0||v>80)return notice("endtermNotice","Every end-of-term mark must be between 0 and 80.","err");payload.push({student_id:endRows[i].student.id,subject_id:subjectId,class_id:classId,school_id:teacherSchoolId,term_id:termId,teacher_id:teacher.id,assessment_mark:Number(endRows[i].assessment)||0,end_term_mark:v,max_mark:80,updated_at:new Date().toISOString()});}
+  const {error}=await supabaseClient.from("end_term_results").upsert(payload,{onConflict:"student_id,subject_id,term_id"});
+  if(error)return notice("endtermNotice","End-term marks could not be saved: "+error.message,"err");
+  notice("endtermNotice","End-term results saved. Final marks are calculated out of 100.","ok");toast("End-term results saved.");
+};
+
+async function loadReports(){
+  if(!teacher)return;
+  const {data,error}=await supabaseClient.from("reports").select("*").eq("reported_by",teacher.id).order("created_at",{ascending:false}).limit(30);
+  if(error){$("reportsTable").innerHTML='<div class="empty">Could not load reports: '+esc(error.message)+'</div>';return;}
+  const rows=data||[];
+  if(!rows.length){$("reportsTable").innerHTML='<div class="empty">You have not submitted any reports.</div>';return;}
+  $("reportsTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Priority</th><th>Status</th><th>Description</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleDateString())}</td><td>${esc(r.report_type)}</td><td>${esc(r.priority)}</td><td>${esc(r.status)}</td><td>${esc(r.description)}</td></tr>`).join("")}</tbody></table></div>`;
+}
+async function loadReportStudents(){
+  try{
+    const unique=new Map();
+    for(const c of classes){
+      const rows=await getStudents(c.id);
+      rows.forEach(s=>unique.set(s.id,s));
+    }
+    const data=[...unique.values()];
+    $("reportStudent").innerHTML='<option value="">No specific student</option>'+(data.length?data.map(s=>`<option value="${esc(s.id)}">${esc(studentName(s))}</option>`).join(""):'<option value="">No students available</option>');
+  }catch(e){
+    console.warn(e);
+    $("reportStudent").innerHTML='<option value="">Unable to load students</option>';
+  }
+}
+$("submitReport").onclick=async()=>{
+  clearNotice("reportNotice");
+  const description=$("reportDescription").value.trim();
+  if(!description)return notice("reportNotice","Please describe the issue.","err");
+  const payload={school_id:teacherSchoolId,reported_by:teacher.id,student_id:$("reportStudent").value||null,teacher_id:teacher.id,report_type:$("reportType").value,subject:$("reportSubject").value.trim()||null,description,priority:$("reportPriority").value,status:"open"};
+  const {error}=await supabaseClient.from("reports").insert(payload);
+  if(error)return notice("reportNotice","Report could not be submitted: "+error.message,"err");
+  $("reportDescription").value="";$("reportSubject").value="";
+  notice("reportNotice","Report submitted successfully.","ok");toast("Report submitted.");loadReports();
+};
+
+supabaseClient.auth.onAuthStateChange((event,newSession)=>{
+  if(event==="SIGNED_OUT")window.location.href="Access.html";
+});
+
+window.addEventListener("load",async()=>{
+  await init();
+  await loadReportStudents();
+});
+</script>
+</body>
+</html>
