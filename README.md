@@ -5,7 +5,7 @@ Dev: Jovan Kaliisa - Masaka - jkaliisa256@outlook.com
 ## 📸 Screenshots
 All 18 screenshots are in /screenshots folder!
 
-Click here to see them: https://github.com/jovankaliisa/AccessUg/tree/main/screenshots
+Click here to see them: https://github.com/jovankaliisa/AccessUg/tree/main/Screenshots
 
 What built:
 - Portal Login - Student/Teacher/Admin
