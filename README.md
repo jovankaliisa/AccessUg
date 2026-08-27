@@ -1,33 +1,24 @@
-# ACCESSUG.SCH 🇺🇬 - Uganda School Management System
+# ACCESSUG.SCH 🇺🇬
+Live: https://jovankaliisa.github.io/AccessUg/
+Dev: Jovan Kaliisa - Masaka - jkaliisa256@outlook.com
 
-**Built in Masaka on Tecno phone | jovankaliisa**
+## 📸 Screenshots
+All 18 screenshots are in /screenshots folder!
 
-> Access. Choose. Succeed. - A school system for rural Uganda
+Click here to see them: https://github.com/jovankaliisa/AccessUg/tree/main/screenshots
 
-**Live Demo:**https://jovankaliisa.github.io/AccessUg/ (we will activate it next step)
-**Built with:** Spck Editor + Supabase + HTML/CSS
+What built:
+- Portal Login - Student/Teacher/Admin
+- Welcome Page - Access Choose Succeed
+- Admin Dashboard - Schools 3 Students 5
+- Teacher Dashboard - Katumba Francis ARCHBISHOP KIWANUKA S3 North 0764508030
+- Attendance - S3 North
+- Behaviour - A15 B12 C9 D6 E0
+- Reports - Teacher absence
+- Settings - Supabase Ready Online
 
-### Problem
-Schools in Masaka lose fees records, no parent updates, teachers can't work offline.
+Live accounts: Admin jkaliisa256@outlook.com / Teacher jkaliisa456@gmail.com
 
-### Solution
-- Offline marks & attendance
-- Parent SMS via MTN MoMo
-- GPS teacher attendance
-- Works 100% on phone
+Tech: HTML CSS JS Supabase GitHub Pages - Built on phone
 
-### Files
-- `index.html` - Secure login (left login + welcome top)
-- `admin-dashboard.html` - School admin panel
-- `teacher-dashboard.html` - Teacher tools
-
-### Goal
-50 schools in Greater Masaka by Dec 2026 | 30k-80k UGX/month per school
-
-### Seeking
-MTN ACE Tech mentorship, MTN Foundation laptop support, and international EdTech scholarship.
-
-Built by @jovankaliisa from Masaka District.
-#MTNACE #BuildInPublicUG #EdTechUG
-
-Contact: Masaka, UG | jovankaliisa on GitHub
+Requesting laptop support from MTN Foundation to help schools in Masaka manage digitally.
