@@ -4,7 +4,7 @@
 
 > Access. Choose. Succeed. - A school system for rural Uganda
 
-**Live Demo:** https://jovankaliisa.github.io/Access... (we will activate it next step)
+**Live Demo:**https://jovankaliisa.github.io/AccessUg/ (we will activate it next step)
 **Built with:** Spck Editor + Supabase + HTML/CSS
 
 ### Problem
