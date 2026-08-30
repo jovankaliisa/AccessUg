@@ -1298,11 +1298,83 @@ if (loginForm && loginButton) {
 
             /*
              * =========================================================
-             * ADMINISTRATOR / STUDENT / PARENT LOGIN
+             * STUDENT LOGIN
              * =========================================================
              *
-             * These roles continue to use the profiles table exactly
-             * as the existing ACCESS UG system was designed.
+             * IMPORTANT: Students in the current ACCESS UG database are
+             * identified through students.parent_email. A student does NOT
+             * need a matching row in public.profiles. Therefore the student
+             * lookup MUST happen before the profiles lookup.
+             */
+            if (selectedRole === "student") {
+                const { data: linkedStudents, error: studentLinkError } =
+                    await supabaseClient
+                        .from("students")
+                        .select("*")
+                        .ilike("email", authenticatedEmail)
+                        .limit(2);
+
+                if (studentLinkError) {
+                    await supabaseClient.auth.signOut();
+                    throw new Error(
+                        "Student access verification failed: " +
+                        studentLinkError.message
+                    );
+                }
+
+                if (!linkedStudents || linkedStudents.length === 0) {
+                    await supabaseClient.auth.signOut();
+                    throw new Error(
+                        "This email has no student access to ACCESS UG. " +
+                        "Make sure this exact email is saved in students.email."
+                    );
+                }
+
+                if (linkedStudents.length > 1) {
+                    await supabaseClient.auth.signOut();
+                    throw new Error(
+                        "This email is linked to more than one student. " +
+                        "Please ask the administrator to keep one student record for this email."
+                    );
+                }
+
+                const student = linkedStudents[0];
+                const studentName =
+                    student.student_name ||
+                    student.full_name ||
+                    [student.first_name, student.last_name]
+                        .filter(Boolean)
+                        .join(" ") ||
+                    "Student";
+
+                localStorage.setItem("accessug_selected_role", "student");
+                localStorage.setItem("accessug_login_email", authenticatedEmail);
+                localStorage.setItem("accessug_student_id", String(student.id));
+                localStorage.setItem("accessug_student_name", studentName);
+                localStorage.setItem("accessug_full_name", studentName);
+
+                if (student.school_id) {
+                    localStorage.setItem(
+                        "accessug_student_school_id",
+                        String(student.school_id)
+                    );
+                }
+
+                if (student.class_level) {
+                    localStorage.setItem(
+                        "accessug_student_class_level",
+                        String(student.class_level)
+                    );
+                }
+
+                window.location.replace("./student-dashboard.html");
+                return;
+            }
+
+            /*
+             * =========================================================
+             * ADMINISTRATOR / PARENT LOGIN
+             * =========================================================
              */
             const {
                 data: profile,
@@ -1314,6 +1386,7 @@ if (loginForm && loginButton) {
                 .maybeSingle();
 
             if (profileError) {
+                await supabaseClient.auth.signOut();
                 throw new Error(
                     "Could not read your ACCESS UG profile: " +
                     profileError.message
@@ -1322,7 +1395,6 @@ if (loginForm && loginButton) {
 
             if (!profile) {
                 await supabaseClient.auth.signOut();
-
                 throw new Error(
                     "This account has no ACCESS UG profile."
                 );

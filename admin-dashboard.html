@@ -520,9 +520,6 @@ tbody tr:hover{
 
 .modal{
     display:none;
-    visibility:hidden;
-    opacity:0;
-    pointer-events:none;
     position:fixed;
     inset:0;
     background:rgba(3,20,45,.72);
@@ -532,7 +529,9 @@ tbody tr:hover{
     z-index:2000;
 }
 
-.modal.show{display:flex !important;visibility:visible !important;opacity:1 !important;pointer-events:auto !important;}
+.modal.show{
+    display:flex;
+}
 
 .modalbox{
     background:white;
@@ -775,6 +774,153 @@ tbody tr:hover{
     border:1px solid #abefc6;
 }
 
+
+/* =========================
+   CLASS / STREAM BUILDER
+========================= */
+
+.school-subject-builder{margin-top:18px;padding:18px;border:1px solid #dce6f2;border-radius:16px;background:#f8fbff}
+.school-subject-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:12px}
+.school-subject-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.school-subject-item{display:flex;align-items:center;gap:9px;padding:10px 12px;border:1px solid #dfe7f0;border-radius:10px;background:#fff;color:#243b5a}
+.school-subject-item input{width:17px;height:17px;accent-color:#0b3d82}
+.school-subject-status{padding:10px 12px;border-radius:10px;background:#eef4fb;color:#60738c;font-size:13px}
+@media(max-width:650px){.school-subject-list{grid-template-columns:1fr}.school-subject-head{flex-direction:column}}
+.class-builder{
+    margin-top:20px;
+    padding:18px;
+    border:1px solid #dfe7f2;
+    border-radius:14px;
+    background:#f8fafd;
+}
+.class-builder-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:12px;
+}
+.class-builder-head h4{color:#102a56;font-size:16px}
+.class-builder-head p{margin-top:4px}
+.class-rows{display:flex;flex-direction:column;gap:10px}
+.class-row{
+    display:grid;
+    grid-template-columns:1fr 1fr auto;
+    gap:10px;
+    align-items:center;
+}
+.class-row input{
+    width:100%;
+    padding:11px;
+    border:1px solid #d4dfed;
+    border-radius:8px;
+    background:#fff;
+    color:#172b4d;
+}
+.class-row input:focus{
+    outline:none;
+    border-color:#0b3d82;
+    box-shadow:0 0 0 3px rgba(11,61,130,.10);
+}
+.add-class-btn{
+    border:0;
+    background:#edf4ff;
+    color:#0b3d82;
+    border-radius:9px;
+    padding:10px 14px;
+    font-weight:700;
+    cursor:pointer;
+}
+.remove-class{
+    border:1px solid #fecdd3;
+    background:#fff1f2;
+    color:#b42318;
+    border-radius:8px;
+    padding:10px 12px;
+    cursor:pointer;
+    font-weight:600;
+}
+.class-hint{
+    margin-top:9px;
+    color:#718096;
+    font-size:12px;
+}
+.db-message{
+    display:none;
+    margin-top:15px;
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:14px;
+    line-height:1.4;
+}
+.db-message.show{display:block}
+.db-message.ok{background:#ecfdf3;color:#027a48;border:1px solid #abefc6}
+.db-message.error{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
+.db-message.info{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+@media(max-width:750px){
+    .class-row{grid-template-columns:1fr 1fr}
+    .class-row .remove-class{grid-column:1/-1}
+}
+
+
+/* =========================
+   TEACHER ASSIGNMENT BUILDER
+========================= */
+.assignment-builder{
+    margin-top:20px;
+    padding:18px;
+    border:1px solid #dfe7f2;
+    border-radius:14px;
+    background:#f8fafd;
+}
+.assignment-builder-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:14px;
+}
+.assignment-builder-head h4{color:#102a56;font-size:17px;margin-bottom:5px}
+.assignment-year{
+    background:#eaf2ff;
+    color:#0b3d82;
+    padding:7px 10px;
+    border-radius:999px;
+    font-size:12px;
+    font-weight:700;
+    white-space:nowrap;
+}
+.assignment-status{
+    padding:13px;
+    border-radius:10px;
+    background:#eef4fb;
+    color:#526581;
+    font-size:13px;
+}
+.teacher-assignments{display:flex;flex-direction:column;gap:12px;margin-top:12px}
+.teacher-assignment-row{
+    background:#fff;
+    border:1px solid #dfe7f2;
+    border-radius:12px;
+    padding:14px;
+}
+.teacher-assignment-row.selected{border-color:#9dbce5;box-shadow:0 0 0 2px rgba(11,61,130,.06)}
+.assignment-class-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.assignment-class-check{display:flex;align-items:center;gap:10px;font-weight:700;color:#172b4d}
+.assignment-class-check input{width:18px;height:18px;accent-color:#0b3d82}
+.assignment-select-all{border:0;background:#edf4ff;color:#0b3d82;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:700;cursor:pointer}
+.subject-checks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding-left:28px}
+.subject-check{display:flex;align-items:center;gap:8px;padding:8px 9px;border:1px solid #e3eaf3;border-radius:8px;background:#fbfcfe;font-size:13px;color:#304866}
+.subject-check input{width:16px;height:16px;accent-color:#0b3d82}
+.subject-check.disabled{opacity:.55}
+.assignment-empty{padding:18px;text-align:center;border:1px dashed #cbd7e6;border-radius:10px;color:#718096;font-size:13px;background:#fff}
+@media(max-width:750px){
+    .assignment-builder-head{flex-direction:column}
+    .subject-checks{grid-template-columns:1fr;padding-left:0}
+}
+
+
+.school-actions{display:flex;gap:7px;flex-wrap:wrap}.small-btn{border:1px solid #d4dfed;background:#fff;color:#0b3d82;border-radius:7px;padding:7px 9px;font-size:11px;font-weight:700;cursor:pointer}.small-btn:hover{background:#edf4ff}.danger-btn{border-color:#fecdd3;background:#fff1f2;color:#b42318}.detail-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:15px}.detail-item{background:#f8fafd;border:1px solid #e1e8f2;border-radius:10px;padding:12px}.detail-item small{display:block;color:#718096;margin-bottom:4px}.detail-item strong{color:#172b4d}.detail-list{margin-top:15px}.detail-list h4{margin:0 0 8px;color:#102a56}.detail-list .item{padding:9px 0;border-bottom:1px solid #e5ebf3;font-size:13px}.danger-zone{margin-top:20px;padding:14px;border:1px solid #fecdd3;background:#fff8f8;border-radius:10px}.danger-zone p{color:#8a1c1c;font-size:12px;margin:5px 0 10px}@media(max-width:750px){.detail-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -1011,7 +1157,7 @@ tbody tr:hover{
         </h2>
 
         <p>
-            Manage ACCESS UG schools, students, teachers and reports from one place.
+            Manage schools, classes, students, teachers, subjects and teaching assignments from one place. Registration data is written directly to Supabase.
         </p>
 
     </div>
@@ -1148,7 +1294,7 @@ tbody tr:hover{
                     Recent Schools
                 </h3>
 
-                <button type="button" class="btn" id="addSchoolBtn" onclick="openModal()">
+                <button class="btn" onclick="openModal()">
                     + Add School
                 </button>
 
@@ -1299,7 +1445,7 @@ tbody tr:hover{
                 School Management
             </h3>
 
-            <button type="button" class="btn" onclick="openModal()">
+            <button class="btn" onclick="openModal()">
                 + Add School
             </button>
 
@@ -1355,7 +1501,7 @@ tbody tr:hover{
         <div class="title">
             <div>
                 <h3>Student Management</h3>
-                <p class="muted">Students are permanently stored in Supabase and linked to their school.</p>
+                <p class="muted">Register the learner, give them a dedicated login email, and assign their school and class in one step.</p>
             </div>
 
             <button class="btn" type="button" onclick="openStudentModal()">
@@ -1372,6 +1518,7 @@ tbody tr:hover{
                         <th>Class / Level</th>
                         <th>School</th>
                         <th>Parent / Guardian</th>
+                        <th>Login Email</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -1405,7 +1552,7 @@ tbody tr:hover{
         <div class="title">
             <div>
                 <h3>Teacher Management</h3>
-                <p class="muted">Teachers are permanently stored in Supabase and linked to their school.</p>
+                <p class="muted">Register the teacher and assign every class + subject combination in the same form. No manual assignment SQL is required.</p>
             </div>
 
             <button class="btn" type="button" onclick="openTeacherModal()">
@@ -1419,10 +1566,11 @@ tbody tr:hover{
                     <tr>
                         <th>Teacher</th>
                         <th>Employee No.</th>
-                        <th>Subject</th>
+                        <th>Subjects</th>
                         <th>School</th>
                         <th>Phone</th>
                         <th>Status</th>
+                        <th>Login</th>
                     </tr>
                 </thead>
                 <tbody id="teachersTable"></tbody>
@@ -1676,7 +1824,7 @@ tbody tr:hover{
             </div>
 
 
-            <button type="button" class="close" onclick="closeModal()">
+            <button class="close" onclick="closeModal()">
                 ×
             </button>
 
@@ -1823,6 +1971,38 @@ tbody tr:hover{
             </div>
 
 
+            <div class="class-builder">
+                <div class="class-builder-head">
+                    <div>
+                        <h4>Classes / Streams</h4>
+                        <p class="muted">Register the classes that belong to this school.</p>
+                    </div>
+                    <button type="button" class="add-class-btn" onclick="addClassRow()">+ Add class</button>
+                </div>
+
+                <div class="field" style="margin-bottom:12px;">
+                    <label>Academic Year *</label>
+                    <input id="classAcademicYear" type="number" min="2000" max="2100" required>
+                </div>
+
+                <div id="classRows" class="class-rows"></div>
+                <div id="classHint" class="class-hint">Add at least one class/stream. Example: S3 + North → S3 North.</div>
+            </div>
+
+            <div class="school-subject-builder">
+                <div class="school-subject-head">
+                    <div>
+                        <h4>Subjects offered by this school</h4>
+                        <p class="muted">Select the subjects already available in the ACCESS UG <b>subjects</b> table. Only subjects selected here will appear when registering teachers for this school.</p>
+                    </div>
+                    <button type="button" class="add-class-btn" id="refreshSchoolSubjectsBtn">↻ Refresh</button>
+                </div>
+                <div id="schoolSubjectStatus" class="school-subject-status">Loading subjects…</div>
+                <div id="schoolSubjectList" class="school-subject-list"></div>
+            </div>
+
+            <div id="schoolMessage" class="db-message"></div>
+
             <div class="actions">
 
                 <button
@@ -1838,7 +2018,7 @@ tbody tr:hover{
                     type="submit"
                     class="btn"
                 >
-                    Save School
+                    Save School & Classes
                 </button>
 
             </div>
@@ -1852,6 +2032,19 @@ tbody tr:hover{
 
 
 <!-- =========================
+     SCHOOL DETAILS MODAL
+========================= -->
+<div class="modal" id="schoolDetailsModal">
+  <div class="modalbox">
+    <div class="modalhead">
+      <div><h3 id="schoolDetailsTitle">School Details</h3><p class="muted">Complete information currently stored in Supabase.</p></div>
+      <button class="close" type="button" onclick="closeSchoolDetails()">×</button>
+    </div>
+    <div id="schoolDetailsBody"></div>
+  </div>
+</div>
+
+<!-- =========================
      ADD TEACHER MODAL
 ========================= -->
 <div class="modal" id="teacherModal">
@@ -1859,7 +2052,7 @@ tbody tr:hover{
         <div class="modalhead">
             <div>
                 <h3>Add New Teacher</h3>
-                <p class="muted">Enter the teacher's details and assign a school.</p>
+                <p class="muted">Enter the teacher's details, login email, school, classes and subjects.</p>
             </div>
             <button class="close" type="button" onclick="closeTeacherModal()">×</button>
         </div>
@@ -1891,24 +2084,38 @@ tbody tr:hover{
                     <input id="teacherPhone" type="tel">
                 </div>
                 <div class="field">
-                    <label>Email</label>
-                    <input id="teacherEmail" type="email">
+                    <label>Teacher Login Email *</label>
+                    <input id="teacherEmail" type="email" placeholder="teacher@example.com" required>
                 </div>
                 <div class="field">
                     <label>Employee Number</label>
                     <input id="teacherEmployeeNumber">
                 </div>
                 <div class="field">
-                    <label>Subject</label>
-                    <input id="teacherSubject">
-                </div>
-                <div class="field">
                     <label>School *</label>
-                    <select id="teacherSchool" required></select>
+                    <select id="teacherSchool" required>
+                        <option value="">Select a school</option>
+                    </select>
                 </div>
-                <div class="field">
+                <div class="field" style="grid-column:1/-1">
                     <label>Address</label>
                     <input id="teacherAddress">
+                </div>
+            </div>
+
+            <div class="assignment-builder">
+                <div class="assignment-builder-head">
+                    <div>
+                        <h4>Teaching Assignments</h4>
+                        <p class="muted">Choose the classes this teacher will teach, then select the subjects for each class. Everything is saved to <b>teacher_class_assignments</b> automatically.</p>
+                    </div>
+                    <span class="assignment-year" id="teacherAssignmentYear"></span>
+                </div>
+
+                <div id="teacherAssignmentLoading" class="assignment-status">Select a school above to load its classes and available subjects.</div>
+                <div id="teacherAssignments" class="teacher-assignments"></div>
+                <div class="assignment-status" style="margin-top:12px;background:#ecfdf3;color:#166534;border:1px solid #bbf7d0;">
+                    <strong>Login connection:</strong> after you create this teacher's Supabase Auth account, use the <strong>same email</strong> entered above. The teacher dashboard will then read these saved assignments automatically.
                 </div>
             </div>
 
@@ -1916,7 +2123,7 @@ tbody tr:hover{
 
             <div class="actions">
                 <button type="button" class="secondary" onclick="closeTeacherModal()">Cancel</button>
-                <button type="submit" class="btn" id="saveTeacherBtn">Save Teacher</button>
+                <button type="submit" class="btn" id="saveTeacherBtn">Save Teacher & Assignments</button>
             </div>
         </form>
     </div>
@@ -1963,8 +2170,20 @@ tbody tr:hover{
                     <input id="studentNumber">
                 </div>
                 <div class="field">
-                    <label>Class / Level</label>
-                    <input id="studentClass">
+                    <label>Student Login Email *</label>
+                    <input id="studentEmail" type="email" placeholder="student@example.com" required>
+                </div>
+                <div class="field">
+                    <label>School *</label>
+                    <select id="studentSchool" required>
+                        <option value="">Select a school</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Class / Stream *</label>
+                    <select id="studentClass" required disabled>
+                        <option value="">Select a school first</option>
+                    </select>
                 </div>
                 <div class="field">
                     <label>Parent / Guardian Name</label>
@@ -1977,12 +2196,7 @@ tbody tr:hover{
                 <div class="field">
                     <label>Parent / Guardian Email</label>
                     <input id="studentParentEmail" type="email">
-                </div>
-                <div class="field">
-                    <label>School *</label>
-                    <select id="studentSchool" required></select>
-                </div>
-                <div class="field">
+                </div>                <div class="field">
                     <label>Address</label>
                     <input id="studentAddress">
                 </div>
@@ -2020,105 +2234,7 @@ const supabaseClient = window.supabase.createClient(
     }
 );
 
-
-
 let schoolsCache = [];
-
-/* =========================
-   CROSS-FILE SESSION HANDOFF
-   =========================
-   ACCESS.html and admin-dashboard.html may be opened as separate local
-   file:// documents. Some browsers do not share Supabase's persisted
-   storage between separate file URLs. ACCESS.html therefore hands the
-   short-lived session tokens to this page through the URL fragment.
-*/
-async function restoreHandoffSession(){
-    const hash = window.location.hash.startsWith("#")
-        ? window.location.hash.substring(1)
-        : "";
-
-    if(!hash) return;
-
-    const params = new URLSearchParams(hash);
-    const accessToken = params.get("access_token");
-    const refreshToken = params.get("refresh_token");
-
-    if(!accessToken || !refreshToken) return;
-
-    const { error } = await supabaseClient.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-    });
-
-    // Remove tokens from the address bar immediately after setting the session.
-    history.replaceState(null, document.title, window.location.pathname + window.location.search);
-
-    if(error){
-        console.error("Session handoff error:", error);
-        throw new Error("The login session could not be transferred to the dashboard.");
-    }
-}
-
-
-/* =========================
-   SCHOOL MODAL ROBUST HANDLER
-========================= */
-function showSchoolModal(){
-    const modal = document.getElementById("modal");
-    if(!modal){
-        alert("Add School form is missing from this dashboard file.");
-        return;
-    }
-
-    modal.style.display = "flex";
-    modal.style.visibility = "visible";
-    modal.style.opacity = "1";
-    modal.style.pointerEvents = "auto";
-    modal.classList.add("show");
-}
-
-function hideSchoolModal(){
-    const modal = document.getElementById("modal");
-    if(!modal) return;
-
-    modal.classList.remove("show");
-    modal.style.display = "none";
-    modal.style.visibility = "hidden";
-    modal.style.opacity = "0";
-    modal.style.pointerEvents = "none";
-}
-
-window.openModal = showSchoolModal;
-window.closeModal = hideSchoolModal;
-
-document.addEventListener("DOMContentLoaded", function(){
-    const addButton = document.getElementById("addSchoolBtn");
-    const modal = document.getElementById("modal");
-    const closeButton = modal ? modal.querySelector(".close") : null;
-
-    if(addButton){
-        addButton.addEventListener("click", function(event){
-            event.preventDefault();
-            showSchoolModal();
-        });
-    }
-
-    if(closeButton){
-        closeButton.addEventListener("click", function(event){
-            event.preventDefault();
-            hideSchoolModal();
-        });
-    }
-
-    if(modal){
-        modal.addEventListener("click", function(event){
-            if(event.target === modal){
-                hideSchoolModal();
-            }
-        });
-    }
-});
-
 
 /* =========================
    PAGE TITLES
@@ -2157,8 +2273,8 @@ function show(page){
 
     document.getElementById("sidebar").classList.remove("open");
 
-    if(page === "schools") loadSchools();
-    if(page === "students") loadStudents();
+    if(page === "schools"){ loadClasses(); loadSchools(); }
+    if(page === "students"){ loadClasses(); loadStudents(); }
     if(page === "teachers") loadTeachers();
 }
 
@@ -2177,17 +2293,19 @@ document.querySelectorAll("[data-page]").forEach(button => {
    MODALS
 ========================= */
 function openModal(){
-    const modal=document.getElementById("modal");
-    if(!modal){alert("Add School form is missing from this dashboard file.");return;}
-    modal.classList.add("show");
+    clearMessage("schoolMessage");
+    const year = document.getElementById("classAcademicYear");
+    if(year && !year.value) year.value = new Date().getFullYear();
+    const rows = document.getElementById("classRows");
+    if(rows && !rows.children.length) addClassRow();
+    loadSchoolSubjectCatalog();
+    document.getElementById("modal").classList.add("show");
 }
-window.openModal=openModal;
 
 function closeModal(){
-    const modal=document.getElementById("modal");
-    if(modal) modal.classList.remove("show");
+    document.getElementById("modal").classList.remove("show");
+    clearMessage("schoolMessage");
 }
-window.closeModal=closeModal;
 
 function openTeacherModal(){
     if(!schoolsCache.length){
@@ -2196,9 +2314,17 @@ function openTeacherModal(){
         return;
     }
     populateSchoolSelects();
+    clearMessage("teacherMessage");
+    const form=document.getElementById("teacherForm");
+    if(form) form.reset();
+    const box=document.getElementById("teacherAssignments");
+    const status=document.getElementById("teacherAssignmentLoading");
+    const year=document.getElementById("teacherAssignmentYear");
+    if(box) box.innerHTML="";
+    if(status){status.style.display="block";status.textContent="Select a school above to load its classes and available subjects.";}
+    if(year) year.textContent="";
     document.getElementById("teacherModal").classList.add("show");
 }
-window.openTeacherModal=openTeacherModal;
 
 function closeTeacherModal(){
     document.getElementById("teacherModal").classList.remove("show");
@@ -2211,26 +2337,30 @@ function openStudentModal(){
         show("schools");
         return;
     }
+    clearMessage("studentMessage");
     populateSchoolSelects();
+    const cls = document.getElementById("studentClass");
+    if(cls){
+        cls.disabled = true;
+        cls.innerHTML = '<option value="">Select a school first</option>';
+    }
     document.getElementById("studentModal").classList.add("show");
 }
-window.openStudentModal=openStudentModal;
 
 function closeStudentModal(){
     document.getElementById("studentModal").classList.remove("show");
     clearMessage("studentMessage");
 }
 
-const schoolModalElement = document.getElementById("modal");
-if(schoolModalElement){
-    schoolModalElement.addEventListener("click", function(event){
-        if(event.target === this) closeModal();
-    });
-}
+document.getElementById("modal").addEventListener("click", function(event){
+    if(event.target === this) closeModal();
+});
 
 document.getElementById("teacherModal").addEventListener("click", function(event){
     if(event.target === this) closeTeacherModal();
 });
+
+document.getElementById("schoolDetailsModal")?.addEventListener("click", function(event){ if(event.target===this) closeSchoolDetails(); });
 
 document.getElementById("studentModal").addEventListener("click", function(event){
     if(event.target === this) closeStudentModal();
@@ -2240,39 +2370,44 @@ document.getElementById("studentModal").addEventListener("click", function(event
    SECURITY / AUTH
 ========================= */
 async function requireAdministrator(){
-    try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+    const { data: { session }, error: sessionError } =
+        await supabaseClient.auth.getSession();
 
-        if (!session?.user) {
-            console.warn("No active session detected on dashboard. Login page handles authorization.");
-            return true;
-        }
+    if(sessionError || !session?.user){
+        window.location.replace("./ACCESS.html");
+        return false;
+    }
 
-        const { data: profile } = await supabaseClient
+    const { data: profile, error: profileError } =
+        await supabaseClient
             .from("profiles")
             .select("full_name, role")
             .eq("id", session.user.id)
-            .maybeSingle();
+            .single();
 
-        if (profile) {
-            const name = profile.full_name || "Administrator";
-            const nameEl = document.querySelector(".profile-info b");
-            const roleEl = document.querySelector(".profile-info small");
-
-            if (nameEl) nameEl.textContent = name;
-            if (roleEl) roleEl.textContent = "ACCESS UG Administrator";
-        }
-
-        return true;
-    } catch (error) {
-        console.warn("Dashboard profile check:", error);
-        return true;
+    if(profileError || !profile || profile.role !== "administrator"){
+        await supabaseClient.auth.signOut();
+        window.location.replace("./ACCESS.html");
+        return false;
     }
+
+    const displayName = profile.full_name || "Administrator";
+    document.querySelector(".profile-info b").textContent = displayName;
+    document.querySelector(".profile-info small").textContent = "ACCESS UG Administrator";
+
+    const welcome = document.querySelector(".welcome h2");
+    if(welcome){
+        welcome.childNodes[0].textContent = `Welcome back, ${displayName} `;
+    }
+
+    return true;
 }
 
 /* =========================
    DATABASE LOADERS
 ========================= */
+let classesCache = [];
+
 async function loadSchools(){
     const { data, error } = await supabaseClient
         .from("schools")
@@ -2281,7 +2416,7 @@ async function loadSchools(){
 
     if(error){
         console.error("Schools load error:", error);
-        alert("Unable to load schools: " + error.message);
+        showMessage("schoolMessage", "Unable to load schools: " + error.message, "error");
         return;
     }
 
@@ -2294,9 +2429,11 @@ async function loadSchools(){
     recent.innerHTML = "";
 
     schoolsCache.forEach(school => {
+        const classCount = classesCache.filter(c => String(c.school_id) === String(school.id)).length;
+
         table.insertAdjacentHTML("beforeend", `
             <tr>
-                <td>${safe(school.name || "")}</td>
+                <td><button class="small-btn" type="button" onclick="openSchoolDetails('${safe(school.id)}')">${safe(school.name || "")}</button></td>
                 <td>${safe(school.code || "")}</td>
                 <td>${safe(school.district || "")}</td>
                 <td>${safe(school.head_teacher || "Not provided")}</td>
@@ -2327,6 +2464,104 @@ async function loadSchools(){
     }
 }
 
+async function openSchoolDetails(schoolId){
+  const modal=document.getElementById("schoolDetailsModal"), body=document.getElementById("schoolDetailsBody");
+  const school=schoolsCache.find(x=>String(x.id)===String(schoolId));
+  if(!school || !modal || !body) return;
+  body.innerHTML='<div class="empty" style="padding:25px">Loading school details…</div>';
+  modal.classList.add("show");
+  try{
+    const [clsRes,teacherRes,studentRes,subRes]=await Promise.all([
+      supabaseClient.from("classes").select("*").eq("school_id",school.id).order("academic_year",{ascending:false}).order("name"),
+      supabaseClient.from("teachers").select("*").eq("school_id",school.id).order("last_name"),
+      supabaseClient.from("students").select("*").eq("school_id",school.id).order("last_name"),
+      supabaseClient.from("school_subjects").select("subject_id").eq("school_id",school.id)
+    ]);
+    const err=[clsRes,teacherRes,studentRes,subRes].find(r=>r.error);
+    if(err) throw err.error;
+    const subjectIds=(subRes.data||[]).map(x=>x.subject_id).filter(Boolean);
+    let subjectRows=[];
+    if(subjectIds.length){
+      const sr=await supabaseClient.from("subjects").select("*").in("id",subjectIds);
+      if(sr.error) throw sr.error; subjectRows=sr.data||[];
+    }
+    const classes=clsRes.data||[], teachers=teacherRes.data||[], students=studentRes.data||[];
+    body.innerHTML=`
+      <div class="detail-grid">
+        <div class="detail-item"><small>School</small><strong>${safe(school.name||"—")}</strong></div>
+        <div class="detail-item"><small>Code</small><strong>${safe(school.code||"—")}</strong></div>
+        <div class="detail-item"><small>District</small><strong>${safe(school.district||"—")}</strong></div>
+        <div class="detail-item"><small>Location</small><strong>${safe(school.location||"—")}</strong></div>
+        <div class="detail-item"><small>Head Teacher</small><strong>${safe(school.head_teacher||"—")}</strong></div>
+        <div class="detail-item"><small>Phone</small><strong>${safe(school.phone||"—")}</strong></div>
+        <div class="detail-item"><small>Email</small><strong>${safe(school.email||"—")}</strong></div>
+        <div class="detail-item"><small>Status</small><strong>${safe(school.status||"Active")}</strong></div>
+        <div class="detail-item"><small>Classes</small><strong>${classes.length}</strong></div>
+        <div class="detail-item"><small>Teachers</small><strong>${teachers.length}</strong></div>
+        <div class="detail-item"><small>Students</small><strong>${students.length}</strong></div>
+        <div class="detail-item"><small>Subjects offered</small><strong>${subjectRows.length}</strong></div>
+      </div>
+      <div class="detail-list"><h4>Classes / Streams</h4>${classes.length?classes.map(c=>`<div class="item">${safe(classLabel(c))} ${c.academic_year?`— ${safe(c.academic_year)}`:""}</div>`).join(""):'<div class="item">No classes registered.</div>'}</div>
+      <div class="detail-list"><h4>Teachers</h4>${teachers.length?teachers.map(t=>`<div class="item"><button class="small-btn" onclick="openTeacherDetails('${safe(t.id)}')">${safe(`${t.first_name||""} ${t.last_name||""}`.trim()||t.name||"Teacher")}</button> — ${safe(t.email||"No email")}</div>`).join(""):'<div class="item">No teachers registered.</div>'}</div>
+      <div class="detail-list"><h4>Students</h4>${students.length?students.map(st=>`<div class="item"><button class="small-btn" onclick="openStudentDetails('${safe(st.id)}')">${safe(`${st.first_name||""} ${st.last_name||""}`.trim()||st.name||"Student")}</button> — ${safe(st.student_email||st.email||"No login email")}</div>`).join(""):'<div class="item">No students registered.</div>'}</div>
+      <div class="detail-list"><h4>Subjects offered</h4>${subjectRows.length?subjectRows.map(x=>`<div class="item">${safe(subjectNameForSchool(x))}</div>`).join(""):'<div class="item">No subjects linked.</div>'}</div>
+      <div class="danger-zone"><strong>Danger zone</strong><p>Deleting this school is permanent. Its classes, school-subject links, students, teachers and related records that reference the school will be removed where the database relationships permit cascading deletion.</p><button class="small-btn danger-btn" onclick="deleteSchoolCompletely('${safe(school.id)}')">Delete School Completely</button></div>`;
+  }catch(e){ body.innerHTML=`<div class="db-message show error">Could not load school details: ${safe(e.message||e)}</div>`; }
+}
+function closeSchoolDetails(){document.getElementById("schoolDetailsModal")?.classList.remove("show");}
+async function openTeacherDetails(id){
+  const t=await supabaseClient.from("teachers").select("*, schools(name)").eq("id",id).maybeSingle();
+  if(t.error||!t.data)return alert("Could not load teacher details: "+(t.error?.message||"Teacher not found"));
+  const a=await supabaseClient.from("teacher_class_assignments").select("class_id,subject_id,academic_year,status").eq("teacher_id",id);
+  if(a.error)return alert("Could not load teacher assignments: "+a.error.message);
+  const classIds=[...new Set((a.data||[]).map(x=>x.class_id).filter(Boolean))], subjectIds=[...new Set((a.data||[]).map(x=>x.subject_id).filter(Boolean))];
+  const [cr,sr]=await Promise.all([classIds.length?supabaseClient.from("classes").select("*").in("id",classIds):{data:[],error:null},subjectIds.length?supabaseClient.from("subjects").select("*").in("id",subjectIds):{data:[],error:null}]);
+  const cm=new Map((cr.data||[]).map(x=>[String(x.id),x])), sm=new Map((sr.data||[]).map(x=>[String(x.id),x]));
+  const html=`<div class="detail-grid"><div class="detail-item"><small>Name</small><strong>${safe(`${t.data.first_name||""} ${t.data.last_name||""}`.trim())}</strong></div><div class="detail-item"><small>Email</small><strong>${safe(t.data.email||"—")}</strong></div><div class="detail-item"><small>School</small><strong>${safe(t.data.schools?.name||"—")}</strong></div><div class="detail-item"><small>Phone</small><strong>${safe(t.data.phone||"—")}</strong></div></div><div class="detail-list"><h4>Assignments</h4>${(a.data||[]).map(x=>`<div class="item">${safe(classLabel(cm.get(String(x.class_id))))} — ${safe(subjectNameForSchool(sm.get(String(x.subject_id))))} ${x.academic_year?`— ${safe(x.academic_year)}`:""}</div>`).join("")||'<div class="item">No assignments.</div>'}</div>`;
+  document.getElementById("schoolDetailsBody").innerHTML=html;
+  document.getElementById("schoolDetailsTitle").textContent="Teacher Details";
+  document.getElementById("schoolDetailsModal").classList.add("show");
+}
+async function openStudentDetails(id){
+  const r=await supabaseClient.from("students").select("*, schools(name)").eq("id",id).maybeSingle();
+  if(r.error||!r.data)return alert("Could not load student details: "+(r.error?.message||"Student not found"));
+  const st=r.data, c=classesCache.find(x=>String(x.id)===String(st.class_id));
+  document.getElementById("schoolDetailsTitle").textContent="Student Details";
+  document.getElementById("schoolDetailsBody").innerHTML=`<div class="detail-grid"><div class="detail-item"><small>Name</small><strong>${safe(`${st.first_name||""} ${st.last_name||""}`.trim())}</strong></div><div class="detail-item"><small>Login Email</small><strong>${safe(st.student_email||st.email||"—")}</strong></div><div class="detail-item"><small>School</small><strong>${safe(st.schools?.name||"—")}</strong></div><div class="detail-item"><small>Class</small><strong>${safe(st.class_level||classLabel(c)||"—")}</strong></div><div class="detail-item"><small>Student Number</small><strong>${safe(st.student_number||"—")}</strong></div><div class="detail-item"><small>Parent Email</small><strong>${safe(st.parent_email||"—")}</strong></div><div class="detail-item"><small>Parent Phone</small><strong>${safe(st.parent_phone||"—")}</strong></div><div class="detail-item"><small>Status</small><strong>${safe(st.status||"Active")}</strong></div></div>`;
+  document.getElementById("schoolDetailsModal").classList.add("show");
+}
+async function deleteSchoolCompletely(schoolId){
+  const school=schoolsCache.find(x=>String(x.id)===String(schoolId)); if(!school)return;
+  if(!confirm(`Delete ${school.name}? This cannot be undone.`))return;
+  try{
+    const {error}=await supabaseClient.from("schools").delete().eq("id",schoolId);
+    if(error)throw error;
+    closeSchoolDetails(); await loadAllCounts(); show("schools");
+    alert("School deleted successfully from Supabase.");
+  }catch(e){alert("School was NOT deleted: "+(e.message||e)+". Your database may have dependent records without ON DELETE CASCADE; use the cleanup SQL provided with this dashboard.");}
+}
+
+async function loadClasses(){
+    const { data, error } = await supabaseClient
+        .from("classes")
+        .select("*")
+        .order("academic_year", { ascending:false })
+        .order("name", { ascending:true });
+
+    if(error){
+        console.error("Classes load error:", error);
+        classesCache = [];
+        return;
+    }
+
+    classesCache = data || [];
+}
+
+function classLabel(cls){
+    if(!cls) return "";
+    return String(cls.name || [cls.level, cls.stream].filter(Boolean).join(" ")).trim();
+}
+
 async function loadStudents(){
     const { data, error } = await supabaseClient
         .from("students")
@@ -2345,13 +2580,15 @@ async function loadStudents(){
     table.innerHTML = "";
 
     (data || []).forEach(student => {
+        const cls = classesCache.find(c => String(c.id) === String(student.class_id));
         table.insertAdjacentHTML("beforeend", `
             <tr>
                 <td>${safe(`${student.first_name || ""} ${student.last_name || ""}`.trim())}</td>
                 <td>${safe(student.student_number || "—")}</td>
-                <td>${safe(student.class_level || "—")}</td>
+                <td>${safe(student.class_level || classLabel(cls) || "—")}</td>
                 <td>${safe(student.schools?.name || "—")}</td>
                 <td>${safe(student.parent_name || "—")}</td>
+                <td>${safe(student.email || student.student_email || "—")}</td>
                 <td><span class="status">${safe(student.status || "Active")}</span></td>
             </tr>
         `);
@@ -2387,6 +2624,7 @@ async function loadTeachers(){
                 <td>${safe(teacher.schools?.name || "—")}</td>
                 <td>${safe(teacher.phone || "—")}</td>
                 <td><span class="status">${safe(teacher.status || "Active")}</span></td>
+                <td><span class="status" style="background:#ecfdf3;color:#027a48;">Ready — use teacher email</span></td>
             </tr>
         `);
     });
@@ -2396,6 +2634,7 @@ async function loadTeachers(){
 }
 
 async function loadAllCounts(){
+    await loadClasses();
     await Promise.all([
         loadSchools(),
         loadStudents(),
@@ -2406,7 +2645,7 @@ async function loadAllCounts(){
 }
 
 /* =========================
-   SCHOOL DROPDOWNS
+   SCHOOL DROPDOWNS + CLASSES
 ========================= */
 function populateSchoolSelects(){
     const selects = [
@@ -2422,14 +2661,156 @@ function populateSchoolSelects(){
         select.innerHTML =
             `<option value="">Select a school</option>` +
             schoolsCache.map(school =>
-                `<option value="${safe(school.id)}">${safe(school.name)} (${safe(school.code)})</option>`
+                `<option value="${safe(school.id)}">${safe(school.name)}${school.code ? " (" + safe(school.code) + ")" : ""}</option>`
             ).join("");
 
-        if(current && schoolsCache.some(s => s.id === current)){
+        if(current && schoolsCache.some(s => String(s.id) === String(current))){
             select.value = current;
         }
     });
+
+    const studentSchool = document.getElementById("studentSchool");
+    if(studentSchool && studentSchool.value){
+        loadClassesForStudentSchool(studentSchool.value);
+    }
 }
+
+async function loadClassesForStudentSchool(schoolId){
+    const select = document.getElementById("studentClass");
+    if(!select) return;
+
+    select.disabled = true;
+    select.innerHTML = `<option value="">Loading classes…</option>`;
+
+    if(!schoolId){
+        select.innerHTML = `<option value="">Select a school first</option>`;
+        return;
+    }
+
+    const { data, error } = await supabaseClient
+        .from("classes")
+        .select("id,name,level,stream,academic_year,status")
+        .eq("school_id", schoolId)
+        .order("academic_year", { ascending:false })
+        .order("name", { ascending:true });
+
+    if(error){
+        console.error("Class load error:", error);
+        select.innerHTML = `<option value="">Unable to load classes</option>`;
+        showMessage("studentMessage", "Could not load classes: " + error.message, "error");
+        return;
+    }
+
+    const rows = data || [];
+    if(!rows.length){
+        select.innerHTML = `<option value="">No classes registered for this school</option>`;
+        showMessage("studentMessage", "This school has no classes yet. Register classes under Add School first.", "info");
+        return;
+    }
+
+    select.innerHTML =
+        `<option value="">Select class / stream</option>` +
+        rows.map(c =>
+            `<option value="${safe(c.id)}">${safe(classLabel(c))}${c.academic_year ? " — " + safe(c.academic_year) : ""}</option>`
+        ).join("");
+
+    select.disabled = false;
+}
+
+const studentSchoolElement = document.getElementById("studentSchool");
+if(studentSchoolElement){
+    studentSchoolElement.addEventListener("change", function(){
+        clearMessage("studentMessage");
+        loadClassesForStudentSchool(this.value);
+    });
+}
+
+/* =========================
+   CLASS BUILDER
+========================= */
+function addClassRow(level="", stream=""){
+    const rows = document.getElementById("classRows");
+    if(!rows) return;
+
+    const row = document.createElement("div");
+    row.className = "class-row";
+
+    row.innerHTML = `
+        <input class="class-level" placeholder="Level e.g. S3" value="${safe(level)}" required>
+        <input class="class-stream" placeholder="Stream e.g. North" value="${safe(stream)}" required>
+        <button type="button" class="remove-class">Remove</button>
+    `;
+
+    row.querySelector(".remove-class").addEventListener("click", function(){
+        row.remove();
+        updateClassHint();
+    });
+
+    rows.appendChild(row);
+    updateClassHint();
+}
+
+function updateClassHint(){
+    const rows = document.getElementById("classRows");
+    const hint = document.getElementById("classHint");
+    if(!rows || !hint) return;
+
+    hint.textContent = rows.children.length
+        ? `${rows.children.length} class/stream group${rows.children.length === 1 ? "" : "s"} will be saved. Example: S3 + North → S3 North.`
+        : "Add at least one class/stream. Example: S3 + North → S3 North.";
+}
+
+window.addClassRow = addClassRow;
+
+/* =========================
+   SCHOOL SUBJECT CATALOGUE
+========================= */
+let schoolSubjectCatalog = [];
+
+function subjectNameForSchool(subject){
+    return subject?.name || subject?.subject_name || subject?.title || "Unnamed subject";
+}
+
+async function loadSchoolSubjectCatalog(){
+    const status=document.getElementById("schoolSubjectStatus");
+    const list=document.getElementById("schoolSubjectList");
+    if(!status || !list) return;
+    status.textContent="Loading subjects from Supabase…";
+    list.innerHTML="";
+    try{
+        /* Do not assume the catalogue has an `active` column. Your existing
+           subjects table can use different naming, so read the complete catalogue
+           and only exclude a row when it is explicitly marked inactive. */
+        const result=await supabaseClient.from("subjects").select("*");
+        if(result.error) throw result.error;
+        const rawSubjects=result.data||[];
+        schoolSubjectCatalog=rawSubjects.filter(s=>{
+            if(s.active===false) return false;
+            if(s.is_active===false) return false;
+            if(typeof s.status==='string' && ['inactive','disabled','archived'].includes(s.status.trim().toLowerCase())) return false;
+            return true;
+        }).sort((a,b)=>subjectNameForSchool(a).localeCompare(subjectNameForSchool(b)));
+        if(!schoolSubjectCatalog.length){
+            status.textContent="No subjects were returned from public.subjects. Check the subjects table permissions.";
+            return;
+        }
+        status.textContent=`${schoolSubjectCatalog.length} subjects available. Select the ones this school teaches.`;
+        list.innerHTML=schoolSubjectCatalog.map(subject=>{
+            const id=safe(subject.id);
+            return `<label class="school-subject-item"><input type="checkbox" class="school-subject-check" value="${id}"><span>${safe(subjectNameForSchool(subject))}</span></label>`;
+        }).join("");
+    }catch(error){
+        console.error("School subject catalogue error:",error);
+        status.textContent="Could not load subjects: "+(error.message||error);
+    }
+}
+
+function getSelectedSchoolSubjectIds(){
+    return [...document.querySelectorAll(".school-subject-check:checked")].map(x=>x.value);
+}
+
+const refreshSchoolSubjectsBtn=document.getElementById("refreshSchoolSubjectsBtn");
+if(refreshSchoolSubjectsBtn) refreshSchoolSubjectsBtn.addEventListener("click",loadSchoolSubjectCatalog);
 
 /* =========================
    ADD SCHOOL
@@ -2437,106 +2818,477 @@ function populateSchoolSelects(){
 document.getElementById("schoolForm").addEventListener("submit", async function(event){
     event.preventDefault();
 
+    clearMessage("schoolMessage");
+
     const submitButton = this.querySelector('button[type="submit"]');
     submitButton.disabled = true;
-    submitButton.textContent = "Saving...";
+    submitButton.textContent = "Saving school & classes…";
 
-    const school = {
-        name: document.getElementById("name").value.trim(),
-        code: document.getElementById("code").value.trim().toUpperCase(),
-        district: document.getElementById("district").value.trim(),
-        location: document.getElementById("location").value.trim() || null,
-        head_teacher: document.getElementById("head").value.trim() || null,
-        phone: document.getElementById("phone").value.trim() || null,
-        email: document.getElementById("email").value.trim() || null,
-        school_type: document.getElementById("schoolType").value,
-        status: "Active"
-    };
+    let createdSchoolId = null;
 
     try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+        const { data: { user } } = await supabaseClient.auth.getUser();
 
-        if(!session?.user){
+        if(!user){
             throw new Error("Your session has expired. Please log in again.");
         }
 
-        const user = session.user;
-
-        school.created_by = user.id;
-
-        const { error } = await supabaseClient
-            .from("schools")
-            .insert(school);
-
-        if(error){
-            console.error("School insert error:", error);
-
-            if(error.code === "23505"){
-                throw new Error("That school code is already registered. Please use a different code.");
-            }
-
-            throw new Error(error.message);
+        const academicYear = Number(document.getElementById("classAcademicYear").value);
+        if(!Number.isInteger(academicYear) || academicYear < 2000 || academicYear > 2100){
+            throw new Error("Enter a valid academic year.");
         }
 
-        this.reset();
-        closeModal();
-        await loadSchools();
-        show("schools");
+        const classRows = [...document.querySelectorAll(".class-row")]
+            .map(row => {
+                const level = row.querySelector(".class-level").value.trim().toUpperCase();
+                const stream = row.querySelector(".class-stream").value.trim();
+                return {
+                    level,
+                    stream,
+                    name: `${level} ${stream}`.trim(),
+                    academic_year: academicYear,
+                    status: "Active"
+                };
+            })
+            .filter(row => row.level && row.stream);
 
-        alert("School saved successfully to Supabase.");
+        if(!classRows.length){
+            throw new Error("Add at least one class/stream.");
+        }
+
+        const names = classRows.map(x => x.name.toLowerCase());
+        if(new Set(names).size !== names.length){
+            throw new Error("Each class/stream must be unique. Remove duplicate class rows.");
+        }
+
+        const school = {
+            name: document.getElementById("name").value.trim(),
+            code: document.getElementById("code").value.trim().toUpperCase(),
+            district: document.getElementById("district").value.trim(),
+            location: document.getElementById("location").value.trim() || null,
+            head_teacher: document.getElementById("head").value.trim() || null,
+            phone: document.getElementById("phone").value.trim() || null,
+            email: document.getElementById("email").value.trim().toLowerCase() || null,
+            school_type: document.getElementById("schoolType").value,
+            status: "Active",
+            created_by: user.id
+        };
+
+        const schoolInsert = await supabaseClient
+            .from("schools")
+            .insert(school)
+            .select("id")
+            .single();
+
+        if(schoolInsert.error){
+            if(schoolInsert.error.code === "23505"){
+                throw new Error("That school code is already registered. Please use a different code.");
+            }
+            throw new Error(schoolInsert.error.message);
+        }
+
+        createdSchoolId = schoolInsert.data.id;
+
+        const selectedSubjectIds = getSelectedSchoolSubjectIds();
+        if(!selectedSubjectIds.length){
+            await supabaseClient.from("schools").delete().eq("id", createdSchoolId);
+            createdSchoolId = null;
+            throw new Error("Select at least one subject offered by this school.");
+        }
+
+        const schoolSubjectRows = selectedSubjectIds.map(subject_id => ({
+            school_id: createdSchoolId,
+            subject_id
+        }));
+        const schoolSubjectInsert = await supabaseClient.from("school_subjects").insert(schoolSubjectRows);
+        if(schoolSubjectInsert.error){
+            await supabaseClient.from("schools").delete().eq("id", createdSchoolId);
+            createdSchoolId = null;
+            throw new Error("School was created, but its subjects could not be saved: " + schoolSubjectInsert.error.message);
+        }
+
+        const rowsToInsert = classRows.map(row => ({
+            ...row,
+            school_id: createdSchoolId
+        }));
+
+        const classInsert = await supabaseClient
+            .from("classes")
+            .insert(rowsToInsert)
+            .select("id,name,school_id,academic_year");
+
+        if(classInsert.error){
+            await supabaseClient.from("classes").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("school_subjects").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("schools").delete().eq("id", createdSchoolId);
+            createdSchoolId = null;
+            throw new Error(classInsert.error.message);
+        }
+
+        // Every newly registered school also receives its three academic terms.
+        // This removes the need to manually create terms in Supabase before teachers can enter results.
+        const termRows = [1,2,3].map(termNumber => ({
+            school_id: createdSchoolId,
+            academic_year: academicYear,
+            term_number: termNumber,
+            name: `Term ${termNumber}`
+        }));
+
+        const termInsert = await supabaseClient
+            .from("academic_terms")
+            .insert(termRows);
+
+        if(termInsert.error){
+            await supabaseClient.from("classes").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("school_subjects").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("schools").delete().eq("id", createdSchoolId);
+            createdSchoolId = null;
+            throw new Error("School, classes and subjects were created, but academic terms could not be saved: " + termInsert.error.message);
+        }
+
+        showMessage(
+            "schoolMessage",
+            `✓ School, ${rowsToInsert.length} class/stream group${rowsToInsert.length === 1 ? "" : "s"}, ${selectedSubjectIds.length} subject${selectedSubjectIds.length === 1 ? "" : "s"}, and Terms 1–3 saved successfully in Supabase.`,
+            "ok"
+        );
+
+        this.reset();
+        document.getElementById("classAcademicYear").value = new Date().getFullYear();
+        document.getElementById("classRows").innerHTML = "";
+        addClassRow();
+        await loadSchoolSubjectCatalog();
+
+        await loadAllCounts();
+
+        setTimeout(() => {
+            closeModal();
+            show("schools");
+        }, 900);
 
     } catch(error){
-        console.error(error);
-        alert("Could not save school: " + error.message);
+        console.error("School/class insert error:", error);
+        showMessage("schoolMessage", "Could not save school: " + (error.message || error), "error");
     } finally {
         submitButton.disabled = false;
-        submitButton.textContent = "Save School";
+        submitButton.textContent = "Save School & Classes";
     }
 });
+
+/* =========================
+   TEACHER ASSIGNMENT BUILDER
+========================= */
+let teacherAvailableClasses = [];
+let teacherAvailableSubjects = [];
+
+function subjectDisplayName(subject){
+    return subject?.name || subject?.subject_name || subject?.title || "Subject";
+}
+
+function classDisplayName(cls){
+    if(cls?.name) return cls.name;
+    return [cls?.level, cls?.stream].filter(Boolean).join(" ") || "Class";
+}
+
+function teacherAssignmentRows(){
+    return [...document.querySelectorAll(".teacher-assignment-row")];
+}
+
+async function loadTeacherAssignmentOptions(schoolId){
+    const status = document.getElementById("teacherAssignmentLoading");
+    const container = document.getElementById("teacherAssignments");
+    const year = document.getElementById("teacherAssignmentYear");
+    if(!status || !container) return;
+
+    container.innerHTML = "";
+    teacherAvailableClasses = [];
+    teacherAvailableSubjects = [];
+    status.textContent = "Loading classes and subjects…";
+    status.style.display = "block";
+    if(year) year.textContent = "";
+
+    if(!schoolId){
+        status.textContent = "Select a school above to load its classes and available subjects.";
+        return;
+    }
+
+    try{
+        const classResult = await supabaseClient
+            .from("classes")
+            .select("*")
+            .eq("school_id", schoolId)
+            .order("academic_year", {ascending:false})
+            .order("name", {ascending:true});
+
+        if(classResult.error) throw new Error("Could not load classes: " + classResult.error.message);
+        teacherAvailableClasses = (classResult.data || []).filter(c => !c.status || String(c.status).toLowerCase() === "active");
+
+        /* Load only subjects explicitly selected for this school. */
+        /* Load the subjects explicitly enabled for this school. Use two queries
+           instead of relying on a nested PostgREST relationship, because the latter
+           can fail when the dashboard schema cache has not refreshed. */
+        const schoolSubjectResult = await supabaseClient
+            .from("school_subjects")
+            .select("subject_id")
+            .eq("school_id", schoolId);
+
+        if(schoolSubjectResult.error) throw new Error("Could not load this school's subjects: " + schoolSubjectResult.error.message);
+        const enabledSubjectIds=[...new Set((schoolSubjectResult.data||[]).map(r=>String(r.subject_id)).filter(Boolean))];
+        if(enabledSubjectIds.length){
+            const subjectResult=await supabaseClient.from("subjects").select("*").in("id",enabledSubjectIds);
+            if(subjectResult.error) throw new Error("Could not load the school's subject catalogue: " + subjectResult.error.message);
+            teacherAvailableSubjects=(subjectResult.data||[]).filter(s=>{
+                if(s.active===false || s.is_active===false) return false;
+                if(typeof s.status==='string' && ['inactive','disabled','archived'].includes(s.status.trim().toLowerCase())) return false;
+                return true;
+            }).sort((a,b)=>subjectDisplayName(a).localeCompare(subjectDisplayName(b)));
+        }else{
+            teacherAvailableSubjects=[];
+        }
+
+        const years = [...new Set(teacherAvailableClasses.map(c => c.academic_year).filter(Boolean))];
+        if(year) year.textContent = years.length === 1 ? "Academic year " + years[0] : "Classes loaded";
+
+        if(!teacherAvailableClasses.length){
+            status.textContent = "No classes have been registered for this school yet. Register classes under Add School first.";
+            return;
+        }
+
+        if(!teacherAvailableSubjects.length){
+            status.textContent = "Classes loaded, but no active subjects were found. Create the school's subjects first.";
+            renderTeacherAssignments();
+            return;
+        }
+
+        status.style.display = "none";
+        renderTeacherAssignments();
+    }catch(error){
+        console.error("Teacher assignment options error:", error);
+        status.textContent = error.message || String(error);
+        status.style.display = "block";
+    }
+}
+
+function renderTeacherAssignments(){
+    const container = document.getElementById("teacherAssignments");
+    if(!container) return;
+
+    if(!teacherAvailableClasses.length){
+        container.innerHTML = '<div class="assignment-empty">No classes available for this school.</div>';
+        return;
+    }
+
+    container.innerHTML = teacherAvailableClasses.map(cls => {
+        const cid = safe(cls.id);
+        const cname = safe(classDisplayName(cls));
+        const year = cls.academic_year ? ` · ${safe(cls.academic_year)}` : "";
+        const subjects = teacherAvailableSubjects.map(sub => {
+            const sid = safe(sub.id);
+            return `<label class="subject-check"><input type="checkbox" class="teacher-subject-check" data-class-id="${cid}" value="${sid}"><span>${safe(subjectDisplayName(sub))}</span></label>`;
+        }).join("");
+
+        return `<div class="teacher-assignment-row" data-class-id="${cid}">
+            <div class="assignment-class-head">
+                <label class="assignment-class-check">
+                    <input type="checkbox" class="teacher-class-check" value="${cid}">
+                    <span>${cname}${year}</span>
+                </label>
+                <button type="button" class="assignment-select-all" data-select-class="${cid}">Select all subjects</button>
+            </div>
+            <div class="subject-checks">${subjects || '<div class="assignment-empty">No subjects available.</div>'}</div>
+        </div>`;
+    }).join("");
+
+    container.querySelectorAll(".teacher-class-check").forEach(cb => {
+        cb.addEventListener("change", () => {
+            const row = cb.closest(".teacher-assignment-row");
+            if(row) row.classList.toggle("selected", cb.checked);
+        });
+    });
+
+    container.querySelectorAll(".teacher-subject-check").forEach(cb => {
+        cb.addEventListener("change", () => {
+            const row = cb.closest(".teacher-assignment-row");
+            const classCb = row?.querySelector(".teacher-class-check");
+            if(cb.checked && classCb){
+                classCb.checked = true;
+                row.classList.add("selected");
+            }
+            if(row && !row.querySelector(".teacher-subject-check:checked") && classCb){
+                classCb.checked = false;
+                row.classList.remove("selected");
+            }
+        });
+    });
+
+    container.querySelectorAll("[data-select-class]").forEach(button => {
+        button.addEventListener("click", () => {
+            const classId = button.dataset.selectClass;
+            const row = container.querySelector(`.teacher-assignment-row[data-class-id="${CSS.escape(classId)}"]`);
+            if(!row) return;
+            const checks = [...row.querySelectorAll(".teacher-subject-check")];
+            const selectAll = checks.some(c => !c.checked);
+            checks.forEach(c => c.checked = selectAll);
+            const classCb = row.querySelector(".teacher-class-check");
+            if(classCb) classCb.checked = selectAll;
+            row.classList.toggle("selected", selectAll);
+            button.textContent = selectAll ? "Clear subjects" : "Select all subjects";
+        });
+    });
+}
+
+function getTeacherAssignmentsFromForm(){
+    const result = [];
+    teacherAssignmentRows().forEach(row => {
+        const classCheck = row.querySelector(".teacher-class-check");
+        if(!classCheck?.checked) return;
+        const classId = classCheck.value;
+        const subjectIds = [...row.querySelectorAll(".teacher-subject-check:checked")].map(x => x.value);
+        if(!subjectIds.length){
+            throw new Error(`Select at least one subject for ${row.querySelector(".assignment-class-check span")?.textContent || "the selected class"}.`);
+        }
+        result.push({classId, subjectIds});
+    });
+    if(!result.length) throw new Error("Select at least one class and at least one subject for that class.");
+    return result;
+}
+
+const teacherSchoolElement = document.getElementById("teacherSchool");
+if(teacherSchoolElement){
+    teacherSchoolElement.addEventListener("change", function(){
+        clearMessage("teacherMessage");
+        loadTeacherAssignmentOptions(this.value);
+    });
+}
 
 /* =========================
    ADD TEACHER
 ========================= */
 document.getElementById("teacherForm").addEventListener("submit", async function(event){
     event.preventDefault();
+    clearMessage("teacherMessage");
 
     const button = document.getElementById("saveTeacherBtn");
     button.disabled = true;
-    button.textContent = "Saving...";
+    button.textContent = "Saving teacher & assignments…";
 
-    const teacher = {
-        first_name: document.getElementById("teacherFirstName").value.trim(),
-        last_name: document.getElementById("teacherLastName").value.trim(),
-        gender: document.getElementById("teacherGender").value || null,
-        date_of_birth: document.getElementById("teacherDob").value || null,
-        phone: document.getElementById("teacherPhone").value.trim() || null,
-        email: document.getElementById("teacherEmail").value.trim() || null,
-        employee_number: document.getElementById("teacherEmployeeNumber").value.trim() || null,
-        subject: document.getElementById("teacherSubject").value.trim() || null,
-        address: document.getElementById("teacherAddress").value.trim() || null,
-        school_id: document.getElementById("teacherSchool").value,
-        status: "Active"
-    };
+    let createdTeacherId = null;
 
     try {
-        const { error } = await supabaseClient
-            .from("teachers")
-            .insert(teacher);
+        const schoolId = document.getElementById("teacherSchool").value;
+        const email = document.getElementById("teacherEmail").value.trim().toLowerCase();
+        const assignmentPlan = getTeacherAssignmentsFromForm();
 
-        if(error) throw new Error(error.message);
+        if(!schoolId) throw new Error("Select a school.");
+        if(!email) throw new Error("Enter the teacher's login email.");
 
-        this.reset();
-        closeTeacherModal();
+        const schoolCheck = await supabaseClient.from("schools").select("id,name").eq("id", schoolId).maybeSingle();
+        if(schoolCheck.error) throw schoolCheck.error;
+        if(!schoolCheck.data) throw new Error("The selected school could not be found.");
+
+        const classIds = assignmentPlan.map(x => x.classId);
+        const classCheck = await supabaseClient.from("classes")
+            .select("id,name,level,stream,school_id,academic_year")
+            .in("id", classIds)
+            .eq("school_id", schoolId);
+        if(classCheck.error) throw classCheck.error;
+        if((classCheck.data || []).length !== classIds.length){
+            throw new Error("One or more selected classes do not belong to the selected school.");
+        }
+
+        const allSubjectIds = [...new Set(assignmentPlan.flatMap(x => x.subjectIds))];
+        const subjectCheck = await supabaseClient.from("subjects").select("*").in("id", allSubjectIds);
+        if(subjectCheck.error) throw subjectCheck.error;
+        if((subjectCheck.data || []).length !== allSubjectIds.length){
+            throw new Error("One or more selected subjects could not be found.");
+        }
+
+        const schoolSubjectCheck = await supabaseClient
+            .from("school_subjects")
+            .select("subject_id")
+            .eq("school_id", schoolId)
+            .in("subject_id", allSubjectIds);
+        if(schoolSubjectCheck.error) throw schoolSubjectCheck.error;
+        const allowedSubjectIds = new Set((schoolSubjectCheck.data || []).map(x=>String(x.subject_id)));
+        const disallowed = allSubjectIds.find(id=>!allowedSubjectIds.has(String(id)));
+        if(disallowed) throw new Error("One or more selected subjects has not been enabled for this school.");
+
+        const classMap = new Map((classCheck.data || []).map(c => [String(c.id), c]));
+        const subjectMap = new Map((subjectCheck.data || []).map(s => [String(s.id), s]));
+
+        const subjectNames = [...new Set(allSubjectIds.map(id => subjectDisplayName(subjectMap.get(String(id)))))];
+        const teacher = {
+            first_name: document.getElementById("teacherFirstName").value.trim(),
+            last_name: document.getElementById("teacherLastName").value.trim(),
+            gender: document.getElementById("teacherGender").value || null,
+            date_of_birth: document.getElementById("teacherDob").value || null,
+            phone: document.getElementById("teacherPhone").value.trim() || null,
+            email,
+            employee_number: document.getElementById("teacherEmployeeNumber").value.trim() || null,
+            subject: subjectNames.join(", "),
+            address: document.getElementById("teacherAddress").value.trim() || null,
+            school_id: schoolId,
+            status: "Active"
+        };
+
+        const teacherInsert = await supabaseClient.from("teachers").insert(teacher).select("id").single();
+        if(teacherInsert.error){
+            if(teacherInsert.error.code === "23505") throw new Error("A teacher with this email or employee number already exists.");
+            throw teacherInsert.error;
+        }
+        createdTeacherId = teacherInsert.data.id;
+
+        const assignmentRows = assignmentPlan.flatMap(plan => plan.subjectIds.map(subjectId => {
+            const cls = classMap.get(String(plan.classId));
+            return {
+                teacher_id: createdTeacherId,
+                class_id: plan.classId,
+                subject_id: subjectId,
+                academic_year: cls?.academic_year || new Date().getFullYear(),
+                status: "active"
+            };
+        }));
+
+        const assignmentInsert = await supabaseClient
+            .from("teacher_class_assignments")
+            .insert(assignmentRows)
+            .select("id,teacher_id,class_id,subject_id,academic_year,status");
+
+        if(assignmentInsert.error){
+            await supabaseClient.from("teachers").delete().eq("id", createdTeacherId);
+            createdTeacherId = null;
+            throw new Error("Teacher was not completed because the assignments could not be saved: " + assignmentInsert.error.message);
+        }
+
+        const verify = await supabaseClient.from("teacher_class_assignments")
+            .select("id", {count:"exact", head:true})
+            .eq("teacher_id", createdTeacherId);
+        if(verify.error){
+            throw new Error("Teacher and assignments were written, but Supabase verification failed: " + verify.error.message);
+        }
+        if(Number(verify.count || 0) !== assignmentRows.length){
+            throw new Error(`Supabase verification found ${verify.count || 0} assignments, but ${assignmentRows.length} were expected.`);
+        }
+
+        showMessage(
+            "teacherMessage",
+            `✓ ${teacher.first_name} ${teacher.last_name} saved. ${assignmentRows.length} class/subject assignment${assignmentRows.length === 1 ? "" : "s"} confirmed in Supabase. The teacher login can now use ${email}.`,
+            "ok"
+        );
+
         await loadTeachers();
-
-        alert("Teacher saved successfully and linked to the selected school.");
+        this.reset();
+        document.getElementById("teacherAssignments").innerHTML = "";
+        document.getElementById("teacherAssignmentLoading").style.display = "block";
+        document.getElementById("teacherAssignmentLoading").textContent = "Select a school above to load its classes and available subjects.";
+        document.getElementById("teacherAssignmentYear").textContent = "";
+        setTimeout(closeTeacherModal, 1200);
 
     } catch(error){
-        console.error("Teacher insert error:", error);
-        showMessage("teacherMessage", error.message, "error");
+        console.error("Teacher/assignment insert error:", error);
+        showMessage("teacherMessage", "Could not complete teacher registration: " + (error.message || error), "error");
     } finally {
         button.disabled = false;
-        button.textContent = "Save Teacher";
+        button.textContent = "Save Teacher & Assignments";
     }
 });
 
@@ -2546,41 +3298,84 @@ document.getElementById("teacherForm").addEventListener("submit", async function
 document.getElementById("studentForm").addEventListener("submit", async function(event){
     event.preventDefault();
 
+    clearMessage("studentMessage");
+
     const button = document.getElementById("saveStudentBtn");
     button.disabled = true;
-    button.textContent = "Saving...";
-
-    const student = {
-        first_name: document.getElementById("studentFirstName").value.trim(),
-        last_name: document.getElementById("studentLastName").value.trim(),
-        gender: document.getElementById("studentGender").value || null,
-        date_of_birth: document.getElementById("studentDob").value || null,
-        student_number: document.getElementById("studentNumber").value.trim() || null,
-        class_level: document.getElementById("studentClass").value.trim() || null,
-        parent_name: document.getElementById("studentParentName").value.trim() || null,
-        parent_phone: document.getElementById("studentParentPhone").value.trim() || null,
-        parent_email: document.getElementById("studentParentEmail").value.trim() || null,
-        address: document.getElementById("studentAddress").value.trim() || null,
-        school_id: document.getElementById("studentSchool").value,
-        status: "Active"
-    };
+    button.textContent = "Saving student…";
 
     try {
+        const schoolId = document.getElementById("studentSchool").value;
+        const classId = document.getElementById("studentClass").value;
+        const studentEmail = document.getElementById("studentEmail").value.trim().toLowerCase();
+
+        if(!schoolId){
+            throw new Error("Select a school.");
+        }
+
+        if(!classId){
+            throw new Error("Select a class/stream.");
+        }
+
+        if(!studentEmail){
+            throw new Error("Enter the student's email address.");
+        }
+
+        const { data: cls, error: classError } = await supabaseClient
+            .from("classes")
+            .select("id,name,school_id,academic_year")
+            .eq("id", classId)
+            .eq("school_id", schoolId)
+            .maybeSingle();
+
+        if(classError) throw classError;
+        if(!cls) throw new Error("The selected class does not belong to the selected school.");
+
+        const student = {
+            first_name: document.getElementById("studentFirstName").value.trim(),
+            last_name: document.getElementById("studentLastName").value.trim(),
+            email: studentEmail,
+            gender: document.getElementById("studentGender").value || null,
+            date_of_birth: document.getElementById("studentDob").value || null,
+            student_number: document.getElementById("studentNumber").value.trim() || null,
+            class_id: classId,
+            class_level: classLabel(cls),
+            parent_name: document.getElementById("studentParentName").value.trim() || null,
+            parent_phone: document.getElementById("studentParentPhone").value.trim() || null,
+            parent_email: document.getElementById("studentParentEmail").value.trim().toLowerCase() || null,
+            address: document.getElementById("studentAddress").value.trim() || null,
+            school_id: schoolId,
+            status: "Active"
+        };
+
         const { error } = await supabaseClient
             .from("students")
             .insert(student);
 
-        if(error) throw new Error(error.message);
+        if(error){
+            if(error.code === "23505"){
+                throw new Error("A student with this email or student number is already registered.");
+            }
+            throw new Error(error.message);
+        }
+
+        showMessage(
+            "studentMessage",
+            `✓ ${student.first_name} ${student.last_name} saved successfully, assigned to ${classLabel(cls)}, and ready for a Supabase Auth account using ${studentEmail}.`,
+            "ok"
+        );
 
         this.reset();
-        closeStudentModal();
+        document.getElementById("studentClass").disabled = true;
+        document.getElementById("studentClass").innerHTML = '<option value="">Select a school first</option>';
+
         await loadStudents();
 
-        alert("Student saved successfully and linked to the selected school.");
+        setTimeout(closeStudentModal, 900);
 
     } catch(error){
         console.error("Student insert error:", error);
-        showMessage("studentMessage", error.message, "error");
+        showMessage("studentMessage", "Could not save student: " + (error.message || error), "error");
     } finally {
         button.disabled = false;
         button.textContent = "Save Student";
@@ -2666,14 +3461,14 @@ document.getElementById("logout").addEventListener("click", async function(){
    STARTUP
 ========================= */
 (async function initDashboard(){
-    try {
-        await restoreHandoffSession();
-        await requireAdministrator();
-        await loadAllCounts();
-    } catch(error) {
-        console.error("Dashboard startup:", error);
-        alert(error.message || "Unable to initialize the dashboard session.");
-    }
+    const authorized = await requireAdministrator();
+
+    if(!authorized) return;
+
+    const year = document.getElementById("classAcademicYear");
+    if(year) year.value = new Date().getFullYear();
+
+    await loadAllCounts();
 })();
 </script>
 

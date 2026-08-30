@@ -4,13 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ACCESS UG — Teacher Dashboard</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
 <style>
 :root{
   --navy:#061a38;--blue:#0b3d82;--blue2:#1457a6;--bg:#f3f6fb;
   --text:#13233a;--muted:#6d7b8e;--white:#fff;--border:#e3e9f2;
-  --success:#15966b;--warning:#e7a72d;--danger:#d9534f;
+  --success:#15966b;--danger:#d9534f;--warning:#d99419;
   --shadow:0 10px 30px rgba(9,35,75,.08);--radius:16px;
 }
 *{box-sizing:border-box}
@@ -18,21 +20,34 @@ body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Sego
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 .app{min-height:100vh}
-.sidebar{position:fixed;z-index:50;left:0;top:0;bottom:0;width:250px;padding:22px 14px;background:linear-gradient(180deg,var(--navy),#092d63 62%,#0b3d82);color:#fff;transition:.25s;overflow-y:auto}
+.sidebar{
+  position:fixed;z-index:50;left:0;top:0;bottom:0;width:250px;padding:22px 14px;
+  background:linear-gradient(180deg,var(--navy),#092d63 62%,var(--blue2));color:#fff;
+  transition:.25s;overflow-y:auto
+}
 .brand{display:flex;align-items:center;gap:12px;padding:4px 10px 26px}
 .logo{width:44px;height:44px;border-radius:12px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:900}
-.brand h1{font-size:17px;margin:0;letter-spacing:.5px}.brand small{opacity:.72}
+.brand h1{font-size:17px;margin:0}.brand small{opacity:.72}
 .nav{display:grid;gap:7px}
-.nav button{border:0;background:transparent;color:#dbe7f7;text-align:left;padding:13px 14px;border-radius:11px;display:flex;gap:12px;align-items:center;font-weight:600}
+.nav button{
+  border:0;background:transparent;color:#dbe7f7;text-align:left;padding:13px 14px;
+  border-radius:11px;display:flex;gap:12px;align-items:center;font-weight:650;width:100%
+}
 .nav button:hover,.nav button.active{background:rgba(255,255,255,.13);color:#fff}
 .nav-icon{width:23px;text-align:center;font-size:18px}
 .sidebar-bottom{position:absolute;left:14px;right:14px;bottom:18px}
 .logout{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;padding:12px;border-radius:11px;font-weight:700}
 .main{margin-left:250px;min-height:100vh}
-.top{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}
+.top{
+  height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;
+  align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30
+}
 .title-wrap{display:flex;align-items:center;gap:12px}.top h2{font-size:20px;margin:0}
 .menu-btn{display:none;border:0;background:#edf3fb;border-radius:10px;width:40px;height:40px}
-.user-mini{display:flex;align-items:center;gap:11px}.avatar{width:38px;height:38px;border-radius:50%;background:#e5eefb;color:var(--blue);display:grid;place-items:center;font-weight:800}
+.user-mini{display:flex;align-items:center;gap:11px}.avatar{
+  width:38px;height:38px;border-radius:50%;background:#e5eefb;color:var(--blue);
+  display:grid;place-items:center;font-weight:800
+}
 .user-mini span{font-size:13px;color:var(--muted)}
 .content{padding:28px;max-width:1500px;margin:auto}
 .page{display:none}.page.active{display:block}
@@ -41,41 +56,66 @@ button{cursor:pointer}
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}
 .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
 .card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}
-.profile{display:flex;gap:20px;align-items:center}.profile-avatar{width:78px;height:78px;border-radius:20px;background:linear-gradient(135deg,#e9f1fd,#c9dbf5);display:grid;place-items:center;color:var(--blue);font-size:27px;font-weight:900}
+.profile{display:flex;gap:20px;align-items:center}.profile-avatar{
+  width:78px;height:78px;border-radius:20px;background:linear-gradient(135deg,#e9f1fd,#c9dbf5);
+  display:grid;place-items:center;color:var(--blue);font-size:27px;font-weight:900
+}
 .profile-info h2{margin:0 0 5px;font-size:21px}.profile-info p{margin:3px 0;color:var(--muted)}
-.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}
+.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}
+.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}
 .kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}
 .chart-wrap{height:230px;position:relative}
 .toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}
 .field{display:grid;gap:6px;min-width:190px;flex:1}.field label{font-size:12px;font-weight:700;color:#566579}
-input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}
+input,select,textarea{
+  width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;
+  background:#fff;color:var(--text);outline:none
+}
 input:focus,select:focus,textarea:focus{border-color:#4f84c5;box-shadow:0 0 0 3px rgba(20,87,166,.1)}
 textarea{min-height:110px;resize:vertical}
 .btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}
-.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.success{background:var(--success)}
-.btn.danger{background:var(--danger)}.btn.small{padding:8px 11px;font-size:12px}
+.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}
+.btn.success{background:var(--success)}.btn.small{padding:8px 11px;font-size:12px}
+.btn:disabled{opacity:.65;cursor:not-allowed}
 .actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}
 table{border-collapse:collapse;width:100%;min-width:720px;background:#fff}
 th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
 th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}
 tr:last-child td{border-bottom:0}
-.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.active{background:#e7f7f0;color:#117052}
-.notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}
-.subject-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.subject-chip{padding:12px;border:1px solid var(--border);border-radius:11px;background:#fafcff;text-align:left}.subject-chip:hover,.subject-chip.active{border-color:#79a5d8;background:#edf4fd}
+.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}
+.badge.active{background:#e7f7f0;color:#117052}
+.badge.present{background:#e7f7f0;color:#117052}
+.badge.absent{background:#fdebea;color:#a52f2b}
+.badge.auth{background:#fff4d9;color:#946700}
+.notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}
+.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}
+.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}
+.save-state{margin:10px 0 0;font-size:13px;font-weight:700}
+.save-state.ok{color:#117052}.save-state.err{color:#a52f2b}
 .empty{text-align:center;padding:35px;color:var(--muted)}
-.loading{text-align:center;padding:35px;color:var(--muted)}
-.overlay{display:none;position:fixed;inset:0;background:rgba(4,17,37,.45);z-index:45}.overlay.show{display:block}
-.modal{display:none;position:fixed;z-index:60;left:50%;top:50%;transform:translate(-50%,-50%);width:min(600px,calc(100% - 28px));background:#fff;border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25);padding:22px}.modal.show{display:block}.modal h3{margin:0}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.close{border:0;background:#eef3f9;border-radius:9px;width:36px;height:36px}
-.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:360px}.toast.show{display:block}
-@media(max-width:1000px){.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.subject-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:750px){
- .sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}
- .main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:16px}.three{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.hero h1{font-size:24px}.subject-grid{grid-template-columns:1fr 1fr}.card{padding:17px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,17,37,.45);z-index:45}
+.overlay.show{display:block}
+.modal{display:none;position:fixed;z-index:60;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(600px,calc(100% - 28px));background:#fff;border-radius:18px;
+  box-shadow:0 25px 70px rgba(0,0,0,.25);padding:22px
 }
-@media(max-width:430px){.subject-grid{grid-template-columns:1fr}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}}
+.modal.show{display:block}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal h3{margin:0}.close{border:0;background:#eef3f9;border-radius:9px;width:36px;height:36px}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;
+  border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}
+.hint{padding:11px 13px;background:#f7f9fc;border:1px solid var(--border);border-radius:10px;color:var(--muted);font-size:12px;margin-top:12px}
+@media(max-width:1000px){.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
+@media(max-width:750px){
+  .sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}
+  .user-mini span{display:none}.content{padding:16px}.three{grid-template-columns:1fr}
+  .profile{align-items:flex-start}.profile-info{min-width:0}.hero h1{font-size:24px}
+  .card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}
+}
 </style>
 </head>
+
 <body>
 <div class="app">
 <aside class="sidebar" id="sidebar">
@@ -92,6 +132,7 @@ tr:last-child td{border-bottom:0}
 </aside>
 
 <div class="overlay" id="overlay"></div>
+
 <main class="main">
 <header class="top">
   <div class="title-wrap"><button class="menu-btn" id="menuBtn">☰</button><h2 id="pageTitle">Teacher Dashboard</h2></div>
@@ -99,8 +140,9 @@ tr:last-child td{border-bottom:0}
 </header>
 
 <div class="content">
+
 <section id="dashboard" class="page active">
-  <div class="hero"><h1 id="welcome">Welcome, Teacher</h1><p id="welcomeSub">Your teaching overview for today.</p></div>
+  <div class="hero"><h1 id="welcome">Welcome, Teacher</h1><p id="welcomeSub">Loading your teaching overview...</p></div>
   <div id="dashboardNotice" class="notice"></div>
 
   <div class="grid two">
@@ -115,8 +157,9 @@ tr:last-child td{border-bottom:0}
           <p id="teacherPhone">Phone: —</p>
         </div>
       </div>
-      <div style="margin-top:18px" class="muted"><strong>Assigned classes:</strong> <span id="assignedClasses">Loading...</span></div>
+      <div style="margin-top:18px" class="muted"><strong>Assigned classes & subjects:</strong> <span id="assignedClasses">Loading...</span></div>
     </div>
+
     <div class="card">
       <div class="card-head"><div><h3>Teacher Attendance</h3><div class="muted">Your attendance overview</div></div><span id="clockStatus" class="badge active">Checking</span></div>
       <div class="chart-wrap"><canvas id="teacherAttendanceChart"></canvas></div>
@@ -124,13 +167,13 @@ tr:last-child td{border-bottom:0}
   </div>
 
   <div class="grid three" style="margin-top:18px">
-    <div class="card stat"><div class="kpi-icon">◷</div><div class="label" style="margin-top:12px">Present days</div><div class="value" id="presentDays">—</div><div class="sub">Current academic records</div></div>
+    <div class="card stat"><div class="kpi-icon">◷</div><div class="label" style="margin-top:12px">Present days</div><div class="value" id="presentDays">—</div><div class="sub">Teacher attendance records</div></div>
     <div class="card stat"><div class="kpi-icon">▣</div><div class="label" style="margin-top:12px">Assigned classes</div><div class="value" id="classCount">—</div><div class="sub">Classes you can access</div></div>
     <div class="card stat"><div class="kpi-icon">✓</div><div class="label" style="margin-top:12px">Today's status</div><div class="value" id="todayStatus">—</div><div class="sub">Automatic morning check-in</div></div>
   </div>
 
   <div class="card" style="margin-top:18px">
-    <div class="card-head"><div><h3>Quick Actions</h3><div class="muted">Go directly to your daily teaching tasks</div></div></div>
+    <div class="card-head"><div><h3>Quick Actions</h3><div class="muted">Go directly to your teaching tasks</div></div></div>
     <div class="grid three">
       <button class="btn" data-go="attendance">Record Attendance</button>
       <button class="btn" data-go="behaviour">Record Behaviour</button>
@@ -141,7 +184,7 @@ tr:last-child td{border-bottom:0}
 
 <section id="attendance" class="page">
   <div class="hero"><h1>Attendance</h1><p>Record student attendance for your assigned classes.</p></div>
-  <div id="attendanceNotice" class="notice"></div>
+  <div id="attendanceNotice" class="notice"></div><div id="attendanceSaveState" class="save-state"></div>
   <div class="card">
     <div class="toolbar">
       <div class="field"><label>Class</label><select id="attendanceClass"></select></div>
@@ -154,28 +197,29 @@ tr:last-child td{border-bottom:0}
 </section>
 
 <section id="behaviour" class="page">
-  <div class="hero"><h1>Behaviour</h1><p>Record behaviour grades and observations for students in your assigned classes.</p></div>
-  <div id="behaviourNotice" class="notice"></div>
+  <div class="hero"><h1>Behaviour</h1><p>Record behaviour grades and observations for students in your assigned classes and subjects.</p></div>
+  <div id="behaviourNotice" class="notice"></div><div id="behaviourSaveState" class="save-state"></div>
   <div class="card">
     <div class="toolbar">
       <div class="field"><label>Class</label><select id="behaviourClass"></select></div>
-      <div class="field"><label>Term</label><select id="behaviourTerm"></select></div>
+      <div class="field"><label>Subject</label><select id="behaviourSubject"></select></div>
+      <div class="field"><label>Academic term</label><select id="behaviourTerm"></select></div>
       <button class="btn" id="loadBehaviour">Load Students</button>
     </div>
-    <div class="muted" style="margin-bottom:12px">A = 15 points · B = 12 · C = 9 · D = 6 · E = 0. E flags a behaviour concern for school review.</div>
-    <div id="behaviourTable" class="empty">Choose a class and term, then load students.</div>
+    <div class="muted" style="margin-bottom:12px">A = 15 points · B = 12 · C = 9 · D = 6 · E = 0.</div>
+    <div id="behaviourTable" class="empty">Choose a class, subject and term, then load students.</div>
     <div class="actions"><button class="btn success" id="saveBehaviour" style="display:none">Save Behaviour</button></div>
   </div>
 </section>
 
 <section id="assessments" class="page">
   <div class="hero"><h1>Assessments</h1><p>Enter continuous assessment marks out of 20.</p></div>
-  <div id="assessmentNotice" class="notice"></div>
+  <div id="assessmentNotice" class="notice"></div><div id="assessmentSaveState" class="save-state"></div>
   <div class="card">
     <div class="toolbar">
       <div class="field"><label>Class</label><select id="assessmentClass"></select></div>
       <div class="field"><label>Subject</label><select id="assessmentSubject"></select></div>
-      <div class="field"><label>Term</label><select id="assessmentTerm"></select></div>
+      <div class="field"><label>Academic term</label><select id="assessmentTerm"></select></div>
       <button class="btn" id="loadAssessments">Load Students</button>
     </div>
     <div id="assessmentTable" class="empty">Choose class, subject and term.</div>
@@ -185,12 +229,12 @@ tr:last-child td{border-bottom:0}
 
 <section id="endterm" class="page">
   <div class="hero"><h1>End of Term</h1><p>Enter end-of-term marks out of 80. Assessment marks are carried automatically and the final mark is calculated out of 100.</p></div>
-  <div id="endtermNotice" class="notice"></div>
+  <div id="endtermNotice" class="notice"></div><div id="endtermSaveState" class="save-state"></div>
   <div class="card">
     <div class="toolbar">
       <div class="field"><label>Class</label><select id="endClass"></select></div>
       <div class="field"><label>Subject</label><select id="endSubject"></select></div>
-      <div class="field"><label>Term</label><select id="endTerm"></select></div>
+      <div class="field"><label>Academic term</label><select id="endTerm"></select></div>
       <button class="btn" id="loadEndTerm">Load Students</button>
     </div>
     <div id="endtermTable" class="empty">Choose class, subject and term.</div>
@@ -199,11 +243,14 @@ tr:last-child td{border-bottom:0}
 </section>
 
 <section id="reports" class="page">
-  <div class="hero"><h1>Reports / Issues</h1><p>Report an absence, student concern or other issue to the school.</p></div>
+  <div class="hero"><h1>Reports / Issues</h1><p>Report a student concern, attendance issue or other issue to the school.</p></div>
   <div id="reportNotice" class="notice"></div>
   <div class="card">
     <div class="grid two">
-      <div class="field"><label>Report type</label><select id="reportType"><option value="teacher_absence">Teacher absence</option><option value="student_issue">Student issue</option><option value="attendance_issue">Attendance issue</option><option value="academic_issue">Academic issue</option><option value="other">Other</option></select></div>
+      <div class="field"><label>Report type</label><select id="reportType">
+        <option value="teacher_absence">Teacher absence</option><option value="student_issue">Student issue</option>
+        <option value="attendance_issue">Attendance issue</option><option value="academic_issue">Academic issue</option><option value="other">Other</option>
+      </select></div>
       <div class="field"><label>Priority</label><select id="reportPriority"><option value="normal">Normal</option><option value="high">High</option><option value="urgent">Urgent</option></select></div>
     </div>
     <div class="grid two" style="margin-top:16px">
@@ -215,342 +262,791 @@ tr:last-child td{border-bottom:0}
   </div>
   <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>My submitted reports</h3><div class="muted">Reports submitted by your teacher account</div></div></div><div id="reportsTable" class="empty">Loading...</div></div>
 </section>
+
 </div>
 </main>
 </div>
 
 <div class="modal" id="errorModal">
-  <div class="modal-head"><h3>Teacher account not found</h3><button class="close" id="closeError">×</button></div>
-  <p id="errorText" class="muted">Your authenticated email could not be matched to a teacher record.</p>
+  <div class="modal-head"><h3>Teacher dashboard error</h3><button class="close" id="closeError">×</button></div>
+  <p id="errorText" class="muted"></p>
   <div class="actions"><button class="btn" id="errorLogout">Return to Login</button></div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
+/* =========================
+   ACCESS UG / Supabase
+   ========================= */
+const SUPABASE_URL="https://iotmozwesvmieqvsonov.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
-  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+const supabaseClient=window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
+);
+
+let session=null;
+let teacher=null;
+let school=null;
+let teacherSchoolId=null;
+let assignments=[];
+let classes=[];
+let subjects=[];
+let terms=[];
+
+let attendanceRows=[];
+let behaviourRows=[];
+let assessmentRows=[];
+let endRows=[];
+let behaviourHasSubjectColumn=null;
+let charts={};
+
+const $=id=>document.getElementById(id);
+const val=id=>String($(id)?.value??"").trim();
+const todayISO=()=>new Date().toISOString().slice(0,10);
+
+function esc(v){
+  return String(v??"").replace(/[&<>"']/g,c=>({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function errorMessage(e){return e?.message||String(e||"Unknown error");}
+function initials(name){
+  return String(name||"Teacher").split(/\s+/).filter(Boolean).slice(0,2)
+    .map(x=>x[0]).join("").toUpperCase()||"T";
+}
+function teacherDisplayName(){
+  return [teacher?.first_name,teacher?.last_name].filter(Boolean).join(" ")
+    ||teacher?.name||teacher?.full_name||"Teacher";
+}
+function studentName(s){
+  return [s?.first_name,s?.last_name].filter(Boolean).join(" ")
+    ||s?.full_name||s?.name||s?.student_name||"Student";
+}
+function className(c){
+  return c?.name||[c?.level,c?.stream].filter(Boolean).join(" ")||"Class";
+}
+function itemLabel(x){
+  return x?.name||x?.subject_name||x?.title||x?.term_name||x?.label||className(x)||"Unnamed";
+}
+function notice(id,msg,type="ok"){
+  const e=$(id);if(!e)return;
+  e.textContent=msg;e.className="notice show "+type;
+}
+function clearNotice(id){
+  const e=$(id);if(e)e.className="notice";
+}
+function saveState(id,msg,type="ok"){
+  const e=$(id);if(e){e.textContent=msg;e.className="save-state "+type;}
+}
+function clearSaveState(id){
+  const e=$(id);if(e){e.textContent="";e.className="save-state";}
+}
+function toast(msg){
+  const e=$("toast");if(!e)return;
+  e.textContent=msg;e.classList.add("show");
+  setTimeout(()=>e.classList.remove("show"),3200);
+}
+function setButton(id,text,disabled=false){
+  const b=$(id);if(b){b.textContent=text;b.disabled=disabled;}
+}
+function fail(msg){
+  console.error("[ACCESS UG]",msg);
+  if($("errorText"))$("errorText").textContent=msg;
+  if($("errorModal"))$("errorModal").classList.add("show");
+}
+function redirectLogin(){
+  /* The login page in the current Access Ug folder is index.html. */
+  location.replace("index.html");
+}
+
+/* =========================
+   Navigation
+   ========================= */
+const pageTitles={
+  dashboard:"Teacher Dashboard",
+  attendance:"Attendance",
+  behaviour:"Behaviour",
+  assessments:"Assessments",
+  endterm:"End of Term",
+  reports:"Reports / Issues"
+};
+
+function showPage(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  $(page)?.classList.add("active");
+  document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  $("pageTitle").textContent=pageTitles[page]||"Teacher Dashboard";
+  $("sidebar").classList.remove("open");
+  $("overlay").classList.remove("show");
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
+$("menuBtn").addEventListener("click",()=>{
+  $("sidebar").classList.toggle("open");
+  $("overlay").classList.toggle("show",$("sidebar").classList.contains("open"));
+});
+$("overlay").addEventListener("click",()=>{
+  $("sidebar").classList.remove("open");$("overlay").classList.remove("show");
 });
 
-let session=null, teacher=null, school=null, assignments=[], classes=[], terms=[], subjects=[];
-let attendanceRows=[], behaviourRows=[], assessmentRows=[], endRows=[];
-let chart=null;
-
-const $ = id => document.getElementById(id);
-const todayISO = () => new Date().toISOString().slice(0,10);
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
-function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),3200);}
-function notice(id,msg,type="ok"){const n=$(id);n.textContent=msg;n.className="notice show "+type;}
-function clearNotice(id){$(id).className="notice";}
-function initials(name){return String(name||"Teacher").split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase()||"T";}
-function teacherDisplayName(){return [teacher?.first_name,teacher?.last_name].filter(Boolean).join(" ")||teacher?.name||teacher?.full_name||"Teacher";}
-function className(c){return c?.name || [c?.level,c?.stream].filter(Boolean).join(" ") || "Class";}
-
-async function init(){
-  $("attendanceDate").value=todayISO();
-  const {data,error}=await supabaseClient.auth.getSession();
-  if(error){return fail("Could not read the Supabase session: "+error.message);}
-  session=data?.session;
-  if(!session){return redirectLogin();}
-  const email=(session.user.email||"").trim().toLowerCase();
-  if(!email){return fail("Your Supabase session has no email address.");}
-
-  const {data:td,error:te}=await supabaseClient.from("teachers").select("*").ilike("email",email).maybeSingle();
-  if(te){return fail("Teacher lookup failed: "+te.message);}
-  if(!td){return fail("No teacher record was found for "+email+". Make sure the email in the teachers table exactly matches the authenticated login email.");}
-  teacher=td;
-  // In ACCESS UG the teachers table stores the school reference in `school`.
-  // Some older dashboard code incorrectly assumed `school_id`.
-  teacherSchoolId = teacher.school || teacher.school_id || null;
-
-  if(teacher.status && String(teacher.status).toLowerCase()!=="active"){return fail("This teacher account is not active.");}
-  await loadSchool();
-  await loadAssignments();
-  await loadTerms();
-  await loadSubjects();
-  renderIdentity();
-  populateSelectors();
-  await automaticTeacherAttendance();
-  await loadTeacherAttendance();
-  await loadReports();
-}
-
+/* =========================
+   Teacher / school / setup
+   ========================= */
 async function loadSchool(){
   school=null;
-  if(!teacherSchoolId){
-    console.warn("Teacher record has no school_id.");
-    return;
-  }
-  const {data,error}=await supabaseClient
-    .from("schools")
-    .select("*")
-    .eq("id",teacherSchoolId)
-    .maybeSingle();
-  if(error){
-    console.warn("School lookup failed:",error);
-    return;
-  }
-  school=data||null;
+  if(!teacherSchoolId)return;
+  const r=await supabaseClient.from("schools").select("*").eq("id",teacherSchoolId).maybeSingle();
+  if(!r.error)school=r.data||null;
 }
+
 async function loadAssignments(){
-  const {data,error}=await supabaseClient.from("teacher_class_assignments")
+  assignments=[];classes=[];subjects=[];
+
+  const r=await supabaseClient.from("teacher_class_assignments")
     .select("id,teacher_id,class_id,subject_id,academic_year,status")
-    .eq("teacher_id",teacher.id).eq("status","active");
-  if(error){console.warn(error);assignments=[];return;}
-  assignments=data||[];
+    .eq("teacher_id",teacher.id);
+
+  if(r.error)throw new Error("Could not load teacher assignments: "+r.error.message);
+
+  assignments=(r.data||[]).filter(a=>a.status==null||String(a.status).toLowerCase()==="active");
+
   const classIds=[...new Set(assignments.map(a=>a.class_id).filter(Boolean))];
   const subjectIds=[...new Set(assignments.map(a=>a.subject_id).filter(Boolean))];
+
   if(classIds.length){
-    const r=await supabaseClient.from("classes").select("*").in("id",classIds);
-    classes=r.data||[];
+    const c=await supabaseClient.from("classes").select("*").in("id",classIds);
+    if(c.error)throw new Error("Could not load assigned classes: "+c.error.message);
+    classes=c.data||[];
   }
   if(subjectIds.length){
-    const r=await supabaseClient.from("subjects").select("*").in("id",subjectIds);
-    subjects=r.data||[];
+    const s=await supabaseClient.from("subjects").select("*").in("id",subjectIds);
+    if(s.error)throw new Error("Could not load assigned subjects: "+s.error.message);
+    subjects=s.data||[];
   }
 }
+
 async function loadTerms(){
+  terms=[];
   if(!teacherSchoolId)return;
-  const {data,error}=await supabaseClient.from("academic_terms").select("*").eq("school_id",teacherSchoolId).order("academic_year",{ascending:false}).order("term_number");
-  terms=data||[];
-  if(error)console.warn(error);
+
+  /* IMPORTANT: the real table confirmed in this project is academic_terms,
+     not terms. */
+  const r=await supabaseClient.from("academic_terms")
+    .select("*")
+    .eq("school_id",teacherSchoolId)
+    .order("academic_year",{ascending:false})
+    .order("term_number",{ascending:true});
+
+  if(r.error)throw new Error("Could not load academic terms: "+r.error.message);
+  terms=r.data||[];
 }
-async function loadSubjects(){
-  if(!subjects.length){
-    const {data}=await supabaseClient.from("subjects").select("*").eq("active",true).order("name");
-    subjects=data||[];
-  }
+
+function assignedSubjectIds(classId){
+  return [...new Set(assignments
+    .filter(a=>String(a.class_id)===String(classId)&&a.subject_id)
+    .map(a=>String(a.subject_id)))];
 }
+
+function populateClassSelectors(){
+  const html='<option value="">Select class</option>'+
+    classes.map(c=>`<option value="${esc(c.id)}">${esc(className(c))}</option>`).join("");
+  ["attendanceClass","behaviourClass","assessmentClass","endClass"].forEach(id=>{
+    if($(id))$(id).innerHTML=html;
+  });
+}
+
+function populateTermSelectors(){
+  const html=terms.length
+    ? '<option value="">Select term</option>'+terms.map(t=>{
+        const name=t.name||t.term_name||`Term ${t.term_number}`;
+        const year=t.academic_year?` — ${t.academic_year}`:"";
+        return `<option value="${esc(t.id)}">${esc(name+year)}</option>`;
+      }).join("")
+    : '<option value="">No academic terms configured</option>';
+
+  ["behaviourTerm","assessmentTerm","endTerm"].forEach(id=>{
+    if($(id))$(id).innerHTML=html;
+  });
+}
+
+function updateSubjectForClass(selectId,classId){
+  const allowed=assignedSubjectIds(classId);
+  const list=subjects.filter(s=>allowed.includes(String(s.id)));
+  const e=$(selectId);
+  if(!e)return;
+
+  e.innerHTML=allowed.length
+    ? '<option value="">Select subject</option>'+list.map(s=>`<option value="${esc(s.id)}">${esc(itemLabel(s))}</option>`).join("")
+    : '<option value="">No subjects assigned to this class</option>';
+}
+
+function populateSelectors(){
+  populateClassSelectors();
+  populateTermSelectors();
+  ["behaviourClass","assessmentClass","endClass"].forEach(id=>{
+    if($(id))$(id).addEventListener("change",()=>{
+      const map={behaviourClass:"behaviourSubject",assessmentClass:"assessmentSubject",endClass:"endSubject"};
+      updateSubjectForClass(map[id],val(id));
+    });
+  });
+  updateSubjectForClass("behaviourSubject",val("behaviourClass"));
+  updateSubjectForClass("assessmentSubject",val("assessmentClass"));
+  updateSubjectForClass("endSubject",val("endClass"));
+}
+
 function renderIdentity(){
-  const name=teacherDisplayName(), ini=initials(name);
+  const name=teacherDisplayName();
+  const ini=initials(name);
   $("welcome").textContent="Welcome, "+name;
   $("welcomeSub").textContent="Here's your teaching overview for today.";
   $("teacherName").textContent=name;
-  const schoolName=school?.name||school?.school_name||school?.school||school?.title||"School not found";
-  $("teacherSchool").textContent=schoolName;
-  $("teacherEmployee").textContent="Employee number: "+(teacher.employee_number||"—");
-  $("teacherPhone").textContent="Phone: "+(teacher.phone||"—");
-  $("profileAvatar").textContent=ini;$("topAvatar").textContent=ini;
+  $("teacherSchool").textContent=school?.name||school?.school_name||"ACCESS UG";
+  $("teacherEmployee").textContent="Employee number: "+(teacher.employee_number||teacher.employee_no||"—");
+  $("teacherPhone").textContent="Phone: "+(teacher.phone||teacher.phone_number||"—");
+  $("profileAvatar").textContent=ini;
+  $("topAvatar").textContent=ini;
   $("topEmail").textContent=session.user.email||"";
-  $("assignedClasses").textContent=classes.length?classes.map(className).join(", "):"No active class assignments";
+
+  const summaries=classes.map(c=>{
+    const subs=subjects.filter(s=>assignedSubjectIds(c.id).includes(String(s.id))).map(itemLabel);
+    return subs.length?`${className(c)} — ${subs.join(", ")}`:className(c);
+  });
+  $("assignedClasses").textContent=summaries.length?summaries.join(" | "):"No active assignments";
   $("classCount").textContent=classes.length;
 }
-function optionHTML(items,placeholder="Select"){
-  return '<option value="">'+esc(placeholder)+'</option>'+items.map(x=>`<option value="${esc(x.id)}">${esc(x.name||className(x))}</option>`).join("");
-}
-function populateSelectors(){
-  const classOpts=optionHTML(classes,"Select class");
-  ["attendanceClass","behaviourClass","assessmentClass","endClass"].forEach(id=>$(id).innerHTML=classOpts);
-  const termOpts=optionHTML(terms.map(t=>({...t,name:t.name||`Term ${t.term_number} — ${t.academic_year}`})),"Select term");
-  $("behaviourTerm").innerHTML=termOpts;$("assessmentTerm").innerHTML=termOpts;$("endTerm").innerHTML=termOpts;
-  const subjectOpts=optionHTML(subjects,"Select subject");
-  $("assessmentSubject").innerHTML=subjectOpts;$("endSubject").innerHTML=subjectOpts;
-}
-function redirectLogin(){window.location.href="Access.html";}
-function fail(msg){
-  $("errorText").textContent=msg;$("errorModal").classList.add("show");
-}
-async function logout(){
-  await supabaseClient.auth.signOut();
-  window.location.href="Access.html";
-}
-$("logoutBtn").onclick=logout;$("errorLogout").onclick=logout;$("closeError").onclick=()=>$("errorModal").classList.remove("show");
 
-document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.go)));
-$("menuBtn").onclick=()=>{ $("sidebar").classList.toggle("open"); $("overlay").classList.toggle("show",$("sidebar").classList.contains("open")); };
-$("overlay").onclick=()=>{ $("sidebar").classList.remove("open");$("overlay").classList.remove("show"); };
+/* Students in this project are linked by school_id + class_level.
+   The existing Supabase data confirmed S3 North in class_level. */
+async function getStudents(classId){
+  if(!classId)throw new Error("Select a class.");
+  const selected=classes.find(c=>String(c.id)===String(classId));
+  if(!selected)throw new Error("Selected class is not in this teacher's assignments.");
+  if(!teacherSchoolId)throw new Error("Teacher account has no school assigned.");
 
-function showPage(page){
-  document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-  $(page)?.classList.add("active");
-  document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
-  const titles={dashboard:"Teacher Dashboard",attendance:"Attendance",behaviour:"Behaviour",assessments:"Assessments",endterm:"End of Term",reports:"Reports / Issues"};
-  $("pageTitle").textContent=titles[page]||"ACCESS UG";
-  $("sidebar").classList.remove("open");$("overlay").classList.remove("show");
-  if(page==="reports")loadReports();
+  const r=await supabaseClient.from("students").select("*").eq("school_id",teacherSchoolId);
+  if(r.error)throw new Error("Could not load students: "+r.error.message);
+
+  const norm=v=>String(v??"").trim().toLowerCase().replace(/\s+/g," ");
+  const wantedName=norm(selected.name);
+  const wantedLevel=norm(selected.level);
+  const wantedStream=norm(selected.stream);
+  const wantedCombined=norm([selected.level,selected.stream].filter(Boolean).join(" "));
+
+  return (r.data||[]).filter(s=>{
+    const value=norm(s.class_level);
+    return value===wantedName||
+      value===wantedCombined||
+      (wantedLevel&&wantedStream&&value===wantedLevel+" "+wantedStream);
+  }).sort((a,b)=>studentName(a).localeCompare(studentName(b)));
 }
 
+/* =========================
+   Teacher attendance
+   ========================= */
 async function automaticTeacherAttendance(){
-  const now=new Date(), hour=now.getHours();
-  // Automatic morning window: 06:00 through 10:00 local device time.
-  // The database unique constraint prevents duplicate daily records.
-  if(hour<6 || hour>=10){$("clockStatus").textContent="Outside window";$("todayStatus").textContent="—";return;}
-  const {data:existing}=await supabaseClient.from("teacher_attendance").select("*").eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
-  if(existing){$("clockStatus").textContent="Present";$("todayStatus").textContent="Present";return;}
-  const payload={teacher_id:teacher.id,school_id:teacherSchoolId,attendance_date:todayISO(),clock_in:now.toISOString(),status:"present",method:"automatic_login"};
-  const {data,error}=await supabaseClient.from("teacher_attendance").insert(payload).select().single();
-  if(error){
-    if(String(error.message).toLowerCase().includes("duplicate")){$("clockStatus").textContent="Present";$("todayStatus").textContent="Present";}
-    else {console.warn(error);$("clockStatus").textContent="Not recorded";$("todayStatus").textContent="—";}
-  }else{$("clockStatus").textContent="Present";$("todayStatus").textContent="Present";toast("Your morning attendance has been recorded.");}
+  const now=new Date();
+  const hour=now.getHours();
+
+  if(hour<6||hour>=10){
+    $("clockStatus").textContent="Outside window";
+    $("todayStatus").textContent="—";
+    return;
+  }
+
+  const old=await supabaseClient.from("teacher_attendance")
+    .select("*").eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
+
+  if(old.error){
+    console.warn("Teacher attendance check:",old.error.message);
+    return;
+  }
+  if(old.data){
+    $("clockStatus").textContent="Present";
+    $("todayStatus").textContent="Present";
+    return;
+  }
+
+  const payload={
+    teacher_id:teacher.id,school_id:teacherSchoolId,
+    attendance_date:todayISO(),clock_in:now.toISOString(),
+    status:"present",method:"automatic_login"
+  };
+  const r=await supabaseClient.from("teacher_attendance").insert(payload);
+  if(r.error){
+    console.warn("Teacher attendance insert:",r.error.message);
+  }else{
+    $("clockStatus").textContent="Present";
+    $("todayStatus").textContent="Present";
+    toast("Your morning attendance has been recorded.");
+  }
 }
 
 async function loadTeacherAttendance(){
-  const since=new Date();since.setDate(since.getDate()-90);
-  const {data,error}=await supabaseClient.from("teacher_attendance").select("attendance_date,status").eq("teacher_id",teacher.id).gte("attendance_date",since.toISOString().slice(0,10));
-  if(error)return;
-  const rows=data||[], present=rows.filter(x=>x.status==="present").length, absent=rows.filter(x=>x.status==="absent").length, auth=rows.filter(x=>x.status==="authorized_absence").length;
+  const since=new Date();
+  since.setDate(since.getDate()-90);
+
+  const r=await supabaseClient.from("teacher_attendance")
+    .select("attendance_date,status")
+    .eq("teacher_id",teacher.id)
+    .gte("attendance_date",since.toISOString().slice(0,10));
+
+  if(r.error)return;
+
+  const rows=r.data||[];
+  const present=rows.filter(x=>String(x.status).toLowerCase()==="present").length;
+  const absent=rows.filter(x=>String(x.status).toLowerCase()==="absent").length;
+  const auth=rows.filter(x=>String(x.status).toLowerCase()==="authorized_absence").length;
+
   $("presentDays").textContent=present;
-  if(chart)chart.destroy();
-  chart=new Chart($("teacherAttendanceChart"),{type:"doughnut",data:{labels:["Present","Absent","Authorized"],datasets:[{data:[present,absent,auth]}]},options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom"}}}});
-}
+  if(charts.teacherAttendance)charts.teacherAttendance.destroy();
 
-async function getStudents(classId){
-  if(!classId) return [];
-  if(!teacherSchoolId) throw new Error("Your teacher account has no school assigned.");
-
-  const selectedClass=classes.find(c=>String(c.id)===String(classId));
-  if(!selectedClass) throw new Error("The selected class could not be found in your assignments.");
-
-  const selectedName=String(selectedClass.name||"").trim();
-  const selectedLevel=String(selectedClass.level||"").trim();
-  const selectedStream=String(selectedClass.stream||"").trim();
-
-  // Students are linked in this database by school_id + class_level, NOT class_id.
-  // Fetch only this teacher's school. This is also the exact structure confirmed in Supabase.
-  const {data,error}=await supabaseClient
-    .from("students")
-    .select("*")
-    .eq("school_id",teacherSchoolId);
-
-  if(error) throw new Error("Could not load students: "+error.message);
-
-  const norm=v=>String(v??"").trim().toLowerCase().replace(/\s+/g," ");
-  const wantedName=norm(selectedName);
-  const wantedLevel=norm(selectedLevel);
-  const wantedStream=norm(selectedStream);
-  const wantedCombined=norm([selectedLevel,selectedStream].filter(Boolean).join(" "));
-
-  const matched=(data||[]).filter(s=>{
-    const value=norm(s.class_level);
-    return value===wantedName || value===wantedCombined ||
-      (wantedLevel && wantedStream && value===wantedLevel+" "+wantedStream);
+  charts.teacherAttendance=new Chart($("teacherAttendanceChart"),{
+    type:"doughnut",
+    data:{labels:["Present","Absent","Authorized"],datasets:[{data:[present,absent,auth]}]},
+    options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom"}}}
   });
-
-  return matched.sort((a,b)=>studentName(a).localeCompare(studentName(b)));
 }
-function studentName(s){return [s.first_name,s.last_name].filter(Boolean).join(" ")||s.full_name||s.name||s.student_name||"Unnamed student";}
 
-$("loadAttendance").onclick=async()=>{
-  clearNotice("attendanceNotice");
+/* =========================
+   Attendance
+   ========================= */
+$("loadAttendance").addEventListener("click",loadAttendance);
+$("saveAttendance").addEventListener("click",saveAttendance);
+
+async function loadAttendance(){
+  clearNotice("attendanceNotice");clearSaveState("attendanceSaveState");
   try{
-    const classId=$("attendanceClass").value,date=$("attendanceDate").value;
-    if(!classId||!date)return notice("attendanceNotice","Select a class and date.","err");
+    const classId=val("attendanceClass"),date=val("attendanceDate");
+    if(!classId||!date)throw new Error("Select a class and date first.");
+
     const students=await getStudents(classId);
-    if(!students.length){$("attendanceTable").innerHTML='<div class="empty">No students are registered in this class.</div>';return;}
-    const {data:old}=await supabaseClient.from("student_attendance").select("student_id,status,notes").eq("class_id",classId).eq("attendance_date",date);
-    const map=new Map((old||[]).map(x=>[x.student_id,x]));
-    attendanceRows=students.map(s=>({student:s,status:map.get(s.id)?.status||"present",notes:map.get(s.id)?.notes||""}));
-    $("attendanceTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Status</th><th>Notes</th></tr></thead><tbody>${attendanceRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td><select data-att-status="${i}"><option value="present" ${r.status==="present"?"selected":""}>Present</option><option value="absent" ${r.status==="absent"?"selected":""}>Absent</option><option value="authorized_absence" ${r.status==="authorized_absence"?"selected":""}>Authorized absence</option></select></td><td><input data-att-note="${i}" value="${esc(r.notes)}" placeholder="Optional note"></td></tr>`).join("")}</tbody></table></div>`;
+    if(!students.length){
+      attendanceRows=[];$("attendanceTable").innerHTML='<div class="empty">No students are registered in this class.</div>';
+      $("saveAttendance").style.display="none";return;
+    }
+
+    const old=await supabaseClient.from("student_attendance")
+      .select("student_id,status,notes")
+      .eq("school_id",teacherSchoolId).eq("class_id",classId).eq("attendance_date",date);
+
+    if(old.error)throw old.error;
+
+    const map=new Map((old.data||[]).map(x=>[x.student_id,x]));
+    attendanceRows=students.map(s=>({
+      student:s,status:map.get(s.id)?.status||"present",notes:map.get(s.id)?.notes||""
+    }));
+
+    $("attendanceTable").innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Student</th><th>Status</th><th>Notes</th></tr></thead><tbody>
+      ${attendanceRows.map((r,i)=>`<tr>
+        <td><strong>${esc(studentName(r.student))}</strong></td>
+        <td><select data-att-status="${i}">
+          <option value="present" ${r.status==="present"?"selected":""}>Present</option>
+          <option value="absent" ${r.status==="absent"?"selected":""}>Absent</option>
+          <option value="authorized_absence" ${r.status==="authorized_absence"?"selected":""}>Authorized absence</option>
+        </select></td>
+        <td><input data-att-note="${i}" value="${esc(r.notes)}" placeholder="Optional note"></td>
+      </tr>`).join("")}
+      </tbody></table></div>`;
+
     $("saveAttendance").style.display="inline-block";
-  }catch(e){notice("attendanceNotice",e.message,"err");}
-};
-$("saveAttendance").onclick=async()=>{
-  clearNotice("attendanceNotice");
-  const classId=$("attendanceClass").value,date=$("attendanceDate").value;
-  const payload=attendanceRows.map((r,i)=>({student_id:r.student.id,class_id:classId,school_id:teacherSchoolId,attendance_date:date,status:$(`[data-att-status="${i}"]`).value,recorded_by:teacher.id,notes:$(`[data-att-note="${i}"]`).value||null}));
-  const {error}=await supabaseClient.from("student_attendance").upsert(payload,{onConflict:"student_id,attendance_date"});
-  if(error)return notice("attendanceNotice","Attendance could not be saved: "+error.message,"err");
-  notice("attendanceNotice","Attendance saved successfully.","ok");toast("Attendance saved.");
-};
+    notice("attendanceNotice",`${students.length} student${students.length===1?"":"s"} loaded. Mark attendance and save.`,"info");
+  }catch(e){
+    notice("attendanceNotice","Could not load attendance: "+errorMessage(e),"err");
+    $("saveAttendance").style.display="none";
+  }
+}
+
+async function saveAttendance(){
+  clearNotice("attendanceNotice");clearSaveState("attendanceSaveState");
+  const classId=val("attendanceClass"),date=val("attendanceDate");
+  if(!classId||!date||!attendanceRows.length)return notice("attendanceNotice","Load students first.","err");
+
+  setButton("saveAttendance","Saving attendance…",true);
+  try{
+    let saved=0;
+
+    for(let i=0;i<attendanceRows.length;i++){
+      const statusEl=document.querySelector(`[data-att-status="${i}"]`);
+      const noteEl=document.querySelector(`[data-att-note="${i}"]`);
+      if(!statusEl||!noteEl)throw new Error("Attendance input is missing for student "+(i+1));
+
+      const payload={
+        student_id:attendanceRows[i].student.id,class_id:classId,school_id:teacherSchoolId,
+        attendance_date:date,status:statusEl.value,recorded_by:teacher.id,
+        notes:String(noteEl.value||"").trim()||null
+      };
+
+      const old=await supabaseClient.from("student_attendance").select("id")
+        .eq("student_id",payload.student_id).eq("class_id",classId)
+        .eq("attendance_date",date).maybeSingle();
+      if(old.error)throw old.error;
+
+      const r=old.data
+        ?await supabaseClient.from("student_attendance").update(payload).eq("id",old.data.id)
+        :await supabaseClient.from("student_attendance").insert(payload);
+
+      if(r.error)throw r.error;
+      saved++;
+    }
+
+    const verify=await supabaseClient.from("student_attendance").select("id",{count:"exact",head:true})
+      .eq("class_id",classId).eq("school_id",teacherSchoolId).eq("attendance_date",date);
+    if(verify.error)throw verify.error;
+    if(Number(verify.count||0)<saved)throw new Error(`Supabase verification found ${verify.count||0} records; ${saved} were expected.`);
+
+    saveState("attendanceSaveState",`✓ CONFIRMED in Supabase: ${saved} attendance record${saved===1?"":"s"} saved.`,"ok");
+    notice("attendanceNotice",`Attendance saved successfully. ${saved} student record${saved===1?"":"s"} confirmed in Supabase.`,"ok");
+    setButton("saveAttendance","Attendance Saved ✓",false);
+    toast("Attendance saved and verified.");
+  }catch(e){
+    saveState("attendanceSaveState","✕ NOT CONFIRMED in Supabase: "+errorMessage(e),"err");
+    notice("attendanceNotice","Attendance was NOT confirmed as saved: "+errorMessage(e),"err");
+    setButton("saveAttendance","Save Attendance",false);
+  }
+}
+
+/* =========================
+   Behaviour
+   ========================= */
+$("loadBehaviour").addEventListener("click",loadBehaviour);
+$("saveBehaviour").addEventListener("click",saveBehaviour);
+
+async function loadBehaviourRecords(classId,termId,subjectId){
+  if(behaviourHasSubjectColumn!==false){
+    let q=supabaseClient.from("behaviour_records").select("*")
+      .eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id)
+      .eq("subject_id",subjectId);
+
+    let r=await q;
+    if(!r.error){
+      behaviourHasSubjectColumn=true;
+      return r.data||[];
+    }
+
+    if(!String(r.error.message||"").toLowerCase().includes("subject_id"))throw r.error;
+    behaviourHasSubjectColumn=false;
+  }
+
+  const r=await supabaseClient.from("behaviour_records").select("*")
+    .eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id);
+
+  if(r.error)throw r.error;
+  return r.data||[];
+}
 
 const behaviourPoints={A:15,B:12,C:9,D:6,E:0};
-$("loadBehaviour").onclick=async()=>{
-  clearNotice("behaviourNotice");
+
+async function loadBehaviour(){
+  clearNotice("behaviourNotice");clearSaveState("behaviourSaveState");
   try{
-    const classId=$("behaviourClass").value,termId=$("behaviourTerm").value;
-    if(!classId||!termId)return notice("behaviourNotice","Select a class and term.","err");
+    const classId=val("behaviourClass"),subjectId=val("behaviourSubject"),termId=val("behaviourTerm");
+    if(!classId||!subjectId||!termId)throw new Error("Select class, subject and academic term first.");
+    if(!assignedSubjectIds(classId).includes(String(subjectId)))throw new Error("That subject is not assigned to you for this class.");
+
     const students=await getStudents(classId);
-    const {data:old}=await supabaseClient.from("behaviour_records").select("*").eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id);
+    if(!students.length)throw new Error("No students are registered in this class.");
+
+    const old=await loadBehaviourRecords(classId,termId,subjectId);
     const map=new Map((old||[]).map(x=>[x.student_id,x]));
-    behaviourRows=students.map(s=>({student:s,record:map.get(s.id)||{grade:"A",comment:""}}));
-    $("behaviourTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Grade</th><th>Points</th><th>Comment</th></tr></thead><tbody>${behaviourRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td><select data-beh-grade="${i}">${["A","B","C","D","E"].map(g=>`<option value="${g}" ${r.record.grade===g?"selected":""}>${g}</option>`).join("")}</select></td><td><strong id="beh-point-${i}">${behaviourPoints[r.record.grade]??15}</strong></td><td><input data-beh-comment="${i}" value="${esc(r.record.comment||"")}" placeholder="Optional observation"></td></tr>`).join("")}</tbody></table></div>`;
-    behaviourRows.forEach((_,i)=>$(`[data-beh-grade="${i}"]`).addEventListener("change",e=>$(`beh-point-${i}`).textContent=behaviourPoints[e.target.value]));
+
+    behaviourRows=students.map(s=>({
+      student:s,record:map.get(s.id)||{grade:"A",comment:""}
+    }));
+
+    $("behaviourTable").innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Student</th><th>Grade</th><th>Points</th><th>Comment</th></tr></thead><tbody>
+      ${behaviourRows.map((r,i)=>`<tr>
+        <td><strong>${esc(studentName(r.student))}</strong></td>
+        <td><select data-beh-grade="${i}">${["A","B","C","D","E"].map(g=>
+          `<option value="${g}" ${String(r.record.grade||"A").toUpperCase()===g?"selected":""}>${g}</option>`).join("")}</select></td>
+        <td><strong id="beh-point-${i}">${behaviourPoints[String(r.record.grade||"A").toUpperCase()]??15}</strong></td>
+        <td><input data-beh-comment="${i}" value="${esc(r.record.comment||r.record.notes||"")}" placeholder="Optional observation"></td>
+      </tr>`).join("")}
+      </tbody></table></div>`;
+
+    $("behaviourTable").querySelectorAll("[data-beh-grade]").forEach(el=>{
+      el.addEventListener("change",e=>{
+        const i=e.target.getAttribute("data-beh-grade");
+        $(`beh-point-${i}`).textContent=behaviourPoints[e.target.value]??0;
+      });
+    });
+
     $("saveBehaviour").style.display="inline-block";
-  }catch(e){notice("behaviourNotice",e.message,"err");}
-};
-$("saveBehaviour").onclick=async()=>{
-  clearNotice("behaviourNotice");
-  const classId=$("behaviourClass").value,termId=$("behaviourTerm").value;
-  const payload=behaviourRows.map((r,i)=>{const grade=$(`[data-beh-grade="${i}"]`).value;return {student_id:r.student.id,teacher_id:teacher.id,school_id:teacherSchoolId,class_id:classId,term_id:termId,grade,points:behaviourPoints[grade],comment:$(`[data-beh-comment="${i}"]`).value||null};});
-  const {error}=await supabaseClient.from("behaviour_records").upsert(payload,{onConflict:"student_id,term_id"});
-  if(error){
-    // If the table has no unique key for upsert, fall back to inserts.
-    const ins=await supabaseClient.from("behaviour_records").insert(payload);
-    if(ins.error)return notice("behaviourNotice","Behaviour could not be saved: "+error.message,"err");
+    notice("behaviourNotice",`${students.length} student${students.length===1?"":"s"} loaded. Choose grades and save.`,"info");
+  }catch(e){
+    notice("behaviourNotice","Could not load Behaviour: "+errorMessage(e),"err");
+    $("saveBehaviour").style.display="none";
   }
-  notice("behaviourNotice","Behaviour records saved.","ok");toast("Behaviour saved.");
-};
-
-function assignedSubjectIds(classId){return [...new Set(assignments.filter(a=>a.class_id===classId&&a.subject_id).map(a=>a.subject_id))];}
-function updateSubjectForClass(selectId,classId){
-  const allowed=assignedSubjectIds(classId);
-  const list=allowed.length?subjects.filter(s=>allowed.includes(s.id)):subjects;
-  $(selectId).innerHTML=optionHTML(list,"Select subject");
 }
-$("assessmentClass").onchange=()=>updateSubjectForClass("assessmentSubject",$("assessmentClass").value);
-$("endClass").onchange=()=>updateSubjectForClass("endSubject",$("endClass").value);
 
-$("loadAssessments").onclick=async()=>{
-  clearNotice("assessmentNotice");
+async function saveBehaviour(){
+  clearNotice("behaviourNotice");clearSaveState("behaviourSaveState");
+  const classId=val("behaviourClass"),subjectId=val("behaviourSubject"),termId=val("behaviourTerm");
+  if(!classId||!subjectId||!termId||!behaviourRows.length)return notice("behaviourNotice","Load class, subject and term first.","err");
+  if(!assignedSubjectIds(classId).includes(String(subjectId)))return notice("behaviourNotice","That subject is not assigned to you for this class.","err");
+
+  setButton("saveBehaviour","Saving behaviour…",true);
   try{
-    const classId=$("assessmentClass").value,subjectId=$("assessmentSubject").value,termId=$("assessmentTerm").value;
-    if(!classId||!subjectId||!termId)return notice("assessmentNotice","Select class, subject and term.","err");
+    let saved=0;
+
+    for(let i=0;i<behaviourRows.length;i++){
+      const grade=document.querySelector(`[data-beh-grade="${i}"]`)?.value;
+      const comment=document.querySelector(`[data-beh-comment="${i}"]`)?.value.trim()||null;
+      if(!grade)throw new Error("Behaviour grade is missing for student "+(i+1));
+
+      const payload={
+        student_id:behaviourRows[i].student.id,teacher_id:teacher.id,school_id:teacherSchoolId,
+        class_id:classId,term_id:termId,grade,points:behaviourPoints[grade],comment
+      };
+      if(behaviourHasSubjectColumn===true)payload.subject_id=subjectId;
+
+      let lookup=supabaseClient.from("behaviour_records").select("id")
+        .eq("student_id",payload.student_id).eq("term_id",termId)
+        .eq("teacher_id",teacher.id).eq("class_id",classId);
+      if(behaviourHasSubjectColumn===true)lookup=lookup.eq("subject_id",subjectId);
+
+      const old=await lookup.maybeSingle();
+      if(old.error)throw old.error;
+
+      const r=old.data
+        ?await supabaseClient.from("behaviour_records").update(payload).eq("id",old.data.id)
+        :await supabaseClient.from("behaviour_records").insert(payload);
+      if(r.error)throw r.error;
+      saved++;
+    }
+
+    let verify=supabaseClient.from("behaviour_records").select("id",{count:"exact",head:true})
+      .eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id);
+    if(behaviourHasSubjectColumn===true)verify=verify.eq("subject_id",subjectId);
+
+    const vr=await verify;
+    if(vr.error)throw vr.error;
+    if(Number(vr.count||0)<saved)throw new Error(`Supabase verification found ${vr.count||0} records; ${saved} were expected.`);
+
+    saveState("behaviourSaveState",`✓ CONFIRMED in Supabase: ${saved} behaviour record${saved===1?"":"s"} saved.`,"ok");
+    notice("behaviourNotice",`Behaviour saved successfully. ${saved} record${saved===1?"":"s"} confirmed in Supabase.`,"ok");
+    setButton("saveBehaviour","Behaviour Saved ✓",false);
+    toast("Behaviour saved and verified.");
+  }catch(e){
+    saveState("behaviourSaveState","✕ NOT CONFIRMED in Supabase: "+errorMessage(e),"err");
+    notice("behaviourNotice","Behaviour was NOT confirmed as saved: "+errorMessage(e),"err");
+    setButton("saveBehaviour","Save Behaviour",false);
+  }
+}
+
+/* =========================
+   Assessments
+   ========================= */
+$("loadAssessments").addEventListener("click",loadAssessments);
+$("saveAssessments").addEventListener("click",saveAssessments);
+
+async function loadAssessments(){
+  clearNotice("assessmentNotice");clearSaveState("assessmentSaveState");
+  try{
+    const classId=val("assessmentClass"),subjectId=val("assessmentSubject"),termId=val("assessmentTerm");
+    if(!classId||!subjectId||!termId)throw new Error("Select class, subject and academic term first.");
+    if(!assignedSubjectIds(classId).includes(String(subjectId)))throw new Error("That subject is not assigned to you for this class.");
+
     const students=await getStudents(classId);
-    const {data:old}=await supabaseClient.from("assessments").select("*").eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
-    const map=new Map((old||[]).map(x=>[x.student_id,x]));
+    if(!students.length)throw new Error("No students are registered in this class.");
+
+    const old=await supabaseClient.from("assessments").select("*")
+      .eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    if(old.error)throw old.error;
+
+    const map=new Map((old.data||[]).map(x=>[x.student_id,x]));
     assessmentRows=students.map(s=>({student:s,record:map.get(s.id)}));
-    $("assessmentTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Assessment mark / 20</th></tr></thead><tbody>${assessmentRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td><input type="number" min="0" max="20" step="0.01" data-assess="${i}" value="${r.record?.mark??""}" placeholder="0–20"></td></tr>`).join("")}</tbody></table></div>`;
+
+    $("assessmentTable").innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Student</th><th>Assessment mark / 20</th></tr></thead><tbody>
+      ${assessmentRows.map((r,i)=>`<tr>
+        <td><strong>${esc(studentName(r.student))}</strong></td>
+        <td><input type="number" min="0" max="20" step="0.01" data-assess="${i}"
+          value="${r.record?.mark??""}" placeholder="0–20"></td>
+      </tr>`).join("")}
+      </tbody></table></div>`;
+
     $("saveAssessments").style.display="inline-block";
-  }catch(e){notice("assessmentNotice",e.message,"err");}
-};
-$("saveAssessments").onclick=async()=>{
-  clearNotice("assessmentNotice");
-  const classId=$("assessmentClass").value,subjectId=$("assessmentSubject").value,termId=$("assessmentTerm").value;
-  const payload=[];
-  for(let i=0;i<assessmentRows.length;i++){const v=Number($(`[data-assess="${i}"]`).value);if(!Number.isFinite(v)||v<0||v>20)return notice("assessmentNotice","Every assessment mark must be between 0 and 20.","err");payload.push({student_id:assessmentRows[i].student.id,subject_id:subjectId,class_id:classId,school_id:teacherSchoolId,term_id:termId,teacher_id:teacher.id,mark:v,max_mark:20,updated_at:new Date().toISOString()});}
-  const {error}=await supabaseClient.from("assessments").upsert(payload,{onConflict:"student_id,subject_id,term_id"});
-  if(error)return notice("assessmentNotice","Assessment could not be saved: "+error.message,"err");
-  notice("assessmentNotice","Assessment marks saved successfully.","ok");toast("Assessment marks saved.");
-};
-
-$("loadEndTerm").onclick=async()=>{
-  clearNotice("endtermNotice");
-  try{
-    const classId=$("endClass").value,subjectId=$("endSubject").value,termId=$("endTerm").value;
-    if(!classId||!subjectId||!termId)return notice("endtermNotice","Select class, subject and term.","err");
-    const students=await getStudents(classId);
-    const {data:ass}=await supabaseClient.from("assessments").select("student_id,mark").eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
-    const {data:old}=await supabaseClient.from("end_term_results").select("*").eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
-    const amap=new Map((ass||[]).map(x=>[x.student_id,x.mark]));
-    const emap=new Map((old||[]).map(x=>[x.student_id,x]));
-    endRows=students.map(s=>({student:s,assessment:amap.get(s.id)??0,record:emap.get(s.id)}));
-    $("endtermTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th></tr></thead><tbody>${endRows.map((r,i)=>`<tr><td><strong>${esc(studentName(r.student))}</strong></td><td>${Number(r.assessment).toFixed(2)}</td><td><input type="number" min="0" max="80" step="0.01" data-end="${i}" value="${r.record?.end_term_mark??""}" placeholder="0–80"></td><td id="final-${i}">${r.record?.final_mark!=null?Number(r.record.final_mark).toFixed(2):Number(r.assessment).toFixed(2)}</td></tr>`).join("")}</tbody></table></div>`;
-    endRows.forEach((r,i)=>$(`[data-end="${i}"]`).addEventListener("input",e=>{const v=Number(e.target.value);$(`final-${i}`).textContent=(Number(r.assessment)+(Number.isFinite(v)?v:0)).toFixed(2)}));
-    $("saveEndTerm").style.display="inline-block";
-  }catch(e){notice("endtermNotice",e.message,"err");}
-};
-$("saveEndTerm").onclick=async()=>{
-  clearNotice("endtermNotice");
-  const classId=$("endClass").value,subjectId=$("endSubject").value,termId=$("endTerm").value;
-  const payload=[];
-  for(let i=0;i<endRows.length;i++){const v=Number($(`[data-end="${i}"]`).value);if(!Number.isFinite(v)||v<0||v>80)return notice("endtermNotice","Every end-of-term mark must be between 0 and 80.","err");payload.push({student_id:endRows[i].student.id,subject_id:subjectId,class_id:classId,school_id:teacherSchoolId,term_id:termId,teacher_id:teacher.id,assessment_mark:Number(endRows[i].assessment)||0,end_term_mark:v,max_mark:80,updated_at:new Date().toISOString()});}
-  const {error}=await supabaseClient.from("end_term_results").upsert(payload,{onConflict:"student_id,subject_id,term_id"});
-  if(error)return notice("endtermNotice","End-term marks could not be saved: "+error.message,"err");
-  notice("endtermNotice","End-term results saved. Final marks are calculated out of 100.","ok");toast("End-term results saved.");
-};
-
-async function loadReports(){
-  if(!teacher)return;
-  const {data,error}=await supabaseClient.from("reports").select("*").eq("reported_by",teacher.id).order("created_at",{ascending:false}).limit(30);
-  if(error){$("reportsTable").innerHTML='<div class="empty">Could not load reports: '+esc(error.message)+'</div>';return;}
-  const rows=data||[];
-  if(!rows.length){$("reportsTable").innerHTML='<div class="empty">You have not submitted any reports.</div>';return;}
-  $("reportsTable").innerHTML=`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Priority</th><th>Status</th><th>Description</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(new Date(r.created_at).toLocaleDateString())}</td><td>${esc(r.report_type)}</td><td>${esc(r.priority)}</td><td>${esc(r.status)}</td><td>${esc(r.description)}</td></tr>`).join("")}</tbody></table></div>`;
+    notice("assessmentNotice",`${students.length} student${students.length===1?"":"s"} loaded. Enter marks out of 20 and save.`,"info");
+  }catch(e){
+    notice("assessmentNotice","Could not load assessments: "+errorMessage(e),"err");
+    $("saveAssessments").style.display="none";
+  }
 }
+
+async function saveAssessments(){
+  clearNotice("assessmentNotice");clearSaveState("assessmentSaveState");
+  const classId=val("assessmentClass"),subjectId=val("assessmentSubject"),termId=val("assessmentTerm");
+  if(!classId||!subjectId||!termId||!assessmentRows.length)return notice("assessmentNotice","Load class, subject and term first.","err");
+
+  setButton("saveAssessments","Saving assessment…",true);
+  try{
+    let saved=0;
+
+    for(let i=0;i<assessmentRows.length;i++){
+      const input=document.querySelector(`[data-assess="${i}"]`);
+      const v=Number(input?.value);
+      if(!Number.isFinite(v)||v<0||v>20)throw new Error("Every assessment mark must be between 0 and 20.");
+
+      const payload={
+        student_id:assessmentRows[i].student.id,subject_id:subjectId,class_id:classId,
+        school_id:teacherSchoolId,term_id:termId,teacher_id:teacher.id,
+        mark:v,max_mark:20,updated_at:new Date().toISOString()
+      };
+
+      const old=await supabaseClient.from("assessments").select("id")
+        .eq("student_id",payload.student_id).eq("subject_id",subjectId)
+        .eq("term_id",termId).maybeSingle();
+      if(old.error)throw old.error;
+
+      const r=old.data
+        ?await supabaseClient.from("assessments").update(payload).eq("id",old.data.id)
+        :await supabaseClient.from("assessments").insert(payload);
+
+      if(r.error)throw r.error;
+      saved++;
+    }
+
+    const vr=await supabaseClient.from("assessments").select("id",{count:"exact",head:true})
+      .eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    if(vr.error)throw vr.error;
+    if(Number(vr.count||0)<saved)throw new Error(`Supabase verification found ${vr.count||0} records; ${saved} were expected.`);
+
+    saveState("assessmentSaveState",`✓ CONFIRMED in Supabase: ${saved} assessment mark${saved===1?"":"s"} saved.`,"ok");
+    notice("assessmentNotice",`Assessment marks saved successfully. ${saved} record${saved===1?"":"s"} confirmed in Supabase.`,"ok");
+    setButton("saveAssessments","Assessment Saved ✓",false);
+    toast("Assessment marks saved and verified.");
+  }catch(e){
+    saveState("assessmentSaveState","✕ NOT CONFIRMED in Supabase: "+errorMessage(e),"err");
+    notice("assessmentNotice","Assessment was NOT confirmed as saved: "+errorMessage(e),"err");
+    setButton("saveAssessments","Save Assessment Marks",false);
+  }
+}
+
+/* =========================
+   End of term
+   ========================= */
+$("loadEndTerm").addEventListener("click",loadEndTerm);
+$("saveEndTerm").addEventListener("click",saveEndTerm);
+
+async function loadEndTerm(){
+  clearNotice("endtermNotice");clearSaveState("endtermSaveState");
+  try{
+    const classId=val("endClass"),subjectId=val("endSubject"),termId=val("endTerm");
+    if(!classId||!subjectId||!termId)throw new Error("Select class, subject and academic term first.");
+    if(!assignedSubjectIds(classId).includes(String(subjectId)))throw new Error("That subject is not assigned to you for this class.");
+
+    const students=await getStudents(classId);
+    if(!students.length)throw new Error("No students are registered in this class.");
+
+    /* This is the important fix for the problem shown in the screenshot:
+       end-of-term reads the assessment table again for the SAME class,
+       subject and term, so the marks entered by the teacher are displayed. */
+    const ass=await supabaseClient.from("assessments").select("student_id,mark")
+      .eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    if(ass.error)throw new Error("Could not load assessment marks for end-of-term: "+ass.error.message);
+
+    const old=await supabaseClient.from("end_term_results").select("*")
+      .eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    if(old.error)throw old.error;
+
+    const amap=new Map((ass.data||[]).map(x=>[x.student_id,x.mark]));
+    const emap=new Map((old.data||[]).map(x=>[x.student_id,x]));
+
+    endRows=students.map(s=>({
+      student:s,
+      assessment:amap.get(s.id)??0,
+      record:emap.get(s.id)
+    }));
+
+    $("endtermTable").innerHTML=`<div class="table-wrap"><table>
+      <thead><tr><th>Student</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th></tr></thead><tbody>
+      ${endRows.map((r,i)=>`<tr>
+        <td><strong>${esc(studentName(r.student))}</strong></td>
+        <td>${Number(r.assessment).toFixed(2)}</td>
+        <td><input type="number" min="0" max="80" step="0.01" data-end="${i}"
+          value="${r.record?.end_term_mark??""}" placeholder="0–80"></td>
+        <td id="final-${i}">${r.record?.final_mark!=null?Number(r.record.final_mark).toFixed(2):Number(r.assessment).toFixed(2)}</td>
+      </tr>`).join("")}
+      </tbody></table></div>`;
+
+    $("endtermTable").querySelectorAll("[data-end]").forEach(el=>{
+      el.addEventListener("input",e=>{
+        const i=Number(e.target.getAttribute("data-end"));
+        const v=Number(e.target.value);
+        const a=Number(endRows[i]?.assessment||0);
+        $(`final-${i}`).textContent=(a+(Number.isFinite(v)?v:0)).toFixed(2);
+      });
+    });
+
+    $("saveEndTerm").style.display="inline-block";
+    notice("endtermNotice",`${students.length} student${students.length===1?"":"s"} loaded. Assessment marks are shown from Supabase.`,"info");
+  }catch(e){
+    notice("endtermNotice","Could not load end-of-term data: "+errorMessage(e),"err");
+    $("saveEndTerm").style.display="none";
+  }
+}
+
+async function saveEndTerm(){
+  clearNotice("endtermNotice");clearSaveState("endtermSaveState");
+  const classId=val("endClass"),subjectId=val("endSubject"),termId=val("endTerm");
+  if(!classId||!subjectId||!termId||!endRows.length)return notice("endtermNotice","Load class, subject and term first.","err");
+
+  setButton("saveEndTerm","Saving end-term…",true);
+  try{
+    let saved=0;
+
+    for(let i=0;i<endRows.length;i++){
+      const input=document.querySelector(`[data-end="${i}"]`);
+      const v=Number(input?.value);
+      if(!Number.isFinite(v)||v<0||v>80)throw new Error("Every end-of-term mark must be between 0 and 80.");
+
+      const assessment=Number(endRows[i].assessment||0);
+      const finalMark=assessment+v;
+
+      const payload={
+        student_id:endRows[i].student.id,subject_id:subjectId,class_id:classId,
+        school_id:teacherSchoolId,term_id:termId,teacher_id:teacher.id,
+        assessment_mark:assessment,end_term_mark:v,max_mark:80,
+        updated_at:new Date().toISOString()
+      };
+
+      const old=await supabaseClient.from("end_term_results").select("id")
+        .eq("student_id",payload.student_id).eq("subject_id",subjectId)
+        .eq("term_id",termId).maybeSingle();
+      if(old.error)throw old.error;
+
+      const r=old.data
+        ?await supabaseClient.from("end_term_results").update(payload).eq("id",old.data.id)
+        :await supabaseClient.from("end_term_results").insert(payload);
+
+      if(r.error)throw r.error;
+      saved++;
+    }
+
+    const vr=await supabaseClient.from("end_term_results").select("id",{count:"exact",head:true})
+      .eq("class_id",classId).eq("subject_id",subjectId).eq("term_id",termId);
+    if(vr.error)throw vr.error;
+    if(Number(vr.count||0)<saved)throw new Error(`Supabase verification found ${vr.count||0} records; ${saved} were expected.`);
+
+    saveState("endtermSaveState",`✓ CONFIRMED in Supabase: ${saved} end-of-term result${saved===1?"":"s"} saved. Final marks are out of 100.`,"ok");
+    notice("endtermNotice",`End-of-term results saved successfully. ${saved} record${saved===1?"":"s"} confirmed in Supabase.`,"ok");
+    setButton("saveEndTerm","End-Term Saved ✓",false);
+    toast("End-term results saved and verified.");
+  }catch(e){
+    saveState("endtermSaveState","✕ NOT CONFIRMED in Supabase: "+errorMessage(e),"err");
+    notice("endtermNotice","End-term results were NOT confirmed as saved: "+errorMessage(e),"err");
+    setButton("saveEndTerm","Save End-Term Marks",false);
+  }
+}
+
+/* =========================
+   Reports
+   ========================= */
 async function loadReportStudents(){
   try{
     const unique=new Map();
@@ -559,31 +1055,120 @@ async function loadReportStudents(){
       rows.forEach(s=>unique.set(s.id,s));
     }
     const data=[...unique.values()];
-    $("reportStudent").innerHTML='<option value="">No specific student</option>'+(data.length?data.map(s=>`<option value="${esc(s.id)}">${esc(studentName(s))}</option>`).join(""):'<option value="">No students available</option>');
+    $("reportStudent").innerHTML='<option value="">No specific student</option>'+
+      data.map(s=>`<option value="${esc(s.id)}">${esc(studentName(s))}</option>`).join("");
   }catch(e){
-    console.warn(e);
     $("reportStudent").innerHTML='<option value="">Unable to load students</option>';
   }
 }
-$("submitReport").onclick=async()=>{
+
+async function loadReports(){
+  const e=$("reportsTable");if(!e||!teacher)return;
+  e.textContent="Loading...";
+  const r=await supabaseClient.from("reports").select("*")
+    .eq("reported_by",teacher.id).order("created_at",{ascending:false}).limit(30);
+
+  if(r.error){
+    e.innerHTML='<div class="empty">Could not load reports: '+esc(r.error.message)+'</div>';return;
+  }
+  const rows=r.data||[];
+  if(!rows.length){e.innerHTML='<div class="empty">You have not submitted any reports.</div>';return;}
+
+  e.innerHTML=`<div class="table-wrap"><table><thead><tr>
+    <th>Date</th><th>Type</th><th>Priority</th><th>Status</th><th>Description</th>
+  </tr></thead><tbody>${rows.map(x=>`<tr>
+    <td>${esc((x.created_at||"").slice(0,10))}</td>
+    <td>${esc(x.report_type||"—")}</td><td>${esc(x.priority||"normal")}</td>
+    <td>${esc(x.status||"open")}</td><td>${esc(x.description||"—")}</td>
+  </tr>`).join("")}</tbody></table></div>`;
+}
+
+$("submitReport").addEventListener("click",async()=>{
   clearNotice("reportNotice");
-  const description=$("reportDescription").value.trim();
+  const description=val("reportDescription");
   if(!description)return notice("reportNotice","Please describe the issue.","err");
-  const payload={school_id:teacherSchoolId,reported_by:teacher.id,student_id:$("reportStudent").value||null,teacher_id:teacher.id,report_type:$("reportType").value,subject:$("reportSubject").value.trim()||null,description,priority:$("reportPriority").value,status:"open"};
-  const {error}=await supabaseClient.from("reports").insert(payload);
-  if(error)return notice("reportNotice","Report could not be submitted: "+error.message,"err");
-  $("reportDescription").value="";$("reportSubject").value="";
-  notice("reportNotice","Report submitted successfully.","ok");toast("Report submitted.");loadReports();
-};
 
-supabaseClient.auth.onAuthStateChange((event,newSession)=>{
-  if(event==="SIGNED_OUT")window.location.href="Access.html";
+  const payload={
+    school_id:teacherSchoolId,
+    reported_by:teacher.id,
+    teacher_id:teacher.id,
+    student_id:val("reportStudent")||null,
+    report_type:val("reportType"),
+    subject:val("reportSubject")||null,
+    description,
+    priority:val("reportPriority")||"normal",
+    status:"open"
+  };
+
+  const r=await supabaseClient.from("reports").insert(payload);
+  if(r.error)return notice("reportNotice","Report could not be submitted: "+r.error.message,"err");
+
+  $("reportDescription").value="";
+  $("reportSubject").value="";
+  notice("reportNotice","Report submitted successfully.","ok");
+  toast("Report submitted.");
+  await loadReports();
 });
 
-window.addEventListener("load",async()=>{
-  await init();
-  await loadReportStudents();
+/* =========================
+   Login / initialization
+   ========================= */
+async function init(){
+  try{
+    $("attendanceDate").value=todayISO();
+
+    const r=await supabaseClient.auth.getSession();
+    if(r.error)throw new Error("Could not read the Supabase session: "+r.error.message);
+
+    session=r.data?.session;
+    if(!session){redirectLogin();return;}
+
+    const email=(session.user.email||"").trim().toLowerCase();
+    if(!email)throw new Error("The authenticated Supabase account has no email address.");
+
+    /* Teacher identity is intentionally matched by email because that is
+       the structure used by this ACCESS UG project. */
+    const t=await supabaseClient.from("teachers").select("*").ilike("email",email).maybeSingle();
+    if(t.error)throw new Error("Teacher lookup failed: "+t.error.message);
+    if(!t.data)throw new Error("No teacher profile was found for "+email+" in public.teachers.");
+
+    teacher=t.data;
+    teacherSchoolId=teacher.school||teacher.school_id||null;
+    if(!teacherSchoolId)throw new Error("The teacher profile has no school assigned.");
+
+    if(teacher.status&&String(teacher.status).toLowerCase()!=="active")
+      throw new Error("This teacher account is not active.");
+
+    await loadSchool();
+    await loadAssignments();
+    await loadTerms();
+
+    renderIdentity();
+    populateSelectors();
+    await automaticTeacherAttendance();
+    await loadTeacherAttendance();
+    await loadReportStudents();
+    await loadReports();
+  }catch(e){
+    fail("The teacher dashboard could not finish loading: "+errorMessage(e));
+  }
+}
+
+$("logoutBtn").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  redirectLogin();
 });
+$("errorLogout").addEventListener("click",async()=>{
+  await supabaseClient.auth.signOut();
+  redirectLogin();
+});
+$("closeError").addEventListener("click",()=>$("errorModal").classList.remove("show"));
+
+supabaseClient.auth.onAuthStateChange((event)=>{
+  if(event==="SIGNED_OUT")redirectLogin();
+});
+
+init();
 </script>
 </body>
 </html>

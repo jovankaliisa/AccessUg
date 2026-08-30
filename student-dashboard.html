@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACCESS UG — Student Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+:root{
+ --navy:#061a38;--navy2:#0b3d82;--blue:#1457a6;--bg:#f3f6fb;--text:#13233a;
+ --muted:#6d7b8e;--white:#fff;--border:#e3e9f2;--success:#15966b;
+ --warning:#e7a72d;--danger:#d9534f;--shadow:0 12px 34px rgba(9,35,75,.09);--radius:17px
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}
+.sidebar{position:fixed;z-index:50;left:0;top:0;bottom:0;width:250px;padding:22px 14px;background:linear-gradient(180deg,var(--navy),#092d63 62%,var(--navy2));color:#fff;transition:.25s;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 10px 28px}.logo{width:44px;height:44px;border-radius:12px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:900}
+.brand h1{font-size:17px;margin:0;letter-spacing:.5px}.brand small{opacity:.72}
+.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#dbe7f7;text-align:left;padding:13px 14px;border-radius:11px;display:flex;gap:12px;align-items:center;font-weight:650}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.13);color:#fff}.nav-icon{width:23px;text-align:center;font-size:18px}
+.sidebar-bottom{position:absolute;left:14px;right:14px;bottom:18px}.logout{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;padding:12px;border-radius:11px;font-weight:700}
+.main{margin-left:250px;min-height:100vh}.top{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}
+.title-wrap{display:flex;align-items:center;gap:12px}.top h2{font-size:20px;margin:0}.menu-btn{display:none;border:0;background:#edf3fb;border-radius:10px;width:40px;height:40px}
+.quick-nav{display:flex;gap:7px;margin-left:auto;margin-right:18px}.quick-nav button{border:1px solid var(--border);background:#f5f8fc;color:#285d9e;padding:8px 10px;border-radius:9px;font-size:11px;font-weight:750}.quick-nav button:hover{background:#eaf2fd}.user-mini{display:flex;align-items:center;gap:11px}.avatar{width:38px;height:38px;border-radius:50%;background:#e5eefb;color:var(--blue);display:grid;place-items:center;font-weight:800}.user-mini span{font-size:13px;color:var(--muted)}
+.content{padding:0 28px 30px;max-width:1500px;margin:auto}.page{display:none}.page.active{display:block}
+.hero{margin:0 -28px 24px;padding:30px 28px 27px;background:linear-gradient(135deg,var(--navy),#0b3d82);color:#fff;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-70px;top:-120px;background:rgba(255,255,255,.07)}
+.hero h1{margin:0 0 8px;font-size:29px;position:relative;z-index:1}.hero p{margin:0;color:#dbe7f7;position:relative;z-index:1}
+.welcomeHero{padding:34px 28px 32px}.welcomeHero .hi{font-size:18px;margin-bottom:6px}.welcomeHero h1{font-size:32px}.welcomeHero .sub{max-width:700px}
+.grid{display:grid;gap:18px}.two{grid-template-columns:1.25fr .9fr}.three{grid-template-columns:repeat(3,1fr)}
+.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}
+.profile{display:flex;gap:18px;align-items:center}.profile-avatar{width:78px;height:78px;border-radius:20px;background:linear-gradient(135deg,#e9f1fd,#c9dbf5);display:grid;place-items:center;color:var(--blue);font-size:27px;font-weight:900}.profile-info h2{margin:0 0 5px;font-size:21px}.profile-info p{margin:3px 0;color:var(--muted)}
+.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}.kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}
+.chart-wrap{height:270px;position:relative}.chart-small{height:220px}.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.danger{background:var(--danger)}
+.notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:700px;background:#fff}th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}tr:last-child td{border-bottom:0}
+.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.neutral{background:#edf3fb;color:#285d9e}
+.empty,.loading{text-align:center;padding:35px;color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}.field{display:grid;gap:6px;min-width:190px;flex:1}.field label{font-size:12px;font-weight:700;color:#566579}
+input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}textarea{min-height:120px;resize:vertical}
+.interpret{padding:15px;border-radius:13px;background:#f7f9fc;border:1px solid var(--border);line-height:1.55;font-size:13px;color:#526176}.pill-row{display:flex;flex-wrap:wrap;gap:8px}.pill{padding:8px 11px;border-radius:999px;background:#eef3f9;color:#315b8d;font-size:12px;font-weight:700}
+.empty-state{padding:22px;border:1px dashed #cbd7e6;border-radius:13px;color:var(--muted);text-align:center}
+.overlay{display:none;position:fixed;inset:0;background:rgba(4,17,37,.45);z-index:45}.overlay.show{display:block}
+.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}
+.grade{font-size:22px;font-weight:900;color:var(--blue)}.final{font-weight:900}.section-note{margin:0 0 14px;color:var(--muted);font-size:13px}
+@media(max-width:1000px){.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
+@media(max-width:750px){.quick-nav{display:flex;overflow-x:auto;max-width:55vw;margin-right:8px}.quick-nav button{white-space:nowrap;padding:7px 8px;font-size:10px}.sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:0 16px 24px}.hero{margin:0 -16px 20px;padding:26px 16px}.welcomeHero h1{font-size:27px}.three{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}}
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+ <div class="brand"><div class="logo">AU</div><div><h1>ACCESS UG</h1><small>Student Portal</small></div></div>
+ <nav class="nav">
+  <button class="active" data-page="home"><span class="nav-icon">⌂</span>Home</button>
+  <button data-page="attendance"><span class="nav-icon">◷</span>Attendance</button>
+  <button data-page="behaviour"><span class="nav-icon">★</span>Behaviour</button>
+  <button data-page="assessments"><span class="nav-icon">▤</span>Assessments</button>
+  <button data-page="endterm"><span class="nav-icon">▥</span>End of Term</button>
+  <button data-page="reports"><span class="nav-icon">⚠</span>Report an Issue</button>
+ </nav>
+ <div class="sidebar-bottom"><button class="logout" id="logoutBtn">↪ &nbsp; Log out</button></div>
+</aside>
+
+<div class="overlay" id="overlay"></div>
+<main class="main">
+<header class="top">
+ <div class="title-wrap"><button class="menu-btn" id="menuBtn" aria-label="Open student menu">☰</button><h2 id="pageTitle">Student Dashboard</h2></div>
+  <div class="quick-nav" aria-label="Quick navigation">
+   <button data-quick="home">Home</button><button data-quick="attendance">Attendance</button><button data-quick="behaviour">Behaviour</button>
+  </div>
+ <div class="user-mini"><span id="topEmail">Loading...</span><div class="avatar" id="topAvatar">S</div></div>
+</header>
+
+<div class="content">
+<section id="home" class="page active">
+ <div class="hero welcomeHero">
+  <div class="hi">👋 Hi!</div>
+  <h1 id="welcome">Welcome</h1>
+  <p class="sub">Your ACCESS UG learning overview. Your academic records below are read directly from the records entered by your teachers.</p>
+ </div>
+ <div id="homeNotice" class="notice"></div>
+ <div class="grid two">
+  <div class="card">
+   <div class="card-head"><div><h3>My Profile</h3><div class="muted">Your registered ACCESS UG student profile</div></div><span class="badge neutral">Student</span></div>
+   <div class="profile"><div class="profile-avatar" id="profileAvatar">S</div><div class="profile-info"><h2 id="studentName">Loading...</h2><p id="studentClass">Class: —</p><p id="studentSchool">School: —</p><p id="studentEmail">Email: —</p></div></div>
+  </div>
+  <div class="card">
+   <div class="card-head"><div><h3>Attendance Overview</h3><div class="muted">Teacher-recorded attendance</div></div></div>
+   <div class="chart-wrap chart-small"><canvas id="homeAttendanceChart"></canvas></div>
+  </div>
+ </div>
+ <div class="grid three" style="margin-top:18px">
+  <div class="card stat"><div class="kpi-icon">✓</div><div class="label">Present</div><div class="value" id="homePresent">—</div><div class="sub" id="homePresentPct">—</div></div>
+  <div class="card stat"><div class="kpi-icon">!</div><div class="label">Absent</div><div class="value" id="homeAbsent">—</div><div class="sub" id="homeAbsentPct">—</div></div>
+  <div class="card stat"><div class="kpi-icon">◎</div><div class="label">Authorized absence</div><div class="value" id="homeAuthorized">—</div><div class="sub" id="homeAuthorizedPct">—</div></div>
+ </div>
+ <div class="grid two" style="margin-top:18px">
+  <div class="card">
+   <div class="card-head"><div><h3>Weekly Behaviour</h3><div class="muted">Behaviour records grouped by calendar week</div></div></div>
+   <div class="chart-wrap"><canvas id="homeBehaviourChart"></canvas></div>
+  </div>
+  <div class="card">
+   <div class="card-head"><div><h3>Guidance</h3><div class="muted">How to read your overview</div></div></div>
+   <div class="interpret">
+    <p><strong>Attendance:</strong> Present, absent and authorized absence are shown separately so approved absence is not treated the same as an ordinary absence.</p>
+    <p><strong>Behaviour:</strong> Weekly results reflect the grades and points recorded by your teacher. They are a progress indicator and should be read together with teacher comments.</p>
+    <p><strong>Results:</strong> A subject appears in your results only after a teacher has entered a mark for it.</p>
+   </div>
+  </div>
+ </div>
+</section>
+
+<section id="attendance" class="page">
+ <div class="hero"><h1>Attendance</h1><p>Your complete teacher-recorded attendance summary.</p></div>
+ <div id="attendanceNotice" class="notice"></div>
+ <div class="grid two">
+  <div class="card"><div class="card-head"><div><h3>Attendance Breakdown</h3><div class="muted">All available attendance records</div></div></div><div class="chart-wrap"><canvas id="attendanceChart"></canvas></div></div>
+  <div class="card"><div class="card-head"><div><h3>Attendance Interpretation</h3><div class="muted">Your current record</div></div></div><div id="attendanceInterpret" class="interpret">Loading...</div></div>
+ </div>
+ <div class="grid three" style="margin-top:18px">
+  <div class="card stat"><div class="label">Attended</div><div class="value" id="attPresent">0</div><div class="sub" id="attPresentPct">0%</div></div>
+  <div class="card stat"><div class="label">Absent</div><div class="value" id="attAbsent">0</div><div class="sub" id="attAbsentPct">0%</div></div>
+  <div class="card stat"><div class="label">Authorized absence</div><div class="value" id="attAuthorized">0</div><div class="sub" id="attAuthorizedPct">0%</div></div>
+ </div>
+</section>
+
+<section id="behaviour" class="page">
+ <div class="hero"><h1>Behaviour</h1><p>See the behaviour grades, points and weekly progress recorded for you.</p></div>
+ <div id="behaviourNotice" class="notice"></div>
+ <div class="grid two">
+  <div class="card"><div class="card-head"><div><h3>Weekly Behaviour Points</h3><div class="muted">Actual records grouped by week</div></div></div><div class="chart-wrap"><canvas id="behaviourChart"></canvas></div></div>
+  <div class="card"><div class="card-head"><div><h3>Behaviour Summary</h3><div class="muted">Recorded grades and points</div></div></div><div id="behaviourSummary" class="empty">Loading...</div></div>
+ </div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>Behaviour Records</h3><div class="muted">Teacher comments are shown when recorded.</div></div></div><div id="behaviourTable" class="empty">Loading...</div></div>
+</section>
+
+<section id="assessments" class="page">
+ <div class="hero"><h1>Assessments</h1><p>Continuous assessment results entered by your teachers, out of 20.</p></div>
+ <div id="assessmentNotice" class="notice"></div>
+ <div class="card"><div class="card-head"><div><h3>Recorded Assessment Results</h3><div class="muted">Subjects without a recorded mark are not displayed.</div></div></div><div id="assessmentTable" class="empty">Loading...</div></div>
+</section>
+
+<section id="endterm" class="page">
+ <div class="hero"><h1>End of Term</h1><p>Combined assessment and end-of-term results, calculated out of 100.</p></div>
+ <div id="endtermNotice" class="notice"></div>
+ <div class="card"><div class="card-head"><div><h3>Final Results</h3><div class="muted">Assessment /20 + End Term /80 = Final /100</div></div></div><div id="endtermTable" class="empty">Loading...</div></div>
+</section>
+
+<section id="reports" class="page">
+ <div class="hero"><h1>Report an Issue</h1><p>Send a concern or issue to the school through ACCESS UG.</p></div>
+ <div id="reportNotice" class="notice"></div>
+ <div class="card">
+  <div class="field"><label>Issue type</label><select id="reportType"><option value="attendance_issue">Attendance issue</option><option value="academic_issue">Academic issue</option><option value="behaviour_issue">Behaviour issue</option><option value="absence">Absence</option><option value="other">Other</option></select></div>
+  <div class="field" style="margin-top:16px"><label>Subject / short title</label><input id="reportSubject" placeholder="e.g. Attendance recorded incorrectly"></div>
+  <div class="field" style="margin-top:16px"><label>Message</label><textarea id="reportDescription" placeholder="Explain the problem clearly..."></textarea></div>
+  <div class="actions" style="display:flex;justify-content:flex-end;margin-top:16px"><button class="btn" id="submitReport">Send Report</button></div>
+ </div>
+ <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>My Reports</h3><div class="muted">Reports submitted from your student account</div></div></div><div id="reportsTable" class="empty">Loading...</div></div>
+</section>
+</div>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL="https://iotmozwesvmieqvsonov.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+let authUser=null,student=null,attendance=[],behaviour=[],assessments=[],endResults=[];
+let charts={};
+
+function notice(id,text,type="info"){const e=$(id);e.textContent=text;e.className="notice show "+type}
+function toast(text){const e=$("toast");e.textContent=text;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),3500)}
+function studentName(s){return [s.first_name,s.last_name].filter(Boolean).join(" ")||s.full_name||s.name||"Student"}
+function initials(s){return studentName(s).split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"S"}
+function pct(n,total){return total?((n/total)*100).toFixed(1)+"%":"0%"}
+function destroyChart(k){if(charts[k]){charts[k].destroy();charts[k]=null}}
+
+async function init(){
+ const {data:{session},error}=await supabaseClient.auth.getSession();
+ if(error||!session){location.replace('./index.html');return}
+ authUser=session.user;
+ const email=(authUser.email||'').trim().toLowerCase();
+ let studentRows=[];
+ let lookupErrors=[];
+
+ // Support current email records and older records that used student_email.
+ const results=await Promise.all([
+  supabaseClient.from('students').select('*').ilike('email',email).limit(2),
+  supabaseClient.from('students').select('*').ilike('student_email',email).limit(2)
+ ]);
+ for(const r of results){
+  if(r.error) lookupErrors.push(r.error);
+  else if(r.data?.length) studentRows.push(...r.data);
+ }
+ const unique=new Map();
+ studentRows.forEach(row=>{if(row?.id!=null)unique.set(String(row.id),row);});
+ studentRows=[...unique.values()];
+
+ if(!studentRows.length){
+  const reason=lookupErrors.length
+   ? 'Supabase could not read the student record. '+lookupErrors.map(e=>e.message).join(' | ')
+   : 'This signed-in email is not linked to a student record. Check students.email or students.student_email.';
+  await supabaseClient.auth.signOut();
+  alert('ACCESS UG: '+reason);
+  location.replace('./index.html');
+  return;
+ }
+ if(studentRows.length>1){
+   await supabaseClient.auth.signOut();
+   alert('This email is linked to more than one student. A unique student email is required before opening the Student Dashboard.');
+   location.replace('./index.html');
+   return;
+ }
+ student=studentRows[0];
+
+ // Resolve human-readable class and school names separately.
+ let classRow=null, schoolRow=null;
+ if(student.class_id){
+  const r=await supabaseClient.from('classes').select('id,name,level,stream,school_id,academic_year').eq('id',student.class_id).maybeSingle();
+  if(!r.error) classRow=r.data; else console.warn('Class lookup failed:',r.error.message);
+ }
+ if(student.school_id){
+  const r=await supabaseClient.from('schools').select('id,name').eq('id',student.school_id).maybeSingle();
+  if(!r.error) schoolRow=r.data; else console.warn('School lookup failed:',r.error.message);
+ }
+ student._classRow=classRow;
+ student._schoolRow=schoolRow;
+
+ $("topEmail").textContent=authUser.email||student.email||student.student_email||"";
+ $("topAvatar").textContent=initials(student);
+ $("profileAvatar").textContent=initials(student);
+ $("studentName").textContent=studentName(student);
+ $("welcome").textContent="Welcome, "+(student.first_name||student.last_name||studentName(student));
+ $("studentEmail").textContent="Student email: "+(student.email||student.student_email||authUser.email||"—");
+ const classText=classRow?.name || student.class_level || student.class || [classRow?.level,classRow?.stream].filter(Boolean).join(' ') || "—";
+ const schoolText=schoolRow?.name || student.school || String(student.school_id||"—");
+ $("studentClass").textContent="Class: "+classText;
+ $("studentSchool").textContent="School: "+schoolText;
+ try{
+   await loadAll();
+ }catch(error){
+   console.error("ACCESS UG dashboard initialization error:", error);
+   notice(
+     "homeNotice",
+     "Some student information could not be loaded: " +
+     (error?.message || String(error)),
+     "err"
+   );
+ }
+}
+async function loadAttendance(){
+ const {data,error}=await supabaseClient.from("student_attendance").select("*").eq("student_id",student.id).order("attendance_date",{ascending:true});
+ if(error){notice("attendanceNotice","Could not load attendance: "+error.message,"err");return}
+ attendance=data||[];
+ const c={present:0,absent:0,authorized_absence:0};
+ attendance.forEach(r=>{if(c[r.status]!==undefined)c[r.status]++});
+ renderAttendance(c);
+}
+function renderAttendance(c){
+ const total=c.present+c.absent+c.authorized_absence;
+ ["homeAttendanceChart","attendanceChart"].forEach((id,i)=>{
+  destroyChart(i?"attendance":"homeAttendance");
+  charts[i?"attendance":"homeAttendance"]=new Chart($(id),{type:"doughnut",data:{labels:["Present","Absent","Authorized absence"],datasets:[{data:[c.present,c.absent,c.authorized_absence]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}});
+ });
+ $("homePresent").textContent=c.present;$("homeAbsent").textContent=c.absent;$("homeAuthorized").textContent=c.authorized_absence;
+ $("homePresentPct").textContent=pct(c.present,total);$("homeAbsentPct").textContent=pct(c.absent,total);$("homeAuthorizedPct").textContent=pct(c.authorized_absence,total);
+ $("attPresent").textContent=c.present;$("attAbsent").textContent=c.absent;$("attAuthorized").textContent=c.authorized_absence;
+ $("attPresentPct").textContent=pct(c.present,total);$("attAbsentPct").textContent=pct(c.absent,total);$("attAuthorizedPct").textContent=pct(c.authorized_absence,total);
+ $("attendanceInterpret").innerHTML=total?`<p><strong>${c.present}</strong> attendance record${c.present===1?"":"s"} show present (${pct(c.present,total)}).</p><p><strong>${c.absent}</strong> show absent (${pct(c.absent,total)}).</p><p><strong>${c.authorized_absence}</strong> show authorized absence (${pct(c.authorized_absence,total)}).</p><p>Authorized absence is kept separate from ordinary absence so approved absence can be interpreted correctly.</p>`:`<p>No attendance records have been entered for you yet.</p>`;
+}
+
+async function loadBehaviour(){
+ let q=supabaseClient.from("behaviour_records").select("*").eq("student_id",student.id).order("created_at",{ascending:true});
+ let r=await q;
+ if(r.error){
+  r=await supabaseClient.from("behaviour_records").select("*").eq("student_id",student.id).order("id",{ascending:true});
+ }
+ if(r.error){notice("behaviourNotice","Could not load behaviour: "+r.error.message,"err");return}
+ behaviour=r.data||[];
+ renderBehaviour();
+}
+function weekKey(date){
+ const d=new Date(date); if(Number.isNaN(d.getTime()))return "Unknown";
+ const start=new Date(d);const day=(start.getDay()+6)%7;start.setDate(start.getDate()-day);
+ return start.toISOString().slice(0,10);
+}
+function renderBehaviour(){
+ const points={A:15,B:12,C:9,D:6,E:0},counts={A:0,B:0,C:0,D:0,E:0},weeks={};
+ behaviour.forEach(r=>{const g=String(r.grade||"").toUpperCase();if(counts[g]!==undefined){counts[g]++;const k=weekKey(r.created_at||r.recorded_at||r.date);weeks[k]=(weeks[k]||0)+(Number(r.points)||points[g]||0)}});
+ const labels=Object.keys(weeks).sort();destroyChart("behaviour");destroyChart("homeBehaviour");
+ charts.behaviour=new Chart($("behaviourChart"),{type:"bar",data:{labels:labels.map((_,i)=>"Week "+(i+1)),datasets:[{label:"Behaviour points",data:labels.map(k=>weeks[k]||0)}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+ charts.homeBehaviour=new Chart($("homeBehaviourChart"),{type:"bar",data:{labels:labels.map((_,i)=>"Week "+(i+1)),datasets:[{label:"Points",data:labels.map(k=>weeks[k]||0)}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}}}});
+ const totalPoints=behaviour.reduce((sum,r)=>sum+(Number(r.points)||points[String(r.grade||"").toUpperCase()]||0),0);
+ $("behaviourSummary").innerHTML=`
+  <div class="pill-row"><span class="pill">A: ${counts.A}</span><span class="pill">B: ${counts.B}</span><span class="pill">C: ${counts.C}</span><span class="pill">D: ${counts.D}</span><span class="pill">E: ${counts.E}</span></div>
+  <div style="margin-top:18px"><div class="muted">Total behaviour points</div><div class="grade">${totalPoints}</div></div>`;
+ $("behaviourTable").innerHTML=behaviour.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Grade</th><th>Points</th><th>Subject</th><th>Comment</th></tr></thead><tbody>${behaviour.map(r=>`<tr><td>${esc((r.created_at||r.recorded_at||"").slice(0,10)||"—")}</td><td><strong>${esc(r.grade||"—")}</strong></td><td>${Number(r.points)||points[String(r.grade||"").toUpperCase()]||0}</td><td>${esc(r.subject_name||r.subject||"—")}</td><td>${esc(r.comment||"—")}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty-state">No behaviour records have been entered for you yet.</div>';
+}
+
+async function loadAssessments(){
+ const {data,error}=await supabaseClient.from("assessments").select("*").eq("student_id",student.id).order("updated_at",{ascending:false});
+ if(error){notice("assessmentNotice","Could not load assessments: "+error.message,"err");return}
+ assessments=(data||[]).filter(r=>r.mark!==null&&r.mark!==undefined&&r.mark!=="");
+ const subjectIds=[...new Set(assessments.map(r=>r.subject_id).filter(Boolean))];
+ let subjects=[];
+ if(subjectIds.length){const r=await supabaseClient.from("subjects").select("id,name").in("id",subjectIds);if(!r.error)subjects=r.data||[]}
+ const sm=new Map(subjects.map(s=>[s.id,s.name]));
+ $("assessmentTable").innerHTML=assessments.length?`<div class="table-wrap"><table><thead><tr><th>Subject</th><th>Assessment</th><th>Percentage</th><th>Grade</th><th>Term</th></tr></thead><tbody>${assessments.map(r=>{const m=Number(r.mark);return `<tr><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||"Subject")}</strong></td><td>${m.toFixed(2)} / ${Number(r.max_mark||20)}</td><td>${(m/(Number(r.max_mark)||20)*100).toFixed(1)}%</td><td>${esc(gradeFromPercent(m/(Number(r.max_mark)||20)*100))}</td><td>${esc(r.term_name||r.term_id||"—")}</td></tr>`}).join("")}</tbody></table></div>`:'<div class="empty-state">No assessment marks have been recorded for you yet. Subjects appear here only after a teacher enters a mark.</div>';
+}
+function gradeFromPercent(p){
+ if(p>=80)return"A";if(p>=70)return"B";if(p>=60)return"C";if(p>=50)return"D";if(p>=40)return"E";return"F";
+}
+
+async function loadEndTerm(){
+ const {data,error}=await supabaseClient.from("end_term_results").select("*").eq("student_id",student.id).order("updated_at",{ascending:false});
+ if(error){notice("endtermNotice","Could not load end-of-term results: "+error.message,"err");return}
+ endResults=(data||[]).filter(r=>r.end_term_mark!==null&&r.end_term_mark!==undefined&&r.end_term_mark!=="");
+ const subjectIds=[...new Set(endResults.map(r=>r.subject_id).filter(Boolean))];
+ let subjects=[];if(subjectIds.length){const r=await supabaseClient.from("subjects").select("id,name").in("id",subjectIds);if(!r.error)subjects=r.data||[]}
+ const sm=new Map(subjects.map(s=>[s.id,s.name]));
+ $("endtermTable").innerHTML=endResults.length?`<div class="table-wrap"><table><thead><tr><th>Subject</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th><th>Grade</th><th>Term</th></tr></thead><tbody>${endResults.map(r=>{const a=Number(r.assessment_mark||0),e=Number(r.end_term_mark||0),f=Number(r.final_mark??(a+e));return `<tr><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||"Subject")}</strong></td><td>${a.toFixed(2)}</td><td>${e.toFixed(2)}</td><td class="final">${f.toFixed(2)} / 100</td><td><span class="grade">${esc(gradeFromPercent(f))}</span></td><td>${esc(r.term_name||r.term_id||"—")}</td></tr>`}).join("")}</tbody></table></div>`:'<div class="empty-state">No end-of-term results have been recorded for you yet.</div>';
+}
+
+async function loadReports(){
+ const {data,error}=await supabaseClient.from("reports").select("*").eq("reported_by",student.id).order("created_at",{ascending:false});
+ if(error){$("reportsTable").innerHTML='<div class="empty-state">Reports could not be loaded: '+esc(error.message)+'</div>';return}
+ $("reportsTable").innerHTML=(data||[]).length?`<div class="table-wrap"><table><thead><tr><th>Submitted</th><th>Type</th><th>Subject</th><th>Status</th><th>Message</th></tr></thead><tbody>${data.map(r=>`<tr><td>${esc((r.created_at||"").slice(0,10)||"—")}</td><td>${esc(r.report_type||"—")}</td><td>${esc(r.subject||"—")}</td><td>${esc(r.status||"Submitted")}</td><td>${esc(r.description||r.message||"—")}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty-state">You have not submitted any reports yet.</div>';
+}
+
+async function submitReport(){
+ const type=$("reportType").value,subjectText=$("reportSubject").value.trim(),description=$("reportDescription").value.trim();
+ if(!description)return notice("reportNotice","Please describe the issue before sending.","err");
+ const payload={reported_by:student.id,report_type:type,subject:subjectText||null,description};
+ const {error}=await supabaseClient.from("reports").insert(payload);
+ if(error)return notice("reportNotice","The report was not submitted: "+error.message,"err");
+ notice("reportNotice","Report submitted successfully to ACCESS UG. The school can now review it.","ok");
+ $("reportSubject").value="";$("reportDescription").value="";toast("Report submitted.");
+ await loadReports();
+}
+
+/* Navigation */
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+document.querySelectorAll(".quick-nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.quick)));
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $(id).classList.add("active");
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ const titles={home:"Student Dashboard",attendance:"Attendance",behaviour:"Behaviour",assessments:"Assessments",endterm:"End of Term",reports:"Report an Issue"};
+ $("pageTitle").textContent=titles[id]||"Student Dashboard";
+ $("sidebar").classList.remove("open");$("overlay").classList.remove("show");
+ if(id==="reports")loadReports();
+}
+$("menuBtn").onclick=()=>{$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show")};
+$("overlay").onclick=()=>{$("sidebar").classList.remove("open");$("overlay").classList.remove("show")};
+$("logoutBtn").onclick=async()=>{await supabaseClient.auth.signOut();location.replace("./index.html")};
+$("submitReport").onclick=submitReport;
+
+async function loadAll(){
+ /*
+  * Load every section independently.
+  * One database/table error must never keep the entire dashboard
+  * looking as if it is still loading.
+  */
+ const jobs = [
+  ["attendance", loadAttendance],
+  ["behaviour", loadBehaviour],
+  ["assessment", loadAssessments],
+  ["endterm", loadEndTerm],
+  ["reports", loadReports]
+ ];
+
+ await Promise.all(jobs.map(async ([name, fn])=>{
+   try{
+     await fn();
+   }catch(error){
+     console.error("ACCESS UG student section failed:", name, error);
+     const noticeId =
+       name==="assessment" ? "assessmentNotice" :
+       name==="endterm" ? "endtermNotice" :
+       name==="reports" ? "reportNotice" :
+       name+"Notice";
+
+     if($(noticeId)){
+       notice(
+         noticeId,
+         "This section could not be loaded: " +
+         (error?.message || String(error)),
+         "err"
+       );
+     }
+
+     const tableId =
+       name==="assessment" ? "assessmentTable" :
+       name==="endterm" ? "endtermTable" :
+       name==="reports" ? "reportsTable" :
+       name==="behaviour" ? "behaviourTable" : null;
+
+     if(tableId && $(tableId)){
+       $(tableId).innerHTML =
+         '<div class="empty-state">This section could not be loaded right now. Please refresh the dashboard or contact the school administrator.</div>';
+     }
+   }
+ }));
+
+ // Never leave a generic "Loading..." message behind.
+ [
+   "attendanceInterpret",
+   "behaviourSummary",
+   "behaviourTable",
+   "assessmentTable",
+   "endtermTable",
+   "reportsTable"
+ ].forEach(id=>{
+   const el=$(id);
+   if(el && /loading\.\.\./i.test(el.textContent||"")){
+     el.innerHTML='<div class="empty-state">No data is currently available.</div>';
+   }
+ });
+}
+init();
+</script>
+</body>
+</html>
