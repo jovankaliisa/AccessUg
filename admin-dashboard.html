@@ -1098,6 +1098,19 @@ tbody tr:hover{
 .profile-crop-modal{display:none;position:fixed;inset:0;z-index:10050;background:rgba(4,18,42,.72);backdrop-filter:blur(9px);align-items:center;justify-content:center;padding:16px}.profile-crop-modal.show{display:flex}.profile-crop-card{width:min(560px,100%);background:#fff;border-radius:24px;padding:20px;box-shadow:0 30px 100px rgba(0,0,0,.3)}.profile-crop-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.profile-crop-head h3{margin:0;color:#102a50;font-size:19px}.profile-crop-stage{width:min(420px,88vw);height:min(420px,88vw);margin:0 auto 16px;position:relative;border-radius:18px;overflow:hidden;background:#0d1d33;display:grid;place-items:center}.profile-crop-stage canvas{width:100%;height:100%;display:block;touch-action:none}.profile-crop-guide{position:absolute;inset:10%;border:2px solid rgba(255,255,255,.92);border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,.28);pointer-events:none}.profile-crop-controls{display:grid;gap:10px}.profile-crop-controls label{font-size:12px;font-weight:750;color:#405673}.profile-crop-controls input[type=range]{width:100%}.profile-crop-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}.profile-crop-actions button{border:0;border-radius:10px;padding:10px 14px;font-weight:750;cursor:pointer}.profile-crop-cancel{background:#edf3fa;color:#233b5d}.profile-crop-save{background:#1559b7;color:#fff}.profile-photo img,.profile-trigger .avatar img{object-fit:cover;object-position:center;display:block;width:100%;height:100%}
 
 </style>
+<style id="accessug-premium-overrides">
+:root{--navy:#071b3a;--navy2:#0b2d5c;--blue:#1769d2;--sky:#eaf2ff;--line:#d9e3f0;--text:#10233f;--muted:#64748b;--white:#fff;--green:#0f9f6e;--red:#d64545;--amber:#c47a00}
+body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(180deg,var(--navy),#0b2d5c)!important;color:#fff} .sidebar a,.sidebar button{color:#dbeafe!important}.sidebar .active{background:rgba(255,255,255,.13)!important;color:#fff!important;border-left:3px solid #60a5fa}.topbar,.card,.modal,.hero{background:#fff;border:1px solid var(--line);box-shadow:0 10px 30px rgba(7,27,58,.07)} .hero{border-left:4px solid var(--blue)} .btn{background:var(--blue)!important;color:#fff!important;border:none;border-radius:10px;box-shadow:0 5px 12px rgba(23,105,210,.18)} .btn.secondary{background:#e8f0fb!important;color:var(--navy)!important;box-shadow:none}.card-head,.toolbar{border-color:var(--line)} table{border-collapse:separate;border-spacing:0;width:100%;overflow:hidden;border:1px solid var(--line);border-radius:12px} th{background:#eef4fb!important;color:#183252!important;font-weight:700} td,th{padding:12px 14px;border-bottom:1px solid var(--line)} tr:last-child td{border-bottom:0} tr:hover td{background:#f8fbff}.notice{border-radius:10px}.badge,.status{border-radius:999px}.page{max-width:1500px;margin:auto}.grid,.stats{gap:18px}.field input,.field select,.field textarea{border:1px solid #cbd8e8;border-radius:9px;background:#fff}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,210,.12);outline:0}.mobile-only{display:none}@media(max-width:800px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.mobile-only{display:block}.page{padding:12px}.hero{padding:18px}.toolbar{display:grid;grid-template-columns:1fr;gap:10px}table{min-width:760px}.table-wrap{overflow-x:auto}.card{border-radius:14px}.stats,.grid{grid-template-columns:1fr!important}}
+</style>
+<style id="accessug-premium-consistency">
+:root{--navy:#061a38;--navy2:#0b3d82;--blue:#0b3d82;--blue2:#1457a6;--sky:#edf4fd;--line:#d9e3f0;--text:#13233a;--muted:#6d7b8e}
+.btn,.bulk-primary{background:linear-gradient(135deg,var(--navy),var(--navy2))!important;color:#fff!important;border:0!important;box-shadow:0 8px 18px rgba(6,26,56,.16)}
+.btn:hover,.bulk-primary:hover{background:linear-gradient(135deg,#081f47,#1457a6)!important}
+.btn.secondary{background:#edf4fd!important;color:var(--navy)!important;border:1px solid #d5e2f2!important;box-shadow:none}
+.hero,.welcome{background:linear-gradient(135deg,var(--navy),var(--navy2))!important;color:#fff!important;border:0!important;box-shadow:0 14px 32px rgba(6,26,56,.16)}
+.hero p,.welcome p{color:#dbe7fa!important}
+.report-groups{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.report-group{border:1px solid var(--line);background:#fff;border-radius:14px;padding:18px;text-align:left;color:var(--navy);display:grid;gap:5px;box-shadow:0 5px 16px rgba(6,26,56,.05)}.report-group.active,.report-group:hover{background:#edf4fd;border-color:#bcd0ea}.report-group strong{font-size:26px}.report-group span{color:var(--muted);font-size:12px;font-weight:700}.bulk-admin-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.bulk-admin-drop{border:2px dashed #b8cae1;border-radius:16px;padding:36px 20px;text-align:center;background:#f7faff}.bulk-upload-icon{font-size:42px;color:var(--navy2);font-weight:900}.bulk-admin-drop h4{margin:8px 0 5px;font-size:18px;color:var(--navy)}.bulk-admin-drop p{color:var(--muted);margin-bottom:16px}.bulk-admin-drop label{display:inline-block}.bulk-admin-drop #adminBulkFileName{margin-top:12px}.bulk-admin-hint{margin-top:14px;padding:13px 15px;border-radius:12px;background:#edf4fd;color:#35506f;font-size:12px;line-height:1.6}.bulk-admin-status{border:1px solid var(--line);border-radius:16px;padding:20px;background:#fff}.bulk-admin-status h4,.bulk-admin-preview h4{margin:0;color:var(--navy)}.bulk-progress-head{display:flex;justify-content:space-between;margin:18px 0 8px;color:var(--navy)}.bulk-progress-track{height:10px;background:#e7edf5;border-radius:99px;overflow:hidden}.bulk-progress-track>div{height:100%;width:0;background:linear-gradient(90deg,var(--navy),#2d7ff9);transition:width .25s}.bulk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}.bulk-kpis span{padding:10px;background:#f7f9fc;border:1px solid var(--line);border-radius:10px;font-size:11px;color:var(--muted)}.bulk-kpis b{display:block;color:var(--navy);font-size:17px;margin-top:3px}.bulk-admin-preview{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}.bulk-admin-preview>.title{margin-bottom:12px}.bulk-notice{display:none;padding:12px 14px;border-radius:10px;margin-bottom:14px}.bulk-notice.show{display:block}.bulk-notice.err{background:#fdebea;color:#9d2e29}.bulk-notice.ok{background:#e7f7f0;color:#116d50}@media(max-width:800px){.report-groups{grid-template-columns:1fr 1fr}.bulk-admin-grid{grid-template-columns:1fr}.bulk-kpis{grid-template-columns:1fr 1fr}.report-table-wrap{overflow-x:auto}}@media(max-width:520px){.report-groups{grid-template-columns:1fr}.bulk-kpis{grid-template-columns:1fr}}
+</style>
 </head>
 
 <body>
@@ -1173,6 +1186,10 @@ tbody tr:hover{
 
             Students
 
+        </button>
+        <button data-page="bulk-students">
+            <span class="nav-icon">⇧</span>
+            Bulk Students
         </button>
 
 
@@ -1748,6 +1765,28 @@ tbody tr:hover{
 </div>
 
 <!-- =========================
+     ADMIN BULK STUDENTS
+========================= -->
+<div class="page" id="bulk-students">
+  <div class="pagecard">
+    <div class="title"><div><h3>Bulk Student Registration</h3><p class="muted">Upload Excel or CSV, validate the complete file, preview it, then register students in one controlled import.</p></div></div>
+    <div id="adminBulkNotice" class="bulk-notice"></div>
+    <div class="bulk-admin-grid">
+      <div class="bulk-admin-upload">
+        <div class="bulk-admin-drop" id="adminBulkDrop">
+          <div class="bulk-upload-icon">⇧</div><h4>Upload student spreadsheet</h4><p>Excel .xlsx / .xls or CSV · up to 200 students</p>
+          <label class="btn bulk-primary" for="adminBulkFile">Choose Excel / CSV</label><input id="adminBulkFile" type="file" accept=".csv,.xlsx,.xls" hidden>
+          <div id="adminBulkFileName" class="muted"></div>
+        </div>
+        <div class="bulk-admin-hint"><strong>Required:</strong> first_name, last_name, email, student_password, school_code, class_level, stream, academic_year. Student numbers are generated automatically.</div>
+      </div>
+      <div class="bulk-admin-status"><h4>Import status</h4><div id="adminBulkSummary" class="empty">Choose a file to begin.</div><div id="adminBulkProgress" style="display:none"><div class="bulk-progress-head"><strong id="adminBulkProgressTitle">Registering…</strong><strong id="adminBulkPercent">0%</strong></div><div class="bulk-progress-track"><div id="adminBulkBar"></div></div><div class="bulk-kpis"><span>Found <b id="adminBulkFound">0</b></span><span>Registered <b id="adminBulkRegistered">0</b></span><span>Errors <b id="adminBulkErrors">0</b></span></div><div id="adminBulkLive"></div></div></div>
+    </div>
+    <div class="bulk-admin-preview"><div class="title"><div><h4>Spreadsheet preview</h4><p class="muted">Validation happens before account creation.</p></div><button class="btn secondary" type="button" id="adminBulkClear">Clear</button></div><div id="adminBulkPreview" class="table-wrap"><div class="empty">Nothing to preview yet.</div></div><div class="actions"><button class="btn" id="adminBulkStart" type="button" disabled>Register Students</button></div></div>
+  </div>
+</div>
+
+<!-- =========================
      TEACHERS
 ========================= -->
 
@@ -1803,97 +1842,18 @@ tbody tr:hover{
 ========================= -->
 
 <div class="page" id="reports">
-
-    <div class="pagecard">
-
-        <div class="title">
-
-            <h3>
-                Reports
-            </h3>
-
-            <button class="btn">
-                Generate Report
-            </button>
-
-        </div>
-
-
-        <div class="cards">
-
-
-            <div class="card">
-
-                <div class="stat-icon">
-
-                    <svg viewBox="0 0 24 24">
-                        <path d="M3 21h18"></path>
-                        <path d="M5 21V9l7-5 7 5v12"></path>
-                        <path d="M9 21v-6h6v6"></path>
-                    </svg>
-
-                </div>
-
-                <h3>
-                    School Report
-                </h3>
-
-                <p class="muted">
-                    View registered schools.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="stat-icon">
-
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="8" r="4"></circle>
-                        <path d="M4 21c0-4.2 3.6-7 8-7s8 2.8 8 7"></path>
-                    </svg>
-
-                </div>
-
-                <h3>
-                    Student Report
-                </h3>
-
-                <p class="muted">
-                    View student statistics.
-                </p>
-
-            </div>
-
-
-            <div class="card">
-
-                <div class="stat-icon">
-
-                    <svg viewBox="0 0 24 24">
-                        <circle cx="12" cy="7" r="4"></circle>
-                        <path d="M5 21c.6-4 3.2-6 7-6s6.4 2 7 6"></path>
-                    </svg>
-
-                </div>
-
-                <h3>
-                    Teacher Report
-                </h3>
-
-                <p class="muted">
-                    View teacher statistics.
-                </p>
-
-            </div>
-
-        </div>
-
+  <div class="pagecard">
+    <div class="title"><div><h3>Reports & Intelligence</h3><p class="muted">Every report submitted by schools, teachers and students, grouped for fast review.</p></div><button class="btn" type="button" onclick="loadAdminReports()">Refresh Reports</button></div>
+    <div class="report-groups">
+      <button class="report-group active" data-report-filter="all"><strong id="allReportCount">0</strong><span>All reports</span></button>
+      <button class="report-group" data-report-filter="school"><strong id="schoolReportCount">0</strong><span>From schools</span></button>
+      <button class="report-group" data-report-filter="teacher"><strong id="teacherReportCount">0</strong><span>From teachers</span></button>
+      <button class="report-group" data-report-filter="student"><strong id="studentReportCount">0</strong><span>From students</span></button>
     </div>
-
+    <div class="table-wrap report-table-wrap"><table class="data-table"><thead><tr><th>Date</th><th>Source</th><th>School</th><th>Subject</th><th>Priority</th><th>Status</th><th>Action</th></tr></thead><tbody id="adminReportsTable"></tbody></table></div>
+    <div class="empty" id="adminReportsEmpty">No reports found.</div>
+  </div>
 </div>
-
 
 <!-- =========================
      SETTINGS
@@ -2423,6 +2383,7 @@ tbody tr:hover{
      does not redirect based on getSession(), preventing a login loop while
      the project is being tested from local HTML files. -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <script>
 const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
@@ -3032,6 +2993,27 @@ async function loadTeachers(){
     document.getElementById("teacherCount").textContent = data?.length || 0;
 }
 
+
+let adminReportsCache=[]; let adminReportFilter='all';
+async function loadAdminReports(){
+ const table=document.getElementById('adminReportsTable'); if(!table)return; table.innerHTML='<tr><td colspan="7">Loading reports…</td></tr>';
+ const {data,error}=await supabaseClient.from('reports').select('id,school_id,reported_by,student_id,teacher_id,report_type,subject,description,priority,status,created_at').order('created_at',{ascending:false}).limit(500);
+ if(error){table.innerHTML='<tr><td colspan="7">Could not load reports.</td></tr>';return;}
+ const schoolIds=[...new Set((data||[]).map(r=>r.school_id).filter(Boolean))];
+ let schoolMap={}; if(schoolIds.length){const sr=await supabaseClient.from('schools').select('id,name,code').in('id',schoolIds);(sr.data||[]).forEach(x=>schoolMap[x.id]=x.name||x.code||x.id)}
+ adminReportsCache=(data||[]).map(r=>({...r,school_name:schoolMap[r.school_id]||r.school_id||'—'})); renderAdminReports();
+}
+function renderAdminReports(){
+ const table=document.getElementById('adminReportsTable'), empty=document.getElementById('adminReportsEmpty'); if(!table)return;
+ const counts={all:adminReportsCache.length,school:0,teacher:0,student:0};
+ adminReportsCache.forEach(r=>{const k=r.student_id?'student':r.teacher_id?'teacher':'school';counts[k]++});
+ ['all','school','teacher','student'].forEach(k=>{const el=document.getElementById(k==='all'?'allReportCount':k+'ReportCount');if(el)el.textContent=counts[k]});
+ const rows=adminReportFilter==='all'?adminReportsCache:adminReportsCache.filter(r=>(r.student_id?'student':r.teacher_id?'teacher':'school')===adminReportFilter);
+ table.innerHTML=rows.map(r=>{const source=r.student_id?'Student':r.teacher_id?'Teacher':'School';return `<tr><td>${r.created_at?new Date(r.created_at).toLocaleString():'—'}</td><td><span class="status">${safe(source)}</span></td><td>${safe(r.school_name||r.school_id||'—')}</td><td><strong>${safe(r.subject||r.report_type||'Report')}</strong><div class="muted">${safe((r.description||'').slice(0,100))}</div></td><td>${safe(r.priority||'normal')}</td><td>${safe(r.status||'open')}</td><td><button class="small-btn" onclick="openAdminReport('${safe(r.id)}')">View</button></td></tr>`}).join(''); empty.style.display=rows.length?'none':'block';
+}
+function openAdminReport(id){const r=adminReportsCache.find(x=>String(x.id)===String(id));if(!r)return;openModal('Report Details',`<div class="preview"><h4>${safe(r.subject||r.report_type||'Report')}</h4><div class="profile-grid"><div class="profile-item"><small>Source</small><strong>${safe(r.student_id?'Student':r.teacher_id?'Teacher':'School')}</strong></div><div class="profile-item"><small>School</small><strong>${safe(r.school_name||'—')}</strong></div><div class="profile-item"><small>Priority</small><strong>${safe(r.priority||'normal')}</strong></div><div class="profile-item"><small>Status</small><strong>${safe(r.status||'open')}</strong></div></div><div style="margin-top:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#f7faff;white-space:pre-wrap">${safe(r.description||'No description')}</div></div>`)}
+document.querySelectorAll('[data-report-filter]').forEach(b=>b.addEventListener('click',()=>{adminReportFilter=b.dataset.reportFilter;document.querySelectorAll('[data-report-filter]').forEach(x=>x.classList.toggle('active',x===b));renderAdminReports()}));
+
 async function loadAllCounts(){
     /* Never make one large serial chain. Each dashboard dataset loads independently. */
     await Promise.allSettled([
@@ -3042,7 +3024,8 @@ async function loadAllCounts(){
     ]);
 
     const reportCount = document.getElementById("reportCount");
-    if(reportCount) reportCount.textContent = "3";
+    if(reportCount) reportCount.textContent = adminReportsCache.length;
+    void loadAdminReports();
 }
 
 /* =========================
@@ -3749,20 +3732,41 @@ document.getElementById("studentForm").addEventListener("submit", async function
             status: "Active"
         };
 
-        const { error } = await supabaseClient
-            .from("students")
-            .insert(student);
+        const parentPassword = document.getElementById("studentParentPassword")?.value || "";
+        const studentPassword = document.getElementById("studentPassword")?.value || "";
 
-        if(error){
-            if(error.code === "23505"){
-                throw new Error("A student with this email or student number is already registered.");
+        const { data: authResult, error: authError } = await supabaseClient.functions.invoke("admin-register-user", {
+            body: {
+                type: "student",
+                school_id: schoolId,
+                first_name: student.first_name,
+                last_name: student.last_name,
+                gender: student.gender,
+                date_of_birth: student.date_of_birth,
+                student_number: student.student_number,
+                class_id: classId,
+                class_level: student.class_level,
+                email: studentEmail,
+                password: studentPassword,
+                parent_name: student.parent_name,
+                parent_email: student.parent_email,
+                parent_password: parentPassword,
+                parent_phone: student.parent_phone,
+                address: student.address,
+                status: "Active"
             }
-            throw new Error(error.message);
+        });
+
+        if(authError){
+            throw new Error(authError.message);
+        }
+        if(authResult?.error){
+            throw new Error(authResult.error);
         }
 
         showMessage(
             "studentMessage",
-            `✓ ${student.first_name} ${student.last_name} saved successfully, assigned to ${classLabel(cls)}, and ready for a Supabase Auth account using ${studentEmail}.`,
+            `✓ ${student.first_name} ${student.last_name} saved successfully. Student and parent accounts have been created and the student was assigned to ${classLabel(cls)}.`,
             "ok"
         );
 
@@ -4006,6 +4010,13 @@ document.getElementById("logout").addEventListener("click", async function(){
   // Initialize the visible avatar immediately; profile loading never blocks the dashboard.
   void refreshProfile();
 })();
+</script>
+
+
+
+
+<script>
+(function(){const $=id=>document.getElementById(id);let rows=[],valid=false;const req=['first_name','last_name','email','student_password','school_code','class_level','stream','academic_year'];const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function note(t,c){const n=$('adminBulkNotice');if(n){n.textContent=t;n.className='bulk-notice show '+(c||'')}}function norm(r){const o={};Object.keys(r||{}).forEach(k=>o[String(k).trim().toLowerCase()]=r[k]);return o}async function parse(f){if(f.name.toLowerCase().endsWith('.csv')){const text=await f.text();return csv(text)}const b=await f.arrayBuffer();const wb=XLSX.read(b,{type:'array'});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}function csv(t){const lines=t.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)return[];const parseLine=l=>{let a=[],v='',q=false;for(let i=0;i<l.length;i++){const c=l[i];if(c==='"'&&l[i+1]==='"'){v+='"';i++;}else if(c==='"')q=!q;else if(c===','&&!q){a.push(v.trim());v='';}else v+=c}a.push(v.trim());return a};const h=parseLine(lines[0]).map(x=>x.toLowerCase());return lines.slice(1).map(l=>{const a=parseLine(l),o={};h.forEach((k,i)=>o[k]=a[i]||'');return o})}function render(){const box=$('adminBulkPreview');if(!box)return;const cols=Object.keys(rows[0]||{});box.innerHTML=rows.length?`<table class="data-table"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(0,30).map(r=>`<tr>${cols.map(c=>`<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'<div class="empty">No rows found.</div>'}function validate(){const issues=[];if(!rows.length)issues.push('No student rows found.');const keys=Object.keys(rows[0]||{}).map(k=>k.toLowerCase());req.forEach(k=>{if(!keys.includes(k))issues.push('Missing required column: '+k)});rows.forEach((raw,i)=>{const r=norm(raw),row=i+2;if(!r.first_name||!r.last_name)issues.push(`Row ${row}: first and last name are required.`);if(!r.email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(r.email)))issues.push(`Row ${row}: valid email required.`);if(String(r.student_password||'').length<6)issues.push(`Row ${row}: student password must be at least 6 characters.`);if(!r.school_code||!r.class_level||!r.stream||!r.academic_year)issues.push(`Row ${row}: school, class, stream and academic year are required.`)});valid=issues.length===0;const sum=$('adminBulkSummary');if(sum)sum.innerHTML=valid?`<div class="bulk-notice show ok"><strong>File passed validation.</strong><br>${rows.length} students are ready to register.</div>`:`<div class="bulk-notice show err"><strong>Registration stopped.</strong><br>${issues.slice(0,30).map(esc).join('<br>')}</div>`;$('adminBulkStart').disabled=!valid;note(valid?'All rows passed validation.':'Fix the spreadsheet errors before registration.',valid?'ok':'err')}async function choose(f){if(!f)return;try{if(!['csv','xlsx','xls'].includes(f.name.split('.').pop().toLowerCase()))throw Error('Choose a CSV or Excel file.');rows=(await parse(f)).map(norm);$('adminBulkFileName').textContent='Selected: '+f.name;render();validate()}catch(e){note(e.message||'Could not read file.','err')}}$('adminBulkFile')?.addEventListener('change',e=>choose(e.target.files?.[0]));$('adminBulkClear')?.addEventListener('click',()=>{rows=[];valid=false;$('adminBulkFile').value='';$('adminBulkFileName').textContent='';$('adminBulkPreview').innerHTML='<div class="empty">Nothing to preview yet.</div>';$('adminBulkSummary').innerHTML='<div class="empty">Choose a file to begin.</div>';note('','');$('adminBulkNotice').className='bulk-notice';$('adminBulkStart').disabled=true});$('adminBulkStart')?.addEventListener('click',async()=>{if(!valid)return;const prog=$('adminBulkProgress');prog.style.display='block';$('adminBulkFound').textContent=rows.length;$('adminBulkRegistered').textContent='0';$('adminBulkErrors').textContent='0';let ok=0,err=0;for(let i=0;i<rows.length;i++){try{const {data,error}=await supabaseClient.functions.invoke('admin-bulk-register-students',{body:{rows:[rows[i]]}});if(error||!data?.ok)throw Error(error?.message||data?.error||'Registration failed');ok++}catch(e){err++;$('adminBulkLive').insertAdjacentHTML('beforeend',`<div class="bulk-notice show err" style="margin-top:7px">Row ${i+2}: ${esc(e.message)}</div>`)}const pct=Math.round((i+1)/rows.length*100);$('adminBulkBar').style.width=pct+'%';$('adminBulkPercent').textContent=pct+'%';$('adminBulkRegistered').textContent=ok;$('adminBulkErrors').textContent=err;await new Promise(requestAnimationFrame)}$('adminBulkProgressTitle').textContent=err?'Registration finished with errors':'Registration complete';note(err?`${ok} registered; ${err} failed.`:`All ${ok} students registered successfully.`,err?'err':'ok');if(typeof loadStudents==='function')loadStudents()})})();
 </script>
 </body>
 </html>
