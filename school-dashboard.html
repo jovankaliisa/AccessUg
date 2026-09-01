@@ -68,6 +68,9 @@ const nameOf=x=>[x?.first_name,x?.last_name].filter(Boolean).join(' ').trim()||x
 const clsName=x=>x?.name||[x?.level,x?.stream].filter(Boolean).join(' ')||x?.class_level||'—';
 const today=()=>new Date().toISOString().slice(0,10);const toast=m=>{const e=$("toast");e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),3000)};
 function notice(id,msg,type='info'){const e=$(id);if(e){e.textContent=msg;e.className='notice show '+type}}
+// Modal message helpers: these must exist before Add Student/Teacher can be opened.
+function clearMessage(id){const e=$(id);if(e){e.textContent='';e.className='db-message';e.style.display='none';}}
+function showMessage(id,msg,type='info'){const e=$(id);if(!e)return;e.textContent=msg;e.className='db-message '+type;e.style.display='block';}
 function initials(n){return String(n||'School').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'S'}
 function safeError(e){return e?.message||String(e||'Unknown error')}
 function openModal(title,html){$('modalTitle').textContent=title;$('modalBody').innerHTML=html;$('modal').classList.add('show')}
@@ -137,19 +140,124 @@ function renderTeacherAssignments(){
 }
 function getTeacherAssignmentsFromForm(){const result=[];teacherAssignmentRows().forEach(row=>{const cc=row.querySelector('.teacher-class-check');if(!cc?.checked)return;const ids=[...row.querySelectorAll('.teacher-subject-check:checked')].map(x=>x.value);if(!ids.length)throw new Error('Select at least one subject for '+(row.querySelector('.assignment-class-check span')?.textContent||'the selected class')+'.');result.push({classId:cc.value,subjectIds:ids});});if(!result.length)throw new Error('Select at least one class and at least one subject for that class.');return result;}
 function schoolFormSelect(){const s=document.getElementById('teacherSchool'),st=document.getElementById('studentSchool');[s,st].forEach(el=>{if(el){el.innerHTML=`<option value="${schoolId}">${(school?.name||'Your school')}</option>`;el.value=schoolId;}})}
-function openTeacherModal(){clearMessage('teacherMessage');document.getElementById('teacherForm').reset();schoolFormSelect();document.getElementById('teacherSchool').value=schoolId;document.getElementById('teacherSchool').disabled=true;document.getElementById('teacherAssignments').innerHTML='';document.getElementById('teacherAssignmentLoading').textContent='Loading your classes and subjects…';document.getElementById('teacherAssignmentLoading').style.display='block';document.getElementById('teacherAssignmentYear').textContent='';document.getElementById('teacherModal').classList.add('show');loadTeacherAssignmentOptions(schoolId);}
-function closeTeacherModal(){document.getElementById('teacherModal').classList.remove('show');clearMessage('teacherMessage');}
-function openStudentModal(){clearMessage('studentMessage');document.getElementById('studentForm').reset();schoolFormSelect();document.getElementById('studentSchool').value=schoolId;document.getElementById('studentSchool').disabled=true;const cls=document.getElementById('studentClass');cls.disabled=true;cls.innerHTML='<option value="">Loading classes…</option>';document.getElementById('studentModal').classList.add('show');loadSchoolStudentClasses();}
-function closeStudentModal(){document.getElementById('studentModal').classList.remove('show');clearMessage('studentMessage');}
+function openTeacherModal(){
+  const modal=$('teacherModal'),form=$('teacherForm');
+  if(!modal||!form){notice('teacherNotice','The teacher registration form could not be loaded. Please refresh this page.','err');return;}
+  try{clearMessage('teacherMessage');form.reset();schoolFormSelect();const schoolEl=$('teacherSchool');if(schoolEl){schoolEl.value=schoolId||'';schoolEl.disabled=true;}const a=$('teacherAssignments');if(a)a.innerHTML='';const st=$('teacherAssignmentLoading');if(st){st.textContent=schoolId?'Loading your classes and subjects…':'School information is still being resolved…';st.style.display='block';}const yr=$('teacherAssignmentYear');if(yr)yr.textContent='';modal.classList.add('show');document.body.classList.add('modal-open');if(schoolId)void loadTeacherAssignmentOptions(schoolId);else showMessage('teacherMessage','Your school could not be identified yet. Please refresh the dashboard and try again.','error');}
+  catch(e){console.error('openTeacherModal failed',e);modal.classList.add('show');showMessage('teacherMessage','The registration form could not be opened: '+safeError(e),'error');}
+}
+function closeTeacherModal(){const m=$('teacherModal');if(m)m.classList.remove('show');document.body.classList.remove('modal-open');clearMessage('teacherMessage');}
+function openStudentModal(){
+  const modal=$('studentModal'),form=$('studentForm');
+  if(!modal||!form){notice('studentNotice','The student registration form could not be loaded. Please refresh this page.','err');return;}
+  try{clearMessage('studentMessage');form.reset();schoolFormSelect();const schoolEl=$('studentSchool');if(schoolEl){schoolEl.value=schoolId||'';schoolEl.disabled=true;}const cls=$('studentClass');if(cls){cls.disabled=true;cls.innerHTML='<option value="">Loading classes…</option>';}modal.classList.add('show');document.body.classList.add('modal-open');if(schoolId)void loadSchoolStudentClasses();else showMessage('studentMessage','Your school could not be identified yet. Please refresh the dashboard and try again.','error');}
+  catch(e){console.error('openStudentModal failed',e);modal.classList.add('show');showMessage('studentMessage','The registration form could not be opened: '+safeError(e),'error');}
+}
+function closeStudentModal(){const m=$('studentModal');if(m)m.classList.remove('show');document.body.classList.remove('modal-open');clearMessage('studentMessage');}
 async function loadSchoolStudentClasses(){const cls=document.getElementById('studentClass');try{const r=await supabaseClient.from('classes').select('id,name,level,stream,academic_year,status').eq('school_id',schoolId).order('academic_year',{ascending:false}).order('level').order('stream');if(r.error)throw r.error;cls.innerHTML='<option value="">Select a class / stream</option>'+(r.data||[]).filter(x=>!x.status||String(x.status).toLowerCase()==='active').map(x=>`<option value="${x.id}">${String(x.name||([x.level,x.stream].filter(Boolean).join(' '))) }${x.academic_year?' — '+x.academic_year:''}</option>`).join('');cls.disabled=false;}catch(e){cls.innerHTML='<option value="">Unable to load classes</option>';notify('Could not load classes: '+e.message,'err');}}
 
-document.getElementById('teacherForm').addEventListener('submit',async function(e){e.preventDefault();clearMessage('teacherMessage');const btn=document.getElementById('saveTeacherBtn');btn.disabled=true;btn.textContent='Creating teacher account…';try{const plan=getTeacherAssignmentsFromForm();const email=document.getElementById('teacherEmail').value.trim().toLowerCase(),password=document.getElementById('teacherPassword').value;if(password.length<6)throw new Error('Teacher password must be at least 6 characters.');const subjectNames=[...new Set(plan.flatMap(p=>p.subjectIds.map(id=>subjectDisplayName(teacherAvailableSubjects.find(s=>String(s.id)===String(id))))))];const body={type:'teacher',school_id:schoolId,first_name:document.getElementById('teacherFirstName').value.trim(),last_name:document.getElementById('teacherLastName').value.trim(),gender:document.getElementById('teacherGender').value||null,date_of_birth:document.getElementById('teacherDob').value||null,phone:document.getElementById('teacherPhone').value.trim()||null,email,password,employee_number:document.getElementById('teacherEmployeeNumber').value.trim()||null,subject:subjectNames.join(', '),address:document.getElementById('teacherAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);const teacherId=r.data?.record?.id;if(!teacherId)throw new Error('Teacher account was created but no teacher record ID was returned.');const rows=plan.flatMap(p=>p.subjectIds.map(subjectId=>{const c=teacherAvailableClasses.find(x=>String(x.id)===String(p.classId));return {teacher_id:teacherId,class_id:p.classId,subject_id:subjectId,academic_year:c?.academic_year||new Date().getFullYear(),status:'active'}}));const ar=await supabaseClient.from('teacher_class_assignments').insert(rows);if(ar.error){throw new Error('Teacher was created, but assignments could not be saved: '+ar.error.message)}showMessage('teacherMessage',`✓ ${body.first_name} ${body.last_name} registered successfully with ${rows.length} class/subject assignment${rows.length===1?'':'s'}.`,'ok');await Promise.all([loadTeachers(),loadNotifications()]);renderTeachers();renderInbox();setTimeout(closeTeacherModal,900);}catch(err){showMessage('teacherMessage','Could not save teacher: '+(err.message||err),'error');}finally{btn.disabled=false;btn.textContent='Save Teacher & Assignments';}});
 
-document.getElementById('studentForm').addEventListener('submit',async function(e){e.preventDefault();clearMessage('studentMessage');const btn=document.getElementById('saveStudentBtn');btn.disabled=true;btn.textContent='Creating student account…';try{const email=document.getElementById('studentEmail').value.trim().toLowerCase(),password=document.getElementById('studentPassword').value,classId=document.getElementById('studentClass').value;if(!classId)throw new Error('Select a class / stream.');if(password.length<6)throw new Error('Student password must be at least 6 characters.');const c=(await supabaseClient.from('classes').select('id,name,level,stream,academic_year').eq('id',classId).eq('school_id',schoolId).maybeSingle());if(c.error)throw c.error;if(!c.data)throw new Error('Selected class does not belong to this school.');const body={type:'student',school_id:schoolId,first_name:document.getElementById('studentFirstName').value.trim(),last_name:document.getElementById('studentLastName').value.trim(),gender:document.getElementById('studentGender').value||null,date_of_birth:document.getElementById('studentDob').value||null,student_number:null,class_id:classId,class_level:classDisplayName(c.data),email,password,parent_name:document.getElementById('studentParentName').value.trim()||null,parent_phone:document.getElementById('studentParentPhone').value.trim()||null,parent_email:document.getElementById('studentParentEmail').value.trim().toLowerCase()||null,address:document.getElementById('studentAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);showMessage('studentMessage',`✓ ${body.first_name} ${body.last_name} registered successfully and assigned to ${classDisplayName(c.data)}.`,'ok');await Promise.all([loadStudents(),loadNotifications()]);renderStudents();renderInbox();setTimeout(closeStudentModal,900);}catch(err){showMessage('studentMessage','Could not save student: '+(err.message||err),'error');}finally{btn.disabled=false;btn.textContent='Save Student';}});
+async function withTimeout(promise, ms=5000, label='Request'){
+  return await Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error(label+' timed out.')),ms))
+  ]);
+}
+function renderSchoolShell(){
+  const nm=school?.name||school?.school_name||localStorage.getItem('accessug_school_name')||'Your School';
+  $('welcome').textContent='Welcome, '+nm;
+  $('schoolSub').textContent=(school?.district?school.district+' · ':'')+'School management overview';
+  $('topEmail').textContent=session?.user?.email||'';
+  $('topAvatar').textContent=initials(nm);
+}
+async function initialLoad(){
+  // HARD RULE: the school dashboard must never wait for a school-table request before rendering.
+  // Login already stores accessug_school_id. If it is missing, resolve it through the
+  // SECURITY DEFINER helper instead of blocking on an RLS-protected schools query.
+  const bootStarted=Date.now();
+  let rendered=false;
+  const showReady=()=>{
+    if(rendered)return;
+    rendered=true;
+    $('topEmail').textContent=session?.user?.email||localStorage.getItem('accessug_login_email')||'School account';
+    const savedName=sessionStorage.getItem('accessug_school_name')||localStorage.getItem('accessug_school_name');
+    if(savedName){$('welcome').textContent='Welcome, '+savedName;$('schoolSub').textContent='School management overview'}
+  };
+  try{
+    // Recover the school id immediately from the login hand-off.
+    const meta=(window.__accessugAuthUser?.user_metadata)||{};
+    const storedId=sessionStorage.getItem('accessug_school_id')||localStorage.getItem('accessug_school_id');
+    const storedName=sessionStorage.getItem('accessug_school_name')||localStorage.getItem('accessug_school_name');
+    if(storedId){schoolId=storedId;school={id:storedId,name:storedName||'Your School'};renderSchoolShell();showReady();}
 
-document.getElementById('teacherModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeTeacherModal()});document.getElementById('studentModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeStudentModal()});
-async function initialLoad(){try{const r=await supabaseClient.auth.getSession();if(r.error)throw r.error;session=r.data.session;if(!session?.user){location.replace('./index.html');return}const email=(session.user.email||'').trim().toLowerCase();const sr=await supabaseClient.from('schools').select('*').ilike('email',email).maybeSingle();if(sr.error)throw new Error('School verification failed: '+sr.error.message);if(!sr.data)throw new Error('This authenticated email is not registered as a school.');schoolId=sr.data.id;await loadSchool();const results=await Promise.allSettled([loadTeachers(),loadStudents(),loadClasses(),loadTeacherAttendance(),loadStudentAttendance(),loadBehaviour(),loadReports(),loadNotifications()]);const failed=results.filter(x=>x.status==='rejected');if(failed.length)notice('dashNotice','Some optional data could not be loaded. The dashboard remains available; open the relevant section for details.','info');loadDashboardCharts();renderTeachers();renderStudents();renderTeacherAttendance();renderStudentAttendance();renderBehaviour();renderReports();renderInbox()}catch(e){console.error(e);notice('dashNotice',safeError(e),'err')}}
-$('refreshTeachers').onclick=async()=>{await loadTeachers();renderTeachers()};$('refreshStudents').onclick=async()=>{await loadStudents();renderStudents()};$('refreshTeacherAttendance').onclick=async()=>{await loadTeacherAttendance();renderTeacherAttendance();loadDashboardCharts()};$('refreshStudentAttendance').onclick=async()=>{await loadStudentAttendance();renderStudentAttendance();loadDashboardCharts()};$('refreshBehaviour').onclick=async()=>{await loadBehaviour();renderBehaviour();loadDashboardCharts()};$('refreshReports').onclick=async()=>{await loadReports();renderReports()};$('markAllRead').onclick=markAll;$('addTeacherBtn').onclick=addTeacher;$('addStudentBtn').onclick=addStudent;$('teacherSearch').oninput=renderTeachers;$('studentSearch').oninput=renderStudents;$('studentClassFilter').onchange=renderStudents;$('behSearch').oninput=renderBehaviour;$('logoutBtn').onclick=async()=>{await supabaseClient.auth.signOut();location.replace('./index.html')};supabaseClient.auth.onAuthStateChange((e)=>{if(e==='SIGNED_OUT')location.replace('./index.html')});
+    // Auth is checked with a hard timeout, but it can never keep the UI in a loading state.
+    const auth=await withTimeout(supabaseClient.auth.getSession(),5000,'Authentication check');
+    if(auth.error)throw auth.error;
+    session=auth.data.session;
+    if(!session?.user){location.replace('./index.html');return;}
+    window.__accessugAuthUser=session.user;
+    $('topEmail').textContent=session.user.email||$('topEmail').textContent;
+
+    // Metadata is authoritative when present; otherwise retain the id saved at login.
+    const userMeta=session.user.user_metadata||{};
+    schoolId=userMeta.school_id||schoolId||storedId||null;
+    if(schoolId){
+      try{sessionStorage.setItem('accessug_school_id',String(schoolId));localStorage.setItem('accessug_school_id',String(schoolId));}catch(_){ }
+    }
+    if(!schoolId){
+      // This helper is SECURITY DEFINER and is specifically designed for school-account resolution.
+      const rr=await withTimeout(supabaseClient.rpc('school_find_by_user',{p_user_id:session.user.id}),5000,'School account resolution');
+      if(rr.error)throw rr.error;
+      schoolId=rr.data||null;
+    }
+    if(!schoolId)throw new Error('This school account is not linked to a school. Please sign in again from the main ACCESS UG login page.');
+
+    // Render the shell NOW. Fetching schools is hydration, not authentication.
+    renderSchoolShell();showReady();
+    try{sessionStorage.setItem('accessug_school_id',String(schoolId));localStorage.setItem('accessug_school_id',String(schoolId));}catch(_){ }
+
+    // Load school details separately. A failed/RLS-blocked schools read must NOT block anything else.
+    void withTimeout(supabaseClient.from('schools').select('*').eq('id',schoolId).maybeSingle(),5000,'School details')
+      .then(r=>{if(!r.error&&r.data){school=r.data;renderSchoolShell();try{localStorage.setItem('accessug_school_name',school.name||'');sessionStorage.setItem('accessug_school_name',school.name||'')}catch(_){}}})
+      .catch(e=>{console.warn('School details hydration failed:',e);notice('dashNotice','School details could not be refreshed. Your dashboard is still available.','info')});
+
+    const jobs=[
+      ['teachers',loadTeachers],['students',loadStudents],['classes',loadClasses],
+      ['teacher attendance',loadTeacherAttendance],['student attendance',loadStudentAttendance],
+      ['behaviour',loadBehaviour],['reports',loadReports],['notifications',loadNotifications]
+    ];
+    await Promise.all(jobs.map(async ([label,fn])=>{
+      try{await withTimeout(fn(),7000,label);}catch(e){console.warn(label+' load failed:',e);}
+    }));
+    loadDashboardCharts();renderTeachers();renderStudents();renderTeacherAttendance();renderStudentAttendance();renderBehaviour();renderReports();renderInbox();
+    $('dashNotice').className='notice';
+  }catch(e){
+    console.error('School dashboard startup failed:',e);
+    // Never replace the dashboard with a permanent loading/error screen.
+    showReady();
+    notice('dashNotice','Dashboard connection issue: '+safeError(e),'err');
+  }
+  console.info('ACCESS UG School Dashboard boot completed in '+(Date.now()-bootStarted)+'ms');
+}
+$('refreshTeachers')?.addEventListener('click',async()=>{try{await loadTeachers();renderTeachers()}catch(e){notice('teacherNotice','Could not refresh teachers: '+safeError(e),'err')}});$('refreshStudents')?.addEventListener('click',async()=>{try{await loadStudents();renderStudents()}catch(e){notice('studentNotice','Could not refresh students: '+safeError(e),'err')}});$('refreshTeacherAttendance')?.addEventListener('click',async()=>{try{await loadTeacherAttendance();renderTeacherAttendance();loadDashboardCharts()}catch(e){notice('attendanceNotice','Could not refresh teacher attendance: '+safeError(e),'err')}});$('refreshStudentAttendance')?.addEventListener('click',async()=>{try{await loadStudentAttendance();renderStudentAttendance();loadDashboardCharts()}catch(e){notice('attendanceNotice','Could not refresh student attendance: '+safeError(e),'err')}});$('refreshBehaviour')?.addEventListener('click',async()=>{try{await loadBehaviour();renderBehaviour();loadDashboardCharts()}catch(e){notice('behaviourNotice','Could not refresh behaviour: '+safeError(e),'err')}});$('refreshReports')?.addEventListener('click',async()=>{try{await loadReports();renderReports()}catch(e){notice('reportNotice','Could not refresh reports: '+safeError(e),'err')}});$('markAllRead')?.addEventListener('click',markAll);$('addTeacherBtn')?.addEventListener('click',openTeacherModal);$('addStudentBtn')?.addEventListener('click',openStudentModal);$('teacherSearch')?.addEventListener('input',renderTeachers);$('studentSearch')?.addEventListener('input',renderStudents);$('studentClassFilter')?.addEventListener('change',renderStudents);$('behSearch')?.addEventListener('input',renderBehaviour);$('logoutBtn')?.addEventListener('click',async()=>{await supabaseClient.auth.signOut();location.replace('./index.html')});supabaseClient.auth.onAuthStateChange((e)=>{if(e==='SIGNED_OUT')location.replace('./index.html')});
+function bindSchoolModalEvents(){
+  const teacherForm=document.getElementById('teacherForm');
+  const studentForm=document.getElementById('studentForm');
+  const teacherModal=document.getElementById('teacherModal');
+  const studentModal=document.getElementById('studentModal');
+  if(teacherForm && !teacherForm.dataset.bound){
+    teacherForm.dataset.bound='1';
+    teacherForm.addEventListener('submit',async function(e){e.preventDefault();clearMessage('teacherMessage');const btn=document.getElementById('saveTeacherBtn');if(btn){btn.disabled=true;btn.textContent='Creating teacher account…'}try{const plan=getTeacherAssignmentsFromForm();const email=document.getElementById('teacherEmail').value.trim().toLowerCase(),password=document.getElementById('teacherPassword').value;if(password.length<6)throw new Error('Teacher password must be at least 6 characters.');const subjectNames=[...new Set(plan.flatMap(p=>p.subjectIds.map(id=>subjectDisplayName(teacherAvailableSubjects.find(s=>String(s.id)===String(id))))))];const body={type:'teacher',school_id:schoolId,first_name:document.getElementById('teacherFirstName').value.trim(),last_name:document.getElementById('teacherLastName').value.trim(),gender:document.getElementById('teacherGender').value||null,date_of_birth:document.getElementById('teacherDob').value||null,phone:document.getElementById('teacherPhone').value.trim()||null,email,password,employee_number:document.getElementById('teacherEmployeeNumber').value.trim()||null,subject:subjectNames.join(', '),address:document.getElementById('teacherAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);const teacherId=r.data?.record?.id;if(!teacherId)throw new Error('Teacher account was created but no teacher record ID was returned.');const rows=plan.flatMap(p=>p.subjectIds.map(subjectId=>{const c=teacherAvailableClasses.find(x=>String(x.id)===String(p.classId));return {teacher_id:teacherId,class_id:p.classId,subject_id:subjectId,academic_year:c?.academic_year||new Date().getFullYear(),status:'active'}}));const ar=await supabaseClient.from('teacher_class_assignments').insert(rows);if(ar.error)throw new Error('Teacher was created, but assignments could not be saved: '+ar.error.message);showMessage('teacherMessage',`✓ ${body.first_name} ${body.last_name} registered successfully with ${rows.length} class/subject assignment${rows.length===1?'':'s'}.`,'ok');await Promise.allSettled([loadTeachers(),loadNotifications()]);renderTeachers();renderInbox();setTimeout(closeTeacherModal,900)}catch(err){showMessage('teacherMessage','Could not save teacher: '+(err.message||err),'error')}finally{if(btn){btn.disabled=false;btn.textContent='Save Teacher & Assignments'}}});
+  }
+  if(studentForm && !studentForm.dataset.bound){
+    studentForm.dataset.bound='1';
+    studentForm.addEventListener('submit',async function(e){e.preventDefault();clearMessage('studentMessage');const btn=document.getElementById('saveStudentBtn');if(btn){btn.disabled=true;btn.textContent='Creating student account…'}try{const email=document.getElementById('studentEmail').value.trim().toLowerCase(),password=document.getElementById('studentPassword').value,classId=document.getElementById('studentClass').value;if(!classId)throw new Error('Select a class / stream.');if(password.length<6)throw new Error('Student password must be at least 6 characters.');const c=await supabaseClient.from('classes').select('id,name,level,stream,academic_year').eq('id',classId).eq('school_id',schoolId).maybeSingle();if(c.error)throw c.error;if(!c.data)throw new Error('Selected class does not belong to this school.');const body={type:'student',school_id:schoolId,first_name:document.getElementById('studentFirstName').value.trim(),last_name:document.getElementById('studentLastName').value.trim(),gender:document.getElementById('studentGender').value||null,date_of_birth:document.getElementById('studentDob').value||null,student_number:null,class_id:classId,class_level:classDisplayName(c.data),email,password,parent_name:document.getElementById('studentParentName').value.trim()||null,parent_phone:document.getElementById('studentParentPhone').value.trim()||null,parent_email:document.getElementById('studentParentEmail').value.trim().toLowerCase()||null,address:document.getElementById('studentAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);showMessage('studentMessage',`✓ ${body.first_name} ${body.last_name} registered successfully and assigned to ${classDisplayName(c.data)}.`,'ok');await Promise.allSettled([loadStudents(),loadNotifications()]);renderStudents();renderInbox();setTimeout(closeStudentModal,900)}catch(err){showMessage('studentMessage','Could not save student: '+(err.message||err),'error')}finally{if(btn){btn.disabled=false;btn.textContent='Save Student'}}});
+  }
+  if(teacherModal && !teacherModal.dataset.bound){teacherModal.dataset.bound='1';teacherModal.addEventListener('click',e=>{if(e.target===e.currentTarget)closeTeacherModal()})}
+  if(studentModal && !studentModal.dataset.bound){studentModal.dataset.bound='1';studentModal.addEventListener('click',e=>{if(e.target===e.currentTarget)closeStudentModal()})}
+}
+document.addEventListener('DOMContentLoaded',bindSchoolModalEvents);
+bindSchoolModalEvents();
 initialLoad();
 </script>
 <div class="profile-modal" id="profileModal" aria-hidden="true">
