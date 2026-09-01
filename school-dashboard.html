@@ -7,7 +7,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 :root{--navy:#061a38;--blue:#0b3d82;--blue2:#1457a6;--bg:#f3f6fb;--text:#13233a;--muted:#6d7b8e;--white:#fff;--border:#e3e9f2;--success:#15966b;--danger:#d9534f;--warning:#d99419;--shadow:0 10px 30px rgba(9,35,75,.08);--radius:16px}
-*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{min-height:100vh}.sidebar{position:fixed;z-index:50;left:0;top:0;bottom:0;width:250px;padding:22px 14px;background:linear-gradient(180deg,var(--navy),#092d63 62%,var(--blue2));color:#fff;transition:.25s;overflow-y:auto}.brand{display:flex;align-items:center;gap:12px;padding:4px 10px 26px}.logo{width:44px;height:44px;border-radius:12px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:900}.brand h1{font-size:17px;margin:0}.brand small{opacity:.72}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#dbe7f7;text-align:left;padding:13px 14px;border-radius:11px;display:flex;gap:12px;align-items:center;font-weight:650;width:100%}.nav button:hover,.nav button.active{background:rgba(255,255,255,.13);color:#fff}.nav-icon{width:23px;text-align:center;font-size:18px}.sidebar-bottom{position:absolute;left:14px;right:14px;bottom:18px}.logout{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;padding:12px;border-radius:11px;font-weight:700}.main{margin-left:250px;min-height:100vh}.top{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}.title-wrap{display:flex;align-items:center;gap:12px}.top h2{font-size:20px;margin:0}.menu-btn{display:none;border:0;background:#edf3fb;border-radius:10px;width:40px;height:40px}.user-mini{display:flex;align-items:center;gap:11px}.avatar{width:38px;height:38px;border-radius:50%;background:#e5eefb;color:var(--blue);display:grid;place-items:center;font-weight:800}.user-mini span{font-size:13px;color:var(--muted)}.bell{position:relative;border:0;background:#edf3fb;color:var(--blue);width:40px;height:40px;border-radius:11px;margin-right:4px}.bell-badge{position:absolute;right:-3px;top:-4px;background:#d9534f;color:#fff;border-radius:99px;min-width:18px;height:18px;font-size:10px;display:none;place-items:center;border:2px solid #fff}.content{padding:28px;max-width:1550px;margin:auto}.page{display:none}.page.active{display:block}.hero{margin-bottom:22px}.hero h1{margin:0 0 7px;font-size:28px}.hero p{margin:0;color:var(--muted)}.grid{display:grid;gap:18px}.two{grid-template-columns:1.25fr .9fr}.three{grid-template-columns:repeat(3,1fr)}.four{grid-template-columns:repeat(4,1fr)}.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}.kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}.chart-wrap{height:250px;position:relative}.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}.field{display:grid;gap:6px;min-width:190px;flex:1}.field label{font-size:12px;font-weight:700;color:#566579}input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}input:focus,select:focus,textarea:focus{border-color:#4f84c5;box-shadow:0 0 0 3px rgba(20,87,166,.1)}textarea{min-height:110px;resize:vertical}.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.success{background:var(--success)}.btn.danger{background:var(--danger)}.btn.small{padding:8px 11px;font-size:12px}.btn:disabled{opacity:.65;cursor:not-allowed}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:760px;background:#fff}th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}tr:last-child td{border-bottom:0}.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present,.badge.active{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.late{background:#fff4d9;color:#946700}.empty{text-align:center;padding:35px;color:var(--muted)}.notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}.modal{display:none;position:fixed;z-index:80;inset:0;background:rgba(4,17,37,.5);align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}.modal-box{width:min(850px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25);padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal h3{margin:0}.close{border:0;background:#eef3f9;border-radius:9px;width:36px;height:36px}.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}.inbox-list{display:grid;gap:10px}.notice-row{border:1px solid var(--border);border-radius:12px;padding:13px;display:flex;gap:12px;align-items:flex-start}.notice-row.unread{background:#f7faff;border-color:#cfe0f7}.dot{width:9px;height:9px;border-radius:50%;background:#1457a6;margin-top:5px;flex:none}.notice-row.read .dot{background:#cbd5e1}.notice-main{min-width:0;flex:1}.notice-main strong{display:block;margin-bottom:4px}.notice-main p{margin:0;color:var(--muted);font-size:13px;white-space:pre-wrap}.notice-meta{font-size:11px;color:var(--muted);margin-top:6px}.preview{background:#f7f9fc;border:1px solid var(--border);border-radius:14px;padding:18px}.preview h4{margin:0 0 12px}.profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.profile-item{background:#fff;border:1px solid var(--border);border-radius:11px;padding:12px}.profile-item small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.profile-item strong{font-size:13px}.pill{display:inline-flex;padding:4px 8px;border-radius:99px;background:#edf4fd;color:#174d8f;font-size:11px;font-weight:700}@media(max-width:1000px){.four{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}@media(max-width:750px){.sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:16px}.four,.three{grid-template-columns:1fr}.card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}.profile-grid{grid-template-columns:1fr}.top h2{font-size:17px}}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--text)}button,input,select,textarea{font:inherit}button{cursor:pointer}.app{min-height:100vh}.sidebar{position:fixed;z-index:50;left:0;top:0;bottom:0;width:250px;padding:22px 14px;background:linear-gradient(180deg,var(--navy),#092d63 62%,var(--blue2));color:#fff;transition:.25s;overflow-y:auto}.brand{display:flex;align-items:center;gap:12px;padding:4px 10px 26px}.logo{width:44px;height:44px;border-radius:12px;background:#fff;color:var(--blue);display:grid;place-items:center;font-weight:900}.brand h1{font-size:17px;margin:0}.brand small{opacity:.72}.nav{display:grid;gap:7px}.nav button{border:0;background:transparent;color:#dbe7f7;text-align:left;padding:13px 14px;border-radius:11px;display:flex;gap:12px;align-items:center;font-weight:650;width:100%}.nav button:hover,.nav button.active{background:rgba(255,255,255,.13);color:#fff}.nav-icon{width:23px;text-align:center;font-size:18px}.sidebar-bottom{position:absolute;left:14px;right:14px;bottom:18px}.logout{width:100%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;padding:12px;border-radius:11px;font-weight:700}.main{margin-left:250px;min-height:100vh}.top{height:72px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:30}.title-wrap{display:flex;align-items:center;gap:12px}.top h2{font-size:20px;margin:0}.menu-btn{display:none;border:0;background:#edf3fb;border-radius:10px;width:40px;height:40px}.user-mini{display:flex;align-items:center;gap:11px}.avatar{width:38px;height:38px;border-radius:50%;background:#e5eefb;color:var(--blue);display:grid;place-items:center;font-weight:800}.user-mini span{font-size:13px;color:var(--muted)}.bell{position:relative;border:0;background:#edf3fb;color:var(--blue);width:40px;height:40px;border-radius:11px;margin-right:4px}.bell-badge{position:absolute;right:-3px;top:-4px;background:#d9534f;color:#fff;border-radius:99px;min-width:18px;height:18px;font-size:10px;display:none;place-items:center;border:2px solid #fff}.content{padding:28px;max-width:1550px;margin:auto}.page{display:none}.page.active{display:block}.hero{margin-bottom:22px}.hero h1{margin:0 0 7px;font-size:28px}.hero p{margin:0;color:var(--muted)}.grid{display:grid;gap:18px}.two{grid-template-columns:1.25fr .9fr}.three{grid-template-columns:repeat(3,1fr)}.four{grid-template-columns:repeat(4,1fr)}.card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}.stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}.kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}.chart-wrap{height:250px;position:relative}.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}.field{display:grid;gap:6px;min-width:190px;flex:1}.field label{font-size:12px;font-weight:700;color:#566579}input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}input:focus,select:focus,textarea:focus{border-color:#4f84c5;box-shadow:0 0 0 3px rgba(20,87,166,.1)}textarea{min-height:110px;resize:vertical}.btn{border:0;background:var(--navy);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:var(--blue2)}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.success{background:var(--success)}.btn.danger{background:var(--danger)}.btn.small{padding:8px 11px;font-size:12px}.btn:disabled{opacity:.65;cursor:not-allowed}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:760px;background:#fff}th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}tr:last-child td{border-bottom:0}.badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present,.badge.active{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.late{background:#fff4d9;color:#946700}.empty{text-align:center;padding:35px;color:var(--muted)}.notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}.modal{display:none;position:fixed;z-index:80;inset:0;background:rgba(4,17,37,.5);align-items:center;justify-content:center;padding:16px}.modal.show{display:flex}.modal-box{width:min(850px,100%);max-height:90vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.25);padding:22px}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.modal h3{margin:0}.close{border:0;background:#eef3f9;border-radius:9px;width:36px;height:36px}.toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}.inbox-list{display:grid;gap:10px}.notice-row{border:1px solid var(--border);border-radius:12px;padding:13px;display:flex;gap:12px;align-items:flex-start}.notice-row.unread{background:#f7faff;border-color:#cfe0f7}.dot{width:9px;height:9px;border-radius:50%;background:#1457a6;margin-top:5px;flex:none}.notice-row.read .dot{background:#cbd5e1}.notice-main{min-width:0;flex:1}.notice-main strong{display:block;margin-bottom:4px}.notice-main p{margin:0;color:var(--muted);font-size:13px;white-space:pre-wrap}.notice-meta{font-size:11px;color:var(--muted);margin-top:6px}.preview{background:#f7f9fc;border:1px solid var(--border);border-radius:14px;padding:18px}.preview h4{margin:0 0 12px}.profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.profile-item{background:#fff;border:1px solid var(--border);border-radius:11px;padding:12px}.profile-item small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.profile-item strong{font-size:13px}.pill{display:inline-flex;padding:4px 8px;border-radius:99px;background:#edf4fd;color:#174d8f;font-size:11px;font-weight:700}@media(max-width:1000px){.four{grid-template-columns:1fr 1fr}.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}@media(max-width:750px){.sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:16px}.four,.three{grid-template-columns:1fr}.card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}.profile-grid{grid-template-columns:1fr}.top h2{font-size:17px}}
 </style>
 <style id="accessug-profile-system">
 .profile-trigger{border:0;background:transparent;padding:0;display:flex;align-items:center;gap:10px;cursor:pointer;color:inherit;text-align:left}
@@ -44,7 +44,7 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 </nav><div class="sidebar-bottom"><button class="logout" id="logoutBtn">↪ &nbsp; Log out</button></div></aside>
 <main class="main"><header class="top"><div class="title-wrap"><button class="menu-btn" id="menuBtn">☰</button><h2 id="pageTitle">School Dashboard</h2></div><div style="display:flex;align-items:center;gap:10px"><button class="bell" id="bellBtn" title="Notifications">♢<span id="bellBadge" class="bell-badge">0</span></button><div class="user-mini"><span id="topEmail">Loading...</span><button class="profile-trigger" id="profileTrigger" type="button" aria-label="Open profile"><div class="avatar" id="topAvatar">S</div></button></div></div></header>
 <div class="content">
-<section id="dashboard" class="page active"><div class="hero"><h1 id="welcome">Welcome</h1><p id="schoolSub">Your school overview for today.</p></div><div id="dashNotice" class="notice"></div>
+<section id="dashboard" class="page active"><div class="hero school-role-lock"><h1 id="welcome">Welcome</h1><p id="schoolSub">Your school overview for today.</p></div><div id="dashNotice" class="notice"></div>
 <div class="grid four"><div class="card stat"><div class="kpi-icon">◉</div><div class="label">Teachers</div><div class="value" id="teacherTotal">—</div><div class="sub" id="teacherSub">Loading...</div></div><div class="card stat"><div class="kpi-icon">♙</div><div class="label">Students</div><div class="value" id="studentTotal">—</div><div class="sub" id="studentSub">Loading...</div></div><div class="card stat"><div class="kpi-icon">◷</div><div class="label">Student attendance</div><div class="value" id="studentPresent">—</div><div class="sub" id="studentAttendanceSub">Present today</div></div><div class="card stat"><div class="kpi-icon">✉</div><div class="label">Unread Inbox</div><div class="value" id="unreadTotal">—</div><div class="sub">Requests & notifications</div></div></div>
 <div class="grid two" style="margin-top:18px"><div class="card"><div class="card-head"><div><h3>Attendance at a glance</h3><div class="muted">Today across your school</div></div></div><div class="chart-wrap"><canvas id="attendanceChart"></canvas></div></div><div class="card"><div class="card-head"><div><h3>Teacher punctuality</h3><div class="muted">Today's sign-in status</div></div></div><div class="chart-wrap"><canvas id="teacherChart"></canvas></div></div></div>
 <div class="grid two" style="margin-top:18px"><div class="card"><div class="card-head"><div><h3>Behaviour leaders</h3><div class="muted">Highest accumulated behaviour points</div></div><button class="btn small secondary" data-go="behaviour">View all</button></div><div id="topBehaviour" class="empty">Loading...</div></div><div class="card"><div class="card-head"><div><h3>Recent Inbox</h3><div class="muted">Latest school notifications</div></div><button class="btn small secondary" data-go="inbox">Open Inbox</button></div><div id="recentInbox" class="empty">Loading...</div></div></div></section>
@@ -105,8 +105,49 @@ function viewTeacher(id){const t=teachers.find(x=>String(x.id)===String(id));if(
 function viewStudent(id){const s=students.find(x=>String(x.id)===String(id));if(!s)return;const a=studentAttendance.filter(x=>String(x.student_id)===String(id)),rec=behaviour.filter(x=>String(x.student_id)===String(id));const pts=rec.reduce((n,b)=>n+Number(b.points||0),0),negative=rec.filter(b=>['D','E'].includes(String(b.grade||'').toUpperCase())).length;openModal('Read-only Student Preview',`<div class="preview"><h4>${esc(nameOf(s))}</h4><div class="profile-grid"><div class="profile-item"><small>Login email</small><strong>${esc(s.email||s.student_email||'—')}</strong></div><div class="profile-item"><small>Student number</small><strong>${esc(s.student_number||'—')}</strong></div><div class="profile-item"><small>Class</small><strong>${esc(s.class_level||'—')}</strong></div><div class="profile-item"><small>Today's attendance</small><strong>${esc(a[0]?.status||'No record')}</strong></div><div class="profile-item"><small>Behaviour points</small><strong>${pts}</strong></div><div class="profile-item"><small>Negative behaviour records</small><strong>${negative}</strong></div><div class="profile-item"><small>Parent email</small><strong>${esc(s.parent_email||'—')}</strong></div><div class="profile-item"><small>Parent phone</small><strong>${esc(s.parent_phone||'—')}</strong></div></div><p class="muted" style="margin-top:14px">Read-only preview. This does not impersonate the student's authenticated account and cannot edit student data.</p></div>`)}
 window.viewTeacher=viewTeacher;window.viewStudent=viewStudent;window.deactivateTeacher=deactivateTeacher;window.deactivateStudent=deactivateStudent;window.authorizeAttendance=authorizeAttendance;window.markRead=markRead;
 function loadDashboardCharts(){const tp=teacherAttendance.filter(x=>String(x.status).toLowerCase()==='present').length,tl=teacherAttendance.filter(x=>String(x.status).toLowerCase()==='late').length,ta=teacherAttendance.filter(x=>['absent','authorized_absence'].includes(String(x.status).toLowerCase())).length;const sp=studentAttendance.filter(x=>String(x.status).toLowerCase()==='present').length,sa=studentAttendance.filter(x=>['absent','authorized_absence'].includes(String(x.status).toLowerCase())).length;$('studentPresent').textContent=sp;$('studentAttendanceSub').textContent=`${sa} absent / authorized`;if(charts.att)charts.att.destroy();charts.att=new Chart($('attendanceChart'),{type:'doughnut',data:{labels:['Present','Absent / authorized'],datasets:[{data:[sp,sa]}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom'}}}});if(charts.t)charts.t.destroy();charts.t=new Chart($('teacherChart'),{type:'doughnut',data:{labels:['Present','Late','Absent / authorized'],datasets:[{data:[tp,tl,ta]}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'bottom'}}}});const ranked=students.map(s=>({s,pts:behaviour.filter(b=>String(b.student_id)===String(s.id)).reduce((n,b)=>n+Number(b.points||0),0)})).sort((a,b)=>b.pts-a.pts).slice(0,5);$('topBehaviour').innerHTML=ranked.length?ranked.map((x,i)=>`<div class="notice-row"><span class="pill">${i+1}</span><div class="notice-main"><strong>${esc(nameOf(x.s))}</strong><p>${esc(x.s.class_level||'—')} · ${x.pts} behaviour points</p></div></div>`).join(''):'<div class="empty">No behaviour records yet.</div>'}
-async function addTeacher(){const name=prompt('Teacher full name');if(!name)return;const email=prompt('Teacher email');if(!email)return;const parts=name.trim().split(/\s+/);const payload={first_name:parts.shift()||name,last_name:parts.join(' '),email:email.trim().toLowerCase(),school_id:schoolId,status:'active'};const r=await supabaseClient.from('teachers').insert(payload);if(r.error){notice('teacherNotice','Could not add teacher: '+r.error.message,'err');return}toast('Teacher record added. Create/attach the Supabase Auth account using the same email before login.');await loadTeachers();renderTeachers()}
-async function addStudent(){const name=prompt('Student full name');if(!name)return;const email=prompt('Student login email');if(!email)return;const cls=prompt('Class / class level');if(!cls)return;const parts=name.trim().split(/\s+/);const payload={first_name:parts.shift()||name,last_name:parts.join(' '),email:email.trim().toLowerCase(),school_id:schoolId,class_level:cls.trim(),status:'active'};const r=await supabaseClient.from('students').insert(payload);if(r.error){notice('studentNotice','Could not add student: '+r.error.message,'err');return}toast('Student record added. Create/attach the Supabase Auth account using the same email before login.');await loadStudents();renderStudents()}
+let teacherAvailableClasses=[];
+let teacherAvailableSubjects=[];
+function subjectDisplayName(subject){return subject?.name||subject?.subject_name||subject?.title||"Subject";}
+function classDisplayName(cls){return cls?.name||[cls?.level,cls?.stream].filter(Boolean).join(" ")||"Class";}
+function teacherAssignmentRows(){return [...document.querySelectorAll(".teacher-assignment-row")];}
+async function loadTeacherAssignmentOptions(sid){
+  const status=document.getElementById('teacherAssignmentLoading'),container=document.getElementById('teacherAssignments'),year=document.getElementById('teacherAssignmentYear');
+  if(!status||!container)return; container.innerHTML=''; teacherAvailableClasses=[]; teacherAvailableSubjects=[];
+  status.style.display='block'; status.textContent='Loading your classes and subjects…'; if(year)year.textContent='';
+  try{
+    const cr=await supabaseClient.from('classes').select('*').eq('school_id',sid).order('academic_year',{ascending:false}).order('name',{ascending:true});
+    if(cr.error)throw new Error('Could not load classes: '+cr.error.message);
+    teacherAvailableClasses=(cr.data||[]).filter(c=>!c.status||String(c.status).toLowerCase()==='active');
+    const ss=await supabaseClient.from('school_subjects').select('subject_id').eq('school_id',sid);
+    if(ss.error)throw new Error('Could not load this school\'s subjects: '+ss.error.message);
+    const ids=[...new Set((ss.data||[]).map(x=>String(x.subject_id)).filter(Boolean))];
+    if(ids.length){const sr=await supabaseClient.from('subjects').select('*').in('id',ids);if(sr.error)throw new Error('Could not load subjects: '+sr.error.message);teacherAvailableSubjects=(sr.data||[]).filter(s=>s.active!==false&&s.is_active!==false&&(!s.status||!['inactive','disabled','archived'].includes(String(s.status).toLowerCase()))).sort((a,b)=>subjectDisplayName(a).localeCompare(subjectDisplayName(b)));}
+    if(year){const ys=[...new Set(teacherAvailableClasses.map(c=>c.academic_year).filter(Boolean))];year.textContent=ys.length===1?'Academic year '+ys[0]:'Classes loaded';}
+    if(!teacherAvailableClasses.length){status.textContent='No classes have been registered for this school yet.';return;}
+    if(!teacherAvailableSubjects.length){status.textContent='Classes loaded, but no active subjects are enabled for this school.';renderTeacherAssignments();return;}
+    status.style.display='none';renderTeacherAssignments();
+  }catch(e){status.textContent=e.message||String(e);status.style.display='block';}
+}
+function renderTeacherAssignments(){
+ const c=document.getElementById('teacherAssignments'); if(!c)return;
+ c.innerHTML=teacherAvailableClasses.map(cls=>{const cid=String(cls.id).replace(/"/g,'&quot;'),name=String(classDisplayName(cls)).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const yr=cls.academic_year?' · '+cls.academic_year:'';const subs=teacherAvailableSubjects.map(s=>`<label class="subject-check"><input type="checkbox" class="teacher-subject-check" data-class-id="${cid}" value="${s.id}"><span>${String(subjectDisplayName(s)).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}</span></label>`).join('');return `<div class="teacher-assignment-row" data-class-id="${cid}"><div class="assignment-class-head"><label class="assignment-class-check"><input type="checkbox" class="teacher-class-check" value="${cid}"><span>${name}${yr}</span></label><button type="button" class="assignment-select-all" data-select-class="${cid}">Select all subjects</button></div><div class="subject-checks">${subs||'<div class="assignment-empty">No subjects available.</div>'}</div></div>`;}).join('');
+ c.querySelectorAll('.teacher-class-check').forEach(cb=>cb.addEventListener('change',()=>cb.closest('.teacher-assignment-row')?.classList.toggle('selected',cb.checked)));
+ c.querySelectorAll('.teacher-subject-check').forEach(cb=>cb.addEventListener('change',()=>{const row=cb.closest('.teacher-assignment-row'),cc=row?.querySelector('.teacher-class-check');if(cb.checked&&cc){cc.checked=true;row.classList.add('selected')}if(row&&!row.querySelector('.teacher-subject-check:checked')&&cc){cc.checked=false;row.classList.remove('selected')}}));
+ c.querySelectorAll('[data-select-class]').forEach(b=>b.addEventListener('click',()=>{const row=c.querySelector(`.teacher-assignment-row[data-class-id="${CSS.escape(b.dataset.selectClass)}"]`);if(!row)return;const checks=[...row.querySelectorAll('.teacher-subject-check')],all=checks.some(x=>!x.checked);checks.forEach(x=>x.checked=all);const cc=row.querySelector('.teacher-class-check');if(cc)cc.checked=all;row.classList.toggle('selected',all);b.textContent=all?'Clear subjects':'Select all subjects';}));
+}
+function getTeacherAssignmentsFromForm(){const result=[];teacherAssignmentRows().forEach(row=>{const cc=row.querySelector('.teacher-class-check');if(!cc?.checked)return;const ids=[...row.querySelectorAll('.teacher-subject-check:checked')].map(x=>x.value);if(!ids.length)throw new Error('Select at least one subject for '+(row.querySelector('.assignment-class-check span')?.textContent||'the selected class')+'.');result.push({classId:cc.value,subjectIds:ids});});if(!result.length)throw new Error('Select at least one class and at least one subject for that class.');return result;}
+function schoolFormSelect(){const s=document.getElementById('teacherSchool'),st=document.getElementById('studentSchool');[s,st].forEach(el=>{if(el){el.innerHTML=`<option value="${schoolId}">${(school?.name||'Your school')}</option>`;el.value=schoolId;}})}
+function openTeacherModal(){clearMessage('teacherMessage');document.getElementById('teacherForm').reset();schoolFormSelect();document.getElementById('teacherSchool').value=schoolId;document.getElementById('teacherSchool').disabled=true;document.getElementById('teacherAssignments').innerHTML='';document.getElementById('teacherAssignmentLoading').textContent='Loading your classes and subjects…';document.getElementById('teacherAssignmentLoading').style.display='block';document.getElementById('teacherAssignmentYear').textContent='';document.getElementById('teacherModal').classList.add('show');loadTeacherAssignmentOptions(schoolId);}
+function closeTeacherModal(){document.getElementById('teacherModal').classList.remove('show');clearMessage('teacherMessage');}
+function openStudentModal(){clearMessage('studentMessage');document.getElementById('studentForm').reset();schoolFormSelect();document.getElementById('studentSchool').value=schoolId;document.getElementById('studentSchool').disabled=true;const cls=document.getElementById('studentClass');cls.disabled=true;cls.innerHTML='<option value="">Loading classes…</option>';document.getElementById('studentModal').classList.add('show');loadSchoolStudentClasses();}
+function closeStudentModal(){document.getElementById('studentModal').classList.remove('show');clearMessage('studentMessage');}
+async function loadSchoolStudentClasses(){const cls=document.getElementById('studentClass');try{const r=await supabaseClient.from('classes').select('id,name,level,stream,academic_year,status').eq('school_id',schoolId).order('academic_year',{ascending:false}).order('level').order('stream');if(r.error)throw r.error;cls.innerHTML='<option value="">Select a class / stream</option>'+(r.data||[]).filter(x=>!x.status||String(x.status).toLowerCase()==='active').map(x=>`<option value="${x.id}">${String(x.name||([x.level,x.stream].filter(Boolean).join(' '))) }${x.academic_year?' — '+x.academic_year:''}</option>`).join('');cls.disabled=false;}catch(e){cls.innerHTML='<option value="">Unable to load classes</option>';notify('Could not load classes: '+e.message,'err');}}
+
+document.getElementById('teacherForm').addEventListener('submit',async function(e){e.preventDefault();clearMessage('teacherMessage');const btn=document.getElementById('saveTeacherBtn');btn.disabled=true;btn.textContent='Creating teacher account…';try{const plan=getTeacherAssignmentsFromForm();const email=document.getElementById('teacherEmail').value.trim().toLowerCase(),password=document.getElementById('teacherPassword').value;if(password.length<6)throw new Error('Teacher password must be at least 6 characters.');const subjectNames=[...new Set(plan.flatMap(p=>p.subjectIds.map(id=>subjectDisplayName(teacherAvailableSubjects.find(s=>String(s.id)===String(id))))))];const body={type:'teacher',school_id:schoolId,first_name:document.getElementById('teacherFirstName').value.trim(),last_name:document.getElementById('teacherLastName').value.trim(),gender:document.getElementById('teacherGender').value||null,date_of_birth:document.getElementById('teacherDob').value||null,phone:document.getElementById('teacherPhone').value.trim()||null,email,password,employee_number:document.getElementById('teacherEmployeeNumber').value.trim()||null,subject:subjectNames.join(', '),address:document.getElementById('teacherAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);const teacherId=r.data?.record?.id;if(!teacherId)throw new Error('Teacher account was created but no teacher record ID was returned.');const rows=plan.flatMap(p=>p.subjectIds.map(subjectId=>{const c=teacherAvailableClasses.find(x=>String(x.id)===String(p.classId));return {teacher_id:teacherId,class_id:p.classId,subject_id:subjectId,academic_year:c?.academic_year||new Date().getFullYear(),status:'active'}}));const ar=await supabaseClient.from('teacher_class_assignments').insert(rows);if(ar.error){throw new Error('Teacher was created, but assignments could not be saved: '+ar.error.message)}showMessage('teacherMessage',`✓ ${body.first_name} ${body.last_name} registered successfully with ${rows.length} class/subject assignment${rows.length===1?'':'s'}.`,'ok');await Promise.all([loadTeachers(),loadNotifications()]);renderTeachers();renderInbox();setTimeout(closeTeacherModal,900);}catch(err){showMessage('teacherMessage','Could not save teacher: '+(err.message||err),'error');}finally{btn.disabled=false;btn.textContent='Save Teacher & Assignments';}});
+
+document.getElementById('studentForm').addEventListener('submit',async function(e){e.preventDefault();clearMessage('studentMessage');const btn=document.getElementById('saveStudentBtn');btn.disabled=true;btn.textContent='Creating student account…';try{const email=document.getElementById('studentEmail').value.trim().toLowerCase(),password=document.getElementById('studentPassword').value,classId=document.getElementById('studentClass').value;if(!classId)throw new Error('Select a class / stream.');if(password.length<6)throw new Error('Student password must be at least 6 characters.');const c=(await supabaseClient.from('classes').select('id,name,level,stream,academic_year').eq('id',classId).eq('school_id',schoolId).maybeSingle());if(c.error)throw c.error;if(!c.data)throw new Error('Selected class does not belong to this school.');const body={type:'student',school_id:schoolId,first_name:document.getElementById('studentFirstName').value.trim(),last_name:document.getElementById('studentLastName').value.trim(),gender:document.getElementById('studentGender').value||null,date_of_birth:document.getElementById('studentDob').value||null,student_number:null,class_id:classId,class_level:classDisplayName(c.data),email,password,parent_name:document.getElementById('studentParentName').value.trim()||null,parent_phone:document.getElementById('studentParentPhone').value.trim()||null,parent_email:document.getElementById('studentParentEmail').value.trim().toLowerCase()||null,address:document.getElementById('studentAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);showMessage('studentMessage',`✓ ${body.first_name} ${body.last_name} registered successfully and assigned to ${classDisplayName(c.data)}.`,'ok');await Promise.all([loadStudents(),loadNotifications()]);renderStudents();renderInbox();setTimeout(closeStudentModal,900);}catch(err){showMessage('studentMessage','Could not save student: '+(err.message||err),'error');}finally{btn.disabled=false;btn.textContent='Save Student';}});
+
+document.getElementById('teacherModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeTeacherModal()});document.getElementById('studentModal').addEventListener('click',e=>{if(e.target===e.currentTarget)closeStudentModal()});
 async function initialLoad(){try{const r=await supabaseClient.auth.getSession();if(r.error)throw r.error;session=r.data.session;if(!session?.user){location.replace('./index.html');return}const email=(session.user.email||'').trim().toLowerCase();const sr=await supabaseClient.from('schools').select('*').ilike('email',email).maybeSingle();if(sr.error)throw new Error('School verification failed: '+sr.error.message);if(!sr.data)throw new Error('This authenticated email is not registered as a school.');schoolId=sr.data.id;await loadSchool();const results=await Promise.allSettled([loadTeachers(),loadStudents(),loadClasses(),loadTeacherAttendance(),loadStudentAttendance(),loadBehaviour(),loadReports(),loadNotifications()]);const failed=results.filter(x=>x.status==='rejected');if(failed.length)notice('dashNotice','Some optional data could not be loaded. The dashboard remains available; open the relevant section for details.','info');loadDashboardCharts();renderTeachers();renderStudents();renderTeacherAttendance();renderStudentAttendance();renderBehaviour();renderReports();renderInbox()}catch(e){console.error(e);notice('dashNotice',safeError(e),'err')}}
 $('refreshTeachers').onclick=async()=>{await loadTeachers();renderTeachers()};$('refreshStudents').onclick=async()=>{await loadStudents();renderStudents()};$('refreshTeacherAttendance').onclick=async()=>{await loadTeacherAttendance();renderTeacherAttendance();loadDashboardCharts()};$('refreshStudentAttendance').onclick=async()=>{await loadStudentAttendance();renderStudentAttendance();loadDashboardCharts()};$('refreshBehaviour').onclick=async()=>{await loadBehaviour();renderBehaviour();loadDashboardCharts()};$('refreshReports').onclick=async()=>{await loadReports();renderReports()};$('markAllRead').onclick=markAll;$('addTeacherBtn').onclick=addTeacher;$('addStudentBtn').onclick=addStudent;$('teacherSearch').oninput=renderTeachers;$('studentSearch').oninput=renderStudents;$('studentClassFilter').onchange=renderStudents;$('behSearch').oninput=renderBehaviour;$('logoutBtn').onclick=async()=>{await supabaseClient.auth.signOut();location.replace('./index.html')};supabaseClient.auth.onAuthStateChange((e)=>{if(e==='SIGNED_OUT')location.replace('./index.html')});
 initialLoad();
@@ -237,6 +278,189 @@ initialLoad();
   void refreshProfile();
 })();
 </script>
+
+
+<style id="school-admin-style-modals">
+.modalbox{width:min(920px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 25px 80px rgba(4,18,42,.28);padding:24px;border:1px solid #dce5f2}.modalhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px}.modalhead h3{margin:0;color:#102a50;font-size:22px}.modalhead p{margin:6px 0 0;color:#718096;font-size:13px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.formgrid .field{min-width:0}.assignment-builder{margin-top:20px;padding:18px;border:1px solid #dce5f2;border-radius:16px;background:#f7faff}.assignment-builder-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}.assignment-builder h4{margin:0;color:#173354}.assignment-status{padding:11px 13px;border-radius:10px;background:#edf4fd;color:#174d8f;border:1px solid #d8e6f7;font-size:13px}.teacher-assignments{display:grid;gap:10px;margin-top:12px}.teacher-assignment-row{border:1px solid #dbe5f0;border-radius:13px;background:#fff;padding:13px}.teacher-assignment-row.selected{border-color:#1769d2;box-shadow:0 0 0 2px rgba(23,105,210,.08)}.assignment-class-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.assignment-class-check{display:flex;align-items:center;gap:9px;font-weight:800;color:#173354}.subject-checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}.subject-check{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid #dce5f2;border-radius:9px;background:#f8fbff;color:#30496a;font-size:12px}.assignment-select-all{border:0;background:#e8f0fb;color:#174d8f;border-radius:8px;padding:7px 9px;font-size:11px;font-weight:800}.assignment-empty{padding:10px;color:#718096;font-size:12px}.db-message{display:none;margin-top:14px;padding:12px 14px;border-radius:10px;font-size:13px}.db-message.show{display:block}.db-message.ok{background:#e7f7f0;color:#116d50}.db-message.error{background:#fdebea;color:#9d2e29}.actions button{border:0;padding:11px 16px;border-radius:10px;font-weight:700}.actions .secondary{background:#eef3f9;color:#173354}.actions .btn{background:#0b3d82;color:#fff}.modal input:disabled,.modal select:disabled{background:#f4f7fb;color:#4d6280;opacity:1}@media(max-width:700px){.formgrid{grid-template-columns:1fr}.modal{padding:10px}.modalbox{padding:18px;border-radius:16px}.assignment-builder{padding:13px}.assignment-builder-head{display:block}.assignment-select-all{white-space:nowrap}}
+</style>
+
+<!-- =========================
+     ADD TEACHER MODAL
+========================= -->
+<div class="modal" id="teacherModal">
+    <div class="modalbox">
+        <div class="modalhead">
+            <div>
+                <h3>Add New Teacher</h3>
+                <p class="muted">Enter the teacher's details, login email, classes and subjects.</p>
+            </div>
+            <button class="close" type="button" onclick="closeTeacherModal()">×</button>
+        </div>
+
+        <form id="teacherForm">
+            <div class="formgrid">
+                <div class="field">
+                    <label>First Name *</label>
+                    <input id="teacherFirstName" required>
+                </div>
+                <div class="field">
+                    <label>Last Name *</label>
+                    <input id="teacherLastName" required>
+                </div>
+                <div class="field">
+                    <label>Gender</label>
+                    <select id="teacherGender">
+                        <option value="">Select gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Date of Birth</label>
+                    <input id="teacherDob" type="date">
+                </div>
+                <div class="field">
+                    <label>Phone</label>
+                    <input id="teacherPhone" type="tel">
+                </div>
+                <div class="field">
+                    <label>Teacher Login Email *</label>
+                    <input id="teacherEmail" type="email" placeholder="teacher@example.com" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label>Teacher Login Password *</label>
+                    <input id="teacherPassword" type="password" minlength="6" autocomplete="new-password" placeholder="At least 6 characters" required>
+                </div>
+                <div class="field">
+                    <label>Employee Number</label>
+                    <input id="teacherEmployeeNumber">
+                </div>
+                <div class="field">
+                    <label>School *</label>
+                    <select id="teacherSchool" required disabled>
+                        <option value="">Select a school</option>
+                    </select>
+                </div>
+                <div class="field" style="grid-column:1/-1">
+                    <label>Address</label>
+                    <input id="teacherAddress">
+                </div>
+            </div>
+
+            <div class="assignment-builder">
+                <div class="assignment-builder-head">
+                    <div>
+                        <h4>Teaching Assignments</h4>
+                        <p class="muted">Choose the classes this teacher will teach, then select the subjects for each class. Everything is saved to <b>teacher_class_assignments</b> automatically.</p>
+                    </div>
+                    <span class="assignment-year" id="teacherAssignmentYear"></span>
+                </div>
+
+                <div id="teacherAssignmentLoading" class="assignment-status">Your school is selected automatically. Classes and subjects below belong to this school.</div>
+                <div id="teacherAssignments" class="teacher-assignments"></div>
+                <div class="assignment-status" style="margin-top:12px;background:#ecfdf3;color:#166534;border:1px solid #bbf7d0;">
+                    <strong>Login connection:</strong> after you create this teacher's Supabase Auth account, use the <strong>same email</strong> entered above. The teacher dashboard will then read these saved assignments automatically.
+                </div>
+            </div>
+
+            <div id="teacherMessage" class="db-message"></div>
+
+            <div class="actions">
+                <button type="button" class="secondary" onclick="closeTeacherModal()">Cancel</button>
+                <button type="submit" class="btn" id="saveTeacherBtn">Save Teacher & Assignments</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- =========================
+     ADD STUDENT MODAL
+========================= -->
+<div class="modal" id="studentModal">
+    <div class="modalbox">
+        <div class="modalhead">
+            <div>
+                <h3>Add New Student</h3>
+                <p class="muted">Enter the student's details and assign their class/stream.</p>
+            </div>
+            <button class="close" type="button" onclick="closeStudentModal()">×</button>
+        </div>
+
+        <form id="studentForm">
+            <div class="formgrid">
+                <div class="field">
+                    <label>First Name *</label>
+                    <input id="studentFirstName" required>
+                </div>
+                <div class="field">
+                    <label>Last Name *</label>
+                    <input id="studentLastName" required>
+                </div>
+                <div class="field">
+                    <label>Gender</label>
+                    <select id="studentGender">
+                        <option value="">Select gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Date of Birth</label>
+                    <input id="studentDob" type="date">
+                </div>
+                <div class="field">
+                    <label>Student Number</label>
+                    <input id="studentNumber">
+                </div>
+                <div class="field">
+                    <label>Student Login Email *</label>
+                    <input id="studentEmail" type="email" placeholder="student@example.com" autocomplete="username" required>
+                </div>
+                <div class="field">
+                    <label>Student Login Password *</label>
+                    <input id="studentPassword" type="password" minlength="6" autocomplete="new-password" placeholder="At least 6 characters" required>
+                </div>
+                <div class="field">
+                    <label>School *</label>
+                    <select id="studentSchool" required disabled>
+                        <option value="">Select a school</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Class / Stream *</label>
+                    <select id="studentClass" required disabled>
+                        <option value="">Select a school first</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Parent / Guardian Name</label>
+                    <input id="studentParentName">
+                </div>
+                <div class="field">
+                    <label>Parent / Guardian Phone</label>
+                    <input id="studentParentPhone" type="tel">
+                </div>
+                <div class="field">
+                    <label>Parent / Guardian Email</label>
+                    <input id="studentParentEmail" type="email">
+                </div>                <div class="field">
+                    <label>Address</label>
+                    <input id="studentAddress">
+                </div>
+            </div>
+
+            <div id="studentMessage" class="db-message"></div>
+
+            <div class="actions">
+                <button type="button" class="secondary" onclick="closeStudentModal()">Cancel</button>
+                <button type="submit" class="btn" id="saveStudentBtn">Save Student</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 <script id="school-bulk-import">
 (function(){

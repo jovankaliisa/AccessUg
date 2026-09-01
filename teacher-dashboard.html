@@ -51,6 +51,7 @@ button{cursor:pointer}
 .user-mini span{font-size:13px;color:var(--muted)}
 .content{padding:28px;max-width:1500px;margin:auto}
 .page{display:none}.page.active{display:block}
+.teacher-welcome-hero{background:linear-gradient(135deg,var(--navy),var(--blue) 68%,var(--blue2))!important;color:#fff!important;box-shadow:0 14px 34px rgba(6,26,56,.20)}
 .hero{margin-bottom:22px;background:linear-gradient(135deg,#061a38,#0b3d82 68%,#1457a6);color:#fff;border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(6,26,56,.18);position:relative;overflow:hidden}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-90px;top:-150px;background:rgba(255,255,255,.08)}.hero h1{margin:0 0 7px;font-size:28px;position:relative;z-index:1}.hero p{margin:0;color:#dbe7fa;position:relative;z-index:1}
 .grid{display:grid;gap:18px}.two{grid-template-columns:1.25fr .9fr}.three{grid-template-columns:repeat(3,1fr)}
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}
@@ -133,8 +134,7 @@ tr:last-child td{border-bottom:0}
 
 .behaviour-choice input{width:18px;height:18px;cursor:pointer}.behaviour-choice:hover{background:#f1f6fd}
 </style>
-<style id="accessug-v3">:root{--navy:#071b3a;--navy2:#0b2f63;--blue:#1769d2;--blue2:#2d7ff9;--sky:#edf5ff;--line:#d9e4f1;--ink:#10233f;--muted:#64748b;--green:#0b8f63;--red:#c73d4a;--gold:#b87900}body{background:#f4f7fb!important;color:var(--ink)}.sidebar{background:linear-gradient(180deg,#061a38,#0b2f63)!important;color:white!important}.sidebar a,.sidebar button{color:#dbeafe!important}.sidebar .active{background:rgba(255,255,255,.13)!important;border-left:3px solid #60a5fa;color:#fff!important}.topbar{background:#fff!important;border-bottom:1px solid var(--line)!important}.card,.pagecard,.hero,.modal{background:#fff!important;border:1px solid var(--line)!important;box-shadow:0 10px 28px rgba(7,27,58,.07)!important;border-radius:14px}.hero{border-left:4px solid var(--blue)!important}.btn{background:linear-gradient(135deg,var(--blue),var(--blue2))!important;color:#fff!important;border:0!important;border-radius:10px!important;box-shadow:0 6px 14px rgba(23,105,210,.18)!important}.btn.secondary{background:#e9f2ff!important;color:var(--navy)!important;box-shadow:none!important}.field input,.field select,.field textarea,input,select,textarea{border:1px solid #cbd8e8!important;border-radius:9px!important;background:#fff!important;color:var(--ink)!important}.field input:focus,.field select:focus,.field textarea:focus,input:focus,select:focus,textarea:focus{outline:0!important;border-color:var(--blue)!important;box-shadow:0 0 0 3px rgba(23,105,210,.12)!important}table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}th{background:#edf4fc!important;color:#173456!important;font-weight:700}td,th{padding:12px 14px;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}tr:hover td{background:#f8fbff}.status,.badge,.pill{border-radius:999px}.premium-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.premium-stat{padding:18px;border-radius:14px;background:linear-gradient(135deg,#fff,#f1f6fd);border:1px solid var(--line)}.premium-stat strong{font-size:28px;color:var(--navy)}.premium-modal{position:fixed;inset:0;background:rgba(5,18,40,.55);z-index:9999;display:none;align-items:center;justify-content:center;padding:16px}.premium-modal.open{display:flex}.premium-box{width:min(720px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.25)}.premium-head{padding:20px 24px;background:linear-gradient(135deg,#071b3a,#1769d2);color:#fff}.premium-body{padding:22px}.premium-form{display:grid;grid-template-columns:1fr 1fr;gap:14px}.premium-form .full{grid-column:1/-1}.premium-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}.mobile-table{overflow-x:auto}@media(max-width:800px){.premium-grid{grid-template-columns:1fr}.premium-form{grid-template-columns:1fr}.premium-form .full{grid-column:auto}.premium-box{max-height:95vh}.page{padding:12px}}
-</style></head>
+</head>
 
 <body>
 <div class="app">
@@ -165,7 +165,7 @@ tr:last-child td{border-bottom:0}
 <div class="content">
 
 <section id="dashboard" class="page active">
-  <div class="hero"><h1 id="welcome">Welcome, Teacher</h1><p id="welcomeSub">Loading your teaching overview...</p></div>
+  <div class="hero teacher-welcome-hero"><h1 id="welcome">👋 Hi, Teacher</h1><p id="welcomeSub">Welcome, Teacher. Here is your teaching overview today.</p></div>
   <div id="dashboardNotice" class="notice"></div>
 
   <div class="grid two">
@@ -534,8 +534,8 @@ function populateSelectors(){
 function renderIdentity(){
   const name=teacherDisplayName();
   const ini=initials(name);
-  $("welcome").textContent="Hi, welcome "+name+".";
-  $("welcomeSub").textContent="Here is your teaching overview today.";
+  $("welcome").textContent="👋 Hi, "+name;
+  $("welcomeSub").textContent="Welcome, "+name+". Here is your teaching overview today.";
   $("teacherName").textContent=name;
   $("teacherSchool").textContent=school?.name||school?.school_name||"ACCESS UG";
   $("teacherEmployee").textContent="Employee number: "+(teacher.employee_number||teacher.employee_no||"—");
@@ -1104,53 +1104,76 @@ async function markAllNotificationsRead(){if(!notificationUserId)return;const r=
    Login / initialization
    ========================= */
 async function init(){
+  // Render the shell first. A slow/blocked Supabase table must never leave
+  // the entire Teacher Dashboard stuck on "Loading...".
   try{
-    $("attendanceDate").value=todayISO();
-    if($("behaviourDate"))$("behaviourDate").value=todayISO();
+    if($('attendanceDate')) $('attendanceDate').value=todayISO();
+    if($('behaviourDate')) $('behaviourDate').value=todayISO();
 
     const r=await supabaseClient.auth.getSession();
-    if(r.error)throw new Error("Could not read the Supabase session: "+r.error.message);
-
+    if(r.error) throw new Error("Could not read the Supabase session: "+r.error.message);
     session=r.data?.session;
-    if(!session){redirectLogin();return;}
+    if(!session){ redirectLogin(); return; }
 
-    const email=(session.user.email||"").trim().toLowerCase();
-    if(!email)throw new Error("The authenticated Supabase account has no email address.");
+    const email=(session.user.email||'').trim().toLowerCase();
+    const storedTeacherId=sessionStorage.getItem('accessug_teacher_id')||localStorage.getItem('accessug_teacher_id');
+    const storedSchoolId=sessionStorage.getItem('accessug_teacher_school_id')||localStorage.getItem('accessug_school_id');
 
-    /* Teacher identity is intentionally matched by email because that is
-       the structure used by this ACCESS UG project. */
-    const t=await supabaseClient.from("teachers").select("*").ilike("email",email).limit(20);
-    if(t.error)throw new Error("Teacher lookup failed: "+t.error.message);
-    const teacherRows=t.data||[];
-    const activeTeacherRows=teacherRows.filter(x=>!x.status||String(x.status).trim().toLowerCase()==="active");
-    teacher=activeTeacherRows[0]||teacherRows[0]||null;
-    if(!teacher)throw new Error("No teacher profile was found for "+email+" in public.teachers.");
-    teacherSchoolId=teacher.school_id||teacher.school||null;
+    // Prefer the exact teacher id saved by the login page. This avoids a
+    // fragile email lookup and also works when teacher email casing differs.
+    let t=null, tError=null;
+    if(storedTeacherId){
+      const q=await supabaseClient.from('teachers').select('*').eq('id',storedTeacherId).maybeSingle();
+      t=q.data||null; tError=q.error;
+    }
+    if(!t && session.user.id){
+      const q=await supabaseClient.from('teachers').select('*').eq('auth_user_id',session.user.id).maybeSingle();
+      if(!q.error && q.data) t=q.data;
+      else if(q.error) console.warn('Teacher auth_user_id lookup:',q.error.message);
+    }
+    if(!t && email){
+      const q=await supabaseClient.from('teachers').select('*').ilike('email',email).limit(20);
+      if(!q.error){
+        const rows=q.data||[];
+        t=rows.find(x=>!x.status||String(x.status).trim().toLowerCase()==='active')||rows[0]||null;
+      } else tError=q.error;
+    }
+    if(!t) throw new Error(tError?.message||('No teacher profile was found for '+(email||'this account')+'.'));
+    teacher=t;
+    teacherSchoolId=teacher.school_id||teacher.school||storedSchoolId||null;
 
-    if(teacher.status&&String(teacher.status).toLowerCase()!=="active")
-      throw new Error("This teacher account is not active.");
+    if(teacher.status && String(teacher.status).toLowerCase()!=='active')
+      throw new Error('This teacher account is not active.');
 
-    // Load assignments before any school-scoped save operation.
-    await loadAssignments();
-    if(!teacherSchoolId)throw new Error("Could not determine the teacher's school from the teacher record or assigned classes.");
-
+    // Identity is displayed immediately; secondary data loads independently.
+    renderIdentity();
     setupNotifications(session.user.id);
     initInboxUI();
 
-    const setupResults=await Promise.allSettled([loadSchool(),loadTerms()]);
-    const failed=setupResults.filter(x=>x.status==="rejected");
+    // Keep the main dashboard usable even if assignments, terms, attendance,
+    // reports or notifications are unavailable. Each section handles its own
+    // error instead of blocking the whole application.
+    const tasks=[
+      ['school',loadSchool],
+      ['assignments',loadAssignments],
+      ['terms',loadTerms]
+    ];
+    for(const [label,fn] of tasks){
+      try{ await fn(); }
+      catch(e){ console.warn('Teacher '+label+' load:',e); }
+    }
+
     renderIdentity();
     populateSelectors();
-    if(failed.length)notice("dashboardNotice","Some teaching setup information could not be loaded. You can still use the sections that are available.","info");
 
-    // Secondary panels are independent; one slow/failing query no longer freezes the page.
     void (async()=>{
-      await automaticTeacherAttendance();
-      await loadTeacherAttendance();
-      await Promise.allSettled([loadReportStudents(),loadReports()]);
+      try{ await automaticTeacherAttendance(); }catch(e){console.warn('Automatic teacher attendance:',e);}
+      try{ await loadTeacherAttendance(); }catch(e){console.warn('Teacher attendance:',e);}
+      try{ await loadReportStudents(); }catch(e){console.warn('Report students:',e);}
+      try{ await loadReports(); }catch(e){console.warn('Reports:',e);}
     })();
   }catch(e){
-    fail("The teacher dashboard could not finish loading: "+errorMessage(e));
+    fail('The teacher dashboard could not load your account: '+errorMessage(e));
   }
 }
 
