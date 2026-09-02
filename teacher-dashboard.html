@@ -115,6 +115,10 @@ tr:last-child td{border-bottom:0}
   .card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}
 }
 
+
+/* Teacher GPS check-in */
+.gps-checkin-card{margin-bottom:18px;border:1px solid #d7e3f2;background:linear-gradient(180deg,#fff,#f8fbff)}.gps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}.gps-status-box{padding:14px;border:1px solid #e1e8f1;border-radius:13px;background:#fbfdff}.gps-label{display:block;color:#718096;font-size:11px;text-transform:uppercase;letter-spacing:.4px;font-weight:800}.gps-status-box strong{display:block;color:#15365f;font-size:15px;margin-top:5px}.gps-status-box small{display:block;color:#718096;font-size:11px;line-height:1.4;margin-top:5px}.gps-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:15px}.gps-actions .btn{min-height:44px}.gps-checkin-card .badge{background:#eef3f9;color:#5c6f87}.gps-checkin-card .badge.gps-ok{background:#e7f7f0;color:#117052}.gps-checkin-card .badge.gps-bad{background:#fdebea;color:#a52f2b}.gps-checkin-card .badge.gps-info{background:#eaf2fd;color:#174d8f}@media(max-width:800px){.gps-grid{grid-template-columns:1fr}.gps-actions .btn{width:100%}}
+
 /* NOTIFICATION INBOX */
 .notification-wrap{position:relative}.notification-btn{width:42px;height:42px;border:1px solid #dbe5f2;background:#f4f8fd;color:#0b3d82;border-radius:10px;display:grid;place-items:center;cursor:pointer;position:relative;font-size:20px}.notification-badge{position:absolute;right:-3px;top:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff}.notification-popover{position:absolute;right:0;top:52px;width:min(360px,calc(100vw - 28px));background:#fff;border:1px solid #dce5f0;border-radius:16px;box-shadow:0 18px 45px rgba(15,42,86,.18);display:none;z-index:900;padding:12px}.notification-popover.show{display:block}.notification-popover-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 10px}.notification-popover-head h4{margin:0;color:#102a56}.notification-list{max-height:360px;overflow:auto}.notification-item{padding:12px;border-radius:12px;border:1px solid #e6edf5;margin:7px 0;cursor:pointer;background:#fff}.notification-item.unread{background:#f5f9ff;border-color:#cfe0f5}.notification-item strong{display:block;color:#102a56;font-size:14px}.notification-item p{margin:5px 0;color:#64748b;font-size:13px;line-height:1.4}.notification-item small{color:#94a3b8;font-size:11px}.notification-empty{padding:28px 12px;text-align:center;color:#718096}.inbox-card{margin-top:18px}.inbox-card .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.inbox-actions{display:flex;gap:8px;flex-wrap:wrap}.inbox-actions button{border:1px solid #dbe5f2;background:#fff;color:#0b3d82;border-radius:8px;padding:8px 11px;cursor:pointer;font-weight:700}@media(max-width:700px){.notification-popover{position:fixed;right:14px;top:72px}.notification-btn{width:40px;height:40px}}
 </style>
@@ -215,6 +219,16 @@ tr:last-child td{border-bottom:0}
 
 <section id="attendance" class="page">
   <div class="hero"><h1>Attendance</h1><p>Record student attendance for your assigned classes.</p></div>
+  <div class="gps-checkin-card card">
+    <div class="card-head"><div><h3>Teacher Check-in Location</h3><div class="muted">ACCESS UG verifies your GPS position against your registered school's attendance boundary.</div></div><span id="gpsBadge" class="badge gps-info">GPS not checked</span></div>
+    <div class="gps-grid">
+      <div class="gps-status-box"><span class="gps-label">Verification</span><strong id="gpsVerificationStatus">Not checked</strong><small id="gpsDistanceStatus">Your location will be checked when you verify attendance.</small></div>
+      <div class="gps-status-box"><span class="gps-label">School boundary</span><strong id="gpsBoundaryStatus">Checking…</strong><small id="gpsRadiusStatus">Allowed radius: —</small></div>
+      <div class="gps-status-box"><span class="gps-label">GPS accuracy</span><strong id="gpsAccuracyStatus">—</strong><small>High-accuracy device location is requested.</small></div>
+    </div>
+    <div class="gps-actions"><button class="btn" id="verifyLocationBtn" type="button">⌖ Verify Location &amp; Mark Present</button><span id="gpsHelpText" class="muted">GPS permission is requested only when attendance is being verified.</span></div>
+    <div id="gpsCheckinNotice" class="notice"></div>
+  </div>
   <div id="attendanceNotice" class="notice"></div><div id="attendanceSaveState" class="save-state"></div>
   <div class="card">
     <div class="toolbar">
@@ -580,42 +594,38 @@ async function getStudents(classId){
 /* =========================
    Teacher attendance
    ========================= */
+async function getTeacherGpsPosition(){
+  if(!window.isSecureContext&&location.hostname!=='localhost')throw new Error('GPS requires a secure HTTPS page. The browser preview/file page cannot request location reliably.');
+  if(!navigator.geolocation)throw new Error('This browser does not support GPS location.');
+  return await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,err=>{if(err.code===1)reject(new Error('Location permission was denied. Allow location for this HTTPS site in Chrome site settings, then try again.'));else if(err.code===2)reject(new Error('Your device could not determine a location. Turn on device Location/GPS and try again.'));else reject(new Error('GPS timed out. Turn on device Location/GPS and try again.'));},{enableHighAccuracy:true,timeout:20000,maximumAge:0}));
+}
+function setGpsUI(status,badgeClass='',badgeText='GPS not checked',distanceText='Your location will be checked when you verify attendance.',boundary='Checking…',radius='Allowed radius: —',accuracy='—'){if($('gpsVerificationStatus'))$('gpsVerificationStatus').textContent=status;if($('gpsDistanceStatus'))$('gpsDistanceStatus').textContent=distanceText;if($('gpsBoundaryStatus'))$('gpsBoundaryStatus').textContent=boundary;if($('gpsRadiusStatus'))$('gpsRadiusStatus').textContent=radius;if($('gpsAccuracyStatus'))$('gpsAccuracyStatus').textContent=accuracy;if($('gpsBadge')){const b=$('gpsBadge');b.className='badge '+(badgeClass||'gps-info');b.textContent=badgeText;}}
+function gpsNotice(text,type='info'){const el=$('gpsCheckinNotice');if(!el)return;el.textContent=text;el.className='notice show '+type;}
+async function verifyTeacherLocationAndAttendance(){
+  if(!teacher||!teacherSchoolId)return gpsNotice('Teacher profile or school is not ready yet.','err');
+  const btn=$('verifyLocationBtn');if(btn){btn.disabled=true;btn.textContent='⌖ Requesting GPS…';}
+  gpsNotice('Requesting high-accuracy GPS permission. Please allow location if Chrome asks.','info');setGpsUI('Requesting GPS…','gps-info','GPS checking','Waiting for device location…','Checking…','Allowed radius: —','Requesting…');
+  try{
+    const pos=await getTeacherGpsPosition(),lat=pos.coords.latitude,lng=pos.coords.longitude,accuracy=pos.coords.accuracy;
+    gpsNotice('GPS received. Supabase is checking your distance from the registered school…','info');
+    const r=await supabaseClient.rpc('clock_in_teacher_with_location',{p_lat:lat,p_lng:lng,p_accuracy:accuracy});
+    if(r.error)throw new Error(r.error.message);
+    const row=Array.isArray(r.data)?r.data[0]:r.data;
+    const distance=Number(row?.distance_from_school_meters);
+    const schoolRes=await supabaseClient.from('schools').select('name,attendance_radius_meters,geofence_enabled,latitude,longitude').eq('id',teacherSchoolId).maybeSingle();
+    if(schoolRes.error)throw schoolRes.error;
+    const school=schoolRes.data||{},allowed=Number(school.attendance_radius_meters||150);
+    setGpsUI('Verified — Present','gps-ok','✓ Present',Number.isFinite(distance)?`Location verified — ${Math.round(distance)} m from school.`:'Location verified by Supabase.',school.geofence_enabled?'Inside school radius':'Geofence disabled',`Allowed radius: ${allowed} m`,Number.isFinite(Number(accuracy))?`${Math.round(Number(accuracy))} m`:'Available');
+    gpsNotice('✓ Attendance confirmed in Supabase. Your teacher attendance has been marked Present.','ok');if($('clockStatus'))$('clockStatus').textContent='Present';if($('todayStatus'))$('todayStatus').textContent='Present';if(btn){btn.textContent='✓ Present — Location Verified';btn.disabled=true;}await loadTeacherAttendance();
+  }catch(e){
+    const msg=String(e?.message||e);const schoolRes=await supabaseClient.from('schools').select('attendance_radius_meters,geofence_enabled,latitude,longitude').eq('id',teacherSchoolId).maybeSingle();const school=schoolRes.data||{},allowed=Number(school.attendance_radius_meters||150);const outside=/outside school attendance area/i.test(msg),notConfigured=/not been configured/i.test(msg);
+    setGpsUI(outside?'Outside allowed area':notConfigured?'School GPS not configured':'Not verified',outside||notConfigured?'gps-bad':'gps-info','GPS not verified',msg,notConfigured?'Location not configured':outside?'Outside school radius':'Verification failed',`Allowed radius: ${allowed} m`,'—');gpsNotice('Attendance was NOT marked present. '+msg,'err');if(btn){btn.disabled=false;btn.textContent='⌖ Verify Location & Mark Present';}
+  }
+}
 async function automaticTeacherAttendance(){
-  const now=new Date();
-  const hour=now.getHours();
-
-  if(hour<6||hour>=10){
-    $("clockStatus").textContent="Outside window";
-    $("todayStatus").textContent="—";
-    return;
-  }
-
-  const old=await supabaseClient.from("teacher_attendance")
-    .select("*").eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
-
-  if(old.error){
-    console.warn("Teacher attendance check:",old.error.message);
-    return;
-  }
-  if(old.data){
-    $("clockStatus").textContent="Present";
-    $("todayStatus").textContent="Present";
-    return;
-  }
-
-  const payload={
-    teacher_id:teacher.id,school_id:teacherSchoolId,
-    attendance_date:todayISO(),clock_in:now.toISOString(),
-    status:"present",method:"automatic_login"
-  };
-  const r=await supabaseClient.from("teacher_attendance").insert(payload);
-  if(r.error){
-    console.warn("Teacher attendance insert:",r.error.message);
-  }else{
-    $("clockStatus").textContent="Present";
-    $("todayStatus").textContent="Present";
-    toast("Your morning attendance has been recorded.");
-  }
+  const now=new Date(),hour=now.getHours();if(hour<6||hour>=10){$('clockStatus').textContent='Outside window';$('todayStatus').textContent='—';return;}
+  const old=await supabaseClient.from('teacher_attendance').select('*').eq('teacher_id',teacher.id).eq('attendance_date',todayISO()).maybeSingle();if(old.error){console.warn('Teacher attendance check:',old.error.message);return;}if(old.data){$('clockStatus').textContent='Present';$('todayStatus').textContent='Present';return;}
+  await verifyTeacherLocationAndAttendance();
 }
 
 async function loadTeacherAttendance(){
@@ -1104,76 +1114,53 @@ async function markAllNotificationsRead(){if(!notificationUserId)return;const r=
    Login / initialization
    ========================= */
 async function init(){
-  // Render the shell first. A slow/blocked Supabase table must never leave
-  // the entire Teacher Dashboard stuck on "Loading...".
   try{
-    if($('attendanceDate')) $('attendanceDate').value=todayISO();
-    if($('behaviourDate')) $('behaviourDate').value=todayISO();
+    $("attendanceDate").value=todayISO();
+    if($("behaviourDate"))$("behaviourDate").value=todayISO();
 
     const r=await supabaseClient.auth.getSession();
-    if(r.error) throw new Error("Could not read the Supabase session: "+r.error.message);
+    if(r.error)throw new Error("Could not read the Supabase session: "+r.error.message);
+
     session=r.data?.session;
-    if(!session){ redirectLogin(); return; }
+    if(!session){redirectLogin();return;}
 
-    const email=(session.user.email||'').trim().toLowerCase();
-    const storedTeacherId=sessionStorage.getItem('accessug_teacher_id')||localStorage.getItem('accessug_teacher_id');
-    const storedSchoolId=sessionStorage.getItem('accessug_teacher_school_id')||localStorage.getItem('accessug_school_id');
+    const email=(session.user.email||"").trim().toLowerCase();
+    if(!email)throw new Error("The authenticated Supabase account has no email address.");
 
-    // Prefer the exact teacher id saved by the login page. This avoids a
-    // fragile email lookup and also works when teacher email casing differs.
-    let t=null, tError=null;
-    if(storedTeacherId){
-      const q=await supabaseClient.from('teachers').select('*').eq('id',storedTeacherId).maybeSingle();
-      t=q.data||null; tError=q.error;
-    }
-    if(!t && session.user.id){
-      const q=await supabaseClient.from('teachers').select('*').eq('auth_user_id',session.user.id).maybeSingle();
-      if(!q.error && q.data) t=q.data;
-      else if(q.error) console.warn('Teacher auth_user_id lookup:',q.error.message);
-    }
-    if(!t && email){
-      const q=await supabaseClient.from('teachers').select('*').ilike('email',email).limit(20);
-      if(!q.error){
-        const rows=q.data||[];
-        t=rows.find(x=>!x.status||String(x.status).trim().toLowerCase()==='active')||rows[0]||null;
-      } else tError=q.error;
-    }
-    if(!t) throw new Error(tError?.message||('No teacher profile was found for '+(email||'this account')+'.'));
-    teacher=t;
-    teacherSchoolId=teacher.school_id||teacher.school||storedSchoolId||null;
+    /* Teacher identity is intentionally matched by email because that is
+       the structure used by this ACCESS UG project. */
+    const t=await supabaseClient.from("teachers").select("*").ilike("email",email).limit(20);
+    if(t.error)throw new Error("Teacher lookup failed: "+t.error.message);
+    const teacherRows=t.data||[];
+    const activeTeacherRows=teacherRows.filter(x=>!x.status||String(x.status).trim().toLowerCase()==="active");
+    teacher=activeTeacherRows[0]||teacherRows[0]||null;
+    if(!teacher)throw new Error("No teacher profile was found for "+email+" in public.teachers.");
+    teacherSchoolId=teacher.school_id||teacher.school||null;
 
-    if(teacher.status && String(teacher.status).toLowerCase()!=='active')
-      throw new Error('This teacher account is not active.');
+    if(teacher.status&&String(teacher.status).toLowerCase()!=="active")
+      throw new Error("This teacher account is not active.");
 
-    // Identity is displayed immediately; secondary data loads independently.
-    renderIdentity();
+    // Load assignments before any school-scoped save operation.
+    await loadAssignments();
+    if(!teacherSchoolId)throw new Error("Could not determine the teacher's school from the teacher record or assigned classes.");
+
     setupNotifications(session.user.id);
     initInboxUI();
 
-    // Keep the main dashboard usable even if assignments, terms, attendance,
-    // reports or notifications are unavailable. Each section handles its own
-    // error instead of blocking the whole application.
-    const tasks=[
-      ['school',loadSchool],
-      ['assignments',loadAssignments],
-      ['terms',loadTerms]
-    ];
-    for(const [label,fn] of tasks){
-      try{ await fn(); }
-      catch(e){ console.warn('Teacher '+label+' load:',e); }
-    }
-
+    const setupResults=await Promise.allSettled([loadSchool(),loadTerms()]);
+    const failed=setupResults.filter(x=>x.status==="rejected");
     renderIdentity();
     populateSelectors();
+    if(failed.length)notice("dashboardNotice","Some teaching setup information could not be loaded. You can still use the sections that are available.","info");
 
+    // Secondary panels are independent; one slow/failing query no longer freezes the page.
     void (async()=>{
-      try{ await automaticTeacherAttendance(); }catch(e){console.warn('Automatic teacher attendance:',e);}
-      try{ await loadTeacherAttendance(); }catch(e){console.warn('Teacher attendance:',e);}
-      try{ await loadReportStudents(); }catch(e){console.warn('Report students:',e);}
-      try{ await loadReports(); }catch(e){console.warn('Reports:',e);}
+      await automaticTeacherAttendance();
+      await loadTeacherAttendance();
+      await Promise.allSettled([loadReportStudents(),loadReports()]);
     })();
   }catch(e){
-    fail('The teacher dashboard could not load your account: '+errorMessage(e));
+    fail("The teacher dashboard could not finish loading: "+errorMessage(e));
   }
 }
 

@@ -2165,6 +2165,37 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 
                 </div>
 
+                <div class="field">
+                    <label>School Latitude</label>
+                    <input id="schoolLatitude" type="number" step="any" min="-90" max="90" placeholder="e.g. -0.3136">
+                </div>
+
+                <div class="field">
+                    <label>School Longitude</label>
+                    <input id="schoolLongitude" type="number" step="any" min="-180" max="180" placeholder="e.g. 32.5811">
+                </div>
+
+                <div class="field">
+                    <label>Attendance Radius (meters)</label>
+                    <input id="attendanceRadiusMeters" type="number" min="10" max="5000" step="1" value="150">
+                </div>
+
+                <div class="field" style="align-content:end">
+                    <label style="display:flex;align-items:center;gap:9px;cursor:pointer">
+                        <input id="geofenceEnabled" type="checkbox" checked style="width:auto">
+                        Enable GPS Geofence
+                    </label>
+                    <div class="muted">Teachers can only be marked present inside this radius when geofence is enabled.</div>
+                </div>
+
+                <div class="field" style="grid-column:1/-1">
+                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+                        <button type="button" class="secondary" id="useCurrentSchoolLocationBtn">⌖ Use Current Location</button>
+                        <button type="button" class="secondary" id="openSchoolMapsBtn">↗ Open in Google Maps</button>
+                        <span id="schoolLocationStatus" class="muted">Location not configured</span>
+                    </div>
+                </div>
+
             </div>
 
 
@@ -2863,6 +2894,61 @@ async function loadSchools(){
     }
 }
 
+function setSchoolGpsInputs(lat,lng){
+  const la=document.getElementById("schoolLatitude"), lo=document.getElementById("schoolLongitude");
+  if(la)la.value=Number(lat).toFixed(7);
+  if(lo)lo.value=Number(lng).toFixed(7);
+  updateSchoolLocationStatus();
+}
+function updateSchoolLocationStatus(){
+  const la=document.getElementById("schoolLatitude"), lo=document.getElementById("schoolLongitude"), out=document.getElementById("schoolLocationStatus");
+  if(!out)return;
+  const has=la&&lo&&la.value!==""&&lo.value!=="";
+  out.textContent=has?`Location ready · ${Number(la.value).toFixed(6)}, ${Number(lo.value).toFixed(6)}`:"Location not configured";
+}
+async function getBrowserSchoolLocation(onSuccess,onError){
+  if(!navigator.geolocation){onError(new Error("This browser does not provide GPS location."));return;}
+  navigator.geolocation.getCurrentPosition(pos=>onSuccess(pos),err=>{
+    const msg=err.code===1?"Location permission was denied. Please allow GPS access in the browser.":err.code===2?"Your current location could not be determined.":"GPS request timed out. Try again.";
+    onError(new Error(msg));
+  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+}
+function useCurrentSchoolLocation(){
+  const out=document.getElementById("schoolLocationStatus"); if(out)out.textContent="Requesting high-accuracy GPS…";
+  getBrowserSchoolLocation(pos=>{setSchoolGpsInputs(pos.coords.latitude,pos.coords.longitude);},e=>{if(out)out.textContent=e.message;});
+}
+function openSchoolGoogleMaps(schoolId){
+  const school=schoolsCache.find(x=>String(x.id)===String(schoolId));
+  if(!school)return;
+  const url=school.google_maps_url || (school.latitude!=null&&school.longitude!=null?`https://www.google.com/maps?q=${encodeURIComponent(school.latitude)},${encodeURIComponent(school.longitude)}`:"");
+  if(!url){alert("This school does not have GPS coordinates configured yet.");return;}
+  window.open(url,"_blank","noopener,noreferrer");
+}
+async function useCurrentSchoolLocationInDetails(schoolId){
+  const msg=document.getElementById("detailGpsMessage"); if(msg)msg.textContent="Requesting high-accuracy GPS…";
+  getBrowserSchoolLocation(pos=>{
+    const la=document.getElementById("detailGpsLat"),lo=document.getElementById("detailGpsLng");
+    if(la)la.value=Number(pos.coords.latitude).toFixed(7); if(lo)lo.value=Number(pos.coords.longitude).toFixed(7);
+    if(msg)msg.textContent=`GPS captured · accuracy ${Math.round(pos.coords.accuracy||0)} m`;
+  },e=>{if(msg)msg.textContent=e.message;});
+}
+async function saveSchoolAttendanceLocation(schoolId){
+  const msg=document.getElementById("detailGpsMessage");
+  const lat=Number(document.getElementById("detailGpsLat")?.value), lng=Number(document.getElementById("detailGpsLng")?.value);
+  const radius=Number(document.getElementById("detailGpsRadius")?.value||150);
+  const enabled=!!document.getElementById("detailGeofenceEnabled")?.checked;
+  if(enabled && (!Number.isFinite(lat)||!Number.isFinite(lng))) {if(msg)msg.textContent="Set valid latitude and longitude before enabling the geofence.";return;}
+  if((Number.isFinite(lat)&& (lat<-90||lat>90)) || (Number.isFinite(lng)&&(lng<-180||lng>180))){if(msg)msg.textContent="GPS coordinates are outside valid ranges.";return;}
+  if(!Number.isFinite(radius)||radius<10||radius>5000){if(msg)msg.textContent="Radius must be between 10 and 5,000 meters.";return;}
+  if(msg)msg.textContent="Saving location settings…";
+  const payload={latitude:Number.isFinite(lat)?lat:null,longitude:Number.isFinite(lng)?lng:null,attendance_radius_meters:radius,geofence_enabled:enabled,google_maps_url:(Number.isFinite(lat)&&Number.isFinite(lng))?`https://www.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lng)}`:null,location_verified_at:(Number.isFinite(lat)&&Number.isFinite(lng))?new Date().toISOString():null};
+  const r=await supabaseClient.from("schools").update(payload).eq("id",schoolId);
+  if(r.error){if(msg)msg.textContent="Location was not saved: "+r.error.message;return;}
+  const cached=schoolsCache.find(x=>String(x.id)===String(schoolId)); if(cached)Object.assign(cached,payload);
+  if(msg)msg.textContent="✓ Location settings saved.";
+  await loadAllCounts();
+  setTimeout(()=>openSchoolDetails(schoolId),450);
+}
 async function openSchoolDetails(schoolId){
   const modal=document.getElementById("schoolDetailsModal"), body=document.getElementById("schoolDetailsBody");
   const school=schoolsCache.find(x=>String(x.id)===String(schoolId));
@@ -2904,6 +2990,30 @@ async function openSchoolDetails(schoolId){
       <div class="detail-list"><h4>Teachers</h4>${teachers.length?teachers.map(t=>`<div class="item"><button class="small-btn" onclick="openTeacherDetails('${safe(t.id)}')">${safe(`${t.first_name||""} ${t.last_name||""}`.trim()||t.name||"Teacher")}</button> — ${safe(t.email||"No email")}</div>`).join(""):'<div class="item">No teachers registered.</div>'}</div>
       <div class="detail-list"><h4>Students</h4>${students.length?students.map(st=>`<div class="item"><button class="small-btn" onclick="openStudentDetails('${safe(st.id)}')">${safe(`${st.first_name||""} ${st.last_name||""}`.trim()||st.name||"Student")}</button> — ${safe(st.student_email||st.email||"No login email")}</div>`).join(""):'<div class="item">No students registered.</div>'}</div>
       <div class="detail-list"><h4>Subjects offered</h4>${subjectRows.length?subjectRows.map(x=>`<div class="item">${safe(subjectNameForSchool(x))}</div>`).join(""):'<div class="item">No subjects linked.</div>'}</div>
+      <div class="location-admin-card" style="margin-top:18px;padding:16px;border:1px solid #dce6f2;border-radius:14px;background:#f8fbff">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+          <div><h4 style="margin:0 0 4px">School Attendance Location</h4><p class="muted" style="margin:0">Configure the GPS boundary used for teacher attendance.</p></div>
+          <span id="schoolLocationDetailStatus" class="badge ${school.geofence_enabled?'active':'auth'}">${school.geofence_enabled?'Geofence enabled':'Geofence disabled'}</span>
+        </div>
+        <div class="detail-grid" style="margin-top:14px">
+          <div class="detail-item"><small>Latitude</small><strong>${school.latitude==null?'—':safe(school.latitude)}</strong></div>
+          <div class="detail-item"><small>Longitude</small><strong>${school.longitude==null?'—':safe(school.longitude)}</strong></div>
+          <div class="detail-item"><small>Allowed radius</small><strong>${safe(school.attendance_radius_meters??150)} m</strong></div>
+          <div class="detail-item"><small>Last verified</small><strong>${school.location_verified_at?safe(new Date(school.location_verified_at).toLocaleString()):'Not verified'}</strong></div>
+        </div>
+        <div class="formgrid" style="margin-top:14px">
+          <div class="field"><label>Latitude</label><input id="detailGpsLat" type="number" step="any" min="-90" max="90" value="${school.latitude??''}" placeholder="Latitude"></div>
+          <div class="field"><label>Longitude</label><input id="detailGpsLng" type="number" step="any" min="-180" max="180" value="${school.longitude??''}" placeholder="Longitude"></div>
+          <div class="field"><label>Attendance Radius (m)</label><input id="detailGpsRadius" type="number" min="10" max="5000" step="1" value="${school.attendance_radius_meters??150}"></div>
+          <div class="field" style="align-content:end"><label style="display:flex;align-items:center;gap:9px;cursor:pointer"><input id="detailGeofenceEnabled" type="checkbox" ${school.geofence_enabled?'checked':''} style="width:auto"> Enable GPS Geofence</label></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center">
+          <button type="button" class="small-btn" onclick="useCurrentSchoolLocationInDetails('${safe(school.id)}')">⌖ Use Current Location</button>
+          <button type="button" class="small-btn" onclick="openSchoolGoogleMaps('${safe(school.id)}')">↗ Open in Google Maps</button>
+          <button type="button" class="small-btn" onclick="saveSchoolAttendanceLocation('${safe(school.id)}')">Save Location Settings</button>
+          <span id="detailGpsMessage" class="muted"></span>
+        </div>
+      </div>
       <div class="danger-zone"><strong>Danger zone</strong><p>Deleting this school is permanent. Its classes, school-subject links, students, teachers and related records that reference the school will be removed where the database relationships permit cascading deletion.</p><button class="small-btn danger-btn" onclick="deleteSchoolCompletely('${safe(school.id)}')">Delete School Completely</button></div>`;
   }catch(e){ body.innerHTML=`<div class="db-message show error">Could not load school details: ${safe(e.message||e)}</div>`; }
 }
@@ -3232,6 +3342,9 @@ function getSelectedSchoolSubjectIds(){
 
 const refreshSchoolSubjectsBtn=document.getElementById("refreshSchoolSubjectsBtn");
 if(refreshSchoolSubjectsBtn) refreshSchoolSubjectsBtn.addEventListener("click",loadSchoolSubjectCatalog);
+const useCurrentSchoolLocationBtn=document.getElementById("useCurrentSchoolLocationBtn");
+if(useCurrentSchoolLocationBtn) useCurrentSchoolLocationBtn.addEventListener("click",useCurrentSchoolLocation);
+["schoolLatitude","schoolLongitude"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",updateSchoolLocationStatus);});
 
 /* =========================
    ADD SCHOOL
@@ -3282,6 +3395,16 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
             throw new Error("Each class/stream must be unique. Remove duplicate class rows.");
         }
 
+        const gpsLatRaw = document.getElementById("schoolLatitude").value.trim();
+        const gpsLngRaw = document.getElementById("schoolLongitude").value.trim();
+        const gpsRadius = Number(document.getElementById("attendanceRadiusMeters").value || 150);
+        const gpsLat = gpsLatRaw === "" ? null : Number(gpsLatRaw);
+        const gpsLng = gpsLngRaw === "" ? null : Number(gpsLngRaw);
+        if(!Number.isFinite(gpsRadius) || gpsRadius < 10 || gpsRadius > 5000) throw new Error("Attendance radius must be between 10 and 5,000 meters.");
+        if(document.getElementById("geofenceEnabled").checked && (gpsLat === null || gpsLng === null)) throw new Error("Set the school's GPS latitude and longitude before enabling the GPS geofence.");
+        if(gpsLat !== null && (!Number.isFinite(gpsLat) || gpsLat < -90 || gpsLat > 90)) throw new Error("School latitude must be between -90 and 90.");
+        if(gpsLng !== null && (!Number.isFinite(gpsLng) || gpsLng < -180 || gpsLng > 180)) throw new Error("School longitude must be between -180 and 180.");
+
         const school = {
             name: document.getElementById("name").value.trim(),
             code: document.getElementById("code").value.trim().toUpperCase(),
@@ -3291,6 +3414,12 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
             phone: document.getElementById("phone").value.trim() || null,
             email: document.getElementById("email").value.trim().toLowerCase() || null,
             school_type: document.getElementById("schoolType").value,
+            latitude: document.getElementById("schoolLatitude").value === "" ? null : Number(document.getElementById("schoolLatitude").value),
+            longitude: document.getElementById("schoolLongitude").value === "" ? null : Number(document.getElementById("schoolLongitude").value),
+            attendance_radius_meters: Number(document.getElementById("attendanceRadiusMeters").value || 150),
+            geofence_enabled: document.getElementById("geofenceEnabled").checked,
+            google_maps_url: (document.getElementById("schoolLatitude").value && document.getElementById("schoolLongitude").value) ? `https://www.google.com/maps?q=${encodeURIComponent(document.getElementById("schoolLatitude").value)},${encodeURIComponent(document.getElementById("schoolLongitude").value)}` : null,
+            location_verified_at: (document.getElementById("schoolLatitude").value && document.getElementById("schoolLongitude").value) ? new Date().toISOString() : null,
             status: "Active",
             created_by: user.id
         };
@@ -3374,6 +3503,9 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
         );
 
         this.reset();
+        document.getElementById("attendanceRadiusMeters").value = 150;
+        document.getElementById("geofenceEnabled").checked = true;
+        updateSchoolLocationStatus();
         document.getElementById("classAcademicYear").value = new Date().getFullYear();
         document.getElementById("classRows").innerHTML = "";
         addClassRow();
