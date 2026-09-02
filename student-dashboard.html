@@ -40,7 +40,8 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}
 .empty,.loading{text-align:center;padding:35px;color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}.field{display:grid;gap:6px;min-width:190px;flex:1}.field label{font-size:12px;font-weight:700;color:#566579}
 input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;padding:11px 12px;background:#fff;color:var(--text);outline:none}textarea{min-height:120px;resize:vertical}
 .interpret{padding:15px;border-radius:13px;background:#f7f9fc;border:1px solid var(--border);line-height:1.55;font-size:13px;color:#526176}.pill-row{display:flex;flex-wrap:wrap;gap:8px}.pill{padding:8px 11px;border-radius:999px;background:#eef3f9;color:#315b8d;font-size:12px;font-weight:700}
-.empty-state{padding:22px;border:1px dashed #cbd7e6;border-radius:13px;color:var(--muted);text-align:center}
+.empty-state{padding:22px;border:1px dashed #cbd7e6;border-radius:13px;color:var(--muted);text-align:center}.fees-summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}.fees-summary-stat{padding:17px;border:1px solid var(--border);border-radius:14px;background:#f8faff}.fees-summary-stat .label{font-size:12px;color:var(--muted);font-weight:700}.fees-summary-stat .value{font-size:24px;font-weight:900;margin-top:6px;color:var(--text)}.fees-summary-stat.balance .value{color:#b45309}.fees-summary-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.fees-summary-chip{display:inline-flex;align-items:center;padding:7px 10px;border-radius:999px;background:#edf4fd;color:#285d9e;font-size:12px;font-weight:750}.fees-progress{height:11px;background:#e8eef6;border-radius:999px;overflow:hidden;margin-top:8px}.fees-progress>div{height:100%;width:0;background:#15966b;border-radius:inherit;transition:width .3s ease}.fees-source-note{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}@media(max-width:1000px){.fees-summary-grid{grid-template-columns:1fr 1fr}}@media(max-width:750px){.fees-summary-grid{grid-template-columns:1fr 1fr}.fees-summary-stat .value{font-size:20px}}
+
 .overlay{display:none;position:fixed;inset:0;background:rgba(4,17,37,.45);z-index:45}.overlay.show{display:block}
 .toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}
 .grade{font-size:22px;font-weight:900;color:var(--blue)}.final{font-weight:900}.section-note{margin:0 0 14px;color:var(--muted);font-size:13px}
@@ -94,7 +95,14 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 .profile-photo img,.profile-trigger .avatar img{object-fit:cover;object-position:center;display:block;width:100%;height:100%}
 .behaviour-positive{color:#1457a6;font-weight:900}.behaviour-negative{color:#d9534f;font-weight:900}
 </style>
-
+<style id="accessug-student-palette">
+:root{--navy:#061a38;--navy2:#0b3d82;--blue:#1457a6;--bg:#f3f6fb;--text:#13233a;--muted:#6d7b8e;--white:#fff}
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy2))!important;color:#fff!important}
+.hero h1,.hero .sub,.hero p,.welcomeHero .hi{color:#fff!important}
+.sidebar{background:linear-gradient(180deg,var(--navy),#092d63 62%,var(--navy2))!important}
+.btn{background:var(--blue)!important;color:#fff!important}
+.btn:hover{background:#0a3470!important}
+</style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -103,8 +111,10 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
   <button class="active" data-page="home"><span class="nav-icon">⌂</span>Home</button>
   <button data-page="attendance"><span class="nav-icon">◷</span>Attendance</button>
   <button data-page="behaviour"><span class="nav-icon">★</span>Behaviour</button>
+  <button data-page="results"><span class="nav-icon">▣</span>Results</button>
   <button data-page="assessments"><span class="nav-icon">▤</span>Assessments</button>
   <button data-page="endterm"><span class="nav-icon">▥</span>End of Term</button>
+  <button data-page="fees"><span class="nav-icon">▤</span>Fees</button>
   <button data-page="inbox"><span class="nav-icon">✉</span>Inbox <span id="inboxBadge" style="margin-left:auto;display:none;background:#fff;color:#1457a6;border-radius:999px;padding:2px 7px;font-size:10px">0</span></button>
    <button data-page="reports"><span class="nav-icon">⚠</span>Report an Issue</button>
  </nav>
@@ -116,7 +126,7 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 <header class="top">
  <div class="title-wrap"><button class="menu-btn" id="menuBtn" aria-label="Open student menu">☰</button><h2 id="pageTitle">Student Dashboard</h2></div>
   <div class="quick-nav" aria-label="Quick navigation">
-   <button data-quick="home">Home</button><button data-quick="attendance">Attendance</button><button data-quick="behaviour">Behaviour</button>
+   <button data-quick="home">Home</button><button data-quick="attendance">Attendance</button><button data-quick="behaviour">Behaviour</button><button data-quick="results">Results</button>
   </div>
  <div class="user-mini"><span id="topEmail">Loading...</span><button class="profile-trigger" id="profileTrigger" type="button" aria-label="Open profile"><div class="avatar" id="topAvatar">S</div></button></div>
 </header>
@@ -196,6 +206,29 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
  <div class="card"><div class="card-head"><div><h3>Final Results</h3><div class="muted">Assessment /20 + End Term /80 = Final /100</div></div></div><div id="endtermTable" class="empty">Loading...</div></div>
 </section>
 
+<section id="fees" class="page">
+ <div class="hero welcomeHero feesHero"><div class="hi">👋 <span id="feesGreeting">Hi!</span></div><h1 id="feesHeroTitle">Your Fees Standings</h1><p class="sub" id="feesHeroSub">These are your fees standings at your school.</p></div>
+ <div id="feesNotice" class="notice"></div>
+ <div class="card">
+  <div class="card-head"><div><h3>My Fees Account</h3><div class="muted">These figures come directly from the fee structure and payments recorded by your school.</div></div><span id="feesYearChip" class="fees-summary-chip">Academic year —</span></div>
+  <div id="feesSummaryBody"><div class="loading">Loading fees…</div></div>
+ </div>
+</section>
+
+<section id="results" class="page">
+ <div class="hero"><h1>Results</h1><p>Your official ACCESS UG assessment and end-of-term reports.</p></div>
+ <div id="resultsNotice" class="notice"></div>
+ <div class="card" style="margin-bottom:18px">
+  <div class="card-head"><div><h3>Report availability</h3><div class="muted">Reports are created automatically when the required subject results are complete.</div></div>
+   <select id="resultsTerm" class="input" style="max-width:220px"></select>
+  </div>
+  <div class="grid two">
+   <div class="card" style="box-shadow:none;border:1px solid #dbe5f0"><div class="muted">Assessment report</div><h2 id="assessmentReportStatus">Checking…</h2><div id="assessmentReportMeta" class="muted">Requires 9 recorded assessment subjects.</div></div>
+   <div class="card" style="box-shadow:none;border:1px solid #dbe5f0"><div class="muted">End-of-term report</div><h2 id="endReportStatus">Checking…</h2><div id="endReportMeta" class="muted">Requires 9 assessment + 9 end-term subjects.</div></div>
+  </div>
+ </div>
+ <div id="resultReportList"></div>
+</section>
 <section id="inbox" class="page">
   <div class="hero"><h1>Inbox</h1><p>Your ACCESS UG notifications and important updates.</p></div>
   <div id="inboxNotice" class="notice"></div>
@@ -286,7 +319,7 @@ const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHA
 window.supabaseClient=supabaseClient;
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-let authUser=null,student=null,attendance=[],behaviour=[],assessments=[],endResults=[];
+let authUser=null,student=null,attendance=[],behaviour=[],assessments=[],endResults=[],feeSummary=null;
 let charts={};
 
 function notice(id,text,type="info"){const e=$(id);e.textContent=text;e.className="notice show "+type}
@@ -294,6 +327,13 @@ function toast(text){const e=$("toast");e.textContent=text;e.classList.add("show
 function studentName(s){return [s.first_name,s.last_name].filter(Boolean).join(" ")||s.full_name||s.name||"Student"}
 function initials(s){return studentName(s).split(/\s+/).map(x=>x[0]).join("").slice(0,2).toUpperCase()||"S"}
 function pct(n,total){return total?((n/total)*100).toFixed(1)+"%":"0%"}
+function updateFeesHero(isParent, schoolName){
+  const name=studentName(student);
+  const school=String(schoolName||student?.school||student?.school_name||"your school").trim();
+  if($("feesGreeting")) $("feesGreeting").textContent=isParent ? "Hi parents," : "Hi, "+name+"!";
+  if($("feesHeroTitle")) $("feesHeroTitle").textContent=isParent ? "Viewing "+name+"'s Fees Standings" : "Your Fees Standings";
+  if($("feesHeroSub")) $("feesHeroSub").textContent=isParent ? "These are "+name+"'s fees standings at "+school+"." : "These are your fees standings at "+school+".";
+}
 function destroyChart(k){if(charts[k]){charts[k].destroy();charts[k]=null}}
 
 async function init(){
@@ -363,9 +403,10 @@ async function init(){
     }
     $('studentClass').textContent='Class: '+classText;
     $('studentSchool').textContent='School: '+schoolText;
+    updateFeesHero(parentMode, schoolText);
     window.dispatchEvent(new Event('accessug:student-ready'));
     // Load sections independently so one slow/erroring query never freezes the dashboard.
-    const jobs=[loadAttendance,loadBehaviour,loadAssessments,loadEndTerm,loadReports,loadInbox];
+    const jobs=[loadAttendance,loadBehaviour,loadAssessments,loadEndTerm,loadFees,loadReports,loadInbox];
     await Promise.allSettled(jobs.map(fn=>fn()));
   }catch(error){
     console.error('ACCESS UG student initialization error:',error);
@@ -493,6 +534,29 @@ async function loadEndTerm(){
   $('endtermTable').innerHTML=endResults.length?`<div class="table-wrap"><table><thead><tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th><th>Grade</th><th>Term</th></tr></thead><tbody>${endResults.map((r,i)=>{const a=Number(r.assessment_mark||0),e=Number(r.end_term_mark||0),f=Number(r.final_mark??(a+e));return `<tr><td>${i+1}</td><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||r.subject||'Subject')}</strong></td><td>${a.toFixed(2)}</td><td>${e.toFixed(2)}</td><td class="final">${f.toFixed(2)} / 100</td><td><span class="badge neutral">${gradeFromPercent(f)}</span></td><td>${esc(r.term_name||r.term||r.term_id||'—')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty-state">No end-of-term results have been recorded for you yet.</div>';
 }
 
+async function loadFees(){
+  if(!student?.id)return;
+  const body=$("feesSummaryBody");
+  try{
+    if(body)body.innerHTML='<div class="loading">Loading fees…</div>';
+    const {data,error}=await supabaseClient.rpc('get_my_fee_summary',{p_student_id:student.id});
+    if(error)throw error;
+    feeSummary=Array.isArray(data)?data[0]:(data||null);
+    if(!feeSummary){if(body)body.innerHTML='<div class="fees-empty">No fees account is available for this student yet.</div>';return;}
+    const total=Number(feeSummary.total_fees||0),paid=Number(feeSummary.paid||0),balance=Number(feeSummary.balance||0);
+    const pctPaid=total>0?Math.min(100,Math.max(0,(paid/total)*100)):0;
+    const status=total<=0?'Not set':balance<=0?'Paid in full':'Balance due';
+    const statusClass=balance<=0&&total>0?'present':total<=0?'neutral':'auth';
+    const money=v=>new Intl.NumberFormat('en-UG',{style:'currency',currency:'UGX',maximumFractionDigits:0}).format(Number(v)||0);
+    if($("feesYearChip"))$("feesYearChip").textContent='Academic year '+(feeSummary.academic_year||'—');
+    if(body)body.innerHTML=`<div class="fees-summary-grid"><div class="fees-summary-stat"><div class="label">Total fees</div><div class="value">${esc(money(total))}</div></div><div class="fees-summary-stat"><div class="label">Paid</div><div class="value">${esc(money(paid))}</div></div><div class="fees-summary-stat balance"><div class="label">Balance due</div><div class="value">${esc(money(balance))}</div></div><div class="fees-summary-stat"><div class="label">Payments recorded</div><div class="value">${esc(feeSummary.payment_count??0)}</div></div></div><div class="fees-summary-meta"><span class="fees-summary-chip">${esc(feeSummary.class_name||student.class_level||'Class —')}</span><span class="badge ${statusClass}">${esc(status)}</span></div><div style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:750;color:#536278"><span>Payment progress</span><span>${pctPaid.toFixed(0)}%</span></div><div class="fees-progress"><div style="width:${pctPaid}%"></div></div></div><div class="fees-source-note">Fee amounts are controlled by the school/admin fee structure for your class/stream. Payments recorded by the school reduce your balance automatically.</div>`;
+  }catch(error){
+    console.error('ACCESS UG fees load failed:',error);
+    if(body)body.innerHTML='<div class="fees-empty">Fees could not be loaded right now. Please refresh the dashboard or contact the school administrator.</div>';
+    notice('feesNotice','Could not load fees: '+(error?.message||String(error)),'err');
+  }
+}
+
 async function loadReports(){
  const {data,error}=await supabaseClient.from("reports").select("*").eq("reported_by",student.id).order("created_at",{ascending:false});
  if(error){$("reportsTable").innerHTML='<div class="empty-state">Reports could not be loaded: '+esc(error.message)+'</div>';return}
@@ -537,23 +601,208 @@ async function submitReport(){
  await loadReports();
 }
 
-/* Navigation */
-document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
-document.querySelectorAll(".quick-nav button").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.quick)));
-function showPage(id){
- document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
- $(id).classList.add("active");
- document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
- const titles={home:"Student Dashboard",attendance:"Attendance",behaviour:"Behaviour",assessments:"Assessments",endterm:"End of Term",inbox:"Inbox",reports:"Report an Issue"};
- $("pageTitle").textContent=titles[id]||"Student Dashboard";
- $("sidebar").classList.remove("open");$("overlay").classList.remove("show");
- if(id==="reports")loadReports();
-  if(id==="inbox")loadInbox();
+/* Navigation — deliberately defensive: one missing optional element
+   must never stop the rest of the Student Dashboard from booting. */
+function bindStudentNavigation(){
+ document.querySelectorAll(".nav button").forEach(b=>{
+   b.addEventListener("click",()=>showPage(b.dataset.page));
+ });
+ document.querySelectorAll(".quick-nav button").forEach(b=>{
+   b.addEventListener("click",()=>showPage(b.dataset.quick));
+ });
+ const menuBtn=$("menuBtn"), sidebar=$("sidebar"), overlay=$("overlay");
+ menuBtn?.addEventListener("click",()=>{
+   sidebar?.classList.toggle("open");
+   overlay?.classList.toggle("show");
+ });
+ overlay?.addEventListener("click",()=>{
+   sidebar?.classList.remove("open");
+   overlay?.classList.remove("show");
+ });
+ $("logoutBtn")?.addEventListener("click",async()=>{
+   try{ await supabaseClient.auth.signOut(); } finally { location.replace("./index.html"); }
+ });
+ $("submitReport")?.addEventListener("click",submitReport);
 }
-$("menuBtn").onclick=()=>{$("sidebar").classList.toggle("open");$("overlay").classList.toggle("show")};
-$("overlay").onclick=()=>{$("sidebar").classList.remove("open");$("overlay").classList.remove("show")};
-$("logoutBtn").onclick=async()=>{await supabaseClient.auth.signOut();location.replace("./index.html")};
-$("submitReport").onclick=submitReport;
+
+function showPage(id){
+ const target=$(id);
+ if(!target)return;
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ target.classList.add("active");
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));
+ const titles={home:"Student Dashboard",attendance:"Attendance",behaviour:"Behaviour",fees:"Fees",results:"Results",assessments:"Assessments",endterm:"End of Term",inbox:"Inbox",reports:"Report an Issue"};
+ const title=$("pageTitle"); if(title)title.textContent=titles[id]||"Student Dashboard";
+ $("sidebar")?.classList.remove("open"); $("overlay")?.classList.remove("show");
+ if(id==="fees")loadFees().catch(e=>console.error("Fees section:",e));
+  if(id==="results")loadStudentResults().catch(e=>console.error("Results section:",e));
+ if(id==="reports")loadReports().catch(e=>console.error("Reports section:",e));
+ if(id==="inbox")loadInbox().catch(e=>console.error("Inbox section:",e));
+}
+
+
+function withResultsTimeout(promise, ms=5500){
+ return Promise.race([
+   promise,
+   new Promise((_,reject)=>setTimeout(()=>reject(new Error("Results check timed out. Please refresh and try again.")),ms))
+ ]);
+}
+function setResultsChecking(){
+ const a=$("assessmentReportStatus"),am=$("assessmentReportMeta"),e=$("endReportStatus"),em=$("endReportMeta");
+ if(a)a.textContent="Checking…";
+ if(am)am.textContent="Checking the recorded subjects for this term.";
+ if(e)e.textContent="Checking…";
+ if(em)em.textContent="Checking the recorded subjects for this term.";
+}
+function setResultsUnavailable(message){
+ const a=$("assessmentReportStatus"),am=$("assessmentReportMeta"),e=$("endReportStatus"),em=$("endReportMeta");
+ if(a)a.textContent="Unable to check";
+ if(am)am.textContent=message||"The Results service could not be reached.";
+ if(e)e.textContent="Unable to check";
+ if(em)em.textContent="The Results service could not be reached.";
+}
+async function loadStudentResults(){
+ const noticeEl=$("resultsNotice");
+ const sel=$("resultsTerm");
+ try{
+  if(!student?.id || !student?.school_id) throw new Error("Student account details are not ready yet.");
+  setResultsChecking();
+
+  // Keep Results isolated from the main dashboard. A slow/unavailable Results
+  // table must never leave the student dashboard permanently on “Checking…”.
+  const termsQuery=supabaseClient.from("academic_terms").select("id,academic_year,term_number,name,start_date,end_date").eq("school_id",student.school_id).order("academic_year",{ascending:false}).order("term_number",{ascending:false});
+  const {data:terms,error:te}=await withResultsTimeout(termsQuery,5500);
+  if(te)throw te;
+  if(sel)sel.innerHTML=(terms||[]).map(t=>`<option value="${esc(t.id)}">${esc(t.academic_year)} · ${esc(t.name||("Term "+t.term_number))}</option>`).join("");
+  if(!terms?.length){
+    if(noticeEl)noticeEl.innerHTML='<div class="empty">No academic term has been configured yet. Results will appear here after the school configures a term.</div>';
+    setResultsUnavailable("No academic term is configured for this school yet.");
+    return;
+  }
+
+  const run=async()=>{
+   const termId=sel?.value||terms[0].id;
+   const queries=[
+    supabaseClient.from("assessments").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
+    supabaseClient.from("end_term_results").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
+    supabaseClient.from("student_result_reports").select("*").eq("student_id",student.id).eq("term_id",termId).order("report_type")
+   ];
+   const result=await withResultsTimeout(Promise.all(queries),5500);
+   const [ar,er,rr]=result;
+   if(ar.error)throw new Error("Assessment results could not be checked: "+ar.error.message);
+   if(er.error)throw new Error("End-of-term results could not be checked: "+er.error.message);
+   if(rr.error)throw new Error("Student reports could not be checked: "+rr.error.message);
+   const ac=new Set((ar.data||[]).map(x=>x.subject_id).filter(Boolean)).size;
+   const ec=new Set((er.data||[]).map(x=>x.subject_id).filter(Boolean)).size;
+   const aReady=ac>=9, eReady=aReady&&ec>=9;
+   $("assessmentReportStatus").textContent=aReady?"Ready":"Not ready yet";
+   $("assessmentReportMeta").textContent=aReady?`${ac} subjects recorded — report generated automatically.`:`${ac}/9 assessment subjects recorded.`;
+   $("endReportStatus").textContent=eReady?"Ready":"Not ready yet";
+   $("endReportMeta").textContent=eReady?`${ec} end-term subjects recorded — report generated automatically.`:`Assessment ${ac}/9 · End-term ${ec}/9.`;
+   $("resultReportList").innerHTML=(rr.data||[]).length
+     ? (rr.data||[]).map(renderStudentResultReport).join("")
+     : '<div class="card"><div class="empty">No official report is available for this term yet. It will appear automatically when the required marks are recorded.</div></div>';
+   if(noticeEl)noticeEl.innerHTML="";
+  };
+
+  if(sel)sel.onchange=()=>run().catch(e=>{
+    console.error("ACCESS UG Results term check failed:",e);
+    setResultsUnavailable(e?.message||"The Results check failed.");
+    if(noticeEl)noticeEl.innerHTML=`<div class="notice err">${esc(e?.message||e)}</div>`;
+  });
+
+  // One controlled retry for transient network/database delays.
+  try{ await run(); }
+  catch(firstError){
+    console.warn("ACCESS UG Results first check failed; retrying once.",firstError);
+    await new Promise(resolve=>setTimeout(resolve,350));
+    await run();
+  }
+ }catch(e){
+   console.error("ACCESS UG Results load failed:",e);
+   setResultsUnavailable(e?.message||"The Results check could not be completed.");
+   if(noticeEl)noticeEl.innerHTML=`<div class="notice err">${esc(e?.message||e)}</div>`;
+   // Never throw from this section: loadAll must not turn a Results problem
+   // into a whole-dashboard loading/error state.
+ }
+}
+function renderStudentResultReport(r){
+ const d=r.report_data||{},b=d.behaviour||{},a=d.attendance||{},subs=Array.isArray(d.subjects)?d.subjects:[];
+ const identity = [
+   ["Student", d.student_name],
+   ["Student ID", d.student_id||d.student_number],
+   ["Gender", d.gender],
+   ["Class", d.class||d.class_level],
+   ["Stream", d.stream],
+   ["Email", d.email],
+   ["Term", d.term_name||d.term],
+   ["Academic year", d.academic_year]
+ ].filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="");
+
+ const summary = [
+   ["Average", d.average??d.average_score],
+   ["Class rank", d.rank??d.position??d.class_position],
+   ["Overall grade", d.grade??d.overall_grade],
+   ["Subjects completed", d.subjects_completed??subs.length],
+   ["Attendance", (a.present!==undefined||a.absent!==undefined||a.authorized_absence!==undefined)
+      ? `${a.present||0} present · ${a.absent||0} absent · ${a.authorized_absence||0} authorized` : null],
+   ["Positive behaviour", b.positive_points??b.total_positive??d.total_positive_behavior],
+   ["Negative behaviour", b.negative_points??b.total_negative??d.total_negative_behavior]
+ ].filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="");
+
+ const gradeKey = d.grading_key || d.grade_key || [
+   ["A","80–100"],["B","70–79"],["C","50–69"],["D","35–49"],["E","0–34"]
+ ];
+ const rows=subs.map((s,i)=>r.report_type==="assessment"
+  ? `<tr><td>${i+1}</td><td>${esc(s.subject||"—")}</td><td>${esc(s.mark??"—")}</td><td>${esc(s.max_mark??20)}</td><td>${esc(s.grade??"—")}</td><td>${esc(s.remark??s.remarks??"—")}</td></tr>`
+  : `<tr><td>${i+1}</td><td>${esc(s.subject||"—")}</td><td>${esc(s.assessment_mark??"—")}</td><td>${esc(s.end_term_mark??"—")}</td><td><strong>${esc(s.final_mark??"—")}</strong></td><td>${esc(s.grade??"—")}</td><td>${esc(s.remark??s.remarks??"—")}</td></tr>`).join("");
+
+ const head=r.report_type==="assessment"
+   ? '<tr><th>#</th><th>Subject</th><th>Assessment</th><th>Max</th><th>Grade</th><th>Remark</th></tr>'
+   : '<tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th><th>Grade</th><th>Remark</th></tr>';
+
+ const photo=d.student_photo_url||d.profile_photo_url||d.photo_url||"";
+ const photoHtml=photo
+   ? `<img src="${esc(photo)}" alt="Student identification photo" style="width:92px;height:112px;object-fit:cover;border-radius:12px;border:1px solid var(--border);background:#eef3f9">`
+   : `<div style="width:92px;height:112px;border-radius:12px;border:1px solid var(--border);background:#eef3f9;display:grid;place-items:center;color:var(--muted);font-size:12px;text-align:center;padding:6px;box-sizing:border-box">Student photo<br>not available</div>`;
+
+ const identityHtml=identity.map(x=>`<div><div class="muted">${esc(x[0])}</div><strong>${esc(x[1])}</strong></div>`).join("");
+ const summaryHtml=summary.map(x=>`<div class="card" style="box-shadow:none"><div class="muted">${esc(x[0])}</div><strong>${esc(x[1])}</strong></div>`).join("");
+ const keyHtml=Array.isArray(gradeKey)
+   ? gradeKey.map(x=>`<span class="pill">${esc(Array.isArray(x)?x[0]:x.label||x.grade||"")} ${esc(Array.isArray(x)?x[1]:x.range||"")}</span>`).join("")
+   : "";
+
+ return `<article class="card result-report" style="margin-bottom:18px">
+   <div class="card-head">
+    <div><h2>${r.report_type==="assessment"?"Assessment Report":"End-of-Term Report"}</h2>
+      <div class="muted">Official ACCESS UG student result</div>
+    </div>
+    <button class="btn secondary" onclick="printStudentResult('${esc(r.id)}')">Print / Save PDF</button>
+   </div>
+   <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px">
+     ${photoHtml}
+     <div style="flex:1;min-width:230px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">${identityHtml}</div>
+   </div>
+   ${summaryHtml?`<div class="grid three" style="margin-bottom:18px">${summaryHtml}</div>`:""}
+   ${rows
+      ? `<div class="table-wrap"><table><thead>${head}</thead><tbody>${rows}</tbody></table></div>`
+      : `<div class="empty-state">No subject results are available in this report yet.</div>`}
+   ${d.overall_performance||d.class_teacher_remarks||d.headteacher_remarks
+      ? `<div class="grid two" style="margin-top:18px">
+          ${d.overall_performance?`<div class="interpret"><strong>Overall performance</strong><br>${esc(d.overall_performance)}</div>`:""}
+          ${d.class_teacher_remarks?`<div class="interpret"><strong>Class teacher remarks</strong><br>${esc(d.class_teacher_remarks)}</div>`:""}
+          ${d.headteacher_remarks?`<div class="interpret"><strong>Headteacher remarks</strong><br>${esc(d.headteacher_remarks)}</div>`:""}
+        </div>`:""}
+   ${keyHtml?`<div style="margin-top:18px"><div class="muted" style="margin-bottom:8px"><strong>ABC grade key</strong></div><div class="pill-row">${keyHtml}</div></div>`:""}
+ </article>`;
+}
+window.printStudentResult=function(id){
+ const el=document.querySelector('.result-report');if(!el)return;
+ const w=window.open('','_blank');if(!w)return;
+ const clone=el.cloneNode(true);const buttons=clone.querySelectorAll('button');buttons.forEach(b=>b.remove());
+ w.document.write('<!doctype html><html><head><title>ACCESS UG Result</title><style>body{font-family:Arial,sans-serif;color:#102a50;padding:28px}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{border:1px solid #cbd6e3;padding:8px;text-align:left}h1,h2{color:#0b2b57}</style></head><body>'+clone.innerHTML+'</body></html>');
+ w.document.close();w.focus();w.print();
+};
 
 async function loadAll(){
  /*
@@ -564,6 +813,7 @@ async function loadAll(){
  const jobs = [
   ["attendance", loadAttendance],
   ["behaviour", loadBehaviour],
+  ["results", loadStudentResults],
   ["assessment", loadAssessments],
   ["endterm", loadEndTerm],
   ["reports", loadReports],
@@ -619,6 +869,7 @@ async function loadAll(){
  });
 }
 $("markAllRead")?.addEventListener("click",markAllRead);
+bindStudentNavigation();
 init();
 </script>
 <script id="accessug-student-profile-js">

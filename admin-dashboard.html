@@ -1100,6 +1100,8 @@ tbody tr:hover{
 </style>
 <style id="accessug-premium-overrides">
 :root{--navy:#071b3a;--navy2:#0b2d5c;--blue:#1769d2;--sky:#eaf2ff;--line:#d9e3f0;--text:#10233f;--muted:#64748b;--white:#fff;--green:#0f9f6e;--red:#d64545;--amber:#c47a00}
+
+.users-toolbar{display:grid;grid-template-columns:1fr 190px;gap:12px;margin:0 0 16px}.users-toolbar input,.users-toolbar select{height:44px;border:1px solid #cbd8e8;border-radius:10px;padding:0 13px;background:#fff;color:var(--text)}.users-table-wrap{overflow-x:auto}.users-table{min-width:920px}.users-role{display:inline-flex;padding:5px 9px;border-radius:999px;background:#edf4fd;color:#173354;font-size:11px;font-weight:800;text-transform:capitalize}.users-action{white-space:nowrap}.users-reset-box{width:min(560px,100%)}.users-reset-warning{padding:14px;border-radius:12px;background:#fff8e8;border:1px solid #f0d79a;color:#705313;line-height:1.5}.users-reset-warning p{margin:5px 0 0;font-size:13px}.users-credential-preview{margin:14px 0;padding:16px;border:1px solid #d9e3f0;border-radius:12px;background:#f7faff}.users-credential-preview .cred-row{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid #e5edf6}.users-credential-preview .cred-row:last-child{border-bottom:0}.users-credential-preview span{color:#64748b;font-size:12px}.users-credential-preview strong{color:#071b3a;word-break:break-word}@media(max-width:800px){.users-toolbar{grid-template-columns:1fr}.users-table{min-width:800px}}
 body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(180deg,var(--navy),#0b2d5c)!important;color:#fff} .sidebar a,.sidebar button{color:#dbeafe!important}.sidebar .active{background:rgba(255,255,255,.13)!important;color:#fff!important;border-left:3px solid #60a5fa}.topbar,.card,.modal,.hero{background:#fff;border:1px solid var(--line);box-shadow:0 10px 30px rgba(7,27,58,.07)} .hero{border-left:4px solid var(--blue)} .btn{background:var(--blue)!important;color:#fff!important;border:none;border-radius:10px;box-shadow:0 5px 12px rgba(23,105,210,.18)} .btn.secondary{background:#e8f0fb!important;color:var(--navy)!important;box-shadow:none}.card-head,.toolbar{border-color:var(--line)} table{border-collapse:separate;border-spacing:0;width:100%;overflow:hidden;border:1px solid var(--line);border-radius:12px} th{background:#eef4fb!important;color:#183252!important;font-weight:700} td,th{padding:12px 14px;border-bottom:1px solid var(--line)} tr:last-child td{border-bottom:0} tr:hover td{background:#f8fbff}.notice{border-radius:10px}.badge,.status{border-radius:999px}.page{max-width:1500px;margin:auto}.grid,.stats{gap:18px}.field input,.field select,.field textarea{border:1px solid #cbd8e8;border-radius:9px;background:#fff}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,210,.12);outline:0}.mobile-only{display:none}@media(max-width:800px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.mobile-only{display:block}.page{padding:12px}.hero{padding:18px}.toolbar{display:grid;grid-template-columns:1fr;gap:10px}table{min-width:760px}.table-wrap{overflow-x:auto}.card{border-radius:14px}.stats,.grid{grid-template-columns:1fr!important}}
 </style>
 <style id="accessug-premium-consistency">
@@ -1111,7 +1113,11 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 .hero p,.welcome p{color:#dbe7fa!important}
 .report-groups{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px 0}.report-group{border:1px solid var(--line);background:#fff;border-radius:14px;padding:18px;text-align:left;color:var(--navy);display:grid;gap:5px;box-shadow:0 5px 16px rgba(6,26,56,.05)}.report-group.active,.report-group:hover{background:#edf4fd;border-color:#bcd0ea}.report-group strong{font-size:26px}.report-group span{color:var(--muted);font-size:12px;font-weight:700}.bulk-admin-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.bulk-admin-drop{border:2px dashed #b8cae1;border-radius:16px;padding:36px 20px;text-align:center;background:#f7faff}.bulk-upload-icon{font-size:42px;color:var(--navy2);font-weight:900}.bulk-admin-drop h4{margin:8px 0 5px;font-size:18px;color:var(--navy)}.bulk-admin-drop p{color:var(--muted);margin-bottom:16px}.bulk-admin-drop label{display:inline-block}.bulk-admin-drop #adminBulkFileName{margin-top:12px}.bulk-admin-hint{margin-top:14px;padding:13px 15px;border-radius:12px;background:#edf4fd;color:#35506f;font-size:12px;line-height:1.6}.bulk-admin-status{border:1px solid var(--line);border-radius:16px;padding:20px;background:#fff}.bulk-admin-status h4,.bulk-admin-preview h4{margin:0;color:var(--navy)}.bulk-progress-head{display:flex;justify-content:space-between;margin:18px 0 8px;color:var(--navy)}.bulk-progress-track{height:10px;background:#e7edf5;border-radius:99px;overflow:hidden}.bulk-progress-track>div{height:100%;width:0;background:linear-gradient(90deg,var(--navy),#2d7ff9);transition:width .25s}.bulk-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}.bulk-kpis span{padding:10px;background:#f7f9fc;border:1px solid var(--line);border-radius:10px;font-size:11px;color:var(--muted)}.bulk-kpis b{display:block;color:var(--navy);font-size:17px;margin-top:3px}.bulk-admin-preview{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}.bulk-admin-preview>.title{margin-bottom:12px}.bulk-notice{display:none;padding:12px 14px;border-radius:10px;margin-bottom:14px}.bulk-notice.show{display:block}.bulk-notice.err{background:#fdebea;color:#9d2e29}.bulk-notice.ok{background:#e7f7f0;color:#116d50}@media(max-width:800px){.report-groups{grid-template-columns:1fr 1fr}.bulk-admin-grid{grid-template-columns:1fr}.bulk-kpis{grid-template-columns:1fr 1fr}.report-table-wrap{overflow-x:auto}}@media(max-width:520px){.report-groups{grid-template-columns:1fr}.bulk-kpis{grid-template-columns:1fr}}
 </style>
-</head>
+<style id="accessug-fees-css">
+.fees-subnav{margin:4px 8px 8px 12px;padding-left:12px;border-left:1px solid rgba(255,255,255,.18);display:grid;gap:4px}.fees-subnav button{font-size:12px!important;padding:9px 10px!important}.fees-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.fees-kpi{background:#fff;border:1px solid var(--border);border-radius:15px;padding:18px;box-shadow:var(--shadow)}.fees-kpi small{display:block;color:var(--muted);font-size:12px}.fees-kpi strong{display:block;font-size:24px;margin-top:6px;color:var(--navy)}.fees-status-paid{color:#117052}.fees-status-due{color:#a8322e}.fees-class-row{cursor:pointer}.fees-class-row:hover td{background:#f8fbff}.fees-class-row.selected td{background:#eef5ff}.fees-inline{display:flex;gap:8px;align-items:center}.fees-inline input{max-width:180px}.fees-student-panel{margin-top:12px;padding:16px;border:1px solid #dce7f5;border-radius:14px;background:#f9fbfe}.fees-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.fees-tabs button{border:1px solid #d9e3f0;background:#fff;color:#285d9e;padding:9px 12px;border-radius:10px;font-weight:750}.fees-tabs button.active{background:#0b3d82;color:#fff;border-color:#0b3d82}.fees-help{padding:14px;border-radius:12px;background:#eef5ff;border:1px solid #d6e5f8;color:#315b8d;font-size:13px;line-height:1.5}.fees-balance{font-weight:900}.fees-paid{color:#117052;font-weight:800}.fees-due{color:#a8322e;font-weight:800}.fees-modal-box{width:min(520px,100%)}
+@media(max-width:800px){.fees-summary{grid-template-columns:1fr 1fr}.fees-inline{flex-wrap:wrap}.fees-inline input{max-width:none}}
+@media(max-width:520px){.fees-summary{grid-template-columns:1fr}.fees-summary .fees-kpi strong{font-size:22px}}
+</style></head>
 
 <body>
 
@@ -1191,9 +1197,19 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
             <span class="nav-icon">⇧</span>
             Bulk Students
         </button>
+<button data-page="fees-update"><span class="nav-icon">▣</span>Fees</button>
+<div class="fees-subnav"><button data-page="fees-update"><span class="nav-icon">↻</span>Update Fees</button><button data-page="fees-analysis"><span class="nav-icon">◫</span>Analysis</button></div>
 
 
         <!-- TEACHERS -->
+        <!-- USERS -->
+        <button data-page="users">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 20c.4-4 2.5-6 6-6s5.6 2 6 6"></path><path d="M14 15c3-.2 5.4 1.4 6 5"></path></svg>
+            </span>
+            Users
+        </button>
+
         <button data-page="teachers">
 
             <span class="nav-icon">
@@ -1778,7 +1794,7 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
           <label class="btn bulk-primary" for="adminBulkFile">Choose Excel / CSV</label><input id="adminBulkFile" type="file" accept=".csv,.xlsx,.xls" hidden>
           <div id="adminBulkFileName" class="muted"></div>
         </div>
-        <div class="bulk-admin-hint"><strong>Required:</strong> first_name, last_name, email, student_password, school_code, class_level, stream, academic_year. Student numbers are generated automatically.</div>
+        <div class="bulk-admin-hint"><strong>Required:</strong> first_name, last_name, parent_name, school_code, class_level, stream, academic_year. Student and parent login credentials are generated automatically.</div>
       </div>
       <div class="bulk-admin-status"><h4>Import status</h4><div id="adminBulkSummary" class="empty">Choose a file to begin.</div><div id="adminBulkProgress" style="display:none"><div class="bulk-progress-head"><strong id="adminBulkProgressTitle">Registering…</strong><strong id="adminBulkPercent">0%</strong></div><div class="bulk-progress-track"><div id="adminBulkBar"></div></div><div class="bulk-kpis"><span>Found <b id="adminBulkFound">0</b></span><span>Registered <b id="adminBulkRegistered">0</b></span><span>Errors <b id="adminBulkErrors">0</b></span></div><div id="adminBulkLive"></div></div></div>
     </div>
@@ -1962,6 +1978,21 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 
 </section>
 
+
+<section class="page" id="users">
+  <div class="pagecard">
+    <div class="title"><div><h3>Users & Login Management</h3><p class="muted">View every ACCESS UG account and securely reset a user's login to the default credentials.</p></div><button class="btn" id="adminUsersRefresh" type="button">Refresh Users</button></div>
+    <div id="adminUsersNotice" class="notice"></div>
+    <div class="users-toolbar"><input id="adminUsersSearch" type="search" placeholder="Search name, email, school or number…"><select id="adminUsersRole"><option value="">All roles</option><option value="administrator">Administrator</option><option value="school">School</option><option value="teacher">Teacher</option><option value="student">Student</option><option value="parent">Parent</option></select></div>
+    <div class="card"><div id="adminUsersTable" class="empty">Loading users…</div></div>
+  </div>
+</section>
+
+<section class="page" id="fees-update"><div class="pagecard"><div class="title"><div><h3>School Fees — Update Fees</h3><p class="muted">Configure fees by school, class and stream, then record payments for individual students.</p></div></div><div id="adminFeesNotice" class="notice"></div><div class="fees-help" style="margin-bottom:18px"><strong>Fees structure</strong><br>Select a school and academic year. Each class/stream can have its own total fee. Student paid and balance figures are calculated from recorded payments.</div><div class="toolbar"><div class="field"><label>School</label><select id="adminFeesSchool"><option value="">Select school</option></select></div><div class="field"><label>Academic year</label><select id="adminFeesYear"></select></div><button class="btn" id="adminFeesRefresh">Refresh</button></div><div class="card"><div id="adminFeesClasses" class="empty">Select a school to begin.</div></div></div></section>
+<section class="page" id="fees-analysis"><div class="pagecard"><div class="title"><div><h3>School Fees — Analysis</h3><p class="muted">Monitor fully paid students and outstanding balances by school.</p></div></div><div id="adminFeesAnalysisNotice" class="notice"></div><div class="fees-summary"><div class="fees-kpi"><small>Students</small><strong id="adminFeesCount">0</strong></div><div class="fees-kpi"><small>Fully paid</small><strong id="adminFeesPaidCount">0</strong></div><div class="fees-kpi"><small>Balance due</small><strong id="adminFeesDueCount">0</strong></div><div class="fees-kpi"><small>Total balance</small><strong id="adminFeesBalanceTotal">UGX 0</strong></div></div><div class="toolbar"><div class="field"><label>School</label><select id="adminAnalysisSchool"><option value="">Select school</option></select></div><div class="field"><label>Academic year</label><select id="adminAnalysisYear"></select></div></div><div class="card"><div class="fees-tabs"><button class="active" data-admin-fees-filter="all">All</button><button data-admin-fees-filter="paid">Fully Paid</button><button data-admin-fees-filter="due">Balance Due</button><button data-admin-fees-filter="none">No Fee Set</button></div><div id="adminFeesAnalysis" class="empty">Select a school to begin.</div></div></div></section>
+<div class="modal" id="adminUserResetModal"><div class="modal-box users-reset-box"><div class="modal-head"><div><h3>Reset User Login</h3><p class="muted" id="adminResetUserLabel">User</p></div><button class="close" type="button" id="adminUserResetClose">×</button></div><div class="users-reset-warning"><strong>Reset to default credentials?</strong><p>This changes the selected user's login email where the ACCESS UG default law defines one, and resets the password to the matching default password. Existing sessions may need to sign in again.</p></div><div id="adminResetPreview" class="users-credential-preview"></div><div id="adminResetMessage" class="notice"></div><div class="actions"><button class="btn secondary" type="button" id="adminUserResetCancel">Cancel</button><button class="btn" type="button" id="adminUserResetConfirm">Reset Login</button></div></div></div>
+<div class="modal" id="adminFeeClassModal"><div class="modal-box" style="width:min(1100px,100%)"><div class="modal-head"><div><h3 id="adminFeeClassTitle">Class Fees</h3><p class="muted">Students in this class/stream with total fees, paid amount and balance.</p></div><button class="close" type="button" id="adminFeeClassClose">×</button></div><div id="adminFeeClassBody" class="empty">Loading students…</div></div></div>
+<div class="modal" id="adminFeePaymentModal"><div class="modal-box fees-modal-box"><div class="modal-head"><div><h3>Record Fees Payment</h3><p class="muted" id="adminFeePaymentStudentLabel">Student</p></div><button class="close" type="button" id="adminFeePaymentClose">×</button></div><div id="adminFeePaymentMessage" class="notice"></div><form id="adminFeePaymentForm"><input id="adminFeePaymentStudentId" type="hidden"><input id="adminFeePaymentYear" type="hidden"><div class="field"><label>Amount Paid (UGX) *</label><input id="adminFeePaymentAmount" type="number" min="1" step="0.01" required></div><div class="field" style="margin-top:12px"><label>Payment Date</label><input id="adminFeePaymentDate" type="date"></div><div class="field" style="margin-top:12px"><label>Reference / Receipt No.</label><input id="adminFeePaymentReference"></div><div class="field" style="margin-top:12px"><label>Note</label><textarea id="adminFeePaymentNote"></textarea></div><div class="actions"><button class="btn secondary" type="button" id="adminFeePaymentCancel">Cancel</button><button class="btn" type="submit" id="adminFeePaymentSave">Save Payment</button></div></form></div></div>
 </main>
 
 </div>
@@ -2249,14 +2280,8 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                     <label>Phone</label>
                     <input id="teacherPhone" type="tel">
                 </div>
-                <div class="field">
-                    <label>Teacher Login Email *</label>
-                    <input id="teacherEmail" type="email" placeholder="teacher@example.com" required>
-                </div>
-                <div class="field">
-                    <label>Teacher Password *</label>
-                    <input id="teacherPassword" type="password" minlength="6" autocomplete="new-password" placeholder="At least 6 characters" required>
-                </div>
+                <div class="field"><label>Teacher Login Email</label><div class="fees-help" style="padding:11px 12px">Generated automatically by ACCESS UG. Credentials are created uniquely when the registration is saved.</div></div>
+                <div class="field"><label>Teacher Password</label><div class="fees-help" style="padding:11px 12px">Generated automatically by ACCESS UG. Credentials are created uniquely when the registration is saved.</div></div>
                 <div class="field">
                     <label>Employee Number</label>
                     <input id="teacherEmployeeNumber">
@@ -2339,14 +2364,8 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                     <label>Student Number</label>
                     <input id="studentNumber">
                 </div>
-                <div class="field">
-                    <label>Student Login Email *</label>
-                    <input id="studentEmail" type="email" placeholder="student@example.com" required>
-                </div>
-                <div class="field">
-                    <label>Student Password *</label>
-                    <input id="studentPassword" type="password" minlength="6" autocomplete="new-password" placeholder="At least 6 characters" required>
-                </div>
+                <div class="field"><label>Student Login Email</label><div class="fees-help" style="padding:11px 12px">Generated automatically by ACCESS UG. Credentials are created uniquely when the registration is saved.</div></div>
+                <div class="field"><label>Student Password</label><div class="fees-help" style="padding:11px 12px">Generated automatically by ACCESS UG. Credentials are created uniquely when the registration is saved.</div></div>
                 <div class="field">
                     <label>School *</label>
                     <select id="studentSchool" required>
@@ -2424,7 +2443,10 @@ const titles = {
     schools:"Schools",
     students:"Students",
     teachers:"Teachers",
+    users:"Users & Login Management",
     reports:"Reports",
+    "fees-update":"Update Fees",
+    "fees-analysis":"Fees Analysis",
     settings:"Settings"
 };
 
@@ -2456,6 +2478,9 @@ function show(page){
     if(page === "schools"){ loadClasses(); loadSchools(); }
     if(page === "students"){ loadClasses(); loadStudents(); }
     if(page === "teachers") loadTeachers();
+    if(page === "users" && window.accessugAdminLoadUsers) window.accessugAdminLoadUsers();
+    if(page === "fees-update" && window.accessugAdminLoadFees) window.accessugAdminLoadFees();
+    if(page === "fees-analysis" && window.accessugAdminLoadFeeAnalysis) window.accessugAdminLoadFeeAnalysis();
 }
 
 /* =========================
@@ -3559,255 +3584,12 @@ if(teacherSchoolElement){
 /* =========================
    ADD TEACHER
 ========================= */
-document.getElementById("teacherForm").addEventListener("submit", async function(event){
-    event.preventDefault();
-    clearMessage("teacherMessage");
-
-    const button = document.getElementById("saveTeacherBtn");
-    button.disabled = true;
-    button.textContent = "Saving teacher & assignments…";
-
-    let createdTeacherId = null;
-
-    try {
-        const schoolId = document.getElementById("teacherSchool").value;
-        const email = document.getElementById("teacherEmail").value.trim().toLowerCase();
-        const password = document.getElementById("teacherPassword")?.value || "";
-        const assignmentPlan = getTeacherAssignmentsFromForm();
-
-        if(!schoolId) throw new Error("Select a school.");
-        if(!email) throw new Error("Enter the teacher's login email.");
-        if(password.length < 6) throw new Error("Teacher password must be at least 6 characters.");
-
-        const schoolCheck = await supabaseClient.from("schools").select("id,name").eq("id", schoolId).maybeSingle();
-        if(schoolCheck.error) throw schoolCheck.error;
-        if(!schoolCheck.data) throw new Error("The selected school could not be found.");
-
-        const classIds = assignmentPlan.map(x => x.classId);
-        const classCheck = await supabaseClient.from("classes")
-            .select("id,name,level,stream,school_id,academic_year")
-            .in("id", classIds)
-            .eq("school_id", schoolId);
-        if(classCheck.error) throw classCheck.error;
-        if((classCheck.data || []).length !== classIds.length){
-            throw new Error("One or more selected classes do not belong to the selected school.");
-        }
-
-        const allSubjectIds = [...new Set(assignmentPlan.flatMap(x => x.subjectIds))];
-        const subjectCheck = await supabaseClient.from("subjects").select("*").in("id", allSubjectIds);
-        if(subjectCheck.error) throw subjectCheck.error;
-        if((subjectCheck.data || []).length !== allSubjectIds.length){
-            throw new Error("One or more selected subjects could not be found.");
-        }
-
-        const schoolSubjectCheck = await supabaseClient
-            .from("school_subjects")
-            .select("subject_id")
-            .eq("school_id", schoolId)
-            .in("subject_id", allSubjectIds);
-        if(schoolSubjectCheck.error) throw schoolSubjectCheck.error;
-        const allowedSubjectIds = new Set((schoolSubjectCheck.data || []).map(x=>String(x.subject_id)));
-        const disallowed = allSubjectIds.find(id=>!allowedSubjectIds.has(String(id)));
-        if(disallowed) throw new Error("One or more selected subjects has not been enabled for this school.");
-
-        const classMap = new Map((classCheck.data || []).map(c => [String(c.id), c]));
-        const subjectMap = new Map((subjectCheck.data || []).map(s => [String(s.id), s]));
-
-        const subjectNames = [...new Set(allSubjectIds.map(id => subjectDisplayName(subjectMap.get(String(id)))))];
-        const teacher = {
-            first_name: document.getElementById("teacherFirstName").value.trim(),
-            last_name: document.getElementById("teacherLastName").value.trim(),
-            gender: document.getElementById("teacherGender").value || null,
-            date_of_birth: document.getElementById("teacherDob").value || null,
-            phone: document.getElementById("teacherPhone").value.trim() || null,
-            email,
-            password,
-            employee_number: document.getElementById("teacherEmployeeNumber").value.trim() || null,
-            subject: subjectNames.join(", "),
-            address: document.getElementById("teacherAddress").value.trim() || null,
-            school_id: schoolId,
-            status: "Active"
-        };
-
-        const { data: authResult, error: authError } = await supabaseClient.functions.invoke("admin-register-user", {
-            body: {
-                type: "teacher", school_id: schoolId, first_name: teacher.first_name, last_name: teacher.last_name,
-                gender: teacher.gender, date_of_birth: teacher.date_of_birth, phone: teacher.phone, email, password,
-                employee_number: teacher.employee_number, subject: teacher.subject, address: teacher.address, status: "Active"
-            }
-        });
-        if(authError) throw new Error(authError.message || "Teacher account creation failed.");
-        if(authResult?.error) throw new Error(authResult.error);
-        createdTeacherId = authResult?.record_id || authResult?.record?.id || null;
-        if(!createdTeacherId) throw new Error("Teacher account was created but no teacher record ID was returned.");
-
-        const assignmentRows = assignmentPlan.flatMap(plan => plan.subjectIds.map(subjectId => {
-            const cls = classMap.get(String(plan.classId));
-            return {
-                teacher_id: createdTeacherId,
-                class_id: plan.classId,
-                subject_id: subjectId,
-                academic_year: cls?.academic_year || new Date().getFullYear(),
-                status: "active"
-            };
-        }));
-
-        const assignmentInsert = await supabaseClient
-            .from("teacher_class_assignments")
-            .insert(assignmentRows)
-            .select("id,teacher_id,class_id,subject_id,academic_year,status");
-
-        if(assignmentInsert.error){
-            throw new Error("Teacher account was created, but the class/subject assignments could not be saved: " + assignmentInsert.error.message);
-        }
-
-        const verify = await supabaseClient.from("teacher_class_assignments")
-            .select("id", {count:"exact", head:true})
-            .eq("teacher_id", createdTeacherId);
-        if(verify.error){
-            throw new Error("Teacher and assignments were written, but Supabase verification failed: " + verify.error.message);
-        }
-        if(Number(verify.count || 0) !== assignmentRows.length){
-            throw new Error(`Supabase verification found ${verify.count || 0} assignments, but ${assignmentRows.length} were expected.`);
-        }
-
-        showMessage(
-            "teacherMessage",
-            `✓ ${teacher.first_name} ${teacher.last_name} saved. ${assignmentRows.length} class/subject assignment${assignmentRows.length === 1 ? "" : "s"} confirmed in Supabase. The teacher login can now use ${email}.`,
-            "ok"
-        );
-
-        await loadTeachers();
-        this.reset();
-        document.getElementById("teacherAssignments").innerHTML = "";
-        document.getElementById("teacherAssignmentLoading").style.display = "block";
-        document.getElementById("teacherAssignmentLoading").textContent = "Select a school above to load its classes and available subjects.";
-        document.getElementById("teacherAssignmentYear").textContent = "";
-        setTimeout(closeTeacherModal, 1200);
-
-    } catch(error){
-        console.error("Teacher/assignment insert error:", error);
-        showMessage("teacherMessage", "Could not complete teacher registration: " + (error.message || error), "error");
-    } finally {
-        button.disabled = false;
-        button.textContent = "Save Teacher & Assignments";
-    }
-});
+document.getElementById("teacherForm").addEventListener("submit", async function(event){event.preventDefault();clearMessage("teacherMessage");const button=document.getElementById("saveTeacherBtn");button.disabled=true;button.textContent="Saving teacher & assignments…";try{const schoolId=document.getElementById("teacherSchool").value;const assignmentPlan=getTeacherAssignmentsFromForm();if(!schoolId)throw new Error("Select a school.");const classIds=assignmentPlan.map(x=>x.classId);const classCheck=await supabaseClient.from("classes").select("id,name,level,stream,school_id,academic_year").in("id",classIds).eq("school_id",schoolId);if(classCheck.error)throw classCheck.error;if((classCheck.data||[]).length!==classIds.length)throw new Error("One or more selected classes do not belong to the selected school.");const allSubjectIds=[...new Set(assignmentPlan.flatMap(x=>x.subjectIds))];const subjectCheck=await supabaseClient.from("subjects").select("*").in("id",allSubjectIds);if(subjectCheck.error)throw subjectCheck.error;const subjectMap=new Map((subjectCheck.data||[]).map(s=>[String(s.id),s]));const subjectNames=[...new Set(allSubjectIds.map(id=>subjectDisplayName(subjectMap.get(String(id)))) )];const body={type:"teacher",school_id:schoolId,first_name:document.getElementById("teacherFirstName").value.trim(),last_name:document.getElementById("teacherLastName").value.trim(),gender:document.getElementById("teacherGender").value||null,date_of_birth:document.getElementById("teacherDob").value||null,phone:document.getElementById("teacherPhone").value.trim()||null,employee_number:document.getElementById("teacherEmployeeNumber").value.trim()||null,subject:subjectNames.join(", "),address:document.getElementById("teacherAddress").value.trim()||null};if(!body.first_name||!body.last_name)throw new Error("Teacher first name and last name are required.");const {data:r,error}=await supabaseClient.functions.invoke("admin-register-user",{body});if(error)throw new Error(error.message);if(r?.error)throw new Error(r.error);const tid=r.record_id||r.record?.id;if(!tid)throw new Error("Teacher record ID was not returned.");const cmap=new Map((classCheck.data||[]).map(c=>[String(c.id),c]));const rows=assignmentPlan.flatMap(plan=>plan.subjectIds.map(subjectId=>({teacher_id:tid,class_id:plan.classId,subject_id:subjectId,academic_year:cmap.get(String(plan.classId))?.academic_year||new Date().getFullYear(),status:"active"})));const ar=await supabaseClient.from("teacher_class_assignments").insert(rows);if(ar.error)throw new Error("Teacher was created, but assignments could not be saved: "+ar.error.message);showMessage("teacherMessage",`✓ ${body.first_name} ${body.last_name} saved with ${rows.length} assignments. Login credentials were generated automatically.` ,"ok");await loadTeachers();setTimeout(closeTeacherModal,1000)}catch(error){showMessage("teacherMessage","Could not complete teacher registration: "+(error.message||error),"error")}finally{button.disabled=false;button.textContent="Save Teacher & Assignments"}});
 
 /* =========================
    ADD STUDENT
 ========================= */
-document.getElementById("studentForm").addEventListener("submit", async function(event){
-    event.preventDefault();
-
-    clearMessage("studentMessage");
-
-    const button = document.getElementById("saveStudentBtn");
-    button.disabled = true;
-    button.textContent = "Saving student…";
-
-    try {
-        const schoolId = document.getElementById("studentSchool").value;
-        const classId = document.getElementById("studentClass").value;
-        const studentEmail = document.getElementById("studentEmail").value.trim().toLowerCase();
-
-        if(!schoolId){
-            throw new Error("Select a school.");
-        }
-
-        if(!classId){
-            throw new Error("Select a class/stream.");
-        }
-
-        if(!studentEmail){
-            throw new Error("Enter the student's email address.");
-        }
-
-        const studentPassword = document.getElementById("studentPassword")?.value || "";
-        const parentEmail = document.getElementById("studentParentEmail")?.value.trim().toLowerCase() || "";
-        const parentPassword = document.getElementById("studentParentPassword")?.value || "";
-        if(studentPassword.length < 6) throw new Error("Student password must be at least 6 characters.");
-        if(!parentEmail) throw new Error("Enter the parent / guardian email address.");
-        if(parentPassword.length < 6) throw new Error("Parent / guardian password must be at least 6 characters.");
-
-        const { data: cls, error: classError } = await supabaseClient
-            .from("classes")
-            .select("id,name,school_id,academic_year")
-            .eq("id", classId)
-            .eq("school_id", schoolId)
-            .maybeSingle();
-
-        if(classError) throw classError;
-        if(!cls) throw new Error("The selected class does not belong to the selected school.");
-
-        const student = {
-            first_name: document.getElementById("studentFirstName").value.trim(),
-            last_name: document.getElementById("studentLastName").value.trim(),
-            email: studentEmail,
-            gender: document.getElementById("studentGender").value || null,
-            date_of_birth: document.getElementById("studentDob").value || null,
-            student_number: document.getElementById("studentNumber").value.trim() || null,
-            class_id: classId,
-            class_level: classLabel(cls),
-            parent_name: document.getElementById("studentParentName").value.trim() || null,
-            parent_phone: document.getElementById("studentParentPhone").value.trim() || null,
-            parent_email: document.getElementById("studentParentEmail").value.trim().toLowerCase() || null,
-            address: document.getElementById("studentAddress").value.trim() || null,
-            school_id: schoolId,
-            status: "Active"
-        };
-
-        const { data: authResult, error: authError } = await supabaseClient.functions.invoke("admin-register-user", {
-            body: {
-                type: "student",
-                school_id: schoolId,
-                first_name: student.first_name,
-                last_name: student.last_name,
-                gender: student.gender,
-                date_of_birth: student.date_of_birth,
-                student_number: student.student_number,
-                class_id: classId,
-                class_level: student.class_level,
-                email: studentEmail,
-                password: studentPassword,
-                parent_name: student.parent_name,
-                parent_email: student.parent_email,
-                parent_password: parentPassword,
-                parent_phone: student.parent_phone,
-                address: student.address,
-                status: "Active"
-            }
-        });
-
-        if(authError){
-            throw new Error(authError.message);
-        }
-        if(authResult?.error){
-            throw new Error(authResult.error);
-        }
-
-        showMessage(
-            "studentMessage",
-            `✓ ${student.first_name} ${student.last_name} saved successfully. Student and parent accounts have been created and the student was assigned to ${classLabel(cls)}.`,
-            "ok"
-        );
-
-        this.reset();
-        document.getElementById("studentClass").disabled = true;
-        document.getElementById("studentClass").innerHTML = '<option value="">Select a school first</option>';
-
-        await loadStudents();
-
-        setTimeout(closeStudentModal, 900);
-
-    } catch(error){
-        console.error("Student insert error:", error);
-        showMessage("studentMessage", "Could not save student: " + (error.message || error), "error");
-    } finally {
-        button.disabled = false;
-        button.textContent = "Save Student";
-    }
-});
+document.getElementById("studentForm").addEventListener("submit", async function(event){event.preventDefault();clearMessage("studentMessage");const button=document.getElementById("saveStudentBtn");button.disabled=true;button.textContent="Saving student & parent accounts…";try{const schoolId=document.getElementById("studentSchool").value,classId=document.getElementById("studentClass").value;if(!schoolId)throw new Error("Select a school.");if(!classId)throw new Error("Select a class/stream.");const c=await supabaseClient.from("classes").select("id,name,school_id,academic_year").eq("id",classId).eq("school_id",schoolId).maybeSingle();if(c.error)throw c.error;if(!c.data)throw new Error("The selected class does not belong to the selected school.");const student={type:"student",school_id:schoolId,first_name:document.getElementById("studentFirstName").value.trim(),last_name:document.getElementById("studentLastName").value.trim(),gender:document.getElementById("studentGender").value||null,date_of_birth:document.getElementById("studentDob").value||null,student_number:null,class_id:classId,class_level:classLabel(c.data),parent_name:document.getElementById("studentParentName").value.trim(),parent_phone:document.getElementById("studentParentPhone").value.trim()||null,address:document.getElementById("studentAddress").value.trim()||null};if(!student.first_name||!student.last_name)throw new Error("Student first name and last name are required.");if(!student.parent_name)throw new Error("Parent / guardian first and last name are required.");const {data:r,error}=await supabaseClient.functions.invoke("admin-register-user",{body:student});if(error)throw new Error(error.message);if(r?.error)throw new Error(r.error);showMessage("studentMessage",`✓ ${student.first_name} ${student.last_name} saved successfully. Student and parent login credentials were generated automatically.` ,"ok");await loadStudents();setTimeout(closeStudentModal,1000)}catch(error){showMessage("studentMessage","Could not save student: "+(error.message||error),"error")}finally{button.disabled=false;button.textContent="Save Student"}});
 
 /* =========================
    MESSAGES / SECURITY
@@ -4038,7 +3820,20 @@ document.getElementById("logout").addEventListener("click", async function(){
 
 
 <script>
-(function(){const $=id=>document.getElementById(id);let rows=[],valid=false;const req=['first_name','last_name','email','student_password','school_code','class_level','stream','academic_year'];const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function note(t,c){const n=$('adminBulkNotice');if(n){n.textContent=t;n.className='bulk-notice show '+(c||'')}}function norm(r){const o={};Object.keys(r||{}).forEach(k=>o[String(k).trim().toLowerCase()]=r[k]);return o}async function parse(f){if(f.name.toLowerCase().endsWith('.csv')){const text=await f.text();return csv(text)}const b=await f.arrayBuffer();const wb=XLSX.read(b,{type:'array'});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:''})}function csv(t){const lines=t.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)return[];const parseLine=l=>{let a=[],v='',q=false;for(let i=0;i<l.length;i++){const c=l[i];if(c==='"'&&l[i+1]==='"'){v+='"';i++;}else if(c==='"')q=!q;else if(c===','&&!q){a.push(v.trim());v='';}else v+=c}a.push(v.trim());return a};const h=parseLine(lines[0]).map(x=>x.toLowerCase());return lines.slice(1).map(l=>{const a=parseLine(l),o={};h.forEach((k,i)=>o[k]=a[i]||'');return o})}function render(){const box=$('adminBulkPreview');if(!box)return;const cols=Object.keys(rows[0]||{});box.innerHTML=rows.length?`<table class="data-table"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(0,30).map(r=>`<tr>${cols.map(c=>`<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'<div class="empty">No rows found.</div>'}function validate(){const issues=[];if(!rows.length)issues.push('No student rows found.');const keys=Object.keys(rows[0]||{}).map(k=>k.toLowerCase());req.forEach(k=>{if(!keys.includes(k))issues.push('Missing required column: '+k)});rows.forEach((raw,i)=>{const r=norm(raw),row=i+2;if(!r.first_name||!r.last_name)issues.push(`Row ${row}: first and last name are required.`);if(!r.email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(r.email)))issues.push(`Row ${row}: valid email required.`);if(String(r.student_password||'').length<6)issues.push(`Row ${row}: student password must be at least 6 characters.`);if(!r.school_code||!r.class_level||!r.stream||!r.academic_year)issues.push(`Row ${row}: school, class, stream and academic year are required.`)});valid=issues.length===0;const sum=$('adminBulkSummary');if(sum)sum.innerHTML=valid?`<div class="bulk-notice show ok"><strong>File passed validation.</strong><br>${rows.length} students are ready to register.</div>`:`<div class="bulk-notice show err"><strong>Registration stopped.</strong><br>${issues.slice(0,30).map(esc).join('<br>')}</div>`;$('adminBulkStart').disabled=!valid;note(valid?'All rows passed validation.':'Fix the spreadsheet errors before registration.',valid?'ok':'err')}async function choose(f){if(!f)return;try{if(!['csv','xlsx','xls'].includes(f.name.split('.').pop().toLowerCase()))throw Error('Choose a CSV or Excel file.');rows=(await parse(f)).map(norm);$('adminBulkFileName').textContent='Selected: '+f.name;render();validate()}catch(e){note(e.message||'Could not read file.','err')}}$('adminBulkFile')?.addEventListener('change',e=>choose(e.target.files?.[0]));$('adminBulkClear')?.addEventListener('click',()=>{rows=[];valid=false;$('adminBulkFile').value='';$('adminBulkFileName').textContent='';$('adminBulkPreview').innerHTML='<div class="empty">Nothing to preview yet.</div>';$('adminBulkSummary').innerHTML='<div class="empty">Choose a file to begin.</div>';note('','');$('adminBulkNotice').className='bulk-notice';$('adminBulkStart').disabled=true});$('adminBulkStart')?.addEventListener('click',async()=>{if(!valid)return;const prog=$('adminBulkProgress');prog.style.display='block';$('adminBulkFound').textContent=rows.length;$('adminBulkRegistered').textContent='0';$('adminBulkErrors').textContent='0';let ok=0,err=0;for(let i=0;i<rows.length;i++){try{const {data,error}=await supabaseClient.functions.invoke('admin-bulk-register-students',{body:{rows:[rows[i]]}});if(error||!data?.ok)throw Error(error?.message||data?.error||'Registration failed');ok++}catch(e){err++;$('adminBulkLive').insertAdjacentHTML('beforeend',`<div class="bulk-notice show err" style="margin-top:7px">Row ${i+2}: ${esc(e.message)}</div>`)}const pct=Math.round((i+1)/rows.length*100);$('adminBulkBar').style.width=pct+'%';$('adminBulkPercent').textContent=pct+'%';$('adminBulkRegistered').textContent=ok;$('adminBulkErrors').textContent=err;await new Promise(requestAnimationFrame)}$('adminBulkProgressTitle').textContent=err?'Registration finished with errors':'Registration complete';note(err?`${ok} registered; ${err} failed.`:`All ${ok} students registered successfully.`,err?'err':'ok');if(typeof loadStudents==='function')loadStudents()})})();
-</script>
+(function(){const $=id=>document.getElementById(id);let rows=[],valid=false;const req=['first_name','last_name','parent_name','school_code','class_level','stream','academic_year'];const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));function note(t,c){const n=$('adminBulkNotice');if(n){n.textContent=t;n.className='bulk-notice show '+(c||'')}}function norm(r){const o={};Object.keys(r||{}).forEach(k=>o[String(k).trim().toLowerCase().replace(/\s+/g,'_')]=r[k]);return o}async function parse(f){if(f.name.toLowerCase().endsWith('.csv')){const text=await f.text();return csv(text)}const b=await f.arrayBuffer();const wb=XLSX.read(b,{type:'array',cellDates:false,raw:true});return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{defval:'',raw:true})}function csv(t){const lines=t.split(/\r?\n/).filter(x=>x.trim());if(!lines.length)return[];const parseLine=l=>{let a=[],v='',q=false;for(let i=0;i<l.length;i++){const c=l[i];if(c==='"'&&l[i+1]==='"'){v+='"';i++;}else if(c==='"')q=!q;else if(c===','&&!q){a.push(v.trim());v='';}else v+=c}a.push(v.trim());return a};const h=parseLine(lines[0]).map(x=>x.toLowerCase().replace(/\s+/g,'_'));return lines.slice(1).map(l=>{const a=parseLine(l),o={};h.forEach((k,i)=>o[k]=a[i]||'');return o})}function render(){const box=$('adminBulkPreview');if(!box)return;const cols=Object.keys(rows[0]||{});box.innerHTML=rows.length?`<table class="data-table"><thead><tr>${cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${rows.slice(0,30).map(r=>`<tr>${cols.map(c=>`<td>${esc(r[c])}</td>`).join('')}</tr>`).join('')}</tbody></table>`:'<div class="empty">No rows found.</div>'}function validate(){const issues=[];if(!rows.length)issues.push('No student rows found.');const keys=Object.keys(rows[0]||{}).map(k=>k.toLowerCase());req.forEach(k=>{if(!keys.includes(k))issues.push('Missing required column: '+k)});rows.forEach((raw,i)=>{const r=norm(raw),row=i+2;if(!r.first_name||!r.last_name)issues.push(`Row ${row}: first and last name are required.`);if(!r.parent_name)issues.push(`Row ${row}: parent / guardian first and last name are required for automatic parent account generation.`);if(!r.school_code||!r.class_level||!r.stream||!r.academic_year)issues.push(`Row ${row}: school, class, stream and academic year are required.`);if(!Number.isInteger(Number(r.academic_year)))issues.push(`Row ${row}: academic_year must be a valid year.`)});valid=issues.length===0;const sum=$('adminBulkSummary');if(sum)sum.innerHTML=valid?`<div class="bulk-notice show ok"><strong>File passed validation.</strong><br>${rows.length} students are ready. Student, parent email and password will be generated automatically.</div>`:`<div class="bulk-notice show err"><strong>Registration stopped.</strong><br>${issues.slice(0,30).map(esc).join('<br>')}</div>`;$('adminBulkStart').disabled=!valid;note(valid?'All rows passed validation.':'Fix the spreadsheet errors before registration.',valid?'ok':'err')}async function choose(f){if(!f)return;try{if(!['csv','xlsx','xls'].includes(f.name.split('.').pop().toLowerCase()))throw Error('Choose a CSV or Excel file.');rows=(await parse(f)).map(norm);$('adminBulkFileName').textContent='Selected: '+f.name;render();validate()}catch(e){note(e.message||'Could not read file.','err')}}$('adminBulkFile')?.addEventListener('change',e=>choose(e.target.files?.[0]));$('adminBulkClear')?.addEventListener('click',()=>{rows=[];valid=false;$('adminBulkFile').value='';$('adminBulkFileName').textContent='';$('adminBulkPreview').innerHTML='<div class="empty">Nothing to preview yet.</div>';$('adminBulkSummary').innerHTML='<div class="empty">Choose a file to begin.</div>';note('','');$('adminBulkNotice').className='bulk-notice';$('adminBulkStart').disabled=true});$('adminBulkStart')?.addEventListener('click',async()=>{if(!valid)return;const prog=$('adminBulkProgress');prog.style.display='block';$('adminBulkFound').textContent=rows.length;$('adminBulkRegistered').textContent='0';$('adminBulkErrors').textContent='0';$('adminBulkLive').innerHTML='';try{const cleanRows=rows.map(r=>({first_name:String(r.first_name||'').trim(),last_name:String(r.last_name||'').trim(),gender:String(r.gender||'').trim()||null,date_of_birth:String(r.date_of_birth||'').trim()||null,parent_name:String(r.parent_name||'').trim(),parent_phone:String(r.parent_phone||'').trim()||null,school_code:String(r.school_code||'').trim(),class_level:String(r.class_level||'').trim(),stream:String(r.stream||'').trim(),academic_year:Number(r.academic_year),address:String(r.address||'').trim()||null}));const {data,error}=await supabaseClient.functions.invoke('admin-bulk-register-students',{body:{rows:cleanRows}});if(error)throw new Error(error.message||'Bulk registration request failed');const total=cleanRows.length,registered=Number(data?.registered||0),failed=Number(data?.failed||0);$('adminBulkBar').style.width='100%';$('adminBulkPercent').textContent='100%';$('adminBulkRegistered').textContent=registered;$('adminBulkErrors').textContent=failed;if(data?.failures?.length)$('adminBulkLive').innerHTML=data.failures.map(x=>`<div class="bulk-notice show err" style="margin-top:7px">Row ${x.row}: ${esc(x.name||'Student')} — ${esc(x.error)}</div>`).join('');$('adminBulkProgressTitle').textContent=failed?'Registration finished with errors':'Registration complete';note(failed?`${registered} registered; ${failed} failed.`:`All ${registered||total} students registered successfully. Credentials were generated automatically.`,failed?'err':'ok');if(typeof loadStudents==='function')await loadStudents()}catch(e){$('adminBulkProgressTitle').textContent='Registration failed';note(e.message||'Bulk registration failed.','err')} });})();</script>
+<script id="accessug-admin-fees-js">
+(function(){
+const SB=window.supabaseClient;if(!SB)return;const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+let users=[],selected=null;
+function notice(msg,type){const e=$('adminUsersNotice');e.textContent=msg;e.className='notice show '+type}
+function roleLabel(r){return String(r||'user').replace(/_/g,' ')}
+function render(){const q=($('adminUsersSearch')?.value||'').trim().toLowerCase(),role=$('adminUsersRole')?.value||'';const rows=users.filter(u=>(!role||u.role===role)&&(!q||[u.name,u.email,u.role,u.number,u.id].some(v=>String(v||'').toLowerCase().includes(q))));$('adminUsersTable').innerHTML=rows.length?`<div class="users-table-wrap"><table class="users-table"><thead><tr><th>User</th><th>Email</th><th>Role</th><th>School / Scope</th><th>Status</th><th>Last sign-in</th><th>Action</th></tr></thead><tbody>${rows.map(u=>`<tr><td><strong>${esc(u.name)}</strong>${u.number?`<div class="muted" style="font-size:11px;margin-top:3px">${esc(u.number)}</div>`:''}</td><td>${esc(u.email||'—')}</td><td><span class="users-role">${esc(roleLabel(u.role))}</span></td><td>${esc(u.school_id||'—')}</td><td>${esc(u.status||'Active')}</td><td>${u.last_sign_in_at?esc(new Date(u.last_sign_in_at).toLocaleString()):'Never'}</td><td class="users-action"><button class="btn small secondary" type="button" data-reset-user="${esc(u.id)}">Reset Password</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No users match your search.</div>';document.querySelectorAll('[data-reset-user]').forEach(b=>b.onclick=()=>openReset(b.dataset.resetUser))}
+async function load(){const box=$('adminUsersTable');if(box)box.innerHTML='<div class="empty">Loading users…</div>';try{const {data,error}=await SB.functions.invoke('admin-user-management',{body:{action:'list'}});if(error)throw error;if(data?.error)throw new Error(data.error);users=data?.users||[];render();}catch(e){box.innerHTML='<div class="notice show err">Could not load users: '+esc(e.message||e)+'</div>'}}
+function openReset(id){selected=users.find(x=>String(x.id)===String(id));if(!selected)return;$('adminResetUserLabel').textContent=`${selected.name} • ${selected.roleLabel||roleLabel(selected.role)}`;$('adminResetMessage').className='notice';$('adminResetPreview').innerHTML=`<div class="cred-row"><span>Current email</span><strong>${esc(selected.email||'—')}</strong></div><div class="cred-row"><span>Account type</span><strong>${esc(roleLabel(selected.role))}</strong></div><div class="cred-row"><span>Default rule</span><strong>${selected.role==='student'?'School prefix + year + first initial + last 4 letters':selected.role==='teacher'?'School prefix + year + T + first initial + last 4 letters':selected.role==='parent'?'Parent first + last name':'Existing school login local-part'}</strong></div><div class="cred-row"><span>New credentials</span><strong>Generated securely after confirmation</strong></div>`;$('adminUserResetModal').classList.add('show')}
+async function confirmReset(){if(!selected)return;const b=$('adminUserResetConfirm');b.disabled=true;b.textContent='Resetting…';$('adminResetMessage').className='notice';try{const {data,error}=await SB.functions.invoke('admin-user-management',{body:{action:'reset',user_id:selected.id}});if(error)throw error;if(data?.error)throw new Error(data.error);$('adminResetPreview').innerHTML=`<div class="cred-row"><span>Full name</span><strong>${esc(data.name)}</strong></div><div class="cred-row"><span>Role</span><strong>${esc(data.role)}</strong></div><div class="cred-row"><span>Login email</span><strong>${esc(data.email)}</strong></div><div class="cred-row"><span>Default password</span><strong>${esc(data.password)}</strong></div>`;$('adminResetMessage').textContent='Login reset successfully. Save these credentials securely; the password is not stored in the database.';$('adminResetMessage').className='notice show ok';await load()}catch(e){$('adminResetMessage').textContent='Reset failed: '+(e.message||e);$('adminResetMessage').className='notice show err'}finally{b.disabled=false;b.textContent='Reset Login'}}
+$('adminUsersRefresh')?.addEventListener('click',load);$('adminUsersSearch')?.addEventListener('input',render);$('adminUsersRole')?.addEventListener('change',render);$('adminUserResetClose')?.addEventListener('click',()=>$('adminUserResetModal').classList.remove('show'));$('adminUserResetCancel')?.addEventListener('click',()=>$('adminUserResetModal').classList.remove('show'));$('adminUserResetConfirm')?.addEventListener('click',confirmReset);$('adminUserResetModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.remove('show')});window.accessugAdminLoadUsers=load;
+})();
+(function(){const SB=window.supabaseClient;if(!SB)return;const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const money=v=>'UGX '+Number(v||0).toLocaleString('en-UG',{maximumFractionDigits:2});let analysis=[],filter='all',adminClasses=[];function fillSchools(){const schools=window.schoolsData||[];['adminFeesSchool','adminAnalysisSchool'].forEach(id=>{const el=$(id);if(!el)return;el.innerHTML='<option value="">Select school</option>'+schools.map(s=>`<option value="${s.id}">${esc(s.name||s.code)}</option>`).join('')})}function fillYears(){['adminFeesYear','adminAnalysisYear'].forEach(id=>{const el=$(id);if(!el)return;const y=new Date().getFullYear();el.innerHTML=[y-1,y,y+1].map(x=>`<option value="${x}">${x}</option>`).join('');el.value=y})}async function loadSchoolsLocal(){const r=await SB.from('schools').select('id,name,code').order('name');if(r.error)throw r.error;window.schoolsData=r.data||[];fillSchools();fillYears()}async function loadClasses(){const sid=$('adminFeesSchool')?.value;if(!sid){$('adminFeesClasses').innerHTML='<div class="empty">Select a school to begin.</div>';return}const yr=Number($('adminFeesYear').value);const cr=await SB.from('classes').select('*').eq('school_id',sid).eq('academic_year',yr).order('level').order('stream');if(cr.error)throw cr.error;adminClasses=cr.data||[];const fr=adminClasses.length?await SB.from('fee_structures').select('class_id,total_amount').in('class_id',adminClasses.map(x=>x.id)).eq('academic_year',yr):{data:[],error:null};if(fr.error)throw fr.error;const fm=new Map((fr.data||[]).map(x=>[String(x.class_id),x.total_amount]));$('adminFeesClasses').innerHTML=adminClasses.length?`<div class="table-wrap"><table><thead><tr><th>Class</th><th>Stream</th><th>Fee (UGX)</th><th></th></tr></thead><tbody>${adminClasses.map(c=>`<tr class="fees-class-row"><td><strong>${esc(c.level||c.name)}</strong></td><td>${esc(c.stream||'—')}</td><td><input class="admin-fee-input" data-id="${c.id}" type="number" min="0" step="0.01" value="${fm.get(String(c.id))??''}" placeholder="Not set"></td><td><button class="btn small admin-save-fee" data-id="${c.id}" type="button">Save Fee</button><button class="btn small secondary admin-open-class" data-id="${c.id}" type="button" style="margin-left:6px">View Students</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No classes for this academic year.</div>';document.querySelectorAll('.admin-save-fee').forEach(b=>b.onclick=async()=>{const amt=Number(document.querySelector(`.admin-fee-input[data-id="${CSS.escape(b.dataset.id)}"]`).value);if(!Number.isFinite(amt)||amt<0)return showAdminNotice('Enter a valid fee amount.','err');b.disabled=true;try{const r=await SB.rpc('set_fee_structure',{p_class_id:b.dataset.id,p_academic_year:yr,p_total_amount:amt});if(r.error)throw r.error;showAdminNotice('Fee structure updated successfully.','ok');await loadClasses();await loadAnalysis()}catch(e){showAdminNotice(e.message,'err')}finally{b.disabled=false}});document.querySelectorAll('.admin-open-class').forEach(b=>b.onclick=()=>openClassStudents(b.dataset.id,yr))}async function openClassStudents(cid,yr){const c=adminClasses.find(x=>String(x.id)===String(cid));$('adminFeeClassTitle').textContent='Fees — '+(c?.name||'Class');$('adminFeeClassBody').innerHTML='<div class="empty">Loading students…</div>';$('adminFeeClassModal').classList.add('show');const r=await SB.rpc('get_school_fee_students',{p_class_id:cid,p_academic_year:yr});if(r.error){$('adminFeeClassBody').innerHTML='<div class="notice show err">'+esc(r.error.message)+'</div>';return}const rows=r.data||[];$('adminFeeClassBody').innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Student No.</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(x.student_name)}</strong></td><td>${esc(x.student_number||'—')}</td><td>${money(x.total_fees)}</td><td class="fees-paid">${money(x.paid)}</td><td class="fees-balance ${Number(x.balance)>0?'fees-due':'fees-paid'}">${money(x.balance)}</td><td>${esc(x.status)}</td><td>${Number(x.balance)>0?`<button class="btn small" onclick="window.accessugAdminOpenPayment('${x.student_id}','${String(x.student_name).replace(/'/g,"\'")}',${yr})">Record Payment</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No active students in this class/stream.</div>'}
+async function loadAnalysis(){const sid=$('adminAnalysisSchool')?.value;if(!sid){$('adminFeesAnalysis').innerHTML='<div class="empty">Select a school to begin.</div>';return}const yr=Number($('adminAnalysisYear').value);const r=await SB.rpc('get_fee_analysis',{p_school_id:sid,p_academic_year:yr});if(r.error)throw r.error;analysis=r.data||[];renderAnalysis()}function renderAnalysis(){const rows=filter==='paid'?analysis.filter(x=>x.status==='Paid'):filter==='due'?analysis.filter(x=>x.status==='Balance due'):filter==='none'?analysis.filter(x=>x.status==='No fee set'):analysis;const paid=analysis.filter(x=>x.status==='Paid').length,due=analysis.filter(x=>x.status==='Balance due').length,total=analysis.reduce((n,x)=>n+Number(x.balance||0),0);$('adminFeesCount').textContent=analysis.length;$('adminFeesPaidCount').textContent=paid;$('adminFeesDueCount').textContent=due;$('adminFeesBalanceTotal').textContent=money(total);$('adminFeesAnalysis').innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Class / Stream</th><th>Total Fees</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(x.student_name)}</strong></td><td>${esc(x.class_name||'—')}</td><td>${money(x.total_fees)}</td><td class="fees-paid">${money(x.paid)}</td><td class="fees-balance ${Number(x.balance)>0?'fees-due':'fees-paid'}">${money(x.balance)}</td><td>${esc(x.status)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No students match this filter.</div>'}function showAdminNotice(msg,type){const e=$('adminFeesNotice');e.textContent=msg;e.className='notice show '+type}function openPay(id,name,yr){$('adminFeePaymentStudentId').value=id;$('adminFeePaymentYear').value=yr;$('adminFeePaymentStudentLabel').textContent=name;$('adminFeePaymentDate').value=new Date().toISOString().slice(0,10);$('adminFeePaymentAmount').value='';$('adminFeePaymentReference').value='';$('adminFeePaymentNote').value='';$('adminFeePaymentMessage').className='notice';$('adminFeePaymentModal').classList.add('show')}window.accessugAdminOpenPayment=openPay;document.querySelectorAll('[data-admin-fees-filter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-admin-fees-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.adminFeesFilter;renderAnalysis()});$('adminFeePaymentForm')?.addEventListener('submit',async e=>{e.preventDefault();const b=$('adminFeePaymentSave');b.disabled=true;try{const r=await SB.rpc('record_fee_payment',{p_student_id:$('adminFeePaymentStudentId').value,p_academic_year:Number($('adminFeePaymentYear').value),p_amount:Number($('adminFeePaymentAmount').value),p_payment_date:$('adminFeePaymentDate').value||null,p_reference:$('adminFeePaymentReference').value.trim()||null,p_note:$('adminFeePaymentNote').value.trim()||null});if(r.error)throw r.error;$('adminFeePaymentModal').classList.remove('show');showAdminNotice('Payment recorded. Student and linked parent were notified.','ok');await loadAnalysis();await loadClasses()}catch(e){$('adminFeePaymentMessage').textContent=e.message;$('adminFeePaymentMessage').className='notice show err'}finally{b.disabled=false}});['adminFeePaymentClose','adminFeePaymentCancel'].forEach(id=>$(id)?.addEventListener('click',()=>$('adminFeePaymentModal').classList.remove('show')));$('adminFeesSchool')?.addEventListener('change',loadClasses);$('adminFeesYear')?.addEventListener('change',loadClasses);$('adminAnalysisSchool')?.addEventListener('change',loadAnalysis);$('adminAnalysisYear')?.addEventListener('change',loadAnalysis);window.accessugAdminLoadFees=()=>loadClasses();window.accessugAdminLoadFeeAnalysis=()=>loadAnalysis();$('adminFeeClassClose')?.addEventListener('click',()=>$('adminFeeClassModal').classList.remove('show'));$('adminFeeClassModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)$('adminFeeClassModal').classList.remove('show')});loadSchoolsLocal().catch(e=>console.error('Fees school list:',e));})();</script>
 </body>
 </html>
