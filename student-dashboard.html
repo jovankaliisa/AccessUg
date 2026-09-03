@@ -33,7 +33,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}
 .profile{display:flex;gap:18px;align-items:center}.profile-avatar{width:78px;height:78px;border-radius:20px;background:linear-gradient(135deg,#e9f1fd,#c9dbf5);display:grid;place-items:center;color:var(--blue);font-size:27px;font-weight:900;overflow:hidden;flex:none}.profile-avatar img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:inherit}.profile-info h2{margin:0 0 5px;font-size:21px}.profile-info p{margin:3px 0;color:var(--muted)}.profile-card-click{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}.profile-card-click:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(9,35,75,.08)}.profile-card-click:focus{outline:3px solid rgba(21,87,166,.18);outline-offset:4px}
 .stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}.kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}
-.chart-wrap{height:300px;position:relative;min-width:0}.behaviour-chart-scroll{width:100%;height:300px;overflow-x:auto;overflow-y:hidden;padding:0 0 8px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}.behaviour-chart-scroll canvas{display:block;max-width:none}.chart-small{height:220px}.notification-list{display:grid;gap:10px}.notification{border:1px solid var(--border);border-radius:12px;padding:13px 14px;background:#fff}.notification.unread{background:#eef5ff;border-color:#cfe0f8}.notification .ntop{display:flex;justify-content:space-between;gap:12px}.notification .ntitle{font-weight:800}.notification .nmeta{font-size:11px;color:var(--muted);margin-top:4px}.notification .nmsg{font-size:13px;color:#526176;margin-top:6px;line-height:1.45}.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.danger{background:var(--danger)}
+.chart-wrap{height:300px;position:relative}.behaviour-chart-scroll{height:300px;overflow-x:auto;overflow-y:hidden;padding-bottom:6px}.behaviour-chart-scroll canvas{display:block;min-width:700px}.chart-small{height:220px}.notification-list{display:grid;gap:10px}.notification{border:1px solid var(--border);border-radius:12px;padding:13px 14px;background:#fff}.notification.unread{background:#eef5ff;border-color:#cfe0f8}.notification .ntop{display:flex;justify-content:space-between;gap:12px}.notification .ntitle{font-weight:800}.notification .nmeta{font-size:11px;color:var(--muted);margin-top:4px}.notification .nmsg{font-size:13px;color:#526176;margin-top:6px;line-height:1.45}.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.danger{background:var(--danger)}
 .notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:700px;background:#fff}th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}tr:last-child td{border-bottom:0}
 .badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.neutral{background:#edf3fb;color:#285d9e}
@@ -46,7 +46,27 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 .toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}
 .grade{font-size:22px;font-weight:900;color:var(--blue)}.final{font-weight:900}.section-note{margin:0 0 14px;color:var(--muted);font-size:13px}
 @media(max-width:1000px){.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
-@media(max-width:750px){.quick-nav{display:flex;overflow-x:auto;max-width:48vw;margin-right:6px}.quick-nav button{white-space:nowrap;padding:7px 8px;font-size:10px;flex:0 0 auto}.sidebar{transform:translateX(-100%);width:min(86vw,300px)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;width:100%;min-width:0}.menu-btn{display:grid;place-items:center;flex:0 0 40px}.top{padding:0 12px;gap:8px}.title-wrap{min-width:0;flex:1}.top h2{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.user-mini span{display:none}.content{padding:0 12px 24px;width:100%;min-width:0}.hero{margin:0 -12px 18px;padding:24px 12px}.hero h1{font-size:25px}.welcomeHero h1{font-size:26px}.three{grid-template-columns:1fr}.two{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.profile-info h2{font-size:18px;overflow-wrap:anywhere}.card{padding:15px;min-width:0}.card-head{align-items:flex-start}.card-head>div{min-width:0}.card h3{font-size:16px}.muted{line-height:1.4}.chart-wrap{height:270px;width:100%;min-width:0}.chart-small{height:205px}.behaviour-chart-scroll{height:270px;margin:0 -2px;width:calc(100% + 4px)}.behaviour-chart-scroll canvas{height:270px!important}.table-wrap{max-width:100%;overflow-x:auto}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}.fees-summary-grid{grid-template-columns:1fr}.fees-summary-stat .value{font-size:20px}.profile-modal{padding:10px}.profile-modal-card{max-height:94vh;padding:18px;border-radius:18px}.profile-hero{align-items:flex-start}.profile-readonly div{align-items:flex-start;flex-direction:column;gap:4px}.profile-readonly strong{text-align:left;max-width:100%}}
+@media(max-width:750px){.quick-nav{display:flex;overflow-x:auto;max-width:55vw;margin-right:8px}.quick-nav button{white-space:nowrap;padding:7px 8px;font-size:10px}.sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:0 16px 24px}.hero{margin:0 -16px 20px;padding:26px 16px}.welcomeHero h1{font-size:27px}.three{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}}
+/* Mobile layout hardening: keep the student portal inside the phone viewport. */
+@media(max-width:750px){
+ html,body{width:100%;max-width:100%;overflow-x:hidden}
+ .main{width:100%;min-width:0}
+ .top{width:100%;min-width:0;gap:10px;overflow:hidden}
+ .title-wrap{min-width:0;flex:1}
+ .top h2{min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .quick-nav{display:none!important}
+ .user-mini{flex:none}
+ .content{width:100%;min-width:0;max-width:none}
+ .page,.card,.hero{min-width:0;max-width:100%}
+ .profile-modal{padding:12px}
+ .profile-modal-card{width:calc(100vw - 24px);max-width:470px;max-height:calc(100vh - 24px);padding:18px;border-radius:18px}
+ .profile-hero{flex-wrap:wrap}
+ .profile-hero>div:last-child{min-width:0;flex:1}
+ .profile-readonly strong{max-width:60%;overflow-wrap:anywhere}
+ .profile-crop-modal{padding:12px}
+ .profile-crop-card{width:calc(100vw - 24px);max-width:560px;padding:16px;border-radius:18px}
+}
+
 </style>
 
 <style id="accessug-profile-system">
@@ -156,7 +176,7 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
  </div>
  <div class="grid two" style="margin-top:18px">
   <div class="card">
-   <div class="card-head"><div><h3>Behaviour Progress</h3><div class="muted">Positive points go up • negative points go down • each week starts a new 7-day section</div></div></div>
+   <div class="card-head"><div><h3>Behaviour Progress</h3><div class="muted">Positive points go up • negative points go down • one combined bar per week</div></div></div>
    <div class="behaviour-chart-scroll"><canvas id="homeBehaviourChart"></canvas></div>
   </div>
   <div class="card">
@@ -185,10 +205,10 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 </section>
 
 <section id="behaviour" class="page">
- <div class="hero"><h1>Behaviour</h1><p>Track every behaviour event over time. Positive points rise above zero, negative points fall below zero, and each week starts a fresh section.</p></div>
+ <div class="hero"><h1>Behaviour</h1><p>Track every behaviour event over time. Positive points rise above zero and negative points fall below zero, with both recorded in the same weekly bar.</p></div>
  <div id="behaviourNotice" class="notice"></div>
  <div class="grid two">
-  <div class="card"><div class="card-head"><div><h3>Behaviour Progress</h3><div class="muted">Positive points go up • negative points go down • each week starts a new 7-day section</div></div></div><div class="behaviour-chart-scroll"><canvas id="behaviourChart"></canvas></div></div>
+  <div class="card"><div class="card-head"><div><h3>Behaviour Progress</h3><div class="muted">Positive points go up • negative points go down • one combined bar per week</div></div></div><div class="behaviour-chart-scroll"><canvas id="behaviourChart"></canvas></div></div>
   <div class="card"><div class="card-head"><div><h3>Behaviour Summary</h3><div class="muted">Recorded grades and points</div></div></div><div id="behaviourSummary" class="empty">Loading...</div></div>
  </div>
  <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>Behaviour Records</h3><div class="muted">Teacher comments are shown when recorded.</div></div></div><div id="behaviourTable" class="empty">Loading...</div></div>
@@ -406,7 +426,7 @@ async function init(){
     updateFeesHero(parentMode, schoolText);
     window.dispatchEvent(new Event('accessug:student-ready'));
     // Load sections independently so one slow/erroring query never freezes the dashboard.
-    const jobs=[loadAttendance,loadBehaviour,loadAssessments,loadEndTerm,loadFees,loadReports,loadInbox];
+    const jobs=[window.loadAttendance,window.loadBehaviour,window.loadAssessments,window.loadEndTerm,window.loadFees,window.loadReports,window.loadInbox];
     await Promise.allSettled(jobs.map(fn=>fn()));
   }catch(error){
     console.error('ACCESS UG student initialization error:',error);
@@ -414,7 +434,7 @@ async function init(){
   }
 }
 
-async function loadAttendance(){
+window.loadAttendance = async function loadAttendance(){
  const {data,error}=await supabaseClient.from("student_attendance").select("*").eq("student_id",student.id).order("attendance_date",{ascending:true});
  if(error){notice("attendanceNotice","Could not load attendance: "+error.message,"err");return}
  attendance=data||[];
@@ -424,10 +444,10 @@ async function loadAttendance(){
 }
 function renderAttendance(c){
  const total=c.present+c.absent+c.authorized_absence;
- // ACCESS UG follows the requested GO 4 Schools-style interpretation:
- // an authorised absence is still displayed separately, but it does not
- // reduce the student's attendance rate. Only ordinary absences reduce it.
- const attendanceRate=total?((c.present+c.authorized_absence)/total)*100:0;
+ // GO 4 Schools-style attendance calculation:
+ // Attendance is Present sessions divided by all possible sessions.
+ // Authorised absence remains separate and is NOT added to Attendance.
+ const attendanceRate=total?(c.present/total)*100:0;
  const presentPct=total?(c.present/total)*100:0;
  const absentPct=total?(c.absent/total)*100:0;
  const authPct=total?(c.authorized_absence/total)*100:0;
@@ -480,61 +500,68 @@ function renderAttendance(c){
 
  $("attendanceInterpret").innerHTML=total?`
    <p><strong>${attendanceRate.toFixed(1)}%</strong> overall attendance.</p>
-   <p><strong>${c.present}</strong> present and <strong>${c.authorized_absence}</strong> authorised absence record${c.authorized_absence===1?"":"s"} count toward the attendance rate.</p>
+   <p><strong>${c.present}</strong> attendance record${c.present===1?"":"s"} count as attended out of <strong>${total}</strong> possible session${total===1?"":"s"}.</p>
+   <p><strong>${c.authorized_absence}</strong> authorised absence record${c.authorized_absence===1?"":"s"} are shown separately and are not counted as attendance.</p>
    <p><strong>${c.absent}</strong> ordinary absence record${c.absent===1?"":"s"} reduce the attendance rate.</p>
-   <p>Authorised absence remains visible as its own category, but is treated as attended for the overall attendance percentage.</p>
  `:`<p>No attendance records have been entered for you yet.</p>`;
 }
 
-async function loadBehaviour(){
+window.loadBehaviour = async function loadBehaviour(){
   let r=await supabaseClient.from('behaviour_records').select('*').eq('student_id',student.id).order('created_at',{ascending:true});
   if(r.error){notice('behaviourNotice','Could not load behaviour: '+r.error.message,'err');return}
   behaviour=r.data||[];
   renderBehaviour();
 }
 function weekKey(date){
-  const d=new Date(date+"T00:00:00");
-  if(Number.isNaN(d.getTime()))return null;
-  const start=new Date(d);
-  const day=(start.getDay()+6)%7;
-  start.setDate(start.getDate()-day);
-  return start.toISOString().slice(0,10);
+  // Calendar-safe Monday week key. Use UTC so the device timezone cannot
+  // move a date backwards/forwards and accidentally split one week.
+  const m=String(date||"").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if(!m)return null;
+  const d=new Date(Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3])));
+  const day=(d.getUTCDay()+6)%7; // Monday = 0 ... Sunday = 6
+  d.setUTCDate(d.getUTCDate()-day);
+  return d.toISOString().slice(0,10);
 }
 function formatBehaviourDate(date){
-  const d=new Date(date+"T00:00:00");
-  if(Number.isNaN(d.getTime()))return String(date||"");
-  return d.toLocaleDateString(undefined,{day:"2-digit",month:"short"});
+  const m=String(date||"").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m)return String(date||"");
+  const d=new Date(Date.UTC(Number(m[1]),Number(m[2])-1,Number(m[3])));
+  return d.toLocaleDateString(undefined,{day:"2-digit",month:"short",timeZone:"UTC"});
 }
 function renderBehaviour(){
   const points={A:15,B:5,C:2,D:-2,E:-5};
   const counts={A:0,B:0,C:0,D:0,E:0};
-  const weeks={};
 
-  // One x-axis position per calendar week. Positive points always grow
-  // upward and negative points always grow downward at that SAME week.
-  // They are never placed beside another week or merged into one net value.
+  // IMPORTANT: the behaviour graph is WEEKLY. Every event in the same
+  // Monday-Sunday week is combined into one weekly bar. The detailed table
+  // below still keeps every individual behaviour record and its date.
+  const weekly={};
   behaviour.forEach(r=>{
     const g=String(r.grade||"").trim().toUpperCase();
     if(counts[g]===undefined)return;
     counts[g]++;
     const rawDate=r.behaviour_date||r.recorded_date||r.created_at||r.recorded_at||r.date;
     const date=String(rawDate||"").slice(0,10);
-    const week=weekKey(date);
-    if(!week)return;
-    const value=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);
-    if(!weeks[week])weeks[week]={positive:0,negative:0,positiveEvents:0,negativeEvents:0};
-    if(value>0){weeks[week].positive+=value;weeks[week].positiveEvents++;}
-    else if(value<0){weeks[week].negative+=value;weeks[week].negativeEvents++;}
+    if(!date)return;
+    const value=Number.isFinite(Number(r.points)) ? Number(r.points) : (points[g]||0);
+    const wk=weekKey(date);
+    if(!weekly[wk]) weekly[wk]={positive:0,negative:0,positiveEvents:0,negativeEvents:0,totalEvents:0,records:[]};
+    weekly[wk].records.push(r);
+    weekly[wk].totalEvents++;
+    if(value>0){ weekly[wk].positive+=value; weekly[wk].positiveEvents++; }
+    else if(value<0){ weekly[wk].negative+=value; weekly[wk].negativeEvents++; }
   });
 
-  const weekLabels=Object.keys(weeks).sort();
-  const labels=weekLabels.map((w,i)=>{
-    const d=new Date(w+"T00:00:00");
-    const label=Number.isNaN(d.getTime())?w:d.toLocaleDateString(undefined,{day:"2-digit",month:"short"});
-    return "Week "+(i+1)+"\n"+label;
+  const weekStarts=Object.keys(weekly).sort();
+  const formatShort=d=>d.toLocaleDateString(undefined,{day:"2-digit",month:"short",timeZone:"UTC"});
+  const labels=weekStarts.map((wk,i)=>{
+    const startDate=new Date(wk+"T00:00:00Z");
+    const endDate=new Date(startDate);
+    endDate.setUTCDate(endDate.getUTCDate()+6);
+    return "Week "+(i+1)+"\n"+formatShort(startDate)+"–"+formatShort(endDate);
   });
-  const positive=weekLabels.map(w=>weeks[w].positive);
-  const negative=weekLabels.map(w=>weeks[w].negative);
+  const positive=weekStarts.map(w=>weekly[w].positive||0);
+  const negative=weekStarts.map(w=>weekly[w].negative||0);
 
   const chartOptions={
     responsive:false,
@@ -543,31 +570,30 @@ function renderBehaviour(){
     scales:{
       x:{
         stacked:true,
-        ticks:{
-          autoSkip:false,
-          maxRotation:0,
-          minRotation:0,
-          font:{size:10},
-          callback:(value,index)=>labels[index]
-        },
-        grid:{color:"#edf1f6",lineWidth:1}
+        offset:true,
+        ticks:{autoSkip:false,maxRotation:0,minRotation:0,font:{size:10}},
+        grid:{color:"#edf1f6",lineWidth:1},
+        title:{display:true,text:"Weeks"}
       },
-      y:{
-        beginAtZero:true,
-        stacked:true,
-        ticks:{precision:0},
-        title:{display:true,text:"Behaviour points"}
-      }
+      y:{beginAtZero:true,stacked:true,ticks:{precision:0},title:{display:true,text:"Behaviour points"}}
     },
     plugins:{
       legend:{position:"bottom"},
       tooltip:{
         callbacks:{
-          title:(items)=>items[0]?labels[items[0].dataIndex].replace("\n"," • "):"",
-          label:(ctx)=>{
-            const v=Number(ctx.raw||0);
-            const events=ctx.datasetIndex===0?weeks[weekLabels[ctx.dataIndex]].positiveEvents:weeks[weekLabels[ctx.dataIndex]].negativeEvents;
-            return `${ctx.dataset.label}: ${v>0?"+":""}${v} (${events} event${events===1?"":"s"})`;
+          title:(items)=>{
+            const idx=items[0]?.dataIndex??0;
+            const w=weekly[weekStarts[idx]]||{};
+            const start=weekStarts[idx]||"";
+            const sd=start?new Date(start+"T00:00:00Z"):null;
+            const ed=sd?new Date(sd):null;
+            if(ed)ed.setUTCDate(ed.getUTCDate()+6);
+            return "Week "+(idx+1)+(sd?" ("+formatShort(sd)+"–"+formatShort(ed)+")":"")+" • "+(w.totalEvents||0)+" event"+((w.totalEvents||0)===1?"":"s");
+          },
+          label:(item)=>{
+            const w=weekly[weekStarts[item.dataIndex]]||{};
+            if(item.datasetIndex===0)return " Positive: +"+(w.positive||0)+" ("+(w.positiveEvents||0)+" event"+((w.positiveEvents||0)===1?"":"s")+")";
+            return " Negative: "+(w.negative||0)+" ("+(w.negativeEvents||0)+" event"+((w.negativeEvents||0)===1?"":"s")+")";
           }
         }
       }
@@ -578,22 +604,18 @@ function renderBehaviour(){
     const canvas=$(id);
     if(!canvas)return;
     destroyChart(key);
-    // Keep enough width for every week on small screens. The wrapper scrolls,
-    // while the chart itself stays aligned so positive/negative bars share x.
-    const width=Math.max(620,weekLabels.length*96);
+    // One x-axis position = one week. There are NO daily x-axis categories.
+    const width=Math.max(760,weekStarts.length*150);
     canvas.width=width;
-    canvas.height=270;
+    canvas.height=330;
     canvas.style.width=width+"px";
-    canvas.style.height="270px";
+    canvas.style.height="330px";
     charts[key]=new Chart(canvas,{
       type:"bar",
-      data:{
-        labels,
-        datasets:[
-          {label:"Positive points",data:positive,backgroundColor:"#15966b",borderColor:"#15966b",borderWidth:1,barPercentage:.82,categoryPercentage:.82},
-          {label:"Negative points",data:negative,backgroundColor:"#d9534f",borderColor:"#d9534f",borderWidth:1,barPercentage:.82,categoryPercentage:.82}
-        ]
-      },
+      data:{labels,datasets:[
+        {label:"Positive points",data:positive,backgroundColor:"#15966b",borderWidth:1},
+        {label:"Negative points",data:negative,backgroundColor:"#d9534f",borderWidth:1}
+      ]},
       options:chartOptions
     });
   }
@@ -606,106 +628,66 @@ function renderBehaviour(){
     return sum+(Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0));
   },0);
   const positiveTotal=behaviour.reduce((sum,r)=>{
-    const v=Number.isFinite(Number(r.points))?Number(r.points):(points[String(r.grade||"").trim().toUpperCase()]||0);
+    const g=String(r.grade||"").trim().toUpperCase();
+    const v=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);
     return sum+(v>0?v:0);
   },0);
   const negativeTotal=behaviour.reduce((sum,r)=>{
-    const v=Number.isFinite(Number(r.points))?Number(r.points):(points[String(r.grade||"").trim().toUpperCase()]||0);
+    const g=String(r.grade||"").trim().toUpperCase();
+    const v=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);
     return sum+(v<0?v:0);
   },0);
 
-  $("behaviourSummary").innerHTML=`
-    <div class="pill-row">
-      <span class="pill">A: ${counts.A}</span><span class="pill">B: ${counts.B}</span><span class="pill">C: ${counts.C}</span><span class="pill">D: ${counts.D}</span><span class="pill">E: ${counts.E}</span>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px">
-      <div style="padding:12px;border-radius:12px;background:#e7f7f0"><div class="muted">Positive</div><strong style="color:#15966b;font-size:20px">+${positiveTotal}</strong></div>
-      <div style="padding:12px;border-radius:12px;background:#fdebea"><div class="muted">Negative</div><strong style="color:#d9534f;font-size:20px">${negativeTotal}</strong></div>
-    </div>
-    <div style="margin-top:18px"><div class="muted">Overall behaviour points</div><div class="grade" style="${totalPoints<0?'color:#d9534f':''}">${totalPoints>0?"+":""}${totalPoints}</div></div>`;
+  const summary=$("behaviourSummary");
+  if(summary)summary.innerHTML=`<div class="behaviour-total">${totalPoints>=0?"+":""}${totalPoints}</div><div class="behaviour-summary-row"><span class="positive">+${positiveTotal} positive</span><span class="negative">${negativeTotal} negative</span><span>${behaviour.length} event${behaviour.length===1?"":"s"}</span></div>`;
 
-  $("behaviourTable").innerHTML=behaviour.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Week</th><th>Grade</th><th>Points</th><th>Subject</th><th>Comment</th></tr></thead><tbody>${[...behaviour].sort((a,b)=>{
-    const da=String(a.behaviour_date||a.recorded_date||a.created_at||a.recorded_at||"");
-    const db=String(b.behaviour_date||b.recorded_date||b.created_at||b.recorded_at||"");
-    return db.localeCompare(da);
-  }).map(r=>{
-    const g=String(r.grade||"").toUpperCase();
-    const value=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);
-    const rawDate=r.behaviour_date||r.recorded_date||r.created_at||r.recorded_at||"";
-    const date=String(rawDate).slice(0,10)||"—";
-    const wk=weekKey(date);
-    return `<tr><td>${esc(date)}</td><td>${esc(wk||"—")}</td><td><strong>${esc(g||"—")}</strong></td><td style="${value<0?'color:#d9534f;font-weight:900':'color:#15966b;font-weight:900'}">${value>0?'+':''}${value}</td><td>${esc(r.subject_name||r.subject||"—")}</td><td>${esc(r.comment||"—")}</td></tr>`;
-  }).join("")}</tbody></table></div>`:'<div class="empty-state">No behaviour records have been entered for you yet.</div>';
+  const table=$("behaviourTable");
+  if(table) table.innerHTML=behaviour.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Week</th><th>Grade</th><th>Points</th><th>Subject</th><th>Comment</th></tr></thead><tbody>${[...behaviour].sort((a,b)=>String(b.behaviour_date||b.recorded_date||b.created_at||b.date||"").localeCompare(String(a.behaviour_date||a.recorded_date||a.created_at||a.date||""))).map(r=>{const d=String(r.behaviour_date||r.recorded_date||r.created_at||r.date||"").slice(0,10);const g=String(r.grade||"").trim().toUpperCase();const v=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);return `<tr><td>${escapeHtml(d)}</td><td>${escapeHtml(weekKey(d))}</td><td>${escapeHtml(g)}</td><td class="${v>=0?"positive":"negative"}">${v>=0?"+":""}${v}</td><td>${escapeHtml(r.subject_name||r.subject||"—")}</td><td>${escapeHtml(r.comment||r.note||"")}</td></tr>`;}).join("")}</tbody></table></div>`:`<div class="empty">No behaviour records yet.</div>`;
 }
-async function loadAssessments(){
-  let r=await supabaseClient.from('assessments').select('*').eq('student_id',student.id).order('updated_at',{ascending:false});
-  if(r.error){
-    r=await supabaseClient.from('assessments').select('*').eq('student_id',student.id);
-  }
-  if(r.error){notice('assessmentNotice','Could not load assessments: '+r.error.message,'err');$('assessmentTable').innerHTML='<div class="empty-state">Assessment results could not be loaded.</div>';return}
-  assessments=(r.data||[]).filter(x=>x.mark!==null&&x.mark!==undefined&&x.mark!=='');
-  const subjectIds=[...new Set(assessments.map(x=>x.subject_id).filter(Boolean))];
-  let subjects=[]; if(subjectIds.length){const sr=await supabaseClient.from('subjects').select('id,name').in('id',subjectIds);if(!sr.error)subjects=sr.data||[]}
-  const sm=new Map(subjects.map(x=>[x.id,x.name]));
-  $('assessmentTable').innerHTML=assessments.length?`<div class="table-wrap"><table><thead><tr><th>#</th><th>Subject</th><th>Assessment</th><th>Percentage</th><th>Grade</th><th>Term</th></tr></thead><tbody>${assessments.map((r,i)=>{const max=Number(r.max_mark||20);const m=Number(r.mark);const p=max?m/max*100:0;return `<tr><td>${i+1}</td><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||r.subject||'Subject')}</strong></td><td>${m.toFixed(2)} / ${max}</td><td>${p.toFixed(1)}%</td><td><span class="badge neutral">${gradeFromPercent(p)}</span></td><td>${esc(r.term_name||r.term||r.term_id||'—')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty-state">No assessment marks have been recorded for you yet.</div>';
+
+function withSectionTimeout(promise, ms=8000){
+  return Promise.race([
+    promise,
+    new Promise((_,reject)=>setTimeout(()=>reject(new Error("This section took too long to respond.")),ms))
+  ]);
 }
 
 function gradeFromPercent(p){
- if(p>=80)return"A";if(p>=70)return"B";if(p>=60)return"C";if(p>=50)return"D";if(p>=40)return"E";return"F";
+  const n=Number(p);
+  if(!Number.isFinite(n)) return "—";
+  if(n>=80) return "A";
+  if(n>=70) return "B";
+  if(n>=60) return "C";
+  if(n>=50) return "D";
+  return "E";
 }
 
-async function loadEndTerm(){
-  let r=await supabaseClient.from('end_term_results').select('*').eq('student_id',student.id).order('updated_at',{ascending:false});
-  if(r.error) r=await supabaseClient.from('end_term_results').select('*').eq('student_id',student.id);
-  if(r.error){notice('endtermNotice','Could not load end-of-term results: '+r.error.message,'err');$('endtermTable').innerHTML='<div class="empty-state">End-of-term results could not be loaded.</div>';return}
-  endResults=(r.data||[]).filter(x=>x.end_term_mark!==null&&x.end_term_mark!==undefined&&x.end_term_mark!=='');
-  const subjectIds=[...new Set(endResults.map(x=>x.subject_id).filter(Boolean))];
-  let subjects=[];if(subjectIds.length){const sr=await supabaseClient.from('subjects').select('id,name').in('id',subjectIds);if(!sr.error)subjects=sr.data||[]}
-  const sm=new Map(subjects.map(x=>[x.id,x.name]));
-  $('endtermTable').innerHTML=endResults.length?`<div class="table-wrap"><table><thead><tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th><th>Grade</th><th>Term</th></tr></thead><tbody>${endResults.map((r,i)=>{const a=Number(r.assessment_mark||0),e=Number(r.end_term_mark||0),f=Number(r.final_mark??(a+e));return `<tr><td>${i+1}</td><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||r.subject||'Subject')}</strong></td><td>${a.toFixed(2)}</td><td>${e.toFixed(2)}</td><td class="final">${f.toFixed(2)} / 100</td><td><span class="badge neutral">${gradeFromPercent(f)}</span></td><td>${esc(r.term_name||r.term||r.term_id||'—')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty-state">No end-of-term results have been recorded for you yet.</div>';
-}
-
-async function loadFees(){
-  if(!student?.id)return;
-  const body=$("feesSummaryBody");
+window.loadAssessments = async function loadAssessments(){
+  const table=$('assessmentTable');
   try{
-    if(body)body.innerHTML='<div class="loading">Loading fees…</div>';
-    const {data,error}=await supabaseClient.rpc('get_my_fee_summary',{p_student_id:student.id});
-    if(error)throw error;
-    feeSummary=Array.isArray(data)?data[0]:(data||null);
-    if(!feeSummary){if(body)body.innerHTML='<div class="fees-empty">No fees account is available for this student yet.</div>';return;}
-    const total=Number(feeSummary.total_fees||0),paid=Number(feeSummary.paid||0),balance=Number(feeSummary.balance||0);
-    const pctPaid=total>0?Math.min(100,Math.max(0,(paid/total)*100)):0;
-    const status=total<=0?'Not set':balance<=0?'Paid in full':'Balance due';
-    const statusClass=balance<=0&&total>0?'present':total<=0?'neutral':'auth';
-    const money=v=>new Intl.NumberFormat('en-UG',{style:'currency',currency:'UGX',maximumFractionDigits:0}).format(Number(v)||0);
-    if($("feesYearChip"))$("feesYearChip").textContent='Academic year '+(feeSummary.academic_year||'—');
-    if(body)body.innerHTML=`<div class="fees-summary-grid"><div class="fees-summary-stat"><div class="label">Total fees</div><div class="value">${esc(money(total))}</div></div><div class="fees-summary-stat"><div class="label">Paid</div><div class="value">${esc(money(paid))}</div></div><div class="fees-summary-stat balance"><div class="label">Balance due</div><div class="value">${esc(money(balance))}</div></div><div class="fees-summary-stat"><div class="label">Payments recorded</div><div class="value">${esc(feeSummary.payment_count??0)}</div></div></div><div class="fees-summary-meta"><span class="fees-summary-chip">${esc(feeSummary.class_name||student.class_level||'Class —')}</span><span class="badge ${statusClass}">${esc(status)}</span></div><div style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:750;color:#536278"><span>Payment progress</span><span>${pctPaid.toFixed(0)}%</span></div><div class="fees-progress"><div style="width:${pctPaid}%"></div></div></div><div class="fees-source-note">Fee amounts are controlled by the school/admin fee structure for your class/stream. Payments recorded by the school reduce your balance automatically.</div>`;
+    if(!student?.id){throw new Error('Student account details are not ready yet.');}
+    if(table)table.innerHTML='<div class="loading">Loading assessments…</div>';
+    let r=await withSectionTimeout(supabaseClient.from('assessments').select('*').eq('student_id',student.id).order('updated_at',{ascending:false}),8000);
+    if(r.error){
+      r=await withSectionTimeout(supabaseClient.from('assessments').select('*').eq('student_id',student.id),8000);
+    }
+    if(r.error)throw r.error;
+    assessments=(r.data||[]).filter(x=>x.mark!==null&&x.mark!==undefined&&x.mark!=='');
+    const subjectIds=[...new Set(assessments.map(x=>x.subject_id).filter(Boolean))];
+    let subjects=[];
+    if(subjectIds.length){
+      const sr=await withSectionTimeout(supabaseClient.from('subjects').select('id,name').in('id',subjectIds),8000);
+      if(!sr.error)subjects=sr.data||[];
+    }
+    const sm=new Map(subjects.map(x=>[x.id,x.name]));
+    if(table)table.innerHTML=assessments.length?`<div class="table-wrap"><table><thead><tr><th>#</th><th>Subject</th><th>Assessment</th><th>Percentage</th><th>Grade</th><th>Term</th></tr></thead><tbody>${assessments.map((r,i)=>{const max=Number(r.max_mark||20);const m=Number(r.mark);const p=max?m/max*100:0;return `<tr><td>${i+1}</td><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||r.subject||'Subject')}</strong></td><td>${m.toFixed(2)} / ${max}</td><td>${p.toFixed(1)}%</td><td><span class="badge neutral">${gradeFromPercent(p)}</span></td><td>${esc(r.term_name||r.term||r.term_id||'—')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty-state">No assessment marks have been recorded for you yet.</div>';
   }catch(error){
-    console.error('ACCESS UG fees load failed:',error);
-    if(body)body.innerHTML='<div class="fees-empty">Fees could not be loaded right now. Please refresh the dashboard or contact the school administrator.</div>';
-    notice('feesNotice','Could not load fees: '+(error?.message||String(error)),'err');
+    console.error('ACCESS UG assessments load failed:',error);
+    if(table)table.innerHTML='<div class="empty-state">Assessments could not be loaded right now. Please refresh or try again.</div>';
+    notice('assessmentNotice','Could not load assessments: '+(error?.message||String(error)),'err');
   }
 }
 
-async function loadReports(){
- const {data,error}=await supabaseClient.from("reports").select("*").eq("reported_by",student.id).order("created_at",{ascending:false});
- if(error){$("reportsTable").innerHTML='<div class="empty-state">Reports could not be loaded: '+esc(error.message)+'</div>';return}
- $("reportsTable").innerHTML=(data||[]).length?`<div class="table-wrap"><table><thead><tr><th>Submitted</th><th>Type</th><th>Subject</th><th>Status</th><th>Message</th></tr></thead><tbody>${data.map(r=>`<tr><td>${esc((r.created_at||"").slice(0,10)||"—")}</td><td>${esc(r.report_type||"—")}</td><td>${esc(r.subject||"—")}</td><td>${esc(r.status||"Submitted")}</td><td>${esc(r.description||r.message||"—")}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty-state">You have not submitted any reports yet.</div>';
-}
-
-async function loadInbox(){
-  if(!student||!authUser)return;
-  const candidates=[authUser.id,student.id].filter(Boolean);
-  let data=null,error=null;
-  for(const uid of candidates){
-    const r=await supabaseClient.from('notifications').select('*').eq('recipient_user_id',uid).order('created_at',{ascending:false}).limit(30);
-    if(!r.error){data=r.data||[];error=null;break;}
-    error=r.error;
-  }
-  if(error){notice('inboxNotice','Notifications could not be loaded: '+error.message,'err');renderInbox([]);return}
-  renderInbox(data||[]);
-}
 function renderInbox(rows){
   const unread=rows.filter(r=>!r.is_read).length;
   const badge=$('inboxBadge');
@@ -767,6 +749,8 @@ function showPage(id){
  $("sidebar")?.classList.remove("open"); $("overlay")?.classList.remove("show");
  if(id==="fees")loadFees().catch(e=>console.error("Fees section:",e));
   if(id==="results")loadStudentResults().catch(e=>console.error("Results section:",e));
+ if(id==="assessments")window.loadAssessments().catch(e=>console.error("Assessments section:",e));
+ if(id==="endterm")window.loadEndTerm().catch(e=>console.error("End of Term section:",e));
  if(id==="reports")loadReports().catch(e=>console.error("Reports section:",e));
  if(id==="inbox")loadInbox().catch(e=>console.error("Inbox section:",e));
 }
@@ -792,6 +776,72 @@ function setResultsUnavailable(message){
  if(e)e.textContent="Unable to check";
  if(em)em.textContent="The Results service could not be reached.";
 }
+window.loadEndTerm = async function loadEndTerm(){
+  const table=$('endtermTable');
+  try{
+    if(!student?.id){throw new Error('Student account details are not ready yet.');}
+    if(table)table.innerHTML='<div class="loading">Loading end-of-term results…</div>';
+    let r=await withSectionTimeout(supabaseClient.from('end_term_results').select('*').eq('student_id',student.id).order('updated_at',{ascending:false}),8000);
+    if(r.error)r=await withSectionTimeout(supabaseClient.from('end_term_results').select('*').eq('student_id',student.id),8000);
+    if(r.error)throw r.error;
+    endResults=(r.data||[]).filter(x=>x.end_term_mark!==null&&x.end_term_mark!==undefined&&x.end_term_mark!=='');
+    const subjectIds=[...new Set(endResults.map(x=>x.subject_id).filter(Boolean))];
+    let subjects=[];
+    if(subjectIds.length){
+      const sr=await withSectionTimeout(supabaseClient.from('subjects').select('id,name').in('id',subjectIds),8000);
+      if(!sr.error)subjects=sr.data||[];
+    }
+    const sm=new Map(subjects.map(x=>[x.id,x.name]));
+    if(table)table.innerHTML=endResults.length?`<div class="table-wrap"><table><thead><tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th><th>Grade</th><th>Term</th></tr></thead><tbody>${endResults.map((r,i)=>{const a=Number(r.assessment_mark||0),e=Number(r.end_term_mark||0),f=Number(r.final_mark??(a+e));return `<tr><td>${i+1}</td><td><strong>${esc(sm.get(r.subject_id)||r.subject_name||r.subject||'Subject')}</strong></td><td>${a.toFixed(2)}</td><td>${e.toFixed(2)}</td><td class="final">${f.toFixed(2)} / 100</td><td><span class="badge neutral">${gradeFromPercent(f)}</span></td><td>${esc(r.term_name||r.term||r.term_id||'—')}</td></tr>`}).join('')}</tbody></table></div>`:'<div class="empty-state">No end-of-term results have been recorded for you yet.</div>';
+  }catch(error){
+    console.error('ACCESS UG end-of-term load failed:',error);
+    if(table)table.innerHTML='<div class="empty-state">End-of-term results could not be loaded right now. Please refresh or try again.</div>';
+    notice('endtermNotice','Could not load end-of-term results: '+(error?.message||String(error)),'err');
+  }
+}
+
+window.loadFees = async function loadFees(){
+  if(!student?.id)return;
+  const body=$("feesSummaryBody");
+  try{
+    if(body)body.innerHTML='<div class="loading">Loading fees…</div>';
+    const {data,error}=await supabaseClient.rpc('get_my_fee_summary',{p_student_id:student.id});
+    if(error)throw error;
+    feeSummary=Array.isArray(data)?data[0]:(data||null);
+    if(!feeSummary){if(body)body.innerHTML='<div class="fees-empty">No fees account is available for this student yet.</div>';return;}
+    const total=Number(feeSummary.total_fees||0),paid=Number(feeSummary.paid||0),balance=Number(feeSummary.balance||0);
+    const pctPaid=total>0?Math.min(100,Math.max(0,(paid/total)*100)):0;
+    const status=total<=0?'Not set':balance<=0?'Paid in full':'Balance due';
+    const statusClass=balance<=0&&total>0?'present':total<=0?'neutral':'auth';
+    const money=v=>new Intl.NumberFormat('en-UG',{style:'currency',currency:'UGX',maximumFractionDigits:0}).format(Number(v)||0);
+    if($("feesYearChip"))$("feesYearChip").textContent='Academic year '+(feeSummary.academic_year||'—');
+    if(body)body.innerHTML=`<div class="fees-summary-grid"><div class="fees-summary-stat"><div class="label">Total fees</div><div class="value">${esc(money(total))}</div></div><div class="fees-summary-stat"><div class="label">Paid</div><div class="value">${esc(money(paid))}</div></div><div class="fees-summary-stat balance"><div class="label">Balance due</div><div class="value">${esc(money(balance))}</div></div><div class="fees-summary-stat"><div class="label">Payments recorded</div><div class="value">${esc(feeSummary.payment_count??0)}</div></div></div><div class="fees-summary-meta"><span class="fees-summary-chip">${esc(feeSummary.class_name||student.class_level||'Class —')}</span><span class="badge ${statusClass}">${esc(status)}</span></div><div style="margin-top:18px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:750;color:#536278"><span>Payment progress</span><span>${pctPaid.toFixed(0)}%</span></div><div class="fees-progress"><div style="width:${pctPaid}%"></div></div></div><div class="fees-source-note">Fee amounts are controlled by the school/admin fee structure for your class/stream. Payments recorded by the school reduce your balance automatically.</div>`;
+  }catch(error){
+    console.error('ACCESS UG fees load failed:',error);
+    if(body)body.innerHTML='<div class="fees-empty">Fees could not be loaded right now. Please refresh the dashboard or contact the school administrator.</div>';
+    notice('feesNotice','Could not load fees: '+(error?.message||String(error)),'err');
+  }
+}
+
+window.loadReports = async function loadReports(){
+ const {data,error}=await supabaseClient.from("reports").select("*").eq("reported_by",student.id).order("created_at",{ascending:false});
+ if(error){$("reportsTable").innerHTML='<div class="empty-state">Reports could not be loaded: '+esc(error.message)+'</div>';return}
+ $("reportsTable").innerHTML=(data||[]).length?`<div class="table-wrap"><table><thead><tr><th>Submitted</th><th>Type</th><th>Subject</th><th>Status</th><th>Message</th></tr></thead><tbody>${data.map(r=>`<tr><td>${esc((r.created_at||"").slice(0,10)||"—")}</td><td>${esc(r.report_type||"—")}</td><td>${esc(r.subject||"—")}</td><td>${esc(r.status||"Submitted")}</td><td>${esc(r.description||r.message||"—")}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty-state">You have not submitted any reports yet.</div>';
+}
+
+window.loadInbox = async function loadInbox(){
+  if(!student||!authUser)return;
+  const candidates=[authUser.id,student.id].filter(Boolean);
+  let data=null,error=null;
+  for(const uid of candidates){
+    const r=await supabaseClient.from('notifications').select('*').eq('recipient_user_id',uid).order('created_at',{ascending:false}).limit(30);
+    if(!r.error){data=r.data||[];error=null;break;}
+    error=r.error;
+  }
+  if(error){notice('inboxNotice','Notifications could not be loaded: '+error.message,'err');renderInbox([]);return}
+  renderInbox(data||[]);
+}
+
 async function loadStudentResults(){
  const noticeEl=$("resultsNotice");
  const sel=$("resultsTerm");
@@ -942,13 +992,13 @@ async function loadAll(){
   * looking as if it is still loading.
   */
  const jobs = [
-  ["attendance", loadAttendance],
-  ["behaviour", loadBehaviour],
-  ["results", loadStudentResults],
-  ["assessment", loadAssessments],
-  ["endterm", loadEndTerm],
-  ["reports", loadReports],
-  ["inbox", loadInbox]
+  ["attendance", window.loadAttendance || loadAttendance],
+  ["behaviour", window.loadBehaviour || loadBehaviour],
+  ["results", window.loadStudentResults || loadStudentResults],
+  ["assessment", window.loadAssessments],
+  ["endterm", window.loadEndTerm],
+  ["reports", window.loadReports || loadReports],
+  ["inbox", window.loadInbox || loadInbox]
  ];
 
  await Promise.all(jobs.map(async ([name, fn])=>{
