@@ -115,10 +115,6 @@ tr:last-child td{border-bottom:0}
   .card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}
 }
 
-
-/* Teacher GPS check-in */
-.gps-checkin-card{margin-bottom:18px;border:1px solid #d7e3f2;background:linear-gradient(180deg,#fff,#f8fbff)}.gps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:15px}.gps-status-box{padding:14px;border:1px solid #e1e8f1;border-radius:13px;background:#fbfdff}.gps-label{display:block;color:#718096;font-size:11px;text-transform:uppercase;letter-spacing:.4px;font-weight:800}.gps-status-box strong{display:block;color:#15365f;font-size:15px;margin-top:5px}.gps-status-box small{display:block;color:#718096;font-size:11px;line-height:1.4;margin-top:5px}.gps-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:15px}.gps-actions .btn{min-height:44px}.gps-checkin-card .badge{background:#eef3f9;color:#5c6f87}.gps-checkin-card .badge.gps-ok{background:#e7f7f0;color:#117052}.gps-checkin-card .badge.gps-bad{background:#fdebea;color:#a52f2b}.gps-checkin-card .badge.gps-info{background:#eaf2fd;color:#174d8f}@media(max-width:800px){.gps-grid{grid-template-columns:1fr}.gps-actions .btn{width:100%}}
-
 /* NOTIFICATION INBOX */
 .notification-wrap{position:relative}.notification-btn{width:42px;height:42px;border:1px solid #dbe5f2;background:#f4f8fd;color:#0b3d82;border-radius:10px;display:grid;place-items:center;cursor:pointer;position:relative;font-size:20px}.notification-badge{position:absolute;right:-3px;top:-5px;min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:#dc2626;color:#fff;font-size:11px;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid #fff}.notification-popover{position:absolute;right:0;top:52px;width:min(360px,calc(100vw - 28px));background:#fff;border:1px solid #dce5f0;border-radius:16px;box-shadow:0 18px 45px rgba(15,42,86,.18);display:none;z-index:900;padding:12px}.notification-popover.show{display:block}.notification-popover-head{display:flex;align-items:center;justify-content:space-between;padding:4px 4px 10px}.notification-popover-head h4{margin:0;color:#102a56}.notification-list{max-height:360px;overflow:auto}.notification-item{padding:12px;border-radius:12px;border:1px solid #e6edf5;margin:7px 0;cursor:pointer;background:#fff}.notification-item.unread{background:#f5f9ff;border-color:#cfe0f5}.notification-item strong{display:block;color:#102a56;font-size:14px}.notification-item p{margin:5px 0;color:#64748b;font-size:13px;line-height:1.4}.notification-item small{color:#94a3b8;font-size:11px}.notification-empty{padding:28px 12px;text-align:center;color:#718096}.inbox-card{margin-top:18px}.inbox-card .card-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.inbox-actions{display:flex;gap:8px;flex-wrap:wrap}.inbox-actions button{border:1px solid #dbe5f2;background:#fff;color:#0b3d82;border-radius:8px;padding:8px 11px;cursor:pointer;font-weight:700}@media(max-width:700px){.notification-popover{position:fixed;right:14px;top:72px}.notification-btn{width:40px;height:40px}}
 </style>
@@ -138,7 +134,7 @@ tr:last-child td{border-bottom:0}
 
 .behaviour-choice input{width:18px;height:18px;cursor:pointer}.behaviour-choice:hover{background:#f1f6fd}
 </style>
-</head>
+<style id="accessug-v3"></style></head>
 
 <body>
 <div class="app">
@@ -169,7 +165,7 @@ tr:last-child td{border-bottom:0}
 <div class="content">
 
 <section id="dashboard" class="page active">
-  <div class="hero teacher-welcome-hero"><h1 id="welcome">👋 Hi, Teacher</h1><p id="welcomeSub">Welcome, Teacher. Here is your teaching overview today.</p></div>
+  <div class="hero"><h1 id="welcome">Welcome, Teacher</h1><p id="welcomeSub">Loading your teaching overview...</p></div>
   <div id="dashboardNotice" class="notice"></div>
 
   <div class="grid two">
@@ -219,16 +215,6 @@ tr:last-child td{border-bottom:0}
 
 <section id="attendance" class="page">
   <div class="hero"><h1>Attendance</h1><p>Record student attendance for your assigned classes.</p></div>
-  <div class="gps-checkin-card card">
-    <div class="card-head"><div><h3>Teacher Check-in Location</h3><div class="muted">ACCESS UG verifies your GPS position against your registered school's attendance boundary.</div></div><span id="gpsBadge" class="badge gps-info">GPS not checked</span></div>
-    <div class="gps-grid">
-      <div class="gps-status-box"><span class="gps-label">Verification</span><strong id="gpsVerificationStatus">Not checked</strong><small id="gpsDistanceStatus">Your location will be checked when you verify attendance.</small></div>
-      <div class="gps-status-box"><span class="gps-label">School boundary</span><strong id="gpsBoundaryStatus">Checking…</strong><small id="gpsRadiusStatus">Allowed radius: —</small></div>
-      <div class="gps-status-box"><span class="gps-label">GPS accuracy</span><strong id="gpsAccuracyStatus">—</strong><small>High-accuracy device location is requested.</small></div>
-    </div>
-    <div class="gps-actions"><button class="btn" id="verifyLocationBtn" type="button">⌖ Verify Location &amp; Mark Present</button><span id="gpsHelpText" class="muted">GPS permission is requested only when attendance is being verified.</span></div>
-    <div id="gpsCheckinNotice" class="notice"></div>
-  </div>
   <div id="attendanceNotice" class="notice"></div><div id="attendanceSaveState" class="save-state"></div>
   <div class="card">
     <div class="toolbar">
@@ -349,6 +335,7 @@ let behaviourRows=[];
 let assessmentRows=[];
 let endRows=[];
 let behaviourHasSubjectColumn=null;
+let behaviourDeletedIds=new Set();
 let charts={};
 
 const $=id=>document.getElementById(id);
@@ -548,8 +535,8 @@ function populateSelectors(){
 function renderIdentity(){
   const name=teacherDisplayName();
   const ini=initials(name);
-  $("welcome").textContent="👋 Hi, "+name;
-  $("welcomeSub").textContent="Welcome, "+name+". Here is your teaching overview today.";
+  $("welcome").textContent="Hi, welcome "+name+".";
+  $("welcomeSub").textContent="Here is your teaching overview today.";
   $("teacherName").textContent=name;
   $("teacherSchool").textContent=school?.name||school?.school_name||"ACCESS UG";
   $("teacherEmployee").textContent="Employee number: "+(teacher.employee_number||teacher.employee_no||"—");
@@ -594,38 +581,42 @@ async function getStudents(classId){
 /* =========================
    Teacher attendance
    ========================= */
-async function getTeacherGpsPosition(){
-  if(!window.isSecureContext&&location.hostname!=='localhost')throw new Error('GPS requires a secure HTTPS page. The browser preview/file page cannot request location reliably.');
-  if(!navigator.geolocation)throw new Error('This browser does not support GPS location.');
-  return await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,err=>{if(err.code===1)reject(new Error('Location permission was denied. Allow location for this HTTPS site in Chrome site settings, then try again.'));else if(err.code===2)reject(new Error('Your device could not determine a location. Turn on device Location/GPS and try again.'));else reject(new Error('GPS timed out. Turn on device Location/GPS and try again.'));},{enableHighAccuracy:true,timeout:20000,maximumAge:0}));
-}
-function setGpsUI(status,badgeClass='',badgeText='GPS not checked',distanceText='Your location will be checked when you verify attendance.',boundary='Checking…',radius='Allowed radius: —',accuracy='—'){if($('gpsVerificationStatus'))$('gpsVerificationStatus').textContent=status;if($('gpsDistanceStatus'))$('gpsDistanceStatus').textContent=distanceText;if($('gpsBoundaryStatus'))$('gpsBoundaryStatus').textContent=boundary;if($('gpsRadiusStatus'))$('gpsRadiusStatus').textContent=radius;if($('gpsAccuracyStatus'))$('gpsAccuracyStatus').textContent=accuracy;if($('gpsBadge')){const b=$('gpsBadge');b.className='badge '+(badgeClass||'gps-info');b.textContent=badgeText;}}
-function gpsNotice(text,type='info'){const el=$('gpsCheckinNotice');if(!el)return;el.textContent=text;el.className='notice show '+type;}
-async function verifyTeacherLocationAndAttendance(){
-  if(!teacher||!teacherSchoolId)return gpsNotice('Teacher profile or school is not ready yet.','err');
-  const btn=$('verifyLocationBtn');if(btn){btn.disabled=true;btn.textContent='⌖ Requesting GPS…';}
-  gpsNotice('Requesting high-accuracy GPS permission. Please allow location if Chrome asks.','info');setGpsUI('Requesting GPS…','gps-info','GPS checking','Waiting for device location…','Checking…','Allowed radius: —','Requesting…');
-  try{
-    const pos=await getTeacherGpsPosition(),lat=pos.coords.latitude,lng=pos.coords.longitude,accuracy=pos.coords.accuracy;
-    gpsNotice('GPS received. Supabase is checking your distance from the registered school…','info');
-    const r=await supabaseClient.rpc('clock_in_teacher_with_location',{p_lat:lat,p_lng:lng,p_accuracy:accuracy});
-    if(r.error)throw new Error(r.error.message);
-    const row=Array.isArray(r.data)?r.data[0]:r.data;
-    const distance=Number(row?.distance_from_school_meters);
-    const schoolRes=await supabaseClient.from('schools').select('name,attendance_radius_meters,geofence_enabled,latitude,longitude').eq('id',teacherSchoolId).maybeSingle();
-    if(schoolRes.error)throw schoolRes.error;
-    const school=schoolRes.data||{},allowed=Number(school.attendance_radius_meters||150);
-    setGpsUI('Verified — Present','gps-ok','✓ Present',Number.isFinite(distance)?`Location verified — ${Math.round(distance)} m from school.`:'Location verified by Supabase.',school.geofence_enabled?'Inside school radius':'Geofence disabled',`Allowed radius: ${allowed} m`,Number.isFinite(Number(accuracy))?`${Math.round(Number(accuracy))} m`:'Available');
-    gpsNotice('✓ Attendance confirmed in Supabase. Your teacher attendance has been marked Present.','ok');if($('clockStatus'))$('clockStatus').textContent='Present';if($('todayStatus'))$('todayStatus').textContent='Present';if(btn){btn.textContent='✓ Present — Location Verified';btn.disabled=true;}await loadTeacherAttendance();
-  }catch(e){
-    const msg=String(e?.message||e);const schoolRes=await supabaseClient.from('schools').select('attendance_radius_meters,geofence_enabled,latitude,longitude').eq('id',teacherSchoolId).maybeSingle();const school=schoolRes.data||{},allowed=Number(school.attendance_radius_meters||150);const outside=/outside school attendance area/i.test(msg),notConfigured=/not been configured/i.test(msg);
-    setGpsUI(outside?'Outside allowed area':notConfigured?'School GPS not configured':'Not verified',outside||notConfigured?'gps-bad':'gps-info','GPS not verified',msg,notConfigured?'Location not configured':outside?'Outside school radius':'Verification failed',`Allowed radius: ${allowed} m`,'—');gpsNotice('Attendance was NOT marked present. '+msg,'err');if(btn){btn.disabled=false;btn.textContent='⌖ Verify Location & Mark Present';}
-  }
-}
 async function automaticTeacherAttendance(){
-  const now=new Date(),hour=now.getHours();if(hour<6||hour>=10){$('clockStatus').textContent='Outside window';$('todayStatus').textContent='—';return;}
-  const old=await supabaseClient.from('teacher_attendance').select('*').eq('teacher_id',teacher.id).eq('attendance_date',todayISO()).maybeSingle();if(old.error){console.warn('Teacher attendance check:',old.error.message);return;}if(old.data){$('clockStatus').textContent='Present';$('todayStatus').textContent='Present';return;}
-  await verifyTeacherLocationAndAttendance();
+  const now=new Date();
+  const hour=now.getHours();
+
+  if(hour<6||hour>=10){
+    $("clockStatus").textContent="Outside window";
+    $("todayStatus").textContent="—";
+    return;
+  }
+
+  const old=await supabaseClient.from("teacher_attendance")
+    .select("*").eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
+
+  if(old.error){
+    console.warn("Teacher attendance check:",old.error.message);
+    return;
+  }
+  if(old.data){
+    $("clockStatus").textContent="Present";
+    $("todayStatus").textContent="Present";
+    return;
+  }
+
+  const payload={
+    teacher_id:teacher.id,school_id:teacherSchoolId,
+    attendance_date:todayISO(),clock_in:now.toISOString(),
+    status:"present",method:"automatic_login"
+  };
+  const r=await supabaseClient.from("teacher_attendance").insert(payload);
+  if(r.error){
+    console.warn("Teacher attendance insert:",r.error.message);
+  }else{
+    $("clockStatus").textContent="Present";
+    $("todayStatus").textContent="Present";
+    toast("Your morning attendance has been recorded.");
+  }
 }
 
 async function loadTeacherAttendance(){
@@ -734,7 +725,7 @@ $("saveBehaviour").addEventListener("click",saveBehaviour);
 async function loadBehaviourRecords(classId,termId,subjectId,date){
   let q=supabaseClient.from("behaviour_records").select("*")
     .eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id);
-  if(behaviourHasSubjectColumn!==false)q=q.eq("subject_id",subjectId);
+  if(behaviourHasSubjectColumn!==false)q=q.or(`subject_id.eq.${subjectId},subject_id.is.null`);
   if(date)q=q.eq("behaviour_date",date);
   let r=await q;
   if(!r.error){behaviourHasSubjectColumn=true;return r.data||[];}
@@ -747,7 +738,7 @@ async function loadBehaviourRecords(classId,termId,subjectId,date){
   }
   if(msg.includes("behaviour_date")||msg.includes("column")){
     let fallback=supabaseClient.from("behaviour_records").select("*").eq("class_id",classId).eq("term_id",termId).eq("teacher_id",teacher.id);
-    if(behaviourHasSubjectColumn!==false)fallback=fallback.eq("subject_id",subjectId);
+    if(behaviourHasSubjectColumn!==false)fallback=fallback.or(`subject_id.eq.${subjectId},subject_id.is.null`);
     const fr=await fallback;if(fr.error)throw fr.error;return fr.data||[];
   }
   throw r.error;
@@ -773,17 +764,60 @@ async function loadBehaviour(){
     const students=await getStudents(classId);
     if(!students.length)throw new Error("No students are registered in this class.");
     const old=await loadBehaviourRecords(classId,termId,subjectId,date);
-    const map=new Map((old||[]).map(x=>[String(x.student_id),x]));
-    behaviourRows=students.map(s=>({student:s,record:map.get(String(s.id))||{grade:"",comment:""}}));
-    $("behaviourTable").innerHTML=`<div class="hint"><strong>Scale:</strong> A +15 · B +5 · C +2 · D −2 · E −5. Double-click any grade cell to apply it to all loaded students, then change individual students if needed.</div><div class="table-wrap"><table>
-      <thead><tr><th>#</th><th>Student</th><th>A<br><small>+15</small></th><th>B<br><small>+5</small></th><th>C<br><small>+2</small></th><th>D<br><small>−2</small></th><th>E<br><small>−5</small></th><th>Points</th><th>Comment</th></tr></thead><tbody>
-      ${behaviourRows.map((r,i)=>{const g=String(r.record.grade||"").toUpperCase();return `<tr><td>${i+1}</td><td><strong>${esc(studentName(r.student))}</strong></td>${["A","B","C","D","E"].map(x=>`<td class="behaviour-choice" data-grade="${x}" data-index="${i}" style="text-align:center;cursor:pointer"><input type="radio" name="behaviour-${i}" value="${x}" data-beh-grade="${i}" ${g===x?"checked":""}></td>`).join("")}<td><strong id="beh-point-${i}">${g?behaviourPoints[g]:"—"}</strong></td><td><input data-beh-comment="${i}" value="${esc(r.record.comment||r.record.notes||"")}" placeholder="Optional observation"></td></tr>`;}).join("")}
-      </tbody></table></div>`;
-    document.querySelectorAll("[data-beh-grade]").forEach(el=>el.addEventListener("change",e=>{const i=Number(e.target.dataset.behGrade);$("beh-point-"+i).textContent=behaviourPoints[e.target.value];}));
-    document.querySelectorAll(".behaviour-choice").forEach(cell=>cell.addEventListener("dblclick",()=>{const g=cell.dataset.grade;document.querySelectorAll("[data-beh-grade]").forEach(input=>input.checked=input.value===g);behaviourRows.forEach((_,i)=>$("beh-point-"+i).textContent=behaviourPoints[g]);toast(`Grade ${g} applied to all loaded students.`);}));
+    const grouped=new Map();
+    (old||[]).forEach(x=>{const key=String(x.student_id);if(!grouped.has(key))grouped.set(key,[]);grouped.get(key).push(x);});
+    behaviourDeletedIds=new Set();
+    behaviourRows=students.map(s=>({student:s,events:(grouped.get(String(s.id))||[]).map(x=>({id:x.id,grade:String(x.grade||"").toUpperCase(),comment:x.comment||x.notes||""})).concat((grouped.get(String(s.id))||[]).length?[]:[{id:null,grade:"",comment:""}])}));
+    renderBehaviourEditor();
     $("saveBehaviour").style.display="inline-block";
-    notice("behaviourNotice",`${students.length} student${students.length===1?"":"s"} loaded for ${date}.`,"info");
+    notice("behaviourNotice",`${students.length} student${students.length===1?"":"s"} loaded for ${date}. Existing events are preserved; add as many events as needed for the same student and date.` ,"info");
   }catch(e){notice("behaviourNotice","Could not load Behaviour: "+errorMessage(e),"err");$("saveBehaviour").style.display="none";}
+}
+
+function renderBehaviourEditor(){
+  const table=$("behaviourTable");
+  if(!table)return;
+  table.innerHTML=`<div class="hint"><strong>GO 4 Schools-style recording:</strong> every behaviour event is kept as its own record. A +15 · B +5 · C +2 · D −2 · E −5. A student can have multiple positive or negative events on the same day. Use <strong>+ Add event</strong> to record another event; removing an existing event marks it for deletion when you save.</div><div class="behaviour-bulk" style="display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin:12px 0"><div class="field" style="min-width:180px"><label>Apply grade to first event for all students</label><select id="behaviourBulkGrade"><option value="">Choose grade…</option><option value="A">A · +15</option><option value="B">B · +5</option><option value="C">C · +2</option><option value="D">D · −2</option><option value="E">E · −5</option></select></div><button class="btn secondary" id="applyBehaviourBulk" type="button">Apply</button></div><div class="table-wrap"><table>
+    <thead><tr><th>#</th><th>Student</th><th>Behaviour events</th><th>Total today</th></tr></thead><tbody>
+    ${behaviourRows.map((r,i)=>`<tr><td>${i+1}</td><td style="min-width:150px"><strong>${esc(studentName(r.student))}</strong><div class="muted" style="margin-top:4px">${r.events.filter(e=>e.id).length} saved event${r.events.filter(e=>e.id).length===1?"":"s"}</div></td><td><div class="beh-event-list" data-student-events="${i}">${r.events.map((ev,j)=>behaviourEventHtml(i,j,ev)).join("")}</div><button class="btn secondary" type="button" data-add-beh-event="${i}" style="margin-top:8px">＋ Add event</button></td><td><strong data-student-total="${i}">${behaviourEventTotal(r.events)}</strong></td></tr>`).join("")}
+    </tbody></table></div>`;
+  bindBehaviourEditor();
+}
+
+function behaviourEventTotal(events){
+  return events.reduce((sum,e)=>sum+(e.grade?behaviourPoints[e.grade]||0:0),0);
+}
+
+function behaviourEventHtml(studentIndex,eventIndex,ev){
+  const g=String(ev.grade||"").toUpperCase();
+  const deleted=ev.id&&behaviourDeletedIds.has(String(ev.id));
+  return `<div class="beh-event" data-student-index="${studentIndex}" data-event-index="${eventIndex}" data-record-id="${esc(ev.id||"")}" style="border:1px solid #dbe5f0;border-radius:12px;padding:10px;margin:0 0 8px;background:${deleted?'#fff4f4':'#fbfdff'};opacity:${deleted?.55:1}">
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="badge">Event ${eventIndex+1}${deleted?' · marked for deletion':''}</span>${["A","B","C","D","E"].map(x=>`<label style="display:inline-flex;align-items:center;gap:4px;cursor:pointer"><input type="radio" name="beh-event-${studentIndex}-${eventIndex}" value="${x}" data-beh-grade="${studentIndex}:${eventIndex}" ${g===x&&!deleted?"checked":""} ${deleted?'disabled':''}>${x} <small>${behaviourPoints[x]>0?"+":""}${behaviourPoints[x]}</small></label>`).join("")}<button class="btn secondary" type="button" data-remove-beh-event="${studentIndex}:${eventIndex}" style="margin-left:auto;padding:6px 9px">${deleted?'Undo':'Remove'}</button></div>
+    <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:7px;margin-top:8px"><input data-beh-comment="${studentIndex}:${eventIndex}" value="${esc(ev.comment||"")}" placeholder="Optional observation" ${deleted?'disabled':''}></div>
+  </div>`;
+}
+
+function bindBehaviourEditor(){
+  document.querySelectorAll('[data-beh-grade]').forEach(el=>el.addEventListener('change',()=>{
+    const [si,ei]=String(el.dataset.behGrade).split(':').map(Number);
+    const row=behaviourRows[si]; if(row?.events?.[ei])row.events[ei].grade=el.value;
+    const total=document.querySelector(`[data-student-total="${si}"]`);if(total)total.textContent=behaviourEventTotal(row.events);
+  }));
+  document.querySelectorAll('[data-add-beh-event]').forEach(btn=>btn.addEventListener('click',()=>{
+    const si=Number(btn.dataset.addBehEvent);behaviourRows[si].events.push({id:null,grade:"",comment:""});renderBehaviourEditor();
+  }));
+  document.querySelectorAll('[data-remove-beh-event]').forEach(btn=>btn.addEventListener('click',()=>{
+    const [si,ei]=String(btn.dataset.removeBehEvent).split(':').map(Number);
+    const ev=behaviourRows[si].events[ei];
+    if(ev?.id){const id=String(ev.id);if(behaviourDeletedIds.has(id))behaviourDeletedIds.delete(id);else behaviourDeletedIds.add(id);}
+    else behaviourRows[si].events.splice(ei,1);
+    renderBehaviourEditor();
+  }));
+  $("applyBehaviourBulk")?.addEventListener('click',()=>{
+    const g=$("behaviourBulkGrade")?.value;if(!g)return toast('Choose a grade first.');
+    behaviourRows.forEach(r=>{if(!r.events.length)r.events.push({id:null,grade:"",comment:""});r.events[0].grade=g;});
+    renderBehaviourEditor();toast(`Grade ${g} applied to the first event for all loaded students.`);
+  });
 }
 
 async function saveBehaviour(){
@@ -793,31 +827,34 @@ async function saveBehaviour(){
   if(!assignedSubjectIds(classId).includes(String(subjectId)))return notice("behaviourNotice","That subject is not assigned to you for this class.","err");
   setButton("saveBehaviour","Saving behaviour…",true);
   try{
-    let saved=0;
-    for(let i=0;i<behaviourRows.length;i++){
-      const grade=document.querySelector(`[data-beh-grade="${i}"]:checked`)?.value;
-      const comment=document.querySelector(`[data-beh-comment="${i}"]`)?.value.trim()||null;
-      if(!grade)throw new Error("Select a behaviour grade for "+studentName(behaviourRows[i].student)+".");
-      const payload={student_id:behaviourRows[i].student.id,teacher_id:teacher.id,school_id:teacherSchoolId,class_id:classId,term_id:termId,grade,points:behaviourPoints[grade],comment};
-      // Use the new date column when available; the server-side fallback preserves compatibility.
-      payload.behaviour_date=date;
-      if(behaviourHasSubjectColumn===true)payload.subject_id=subjectId;
-      let lookup=supabaseClient.from("behaviour_records").select("id").eq("student_id",payload.student_id).eq("term_id",termId).eq("teacher_id",teacher.id).eq("class_id",classId).eq("behaviour_date",date);
-      if(behaviourHasSubjectColumn===true)lookup=lookup.eq("subject_id",subjectId);
-      let old=await lookup.maybeSingle();
-      if(old.error&&String(old.error.message||"").toLowerCase().includes("behaviour_date")){
-        delete payload.behaviour_date;
-        lookup=supabaseClient.from("behaviour_records").select("id").eq("student_id",payload.student_id).eq("term_id",termId).eq("teacher_id",teacher.id).eq("class_id",classId);
-        if(behaviourHasSubjectColumn===true)lookup=lookup.eq("subject_id",subjectId);
-        old=await lookup.maybeSingle();
-      }
-      if(old.error)throw old.error;
-      const r=old.data?await supabaseClient.from("behaviour_records").update(payload).eq("id",old.data.id):await supabaseClient.from("behaviour_records").insert(payload);
-      if(r.error)throw r.error;saved++;
+    let saved=0,deleted=0;
+    if(behaviourDeletedIds.size){
+      const ids=[...behaviourDeletedIds];
+      const del=await supabaseClient.from("behaviour_records").delete().in("id",ids);
+      if(del.error)throw del.error; deleted=ids.length;
     }
-    saveState("behaviourSaveState",`✓ ${saved} behaviour record${saved===1?"":"s"} saved and confirmed in Supabase.` ,"ok");
-    notice("behaviourNotice",`Behaviour saved successfully for ${date}. Previous dates are preserved when behaviour_date is available.`,"ok");
-    setButton("saveBehaviour","Behaviour Saved ✓",false);toast("Behaviour saved successfully.");
+    for(let i=0;i<behaviourRows.length;i++){
+      for(let j=0;j<behaviourRows[i].events.length;j++){
+        const ev=behaviourRows[i].events[j];
+        if(!ev.grade){if(ev.comment)throw new Error(`Select a behaviour grade for ${studentName(behaviourRows[i].student)} (event ${j+1}).`);continue;}
+        const comment=document.querySelector(`[data-beh-comment="${i}:${j}"]`)?.value.trim()||null;
+        const payload={student_id:behaviourRows[i].student.id,teacher_id:teacher.id,school_id:teacherSchoolId,class_id:classId,term_id:termId,grade:ev.grade,points:behaviourPoints[ev.grade],comment,behaviour_date:date};
+        if(behaviourHasSubjectColumn===true)payload.subject_id=subjectId;
+        let r;
+        if(ev.id){
+          r=await supabaseClient.from("behaviour_records").update(payload).eq("id",ev.id);
+        }else{
+          r=await supabaseClient.from("behaviour_records").insert(payload).select("id").single();
+          if(!r.error&&r.data)ev.id=r.data.id;
+        }
+        if(r.error)throw r.error;saved++;
+      }
+    }
+    behaviourDeletedIds=new Set();
+    saveState("behaviourSaveState",`✓ ${saved} behaviour event${saved===1?"":"s"} saved${deleted?` · ${deleted} removed`:""} and confirmed in Supabase.` ,"ok");
+    notice("behaviourNotice",`Behaviour saved for ${date}. Multiple events for the same student and day are now preserved as separate records.` ,"ok");
+    setButton("saveBehaviour","Behaviour Saved ✓",false);toast("Behaviour events saved successfully.");
+    renderBehaviourEditor();
   }catch(e){saveState("behaviourSaveState","✕ NOT CONFIRMED: "+errorMessage(e),"err");notice("behaviourNotice","Behaviour was NOT saved: "+errorMessage(e),"err");setButton("saveBehaviour","Save Behaviour",false);}
 }
 
@@ -1152,13 +1189,6 @@ async function init(){
     renderIdentity();
     populateSelectors();
     if(failed.length)notice("dashboardNotice","Some teaching setup information could not be loaded. You can still use the sections that are available.","info");
-
-    // Keep the teacher attendance chart synchronized when an administrator authorizes an absence.
-    try{
-      supabaseClient.channel('teacher-attendance-live-'+String(teacher.id))
-        .on('postgres_changes',{event:'*',schema:'public',table:'teacher_attendance',filter:'teacher_id=eq.'+String(teacher.id)},async()=>{await loadTeacherAttendance();})
-        .subscribe();
-    }catch(e){console.warn('Teacher attendance realtime unavailable:',e);}
 
     // Secondary panels are independent; one slow/failing query no longer freezes the page.
     void (async()=>{

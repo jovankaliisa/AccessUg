@@ -33,7 +33,7 @@ button,input,select,textarea{font:inherit}button{cursor:pointer}
 .card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:21px}.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.card h3{margin:0;font-size:17px}.muted{color:var(--muted);font-size:13px}
 .profile{display:flex;gap:18px;align-items:center}.profile-avatar{width:78px;height:78px;border-radius:20px;background:linear-gradient(135deg,#e9f1fd,#c9dbf5);display:grid;place-items:center;color:var(--blue);font-size:27px;font-weight:900;overflow:hidden;flex:none}.profile-avatar img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;border-radius:inherit}.profile-info h2{margin:0 0 5px;font-size:21px}.profile-info p{margin:3px 0;color:var(--muted)}.profile-card-click{cursor:pointer;transition:transform .16s ease,box-shadow .16s ease}.profile-card-click:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(9,35,75,.08)}.profile-card-click:focus{outline:3px solid rgba(21,87,166,.18);outline-offset:4px}
 .stat{padding:18px}.stat .label{font-size:13px;color:var(--muted)}.stat .value{font-size:28px;font-weight:800;margin-top:6px}.stat .sub{font-size:12px;color:var(--muted);margin-top:4px}.kpi-icon{width:42px;height:42px;border-radius:12px;background:#edf4fd;color:var(--blue);display:grid;place-items:center;font-size:20px}
-.chart-wrap{height:300px;position:relative}.chart-small{height:220px}.notification-list{display:grid;gap:10px}.notification{border:1px solid var(--border);border-radius:12px;padding:13px 14px;background:#fff}.notification.unread{background:#eef5ff;border-color:#cfe0f8}.notification .ntop{display:flex;justify-content:space-between;gap:12px}.notification .ntitle{font-weight:800}.notification .nmeta{font-size:11px;color:var(--muted);margin-top:4px}.notification .nmsg{font-size:13px;color:#526176;margin-top:6px;line-height:1.45}.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.danger{background:var(--danger)}
+.chart-wrap{height:300px;position:relative;min-width:0}.behaviour-chart-scroll{width:100%;height:300px;overflow-x:auto;overflow-y:hidden;padding:0 0 8px;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}.behaviour-chart-scroll canvas{display:block;max-width:none}.chart-small{height:220px}.notification-list{display:grid;gap:10px}.notification{border:1px solid var(--border);border-radius:12px;padding:13px 14px;background:#fff}.notification.unread{background:#eef5ff;border-color:#cfe0f8}.notification .ntop{display:flex;justify-content:space-between;gap:12px}.notification .ntitle{font-weight:800}.notification .nmeta{font-size:11px;color:var(--muted);margin-top:4px}.notification .nmsg{font-size:13px;color:#526176;margin-top:6px;line-height:1.45}.btn{border:0;background:var(--blue);color:#fff;padding:11px 16px;border-radius:10px;font-weight:700}.btn:hover{background:#0a3470}.btn.secondary{background:#eef3f9;color:var(--text)}.btn.danger{background:var(--danger)}
 .notice{padding:12px 14px;border-radius:10px;margin-bottom:16px;font-size:13px;display:none}.notice.show{display:block}.notice.ok{background:#e7f7f0;color:#116d50}.notice.err{background:#fdebea;color:#9d2e29}.notice.info{background:#eaf2fd;color:#174d8f}
 .table-wrap{overflow:auto;border:1px solid var(--border);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:700px;background:#fff}th,td{padding:12px 13px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}th{background:#f7f9fc;color:#536278;font-size:12px;text-transform:uppercase;letter-spacing:.3px}tr:last-child td{border-bottom:0}
 .badge{display:inline-flex;padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}.badge.present{background:#e7f7f0;color:#117052}.badge.absent{background:#fdebea;color:#a52f2b}.badge.auth{background:#fff4d9;color:#946700}.badge.neutral{background:#edf3fb;color:#285d9e}
@@ -46,7 +46,7 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 .toast{position:fixed;right:20px;bottom:20px;z-index:100;background:#13233a;color:#fff;padding:13px 16px;border-radius:11px;box-shadow:var(--shadow);display:none;max-width:380px}.toast.show{display:block}
 .grade{font-size:22px;font-weight:900;color:var(--blue)}.final{font-weight:900}.section-note{margin:0 0 14px;color:var(--muted);font-size:13px}
 @media(max-width:1000px){.three{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}}
-@media(max-width:750px){.quick-nav{display:flex;overflow-x:auto;max-width:55vw;margin-right:8px}.quick-nav button{white-space:nowrap;padding:7px 8px;font-size:10px}.sidebar{transform:translateX(-100%);width:240px}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-btn{display:grid;place-items:center}.top{padding:0 15px}.user-mini span{display:none}.content{padding:0 16px 24px}.hero{margin:0 -16px 20px;padding:26px 16px}.welcomeHero h1{font-size:27px}.three{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.card{padding:17px}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}}
+@media(max-width:750px){.quick-nav{display:flex;overflow-x:auto;max-width:48vw;margin-right:6px}.quick-nav button{white-space:nowrap;padding:7px 8px;font-size:10px;flex:0 0 auto}.sidebar{transform:translateX(-100%);width:min(86vw,300px)}.sidebar.open{transform:translateX(0)}.main{margin-left:0;width:100%;min-width:0}.menu-btn{display:grid;place-items:center;flex:0 0 40px}.top{padding:0 12px;gap:8px}.title-wrap{min-width:0;flex:1}.top h2{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.user-mini span{display:none}.content{padding:0 12px 24px;width:100%;min-width:0}.hero{margin:0 -12px 18px;padding:24px 12px}.hero h1{font-size:25px}.welcomeHero h1{font-size:26px}.three{grid-template-columns:1fr}.two{grid-template-columns:1fr}.profile{align-items:flex-start}.profile-info{min-width:0}.profile-info h2{font-size:18px;overflow-wrap:anywhere}.card{padding:15px;min-width:0}.card-head{align-items:flex-start}.card-head>div{min-width:0}.card h3{font-size:16px}.muted{line-height:1.4}.chart-wrap{height:270px;width:100%;min-width:0}.chart-small{height:205px}.behaviour-chart-scroll{height:270px;margin:0 -2px;width:calc(100% + 4px)}.behaviour-chart-scroll canvas{height:270px!important}.table-wrap{max-width:100%;overflow-x:auto}.toolbar .field{min-width:100%}.toolbar .btn{width:100%}.fees-summary-grid{grid-template-columns:1fr}.fees-summary-stat .value{font-size:20px}.profile-modal{padding:10px}.profile-modal-card{max-height:94vh;padding:18px;border-radius:18px}.profile-hero{align-items:flex-start}.profile-readonly div{align-items:flex-start;flex-direction:column;gap:4px}.profile-readonly strong{text-align:left;max-width:100%}}
 </style>
 
 <style id="accessug-profile-system">
@@ -156,8 +156,8 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
  </div>
  <div class="grid two" style="margin-top:18px">
   <div class="card">
-   <div class="card-head"><div><h3>Weekly Behaviour</h3><div class="muted">Behaviour records grouped by calendar week</div></div></div>
-   <div class="chart-wrap"><canvas id="homeBehaviourChart"></canvas></div>
+   <div class="card-head"><div><h3>Behaviour Progress</h3><div class="muted">Positive points go up • negative points go down • each week starts a new 7-day section</div></div></div>
+   <div class="behaviour-chart-scroll"><canvas id="homeBehaviourChart"></canvas></div>
   </div>
   <div class="card">
    <div class="card-head"><div><h3>Guidance</h3><div class="muted">How to read your overview</div></div></div>
@@ -185,10 +185,10 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 </section>
 
 <section id="behaviour" class="page">
- <div class="hero"><h1>Behaviour</h1><p>See the behaviour grades, points and weekly progress recorded for you.</p></div>
+ <div class="hero"><h1>Behaviour</h1><p>Track every behaviour event over time. Positive points rise above zero, negative points fall below zero, and each week starts a fresh section.</p></div>
  <div id="behaviourNotice" class="notice"></div>
  <div class="grid two">
-  <div class="card"><div class="card-head"><div><h3>Weekly Behaviour Points</h3><div class="muted">Actual records grouped by week • positive points in blue, negative points in red</div></div></div><div class="chart-wrap"><canvas id="behaviourChart"></canvas></div></div>
+  <div class="card"><div class="card-head"><div><h3>Behaviour Progress</h3><div class="muted">Positive points go up • negative points go down • each week starts a new 7-day section</div></div></div><div class="behaviour-chart-scroll"><canvas id="behaviourChart"></canvas></div></div>
   <div class="card"><div class="card-head"><div><h3>Behaviour Summary</h3><div class="muted">Recorded grades and points</div></div></div><div id="behaviourSummary" class="empty">Loading...</div></div>
  </div>
  <div class="card" style="margin-top:18px"><div class="card-head"><div><h3>Behaviour Records</h3><div class="muted">Teacher comments are shown when recorded.</div></div></div><div id="behaviourTable" class="empty">Loading...</div></div>
@@ -424,15 +424,66 @@ async function loadAttendance(){
 }
 function renderAttendance(c){
  const total=c.present+c.absent+c.authorized_absence;
+ // ACCESS UG follows the requested GO 4 Schools-style interpretation:
+ // an authorised absence is still displayed separately, but it does not
+ // reduce the student's attendance rate. Only ordinary absences reduce it.
+ const attendanceRate=total?((c.present+c.authorized_absence)/total)*100:0;
+ const presentPct=total?(c.present/total)*100:0;
+ const absentPct=total?(c.absent/total)*100:0;
+ const authPct=total?(c.authorized_absence/total)*100:0;
+
+ const attendanceCenterPlugin={
+   id:"accessAttendanceCenter",
+   afterDraw(chart){
+     const area=chart.chartArea;
+     if(!area)return;
+     const ctx=chart.ctx;
+     const x=(area.left+area.right)/2, y=(area.top+area.bottom)/2;
+     ctx.save();
+     ctx.textAlign="center";ctx.textBaseline="middle";
+     ctx.font="800 27px Inter, system-ui, sans-serif";
+     ctx.fillStyle="#13233a";
+     ctx.fillText(attendanceRate.toFixed(0)+"%",x,y-5);
+     ctx.font="600 10px Inter, system-ui, sans-serif";
+     ctx.fillStyle="#6d7b8e";
+     ctx.fillText("attendance",x,y+18);
+     ctx.restore();
+   }
+ };
+
  ["homeAttendanceChart","attendanceChart"].forEach((id,i)=>{
-  destroyChart(i?"attendance":"homeAttendance");
-  charts[i?"attendance":"homeAttendance"]=new Chart($(id),{type:"doughnut",data:{labels:["Present","Absent","Authorized absence"],datasets:[{data:[c.present,c.absent,c.authorized_absence]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:"bottom"}}}});
+  const key=i?"attendance":"homeAttendance";
+  destroyChart(key);
+  charts[key]=new Chart($(id),{
+   type:"doughnut",
+   data:{
+    labels:["Present","Absent","Authorized absence"],
+    datasets:[{data:[c.present,c.absent,c.authorized_absence]}]
+   },
+   options:{
+    responsive:true,maintainAspectRatio:false,cutout:"70%",
+    plugins:{legend:{position:"bottom"}}
+   },
+   plugins:[attendanceCenterPlugin]
+  });
  });
+
  $("homePresent").textContent=c.present;$("homeAbsent").textContent=c.absent;$("homeAuthorized").textContent=c.authorized_absence;
- $("homePresentPct").textContent=pct(c.present,total);$("homeAbsentPct").textContent=pct(c.absent,total);$("homeAuthorizedPct").textContent=pct(c.authorized_absence,total);
+ $("homePresentPct").textContent=attendanceRate.toFixed(1)+"% attendance rate";
+ $("homeAbsentPct").textContent=absentPct.toFixed(1)+"% of records";
+ $("homeAuthorizedPct").textContent=authPct.toFixed(1)+"% of records";
+
  $("attPresent").textContent=c.present;$("attAbsent").textContent=c.absent;$("attAuthorized").textContent=c.authorized_absence;
- $("attPresentPct").textContent=pct(c.present,total);$("attAbsentPct").textContent=pct(c.absent,total);$("attAuthorizedPct").textContent=pct(c.authorized_absence,total);
- $("attendanceInterpret").innerHTML=total?`<p><strong>${c.present}</strong> attendance record${c.present===1?"":"s"} show present (${pct(c.present,total)}).</p><p><strong>${c.absent}</strong> show absent (${pct(c.absent,total)}).</p><p><strong>${c.authorized_absence}</strong> show authorized absence (${pct(c.authorized_absence,total)}).</p><p>Authorized absence is kept separate from ordinary absence so approved absence can be interpreted correctly.</p>`:`<p>No attendance records have been entered for you yet.</p>`;
+ $("attPresentPct").textContent=attendanceRate.toFixed(1)+"% attendance rate";
+ $("attAbsentPct").textContent=absentPct.toFixed(1)+"% of records";
+ $("attAuthorizedPct").textContent=authPct.toFixed(1)+"% of records";
+
+ $("attendanceInterpret").innerHTML=total?`
+   <p><strong>${attendanceRate.toFixed(1)}%</strong> overall attendance.</p>
+   <p><strong>${c.present}</strong> present and <strong>${c.authorized_absence}</strong> authorised absence record${c.authorized_absence===1?"":"s"} count toward the attendance rate.</p>
+   <p><strong>${c.absent}</strong> ordinary absence record${c.absent===1?"":"s"} reduce the attendance rate.</p>
+   <p>Authorised absence remains visible as its own category, but is treated as attended for the overall attendance percentage.</p>
+ `:`<p>No attendance records have been entered for you yet.</p>`;
 }
 
 async function loadBehaviour(){
@@ -442,70 +493,150 @@ async function loadBehaviour(){
   renderBehaviour();
 }
 function weekKey(date){
-  const d=new Date(date); if(Number.isNaN(d.getTime()))return null;
-  const start=new Date(d); const day=(start.getDay()+6)%7; start.setDate(start.getDate()-day);
+  const d=new Date(date+"T00:00:00");
+  if(Number.isNaN(d.getTime()))return null;
+  const start=new Date(d);
+  const day=(start.getDay()+6)%7;
+  start.setDate(start.getDate()-day);
   return start.toISOString().slice(0,10);
+}
+function formatBehaviourDate(date){
+  const d=new Date(date+"T00:00:00");
+  if(Number.isNaN(d.getTime()))return String(date||"");
+  return d.toLocaleDateString(undefined,{day:"2-digit",month:"short"});
 }
 function renderBehaviour(){
   const points={A:15,B:5,C:2,D:-2,E:-5};
   const counts={A:0,B:0,C:0,D:0,E:0};
   const weeks={};
 
+  // One x-axis position per calendar week. Positive points always grow
+  // upward and negative points always grow downward at that SAME week.
+  // They are never placed beside another week or merged into one net value.
   behaviour.forEach(r=>{
     const g=String(r.grade||"").trim().toUpperCase();
     if(counts[g]===undefined)return;
     counts[g]++;
-    const date=r.behaviour_date||r.created_at||r.recorded_at||r.date;
-    const k=weekKey(date);
-    const value=Number.isFinite(Number(r.points)) ? Number(r.points) : points[g];
-    weeks[k]=(weeks[k]||0)+value;
+    const rawDate=r.behaviour_date||r.recorded_date||r.created_at||r.recorded_at||r.date;
+    const date=String(rawDate||"").slice(0,10);
+    const week=weekKey(date);
+    if(!week)return;
+    const value=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);
+    if(!weeks[week])weeks[week]={positive:0,negative:0,positiveEvents:0,negativeEvents:0};
+    if(value>0){weeks[week].positive+=value;weeks[week].positiveEvents++;}
+    else if(value<0){weeks[week].negative+=value;weeks[week].negativeEvents++;}
   });
 
-  const labels=Object.keys(weeks).sort();
-  const values=labels.map(k=>weeks[k]||0);
-  destroyChart("behaviour");
-  destroyChart("homeBehaviour");
+  const weekLabels=Object.keys(weeks).sort();
+  const labels=weekLabels.map((w,i)=>{
+    const d=new Date(w+"T00:00:00");
+    const label=Number.isNaN(d.getTime())?w:d.toLocaleDateString(undefined,{day:"2-digit",month:"short"});
+    return "Week "+(i+1)+"\n"+label;
+  });
+  const positive=weekLabels.map(w=>weeks[w].positive);
+  const negative=weekLabels.map(w=>weeks[w].negative);
 
   const chartOptions={
-    responsive:true,
+    responsive:false,
     maintainAspectRatio:false,
+    interaction:{mode:"index",intersect:false},
     scales:{
-      x:{beginAtZero:false},
-      y:{beginAtZero:true}
+      x:{
+        stacked:true,
+        ticks:{
+          autoSkip:false,
+          maxRotation:0,
+          minRotation:0,
+          font:{size:10},
+          callback:(value,index)=>labels[index]
+        },
+        grid:{color:"#edf1f6",lineWidth:1}
+      },
+      y:{
+        beginAtZero:true,
+        stacked:true,
+        ticks:{precision:0},
+        title:{display:true,text:"Behaviour points"}
+      }
+    },
+    plugins:{
+      legend:{position:"bottom"},
+      tooltip:{
+        callbacks:{
+          title:(items)=>items[0]?labels[items[0].dataIndex].replace("\n"," • "):"",
+          label:(ctx)=>{
+            const v=Number(ctx.raw||0);
+            const events=ctx.datasetIndex===0?weeks[weekLabels[ctx.dataIndex]].positiveEvents:weeks[weekLabels[ctx.dataIndex]].negativeEvents;
+            return `${ctx.dataset.label}: ${v>0?"+":""}${v} (${events} event${events===1?"":"s"})`;
+          }
+        }
+      }
     }
   };
 
-  charts.behaviour=new Chart($("behaviourChart"),{
-    type:"bar",
-    data:{labels:labels.map((_,i)=>"Week "+(i+1)),datasets:[{label:"Behaviour points",data:values,backgroundColor:values.map(v=>Number(v)<0?"#d9534f":"#1457a6"),borderColor:values.map(v=>Number(v)<0?"#c13f3a":"#1457a6"),borderWidth:1}]},
-    options:{...chartOptions,indexAxis:"x"}
-  });
+  function makeBehaviourChart(id,key){
+    const canvas=$(id);
+    if(!canvas)return;
+    destroyChart(key);
+    // Keep enough width for every week on small screens. The wrapper scrolls,
+    // while the chart itself stays aligned so positive/negative bars share x.
+    const width=Math.max(620,weekLabels.length*96);
+    canvas.width=width;
+    canvas.height=270;
+    canvas.style.width=width+"px";
+    canvas.style.height="270px";
+    charts[key]=new Chart(canvas,{
+      type:"bar",
+      data:{
+        labels,
+        datasets:[
+          {label:"Positive points",data:positive,backgroundColor:"#15966b",borderColor:"#15966b",borderWidth:1,barPercentage:.82,categoryPercentage:.82},
+          {label:"Negative points",data:negative,backgroundColor:"#d9534f",borderColor:"#d9534f",borderWidth:1,barPercentage:.82,categoryPercentage:.82}
+        ]
+      },
+      options:chartOptions
+    });
+  }
 
-  charts.homeBehaviour=new Chart($("homeBehaviourChart"),{
-    type:"bar",
-    data:{labels:labels.map((_,i)=>"Week "+(i+1)),datasets:[{label:"Behaviour points",data:values,backgroundColor:values.map(v=>Number(v)<0?"#d9534f":"#1457a6"),borderColor:values.map(v=>Number(v)<0?"#c13f3a":"#1457a6"),borderWidth:1}]},
-    options:{...chartOptions,indexAxis:"x"}
-  });
+  makeBehaviourChart("behaviourChart","behaviour");
+  makeBehaviourChart("homeBehaviourChart","homeBehaviour");
 
   const totalPoints=behaviour.reduce((sum,r)=>{
     const g=String(r.grade||"").trim().toUpperCase();
     return sum+(Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0));
+  },0);
+  const positiveTotal=behaviour.reduce((sum,r)=>{
+    const v=Number.isFinite(Number(r.points))?Number(r.points):(points[String(r.grade||"").trim().toUpperCase()]||0);
+    return sum+(v>0?v:0);
+  },0);
+  const negativeTotal=behaviour.reduce((sum,r)=>{
+    const v=Number.isFinite(Number(r.points))?Number(r.points):(points[String(r.grade||"").trim().toUpperCase()]||0);
+    return sum+(v<0?v:0);
   },0);
 
   $("behaviourSummary").innerHTML=`
     <div class="pill-row">
       <span class="pill">A: ${counts.A}</span><span class="pill">B: ${counts.B}</span><span class="pill">C: ${counts.C}</span><span class="pill">D: ${counts.D}</span><span class="pill">E: ${counts.E}</span>
     </div>
-    <div style="margin-top:18px"><div class="muted">Total behaviour points</div><div class="grade" style="${totalPoints<0?'color:#d9534f':''}">${totalPoints}</div></div>`;
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px">
+      <div style="padding:12px;border-radius:12px;background:#e7f7f0"><div class="muted">Positive</div><strong style="color:#15966b;font-size:20px">+${positiveTotal}</strong></div>
+      <div style="padding:12px;border-radius:12px;background:#fdebea"><div class="muted">Negative</div><strong style="color:#d9534f;font-size:20px">${negativeTotal}</strong></div>
+    </div>
+    <div style="margin-top:18px"><div class="muted">Overall behaviour points</div><div class="grade" style="${totalPoints<0?'color:#d9534f':''}">${totalPoints>0?"+":""}${totalPoints}</div></div>`;
 
-  $("behaviourTable").innerHTML=behaviour.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Week</th><th>Grade</th><th>Points</th><th>Subject</th><th>Comment</th></tr></thead><tbody>${behaviour.map(r=>{
+  $("behaviourTable").innerHTML=behaviour.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Week</th><th>Grade</th><th>Points</th><th>Subject</th><th>Comment</th></tr></thead><tbody>${[...behaviour].sort((a,b)=>{
+    const da=String(a.behaviour_date||a.recorded_date||a.created_at||a.recorded_at||"");
+    const db=String(b.behaviour_date||b.recorded_date||b.created_at||b.recorded_at||"");
+    return db.localeCompare(da);
+  }).map(r=>{
     const g=String(r.grade||"").toUpperCase();
     const value=Number.isFinite(Number(r.points))?Number(r.points):(points[g]||0);
-    const date=(r.behaviour_date||r.created_at||r.recorded_at||"").slice(0,10)||"—";
-    return `<tr><td>${esc(date)}</td><td>${esc(weekKey(date))}</td><td><strong>${esc(g||"—")}</strong></td><td style="${value<0?'color:#d9534f;font-weight:900':'font-weight:900'}">${value>0?'+':''}${value}</td><td>${esc(r.subject_name||r.subject||"—")}</td><td>${esc(r.comment||"—")}</td></tr>`;
+    const rawDate=r.behaviour_date||r.recorded_date||r.created_at||r.recorded_at||"";
+    const date=String(rawDate).slice(0,10)||"—";
+    const wk=weekKey(date);
+    return `<tr><td>${esc(date)}</td><td>${esc(wk||"—")}</td><td><strong>${esc(g||"—")}</strong></td><td style="${value<0?'color:#d9534f;font-weight:900':'color:#15966b;font-weight:900'}">${value>0?'+':''}${value}</td><td>${esc(r.subject_name||r.subject||"—")}</td><td>${esc(r.comment||"—")}</td></tr>`;
   }).join("")}</tbody></table></div>`:'<div class="empty-state">No behaviour records have been entered for you yet.</div>';
 }
-
 async function loadAssessments(){
   let r=await supabaseClient.from('assessments').select('*').eq('student_id',student.id).order('updated_at',{ascending:false});
   if(r.error){
