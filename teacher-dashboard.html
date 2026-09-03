@@ -1153,6 +1153,13 @@ async function init(){
     populateSelectors();
     if(failed.length)notice("dashboardNotice","Some teaching setup information could not be loaded. You can still use the sections that are available.","info");
 
+    // Keep the teacher attendance chart synchronized when an administrator authorizes an absence.
+    try{
+      supabaseClient.channel('teacher-attendance-live-'+String(teacher.id))
+        .on('postgres_changes',{event:'*',schema:'public',table:'teacher_attendance',filter:'teacher_id=eq.'+String(teacher.id)},async()=>{await loadTeacherAttendance();})
+        .subscribe();
+    }catch(e){console.warn('Teacher attendance realtime unavailable:',e);}
+
     // Secondary panels are independent; one slow/failing query no longer freezes the page.
     void (async()=>{
       await automaticTeacherAttendance();

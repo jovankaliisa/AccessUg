@@ -1024,6 +1024,9 @@ tbody tr:hover{
 }
 
 
+
+
+
 /* =========================
    TEACHER ASSIGNMENT BUILDER
 ========================= */
@@ -1117,6 +1120,52 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 .fees-subnav{margin:4px 8px 8px 12px;padding-left:12px;border-left:1px solid rgba(255,255,255,.18);display:grid;gap:4px}.fees-subnav button{font-size:12px!important;padding:9px 10px!important}.fees-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.fees-kpi{background:#fff;border:1px solid var(--border);border-radius:15px;padding:18px;box-shadow:var(--shadow)}.fees-kpi small{display:block;color:var(--muted);font-size:12px}.fees-kpi strong{display:block;font-size:24px;margin-top:6px;color:var(--navy)}.fees-status-paid{color:#117052}.fees-status-due{color:#a8322e}.fees-class-row{cursor:pointer}.fees-class-row:hover td{background:#f8fbff}.fees-class-row.selected td{background:#eef5ff}.fees-inline{display:flex;gap:8px;align-items:center}.fees-inline input{max-width:180px}.fees-student-panel{margin-top:12px;padding:16px;border:1px solid #dce7f5;border-radius:14px;background:#f9fbfe}.fees-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}.fees-tabs button{border:1px solid #d9e3f0;background:#fff;color:#285d9e;padding:9px 12px;border-radius:10px;font-weight:750}.fees-tabs button.active{background:#0b3d82;color:#fff;border-color:#0b3d82}.fees-help{padding:14px;border-radius:12px;background:#eef5ff;border:1px solid #d6e5f8;color:#315b8d;font-size:13px;line-height:1.5}.fees-balance{font-weight:900}.fees-paid{color:#117052;font-weight:800}.fees-due{color:#a8322e;font-weight:800}.fees-modal-box{width:min(520px,100%)}
 @media(max-width:800px){.fees-summary{grid-template-columns:1fr 1fr}.fees-inline{flex-wrap:wrap}.fees-inline input{max-width:none}}
 @media(max-width:520px){.fees-summary{grid-template-columns:1fr}.fees-summary .fees-kpi strong{font-size:22px}}
+
+/* =========================
+   SCHOOL LOGIN + ADMIN ATTENDANCE
+========================= */
+.attendance-toolbar{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:end;margin-bottom:18px}
+.attendance-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.attendance-kpi{background:#fff;border:1px solid #dfe7f2;border-radius:14px;padding:16px}
+.attendance-kpi small{display:block;color:#718096;font-size:12px}
+.attendance-kpi strong{display:block;font-size:24px;color:#0b3d82;margin-top:5px}
+.attendance-table{width:100%;border-collapse:collapse;min-width:760px}
+.attendance-table th,.attendance-table td{padding:12px 10px;border-bottom:1px solid #e5ebf3;text-align:left;font-size:13px}
+.attendance-table th{background:#f8fafd;color:#526581;font-size:12px}
+.attendance-status{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.attendance-status.present{background:#e7f7f0;color:#116d50}
+.attendance-status.absent{background:#fdebea;color:#9d2e29}
+.attendance-status.authorized{background:#eef4ff;color:#1455a0}
+.attendance-status.not-recorded{background:#f1f5f9;color:#64748b}
+.attendance-action{border:1px solid #d4dfed;background:#fff;color:#0b3d82;padding:8px 10px;border-radius:8px;font-weight:700;cursor:pointer}
+.attendance-action:hover{background:#edf4ff}
+@media(max-width:800px){.attendance-toolbar{grid-template-columns:1fr}.attendance-summary{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.attendance-summary{grid-template-columns:1fr}}
+
+/* Mobile-first admin dashboard sizing */
+@media(max-width:520px){
+  .content{padding:10px}
+  .welcome{padding:17px 15px;margin-bottom:12px;border-radius:14px}
+  .welcome h2{font-size:20px;line-height:1.25;margin-bottom:6px}
+  .welcome p{font-size:12px;line-height:1.45}
+  .cards{grid-template-columns:1fr 1fr!important;gap:9px}
+  .card{padding:13px;border-radius:12px}
+  .stat-icon{width:36px;height:36px;padding:9px}
+  .stat h3{font-size:22px;margin:9px 0 3px}
+  .muted{font-size:11px}
+  .section-grid{gap:12px;margin-top:12px}
+  .section-grid>.card{min-width:0}
+  .title{gap:8px;align-items:flex-start;margin-bottom:12px}
+  .title h3{font-size:16px}
+  .title .btn{padding:8px 10px;font-size:11px;white-space:nowrap}
+  .quick{grid-template-columns:1fr 1fr;gap:8px}
+  .quick button{padding:12px;font-size:12px}
+  .quick-icon{width:22px;height:22px;margin-bottom:5px}
+  .dashboard-inbox{margin-top:12px}
+  .dashboard-inbox-head{padding:13px 14px;gap:9px}
+  .dashboard-inbox-list{max-height:280px}
+}
+
 </style></head>
 
 <body>
@@ -1208,6 +1257,13 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                 <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"></circle><circle cx="17" cy="9" r="2.5"></circle><path d="M3 20c.4-4 2.5-6 6-6s5.6 2 6 6"></path><path d="M14 15c3-.2 5.4 1.4 6 5"></path></svg>
             </span>
             Users
+        </button>
+
+        <button data-page="attendance">
+            <span class="nav-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"></circle><path d="M12 7v5l3 2"></path></svg>
+            </span>
+            Attendance
         </button>
 
         <button data-page="teachers">
@@ -1988,6 +2044,28 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
   </div>
 </section>
 
+<section class="page" id="attendance">
+  <div class="pagecard">
+    <div class="title">
+      <div><h3>School Attendance</h3><p class="muted">View the attendance status of students and teachers in a selected school for a selected date.</p></div>
+      <button class="btn" type="button" id="adminAttendanceRefresh">Refresh</button>
+    </div>
+    <div id="adminAttendanceNotice" class="notice"></div>
+    <div class="attendance-toolbar">
+      <div class="field"><label>School</label><select id="adminAttendanceSchool"><option value="">Select school</option></select></div>
+      <div class="field"><label>Date</label><input id="adminAttendanceDate" type="date"></div>
+      <button class="btn" type="button" id="adminAttendanceLoad">Load Attendance</button>
+    </div>
+    <div class="attendance-summary">
+      <div class="attendance-kpi"><small>Users</small><strong id="adminAttendanceTotal">0</strong></div>
+      <div class="attendance-kpi"><small>Present</small><strong id="adminAttendancePresent">0</strong></div>
+      <div class="attendance-kpi"><small>Absent</small><strong id="adminAttendanceAbsent">0</strong></div>
+      <div class="attendance-kpi"><small>Authorized</small><strong id="adminAttendanceAuthorized">0</strong></div>
+    </div>
+    <div class="card"><div class="table-wrap"><div id="adminAttendanceTable" class="empty">Select a school and date, then load attendance.</div></div></div>
+  </div>
+</section>
+
 <section class="page" id="fees-update"><div class="pagecard"><div class="title"><div><h3>School Fees — Update Fees</h3><p class="muted">Configure fees by school, class and stream, then record payments for individual students.</p></div></div><div id="adminFeesNotice" class="notice"></div><div class="fees-help" style="margin-bottom:18px"><strong>Fees structure</strong><br>Select a school and academic year. Each class/stream can have its own total fee. Student paid and balance figures are calculated from recorded payments.</div><div class="toolbar"><div class="field"><label>School</label><select id="adminFeesSchool"><option value="">Select school</option></select></div><div class="field"><label>Academic year</label><select id="adminFeesYear"></select></div><button class="btn" id="adminFeesRefresh">Refresh</button></div><div class="card"><div id="adminFeesClasses" class="empty">Select a school to begin.</div></div></div></section>
 <section class="page" id="fees-analysis"><div class="pagecard"><div class="title"><div><h3>School Fees — Analysis</h3><p class="muted">Monitor fully paid students and outstanding balances by school.</p></div></div><div id="adminFeesAnalysisNotice" class="notice"></div><div class="fees-summary"><div class="fees-kpi"><small>Students</small><strong id="adminFeesCount">0</strong></div><div class="fees-kpi"><small>Fully paid</small><strong id="adminFeesPaidCount">0</strong></div><div class="fees-kpi"><small>Balance due</small><strong id="adminFeesDueCount">0</strong></div><div class="fees-kpi"><small>Total balance</small><strong id="adminFeesBalanceTotal">UGX 0</strong></div></div><div class="toolbar"><div class="field"><label>School</label><select id="adminAnalysisSchool"><option value="">Select school</option></select></div><div class="field"><label>Academic year</label><select id="adminAnalysisYear"></select></div></div><div class="card"><div class="fees-tabs"><button class="active" data-admin-fees-filter="all">All</button><button data-admin-fees-filter="paid">Fully Paid</button><button data-admin-fees-filter="due">Balance Due</button><button data-admin-fees-filter="none">No Fee Set</button></div><div id="adminFeesAnalysis" class="empty">Select a school to begin.</div></div></div></section>
 <div class="modal" id="adminUserResetModal"><div class="modal-box users-reset-box"><div class="modal-head"><div><h3>Reset User Login</h3><p class="muted" id="adminResetUserLabel">User</p></div><button class="close" type="button" id="adminUserResetClose">×</button></div><div class="users-reset-warning"><strong>Reset to default credentials?</strong><p>This changes the selected user's login email where the ACCESS UG default law defines one, and resets the password to the matching default password. Existing sessions may need to sign in again.</p></div><div id="adminResetPreview" class="users-credential-preview"></div><div id="adminResetMessage" class="notice"></div><div class="actions"><button class="btn secondary" type="button" id="adminUserResetCancel">Cancel</button><button class="btn" type="button" id="adminUserResetConfirm">Reset Login</button></div></div></div>
@@ -2140,6 +2218,23 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 
                 </div>
 
+                <div class="field">
+
+                    <label>
+                        School Login Password *
+                    </label>
+
+                    <input
+                        id="schoolPassword"
+                        type="password"
+                        minlength="6"
+                        autocomplete="new-password"
+                        placeholder="At least 6 characters"
+                        required
+                    >
+
+                </div>
+
 
                 <div class="field">
 
@@ -2163,37 +2258,6 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 
                     </select>
 
-                </div>
-
-                <div class="field">
-                    <label>School Latitude</label>
-                    <input id="schoolLatitude" type="number" step="any" min="-90" max="90" placeholder="e.g. -0.3136">
-                </div>
-
-                <div class="field">
-                    <label>School Longitude</label>
-                    <input id="schoolLongitude" type="number" step="any" min="-180" max="180" placeholder="e.g. 32.5811">
-                </div>
-
-                <div class="field">
-                    <label>Attendance Radius (meters)</label>
-                    <input id="attendanceRadiusMeters" type="number" min="10" max="5000" step="1" value="150">
-                </div>
-
-                <div class="field" style="align-content:end">
-                    <label style="display:flex;align-items:center;gap:9px;cursor:pointer">
-                        <input id="geofenceEnabled" type="checkbox" checked style="width:auto">
-                        Enable GPS Geofence
-                    </label>
-                    <div class="muted">Teachers can only be marked present inside this radius when geofence is enabled.</div>
-                </div>
-
-                <div class="field" style="grid-column:1/-1">
-                    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-                        <button type="button" class="secondary" id="useCurrentSchoolLocationBtn">⌖ Use Current Location</button>
-                        <button type="button" class="secondary" id="openSchoolMapsBtn">↗ Open in Google Maps</button>
-                        <span id="schoolLocationStatus" class="muted">Location not configured</span>
-                    </div>
                 </div>
 
             </div>
@@ -2475,6 +2539,7 @@ const titles = {
     students:"Students",
     teachers:"Teachers",
     users:"Users & Login Management",
+    attendance:"Attendance",
     reports:"Reports",
     "fees-update":"Update Fees",
     "fees-analysis":"Fees Analysis",
@@ -2510,6 +2575,7 @@ function show(page){
     if(page === "students"){ loadClasses(); loadStudents(); }
     if(page === "teachers") loadTeachers();
     if(page === "users" && window.accessugAdminLoadUsers) window.accessugAdminLoadUsers();
+    if(page === "attendance") loadAdminAttendance();
     if(page === "fees-update" && window.accessugAdminLoadFees) window.accessugAdminLoadFees();
     if(page === "fees-analysis" && window.accessugAdminLoadFeeAnalysis) window.accessugAdminLoadFeeAnalysis();
 }
@@ -2610,7 +2676,7 @@ async function requireAdministrator(){
         await supabaseClient.auth.getSession();
 
     if(sessionError || !session?.user){
-        window.location.replace("./ACCESS.html");
+        window.location.replace("./index.html");
         return false;
     }
 
@@ -2625,7 +2691,7 @@ async function requireAdministrator(){
 
     if(profileError || !profile || profile.role !== "administrator"){
         await supabaseClient.auth.signOut();
-        window.location.replace("./ACCESS.html");
+        window.location.replace("./index.html");
         return false;
     }
 
@@ -2894,61 +2960,6 @@ async function loadSchools(){
     }
 }
 
-function setSchoolGpsInputs(lat,lng){
-  const la=document.getElementById("schoolLatitude"), lo=document.getElementById("schoolLongitude");
-  if(la)la.value=Number(lat).toFixed(7);
-  if(lo)lo.value=Number(lng).toFixed(7);
-  updateSchoolLocationStatus();
-}
-function updateSchoolLocationStatus(){
-  const la=document.getElementById("schoolLatitude"), lo=document.getElementById("schoolLongitude"), out=document.getElementById("schoolLocationStatus");
-  if(!out)return;
-  const has=la&&lo&&la.value!==""&&lo.value!=="";
-  out.textContent=has?`Location ready · ${Number(la.value).toFixed(6)}, ${Number(lo.value).toFixed(6)}`:"Location not configured";
-}
-async function getBrowserSchoolLocation(onSuccess,onError){
-  if(!navigator.geolocation){onError(new Error("This browser does not provide GPS location."));return;}
-  navigator.geolocation.getCurrentPosition(pos=>onSuccess(pos),err=>{
-    const msg=err.code===1?"Location permission was denied. Please allow GPS access in the browser.":err.code===2?"Your current location could not be determined.":"GPS request timed out. Try again.";
-    onError(new Error(msg));
-  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
-}
-function useCurrentSchoolLocation(){
-  const out=document.getElementById("schoolLocationStatus"); if(out)out.textContent="Requesting high-accuracy GPS…";
-  getBrowserSchoolLocation(pos=>{setSchoolGpsInputs(pos.coords.latitude,pos.coords.longitude);},e=>{if(out)out.textContent=e.message;});
-}
-function openSchoolGoogleMaps(schoolId){
-  const school=schoolsCache.find(x=>String(x.id)===String(schoolId));
-  if(!school)return;
-  const url=school.google_maps_url || (school.latitude!=null&&school.longitude!=null?`https://www.google.com/maps?q=${encodeURIComponent(school.latitude)},${encodeURIComponent(school.longitude)}`:"");
-  if(!url){alert("This school does not have GPS coordinates configured yet.");return;}
-  window.open(url,"_blank","noopener,noreferrer");
-}
-async function useCurrentSchoolLocationInDetails(schoolId){
-  const msg=document.getElementById("detailGpsMessage"); if(msg)msg.textContent="Requesting high-accuracy GPS…";
-  getBrowserSchoolLocation(pos=>{
-    const la=document.getElementById("detailGpsLat"),lo=document.getElementById("detailGpsLng");
-    if(la)la.value=Number(pos.coords.latitude).toFixed(7); if(lo)lo.value=Number(pos.coords.longitude).toFixed(7);
-    if(msg)msg.textContent=`GPS captured · accuracy ${Math.round(pos.coords.accuracy||0)} m`;
-  },e=>{if(msg)msg.textContent=e.message;});
-}
-async function saveSchoolAttendanceLocation(schoolId){
-  const msg=document.getElementById("detailGpsMessage");
-  const lat=Number(document.getElementById("detailGpsLat")?.value), lng=Number(document.getElementById("detailGpsLng")?.value);
-  const radius=Number(document.getElementById("detailGpsRadius")?.value||150);
-  const enabled=!!document.getElementById("detailGeofenceEnabled")?.checked;
-  if(enabled && (!Number.isFinite(lat)||!Number.isFinite(lng))) {if(msg)msg.textContent="Set valid latitude and longitude before enabling the geofence.";return;}
-  if((Number.isFinite(lat)&& (lat<-90||lat>90)) || (Number.isFinite(lng)&&(lng<-180||lng>180))){if(msg)msg.textContent="GPS coordinates are outside valid ranges.";return;}
-  if(!Number.isFinite(radius)||radius<10||radius>5000){if(msg)msg.textContent="Radius must be between 10 and 5,000 meters.";return;}
-  if(msg)msg.textContent="Saving location settings…";
-  const payload={latitude:Number.isFinite(lat)?lat:null,longitude:Number.isFinite(lng)?lng:null,attendance_radius_meters:radius,geofence_enabled:enabled,google_maps_url:(Number.isFinite(lat)&&Number.isFinite(lng))?`https://www.google.com/maps?q=${encodeURIComponent(lat)},${encodeURIComponent(lng)}`:null,location_verified_at:(Number.isFinite(lat)&&Number.isFinite(lng))?new Date().toISOString():null};
-  const r=await supabaseClient.from("schools").update(payload).eq("id",schoolId);
-  if(r.error){if(msg)msg.textContent="Location was not saved: "+r.error.message;return;}
-  const cached=schoolsCache.find(x=>String(x.id)===String(schoolId)); if(cached)Object.assign(cached,payload);
-  if(msg)msg.textContent="✓ Location settings saved.";
-  await loadAllCounts();
-  setTimeout(()=>openSchoolDetails(schoolId),450);
-}
 async function openSchoolDetails(schoolId){
   const modal=document.getElementById("schoolDetailsModal"), body=document.getElementById("schoolDetailsBody");
   const school=schoolsCache.find(x=>String(x.id)===String(schoolId));
@@ -2990,30 +3001,6 @@ async function openSchoolDetails(schoolId){
       <div class="detail-list"><h4>Teachers</h4>${teachers.length?teachers.map(t=>`<div class="item"><button class="small-btn" onclick="openTeacherDetails('${safe(t.id)}')">${safe(`${t.first_name||""} ${t.last_name||""}`.trim()||t.name||"Teacher")}</button> — ${safe(t.email||"No email")}</div>`).join(""):'<div class="item">No teachers registered.</div>'}</div>
       <div class="detail-list"><h4>Students</h4>${students.length?students.map(st=>`<div class="item"><button class="small-btn" onclick="openStudentDetails('${safe(st.id)}')">${safe(`${st.first_name||""} ${st.last_name||""}`.trim()||st.name||"Student")}</button> — ${safe(st.student_email||st.email||"No login email")}</div>`).join(""):'<div class="item">No students registered.</div>'}</div>
       <div class="detail-list"><h4>Subjects offered</h4>${subjectRows.length?subjectRows.map(x=>`<div class="item">${safe(subjectNameForSchool(x))}</div>`).join(""):'<div class="item">No subjects linked.</div>'}</div>
-      <div class="location-admin-card" style="margin-top:18px;padding:16px;border:1px solid #dce6f2;border-radius:14px;background:#f8fbff">
-        <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
-          <div><h4 style="margin:0 0 4px">School Attendance Location</h4><p class="muted" style="margin:0">Configure the GPS boundary used for teacher attendance.</p></div>
-          <span id="schoolLocationDetailStatus" class="badge ${school.geofence_enabled?'active':'auth'}">${school.geofence_enabled?'Geofence enabled':'Geofence disabled'}</span>
-        </div>
-        <div class="detail-grid" style="margin-top:14px">
-          <div class="detail-item"><small>Latitude</small><strong>${school.latitude==null?'—':safe(school.latitude)}</strong></div>
-          <div class="detail-item"><small>Longitude</small><strong>${school.longitude==null?'—':safe(school.longitude)}</strong></div>
-          <div class="detail-item"><small>Allowed radius</small><strong>${safe(school.attendance_radius_meters??150)} m</strong></div>
-          <div class="detail-item"><small>Last verified</small><strong>${school.location_verified_at?safe(new Date(school.location_verified_at).toLocaleString()):'Not verified'}</strong></div>
-        </div>
-        <div class="formgrid" style="margin-top:14px">
-          <div class="field"><label>Latitude</label><input id="detailGpsLat" type="number" step="any" min="-90" max="90" value="${school.latitude??''}" placeholder="Latitude"></div>
-          <div class="field"><label>Longitude</label><input id="detailGpsLng" type="number" step="any" min="-180" max="180" value="${school.longitude??''}" placeholder="Longitude"></div>
-          <div class="field"><label>Attendance Radius (m)</label><input id="detailGpsRadius" type="number" min="10" max="5000" step="1" value="${school.attendance_radius_meters??150}"></div>
-          <div class="field" style="align-content:end"><label style="display:flex;align-items:center;gap:9px;cursor:pointer"><input id="detailGeofenceEnabled" type="checkbox" ${school.geofence_enabled?'checked':''} style="width:auto"> Enable GPS Geofence</label></div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;align-items:center">
-          <button type="button" class="small-btn" onclick="useCurrentSchoolLocationInDetails('${safe(school.id)}')">⌖ Use Current Location</button>
-          <button type="button" class="small-btn" onclick="openSchoolGoogleMaps('${safe(school.id)}')">↗ Open in Google Maps</button>
-          <button type="button" class="small-btn" onclick="saveSchoolAttendanceLocation('${safe(school.id)}')">Save Location Settings</button>
-          <span id="detailGpsMessage" class="muted"></span>
-        </div>
-      </div>
       <div class="danger-zone"><strong>Danger zone</strong><p>Deleting this school is permanent. Its classes, school-subject links, students, teachers and related records that reference the school will be removed where the database relationships permit cascading deletion.</p><button class="small-btn danger-btn" onclick="deleteSchoolCompletely('${safe(school.id)}')">Delete School Completely</button></div>`;
   }catch(e){ body.innerHTML=`<div class="db-message show error">Could not load school details: ${safe(e.message||e)}</div>`; }
 }
@@ -3342,9 +3329,6 @@ function getSelectedSchoolSubjectIds(){
 
 const refreshSchoolSubjectsBtn=document.getElementById("refreshSchoolSubjectsBtn");
 if(refreshSchoolSubjectsBtn) refreshSchoolSubjectsBtn.addEventListener("click",loadSchoolSubjectCatalog);
-const useCurrentSchoolLocationBtn=document.getElementById("useCurrentSchoolLocationBtn");
-if(useCurrentSchoolLocationBtn) useCurrentSchoolLocationBtn.addEventListener("click",useCurrentSchoolLocation);
-["schoolLatitude","schoolLongitude"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("input",updateSchoolLocationStatus);});
 
 /* =========================
    ADD SCHOOL
@@ -3395,15 +3379,10 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
             throw new Error("Each class/stream must be unique. Remove duplicate class rows.");
         }
 
-        const gpsLatRaw = document.getElementById("schoolLatitude").value.trim();
-        const gpsLngRaw = document.getElementById("schoolLongitude").value.trim();
-        const gpsRadius = Number(document.getElementById("attendanceRadiusMeters").value || 150);
-        const gpsLat = gpsLatRaw === "" ? null : Number(gpsLatRaw);
-        const gpsLng = gpsLngRaw === "" ? null : Number(gpsLngRaw);
-        if(!Number.isFinite(gpsRadius) || gpsRadius < 10 || gpsRadius > 5000) throw new Error("Attendance radius must be between 10 and 5,000 meters.");
-        if(document.getElementById("geofenceEnabled").checked && (gpsLat === null || gpsLng === null)) throw new Error("Set the school's GPS latitude and longitude before enabling the GPS geofence.");
-        if(gpsLat !== null && (!Number.isFinite(gpsLat) || gpsLat < -90 || gpsLat > 90)) throw new Error("School latitude must be between -90 and 90.");
-        if(gpsLng !== null && (!Number.isFinite(gpsLng) || gpsLng < -180 || gpsLng > 180)) throw new Error("School longitude must be between -180 and 180.");
+        const schoolEmail = document.getElementById("email").value.trim().toLowerCase();
+        const schoolPassword = document.getElementById("schoolPassword").value;
+        if(!schoolEmail) throw new Error("School email is required because it is used as the school login email.");
+        if(schoolPassword.length < 6) throw new Error("School login password must be at least 6 characters.");
 
         const school = {
             name: document.getElementById("name").value.trim(),
@@ -3412,14 +3391,8 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
             location: document.getElementById("location").value.trim() || null,
             head_teacher: document.getElementById("head").value.trim() || null,
             phone: document.getElementById("phone").value.trim() || null,
-            email: document.getElementById("email").value.trim().toLowerCase() || null,
+            email: schoolEmail,
             school_type: document.getElementById("schoolType").value,
-            latitude: document.getElementById("schoolLatitude").value === "" ? null : Number(document.getElementById("schoolLatitude").value),
-            longitude: document.getElementById("schoolLongitude").value === "" ? null : Number(document.getElementById("schoolLongitude").value),
-            attendance_radius_meters: Number(document.getElementById("attendanceRadiusMeters").value || 150),
-            geofence_enabled: document.getElementById("geofenceEnabled").checked,
-            google_maps_url: (document.getElementById("schoolLatitude").value && document.getElementById("schoolLongitude").value) ? `https://www.google.com/maps?q=${encodeURIComponent(document.getElementById("schoolLatitude").value)},${encodeURIComponent(document.getElementById("schoolLongitude").value)}` : null,
-            location_verified_at: (document.getElementById("schoolLatitude").value && document.getElementById("schoolLongitude").value) ? new Date().toISOString() : null,
             status: "Active",
             created_by: user.id
         };
@@ -3496,6 +3469,20 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
             throw new Error("School, classes and subjects were created, but academic terms could not be saved: " + termInsert.error.message);
         }
 
+        // Create the school's Supabase Auth login without ever storing the password in the schools table.
+        const accountResult = await supabaseClient.functions.invoke("admin-register-school-account", {
+            body: { school_id: createdSchoolId, email: schoolEmail, password: schoolPassword }
+        });
+        if(accountResult.error || accountResult.data?.error){
+            const reason = accountResult.data?.error || accountResult.error?.message || "School login account could not be created.";
+            await supabaseClient.from("academic_terms").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("classes").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("school_subjects").delete().eq("school_id", createdSchoolId);
+            await supabaseClient.from("schools").delete().eq("id", createdSchoolId);
+            createdSchoolId = null;
+            throw new Error("School was not completed because its login account could not be created: " + reason);
+        }
+
         showMessage(
             "schoolMessage",
             `✓ School, ${rowsToInsert.length} class/stream group${rowsToInsert.length === 1 ? "" : "s"}, ${selectedSubjectIds.length} subject${selectedSubjectIds.length === 1 ? "" : "s"}, and Terms 1–3 saved successfully in Supabase.`,
@@ -3503,9 +3490,6 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
         );
 
         this.reset();
-        document.getElementById("attendanceRadiusMeters").value = 150;
-        document.getElementById("geofenceEnabled").checked = true;
-        updateSchoolLocationStatus();
         document.getElementById("classAcademicYear").value = new Date().getFullYear();
         document.getElementById("classRows").innerHTML = "";
         addClassRow();
@@ -3790,7 +3774,7 @@ document.getElementById("logout").addEventListener("click", async function(){
         localStorage.removeItem("accessug_login_email");
         localStorage.removeItem("accessug_full_name");
 
-        window.location.replace("./ACCESS.html");
+        window.location.replace("./index.html");
 
     } catch(error){
         console.error("Unexpected logout error:", error);
@@ -3818,6 +3802,113 @@ document.getElementById("logout").addEventListener("click", async function(){
     startNotificationRealtime();
     void loadAllCounts();
 })();
+
+
+/* =========================
+   ADMIN SCHOOL ATTENDANCE
+========================= */
+function attendanceDateToday(){
+    const d=new Date();
+    const m=String(d.getMonth()+1).padStart(2,"0");
+    const day=String(d.getDate()).padStart(2,"0");
+    return `${d.getFullYear()}-${m}-${day}`;
+}
+function attendanceStatusLabel(status){
+    const st=String(status||"").trim().toLowerCase();
+    if(["present","late","checked_in"].includes(st)) return {label:st==="late"?"Present / Late":"Present",cls:"present"};
+    if(["authorized_absence","authorized absent","authorized"].includes(st)) return {label:"Authorized absence",cls:"authorized"};
+    if(st==="absent") return {label:"Absent",cls:"absent"};
+    return {label:"Absent",cls:"absent"};
+}
+function attendanceName(row,type){
+    return type==="student"
+      ? [row.first_name,row.last_name].filter(Boolean).join(" ").trim() || row.email || "Student"
+      : [row.first_name,row.last_name].filter(Boolean).join(" ").trim() || row.email || "Teacher";
+}
+async function loadAdminAttendance(){
+    const schoolSel=document.getElementById("adminAttendanceSchool");
+    const dateInput=document.getElementById("adminAttendanceDate");
+    const notice=document.getElementById("adminAttendanceNotice");
+    if(!schoolSel||!dateInput)return;
+    if(!dateInput.value) dateInput.value=attendanceDateToday();
+    const current=schoolSel.value;
+
+    // Attendance can be opened directly, so do not depend on the Schools page
+    // having been opened first. Always refresh the school list from Supabase.
+    try{
+        await loadSchools();
+    }catch(e){
+        console.error("Attendance school list error:",e);
+        schoolSel.innerHTML='<option value="">Select school</option>';
+        if(notice){
+            notice.textContent="Could not load schools: "+(e.message||e);
+            notice.className="notice show err";
+        }
+        return;
+    }
+
+    schoolSel.innerHTML='<option value="">Select school</option>'+(schoolsCache||[]).map(s=>`<option value="${safe(s.id)}">${safe(s.name||s.code||"School")}</option>`).join("");
+    if(current && (schoolsCache||[]).some(s=>String(s.id)===String(current))) schoolSel.value=current;
+    if(!schoolSel.value && schoolsCache?.length===1) schoolSel.value=schoolsCache[0].id;
+
+    if(notice && schoolsCache?.length){
+        notice.className="notice";
+    }
+}
+async function loadAdminAttendanceRecords(){
+    const schoolId=document.getElementById("adminAttendanceSchool")?.value;
+    const date=document.getElementById("adminAttendanceDate")?.value;
+    const box=document.getElementById("adminAttendanceTable");
+    const notice=document.getElementById("adminAttendanceNotice");
+    if(!schoolId||!date){ if(notice){notice.textContent="Select a school and date first.";notice.className="notice show err";} return; }
+    if(notice) notice.className="notice";
+    if(box) box.innerHTML='<div class="empty">Loading attendance…</div>';
+    try{
+      const [studentsRes,teachersRes,studentAttRes,teacherAttRes]=await Promise.all([
+        supabaseClient.from("students").select("id,first_name,last_name,email,student_number,class_level").eq("school_id",schoolId).order("last_name"),
+        supabaseClient.from("teachers").select("id,first_name,last_name,email,employee_number").eq("school_id",schoolId).order("last_name"),
+        supabaseClient.from("student_attendance").select("id,student_id,status,notes").eq("school_id",schoolId).eq("attendance_date",date),
+        supabaseClient.from("teacher_attendance").select("id,teacher_id,status,clock_in,method").eq("school_id",schoolId).eq("attendance_date",date)
+      ]);
+      const err=[studentsRes,teachersRes,studentAttRes,teacherAttRes].find(r=>r.error);
+      if(err) throw err.error;
+      const smap=new Map((studentAttRes.data||[]).map(r=>[String(r.student_id),r]));
+      const tmap=new Map((teacherAttRes.data||[]).map(r=>[String(r.teacher_id),r]));
+      const rows=[...(studentsRes.data||[]).map(u=>{const a=smap.get(String(u.id));const st=a?.status||"absent";return {type:"student",user:u,attendance:a,status:st};}),...(teachersRes.data||[]).map(u=>{const a=tmap.get(String(u.id));const st=a?.status||"absent";return {type:"teacher",user:u,attendance:a,status:st};})];
+      const counts={total:rows.length,present:0,absent:0,authorized:0};
+      rows.forEach(r=>{const st=String(r.status||"").toLowerCase().trim();if(["authorized_absence","authorized absent","authorized"].includes(st))counts.authorized++;else if(st==="absent")counts.absent++;else counts.present++;});
+      document.getElementById("adminAttendanceTotal").textContent=counts.total;document.getElementById("adminAttendancePresent").textContent=counts.present;document.getElementById("adminAttendanceAbsent").textContent=counts.absent;document.getElementById("adminAttendanceAuthorized").textContent=counts.authorized;
+      if(!rows.length){box.innerHTML='<div class="empty">No students or teachers are registered in this school.</div>';return;}
+      box.innerHTML=`<table class="attendance-table"><thead><tr><th>#</th><th>User</th><th>Role</th><th>Status</th><th>Action</th></tr></thead><tbody>${rows.map((r,i)=>{const st=attendanceStatusLabel(r.status);const isAbsent=String(r.status).toLowerCase().trim()==="absent";const action=isAbsent?`<button class="attendance-action" type="button" data-authorize-attendance="${safe(r.attendance?.id||"")}" data-attendance-type="${r.type}" data-user-id="${safe(r.user.id)}" data-school-id="${safe(schoolId)}" data-attendance-date="${safe(date)}">Authorize absence</button>`:'—';return `<tr><td>${i+1}</td><td><strong>${safe(attendanceName(r.user,r.type))}</strong></td><td>${r.type==="student"?"Student":"Teacher"}</td><td><span class="attendance-status ${st.cls}">${safe(st.label)}</span></td><td>${action}</td></tr>`;}).join("")}</tbody></table>`;
+      document.querySelectorAll("[data-authorize-attendance]").forEach(btn=>btn.addEventListener("click",()=>authorizeAdminAbsence(btn.dataset.authorizeAttendance,btn.dataset.attendanceType,btn.dataset.userId,btn.dataset.schoolId,btn.dataset.attendanceDate)));
+    }catch(e){console.error("Admin attendance load error",e);if(box)box.innerHTML='<div class="empty">Could not load attendance.</div>';if(notice){notice.textContent="Could not load attendance: "+(e.message||e);notice.className="notice show err";}}
+}
+async function authorizeAdminAbsence(attendanceId,type,userId,schoolId,date){
+    if(!confirm("Authorize this absence? The status will change to Authorized absence."))return;
+    const notice=document.getElementById("adminAttendanceNotice");
+    try{
+      if(notice){notice.textContent="Authorizing absence…";notice.className="notice show info";}
+      const result=await supabaseClient.functions.invoke("admin-authorize-absence",{body:{attendance_id:attendanceId||null,type,user_id:userId||null,school_id:schoolId||null,attendance_date:date||null}});
+      if(result.error){
+        let message=result.error.message||"Authorization failed.";
+        try{
+          const payload=await result.error.context?.json?.();
+          if(payload?.error)message=payload.error;
+        }catch(_){}
+        throw new Error(message);
+      }
+      if(result.data?.error)throw new Error(result.data.error);
+      if(notice){notice.textContent="Absence authorized successfully.";notice.className="notice show ok";}
+      await loadAdminAttendanceRecords();
+    }catch(e){
+      console.error("Admin absence authorization error:",e);
+      if(notice){notice.textContent="Could not authorize absence: "+(e.message||e);notice.className="notice show err";}
+    }
+}
+document.getElementById("adminAttendanceLoad")?.addEventListener("click",loadAdminAttendanceRecords);
+document.getElementById("adminAttendanceRefresh")?.addEventListener("click",async()=>{await loadSchools();await loadAdminAttendance();await loadAdminAttendanceRecords();});
+document.getElementById("adminAttendanceSchool")?.addEventListener("change",()=>loadAdminAttendanceRecords());
+document.getElementById("adminAttendanceDate")?.addEventListener("change",()=>loadAdminAttendanceRecords());
 </script>
 
 
