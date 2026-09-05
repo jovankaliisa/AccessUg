@@ -491,7 +491,9 @@ async function loadSchool(){
   school=null;
   if(!teacherSchoolId)return;
   const r=await supabaseClient.from("schools").select("*").eq("id",teacherSchoolId).maybeSingle();
-  if(!r.error)school=r.data||null;
+  if(r.error)throw new Error("Could not load teacher school: "+r.error.message);
+  school=r.data||null;
+  if(!school)throw new Error("The teacher's school could not be found.");
 }
 
 async function loadAssignments(){
