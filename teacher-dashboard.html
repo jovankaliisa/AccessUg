@@ -683,6 +683,22 @@ async function verifyTeacherLocation(){
 
   btn.disabled=true;
   btn.textContent="Checking GPS location…";
+
+  if(navigator.permissions && navigator.permissions.query){
+    try{
+      const permission=await navigator.permissions.query({name:"geolocation"});
+      if(permission.state==="denied"){
+        if(status){status.textContent="Location is blocked for this site. In Chrome open Site settings → Location → Allow, then try again.";status.className="teacher-location-status error";}
+        btn.disabled=false;
+        btn.textContent="📍 Verify Location & Check In";
+        return;
+      }
+      if(permission.state==="granted" && status){
+        status.textContent="Location permission is already allowed. Getting a fresh GPS position…";
+        status.className="teacher-location-status info";
+      }
+    }catch(_){ }
+  }
   if(status){
     status.textContent="Requesting your current GPS position. Allow location permission when asked.";
     status.className="teacher-location-status info";
@@ -770,7 +786,7 @@ async function verifyTeacherLocation(){
     }
     btn.disabled=false;
     btn.textContent="📍 Verify Location & Check In";
-  },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
+  },{enableHighAccuracy:true,timeout:45000,maximumAge:0});
 }
 
 $("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);
