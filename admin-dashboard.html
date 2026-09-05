@@ -1166,7 +1166,62 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
   .dashboard-inbox-list{max-height:280px}
 }
 
-</style></head>
+</style>
+<style id="accessug-location-mobile-fixes">
+/* ACCESS UG location registration + mobile fixes */
+.school-location-box{
+  grid-column:1/-1;
+  padding:16px;
+  border:1px solid #cbd8e8;
+  border-radius:14px;
+  background:#f8fbff;
+}
+.school-location-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.4fr) minmax(170px,.6fr);
+  gap:12px;
+}
+.school-location-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:10px;
+}
+.school-location-actions button{
+  flex:1 1 180px;
+}
+.school-location-status{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:9px;
+  font-size:12px;
+  line-height:1.45;
+  background:#eef4fb;
+  color:#526581;
+}
+.school-location-status.ok{background:#ecfdf3;color:#166534;border:1px solid #bbf7d0}
+.school-location-status.error{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
+@media(max-width:750px){
+  .top{min-height:64px;height:auto;padding:10px 12px}
+  .top h2{font-size:17px}
+  .content{padding:12px}
+  .pagecard{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .modal{padding:10px}
+  .modalbox{width:100%;max-width:none;padding:16px;border-radius:14px;max-height:94vh}
+  .formgrid,.formgrid.three{grid-template-columns:1fr!important}
+  .school-location-grid{grid-template-columns:1fr}
+  .school-location-box{padding:13px}
+  .actions{flex-direction:column}
+  .actions .btn,.actions .secondary{width:100%}
+  .quick{grid-template-columns:1fr}
+  .table-wrap{max-width:100%;overflow-x:auto}
+}
+@media(min-width:751px){
+  .modalbox{width:min(920px,calc(100vw - 40px))}
+}
+</style>
+
+</head>
 
 <body>
 
@@ -2159,18 +2214,43 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                 </div>
 
 
-                <div class="field">
+                <div class="school-location-box">
+                    <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap">
+                        <div>
+                            <label style="display:block;font-size:12px;font-weight:bold;margin-bottom:5px;color:#304866">
+                                School Location / Attendance Point *
+                            </label>
+                            <div class="muted">
+                                Set the official school GPS point. Teachers will be checked against this point before attendance is recorded.
+                            </div>
+                        </div>
+                        <span style="padding:6px 9px;border-radius:999px;background:#eaf2ff;color:#0b3d82;font-size:11px;font-weight:800">
+                            Maximum radius: 500 m
+                        </span>
+                    </div>
 
-                    <label>
-                        Location
-                    </label>
+                    <div class="school-location-grid" style="margin-top:12px">
+                        <div class="field">
+                            <label>Location name / address *</label>
+                            <input id="location" type="text" placeholder="e.g. Nkoni, Masaka" required>
+                        </div>
+                        <div class="field">
+                            <label>Attendance radius (metres) *</label>
+                            <input id="attendanceRadius" type="number" min="25" max="500" step="1" value="500" required>
+                        </div>
+                    </div>
 
-                    <input
-                        id="location"
-                        type="text"
-                        placeholder="School location"
-                    >
+                    <input id="schoolLatitude" type="hidden">
+                    <input id="schoolLongitude" type="hidden">
+                    <input id="schoolGoogleMapsUrl" type="hidden">
 
+                    <div class="school-location-actions">
+                        <button type="button" class="btn" id="captureSchoolLocationBtn">📍 Use current GPS location</button>
+                        <button type="button" class="secondary" id="openSchoolGoogleMapsBtn" disabled>🗺 Open in Google Maps</button>
+                    </div>
+                    <div id="schoolLocationStatus" class="school-location-status">
+                        GPS coordinates are required before this school can be registered.
+                    </div>
                 </div>
 
 
@@ -2667,6 +2747,101 @@ document.getElementById("schoolDetailsModal")?.addEventListener("click", functio
 document.getElementById("studentModal").addEventListener("click", function(event){
     if(event.target === this) closeStudentModal();
 });
+
+
+/* =========================
+   SCHOOL GPS / GEOFENCE SETUP
+========================= */
+(function setupSchoolLocationCapture(){
+    const captureBtn = document.getElementById("captureSchoolLocationBtn");
+    const mapsBtn = document.getElementById("openSchoolGoogleMapsBtn");
+    const status = document.getElementById("schoolLocationStatus");
+    const latEl = document.getElementById("schoolLatitude");
+    const lngEl = document.getElementById("schoolLongitude");
+    const mapsEl = document.getElementById("schoolGoogleMapsUrl");
+    const locationEl = document.getElementById("location");
+    const radiusEl = document.getElementById("attendanceRadius");
+
+    if(!captureBtn || !latEl || !lngEl) return;
+
+    function setStatus(msg, type){
+        if(!status) return;
+        status.textContent = msg;
+        status.className = "school-location-status" + (type ? " " + type : "");
+    }
+
+    function updateMapLink(){
+        const lat = Number(latEl.value), lng = Number(lngEl.value);
+        if(!Number.isFinite(lat) || !Number.isFinite(lng)){
+            if(mapsBtn) mapsBtn.disabled = true;
+            return;
+        }
+        const url = `https://www.google.com/maps?q=${encodeURIComponent(lat + "," + lng)}`;
+        if(mapsEl) mapsEl.value = url;
+        if(mapsBtn){
+            mapsBtn.disabled = false;
+            mapsBtn.onclick = () => window.open(url, "_blank", "noopener,noreferrer");
+        }
+    }
+
+    captureBtn.addEventListener("click", ()=>{
+        if(!navigator.geolocation){
+            setStatus("This browser does not provide GPS location. Try a current Chrome/Edge/Safari browser on a device with location enabled.","error");
+            return;
+        }
+
+        captureBtn.disabled = true;
+        captureBtn.textContent = "Getting GPS location…";
+        setStatus("Requesting the device's current location. Allow location permission when your browser asks.", "info");
+
+        navigator.geolocation.getCurrentPosition(
+            pos=>{
+                const lat = Number(pos.coords.latitude);
+                const lng = Number(pos.coords.longitude);
+                const accuracy = Number(pos.coords.accuracy);
+
+                if(!Number.isFinite(lat) || !Number.isFinite(lng)){
+                    setStatus("The device returned invalid coordinates. Please try again.","error");
+                    captureBtn.disabled = false;
+                    captureBtn.textContent = "📍 Use current GPS location";
+                    return;
+                }
+
+                latEl.value = lat.toFixed(8);
+                lngEl.value = lng.toFixed(8);
+                updateMapLink();
+
+                if(locationEl && !locationEl.value.trim()){
+                    locationEl.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                }
+
+                const radius = Number(radiusEl?.value || 500);
+                setStatus(
+                    `Location captured ✓  Latitude ${lat.toFixed(6)}, Longitude ${lng.toFixed(6)}. GPS accuracy about ${Math.round(accuracy)} m. Teacher attendance will be limited to ${Math.min(Math.max(radius || 500,25),500)} m or less.`,
+                    "ok"
+                );
+                captureBtn.textContent = "📍 Update GPS location";
+                captureBtn.disabled = false;
+            },
+            err=>{
+                const messages = {
+                    1:"Location permission was denied. Enable location permission for this site and try again.",
+                    2:"Your device could not determine a location. Move to an area with better GPS/network coverage and try again.",
+                    3:"The GPS request timed out. Try again."
+                };
+                setStatus(messages[err.code] || "Unable to get the school GPS location. Try again.", "error");
+                captureBtn.disabled = false;
+                captureBtn.textContent = "📍 Use current GPS location";
+            },
+            {enableHighAccuracy:true, timeout:20000, maximumAge:0}
+        );
+    });
+
+    radiusEl?.addEventListener("input", ()=>{
+        let r = Number(radiusEl.value);
+        if(Number.isFinite(r)) radiusEl.value = String(Math.min(Math.max(Math.round(r),25),500));
+    });
+})();
 
 /* =========================
    SECURITY / AUTH
@@ -3384,17 +3559,38 @@ document.getElementById("schoolForm").addEventListener("submit", async function(
         if(!schoolEmail) throw new Error("School email is required because it is used as the school login email.");
         if(schoolPassword.length < 6) throw new Error("School login password must be at least 6 characters.");
 
+        const radius = Number(document.getElementById("attendanceRadius").value);
+        const schoolLat = Number(document.getElementById("schoolLatitude").value);
+        const schoolLng = Number(document.getElementById("schoolLongitude").value);
+        const schoolLocation = document.getElementById("location").value.trim();
+
+        if(!schoolLocation) throw new Error("Enter the school's location name or address.");
+        if(!Number.isFinite(radius) || radius < 25 || radius > 500){
+            throw new Error("Attendance radius must be between 25 and 500 metres.");
+        }
+        if(!Number.isFinite(schoolLat) || schoolLat < -90 || schoolLat > 90 ||
+           !Number.isFinite(schoolLng) || schoolLng < -180 || schoolLng > 180){
+            throw new Error("Capture the school's GPS location before registering it.");
+        }
+
         const school = {
             name: document.getElementById("name").value.trim(),
             code: document.getElementById("code").value.trim().toUpperCase(),
             district: document.getElementById("district").value.trim(),
-            location: document.getElementById("location").value.trim() || null,
+            location: schoolLocation,
             head_teacher: document.getElementById("head").value.trim() || null,
             phone: document.getElementById("phone").value.trim() || null,
             email: schoolEmail,
             school_type: document.getElementById("schoolType").value,
             status: "Active",
-            created_by: user.id
+            created_by: user.id,
+            latitude: schoolLat,
+            longitude: schoolLng,
+            attendance_radius_meters: Math.round(radius),
+            geofence_enabled: true,
+            google_maps_url: document.getElementById("schoolGoogleMapsUrl").value.trim() ||
+              `https://www.google.com/maps?q=${encodeURIComponent(schoolLat + "," + schoolLng)}`,
+            location_verified_at: new Date().toISOString()
         };
 
         const schoolInsert = await supabaseClient

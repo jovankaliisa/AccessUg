@@ -134,7 +134,50 @@ tr:last-child td{border-bottom:0}
 
 .behaviour-choice input{width:18px;height:18px;cursor:pointer}.behaviour-choice:hover{background:#f1f6fd}
 </style>
-<style id="accessug-v3"></style></head>
+<style id="accessug-v3"></style>
+<style id="accessug-teacher-location">
+.teacher-location-check{
+  margin:0 0 18px;
+  padding:15px;
+  border:1px solid #dce6f2;
+  border-radius:14px;
+  background:#f8fbff;
+}
+.teacher-location-title{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:12px;
+}
+.teacher-radius-badge{
+  white-space:nowrap;
+  padding:6px 9px;
+  border-radius:999px;
+  background:#eaf2ff;
+  color:#0b3d82;
+  font-size:11px;
+  font-weight:800;
+}
+.teacher-location-status{
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:9px;
+  background:#eef4fb;
+  color:#526581;
+  font-size:12px;
+  line-height:1.45;
+}
+.teacher-location-status.ok{background:#ecfdf3;color:#166534;border:1px solid #bbf7d0}
+.teacher-location-status.error{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
+.teacher-location-status.info{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
+@media(max-width:700px){
+  .teacher-location-title{flex-direction:column}
+  #verifyLocationBtn{width:100%}
+}
+</style>
+
+</head>
 
 <body>
 <div class="app">
@@ -184,7 +227,20 @@ tr:last-child td{border-bottom:0}
     </div>
 
     <div class="card">
-      <div class="card-head"><div><h3>Teacher Attendance</h3><div class="muted">Your attendance overview</div></div><span id="clockStatus" class="badge active">Checking</span></div>
+      <div class="card-head"><div><h3>Teacher Attendance</h3><div class="muted">GPS-verified attendance at your registered school</div></div><span id="clockStatus" class="badge active">Checking</span></div>
+
+      <div class="teacher-location-check">
+        <div class="teacher-location-title">
+          <div>
+            <strong>Verify your location</strong>
+            <div class="muted">ACCESS UG checks your GPS position against the school's registered attendance point before marking you present.</div>
+          </div>
+          <span class="teacher-radius-badge">Maximum 500 m</span>
+        </div>
+        <button class="btn" id="verifyLocationBtn" type="button">📍 Verify Location & Check In</button>
+        <div id="teacherLocationStatus" class="teacher-location-status">Location verification has not been performed yet.</div>
+      </div>
+
       <div class="chart-wrap"><canvas id="teacherAttendanceChart"></canvas></div>
     </div>
   </div>
@@ -582,42 +638,141 @@ async function getStudents(classId){
    Teacher attendance
    ========================= */
 async function automaticTeacherAttendance(){
-  const now=new Date();
-  const hour=now.getHours();
-
-  if(hour<6||hour>=10){
-    $("clockStatus").textContent="Outside window";
-    $("todayStatus").textContent="—";
-    return;
-  }
-
+  // Deliberately do NOT mark a teacher present merely because they logged in.
+  // A successful attendance record must come from the server-side GPS geofence RPC.
   const old=await supabaseClient.from("teacher_attendance")
-    .select("*").eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
+    .select("id,status,location_verified,distance_from_school_meters,location_accuracy_meters")
+    .eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
 
   if(old.error){
     console.warn("Teacher attendance check:",old.error.message);
     return;
   }
+
   if(old.data){
-    $("clockStatus").textContent="Present";
+    $("clockStatus").textContent=old.data.location_verified ? "GPS Verified" : "Present";
     $("todayStatus").textContent="Present";
+    const status=$("teacherLocationStatus");
+    if(status && old.data.location_verified){
+      const d=Number(old.data.distance_from_school_meters);
+      const acc=Number(old.data.location_accuracy_meters);
+      status.textContent=`Today's attendance is already GPS verified${Number.isFinite(d) ? ` — ${Math.round(d)} m from the school point` : ""}${Number.isFinite(acc) ? `, GPS accuracy about ${Math.round(acc)} m` : ""}.`;
+      status.className="teacher-location-status ok";
+    }
+  }else{
+    $("clockStatus").textContent="Not verified";
+    $("todayStatus").textContent="Not checked in";
+  }
+}
+
+async function verifyTeacherLocation(){
+  const btn=$("verifyLocationBtn");
+  const status=$("teacherLocationStatus");
+  const now=new Date();
+return;
+  }
+
+  if(!navigator.geolocation){
+    if(status){
+      status.textContent="This browser does not support GPS location. Use a current browser with location services enabled.";
+      status.className="teacher-location-status error";
+    }
     return;
   }
 
-  const payload={
-    teacher_id:teacher.id,school_id:teacherSchoolId,
-    attendance_date:todayISO(),clock_in:now.toISOString(),
-    status:"present",method:"automatic_login"
-  };
-  const r=await supabaseClient.from("teacher_attendance").insert(payload);
-  if(r.error){
-    console.warn("Teacher attendance insert:",r.error.message);
-  }else{
-    $("clockStatus").textContent="Present";
-    $("todayStatus").textContent="Present";
-    toast("Your morning attendance has been recorded.");
+  btn.disabled=true;
+  btn.textContent="Checking GPS location…";
+  if(status){
+    status.textContent="Requesting your current GPS position. Allow location permission when asked.";
+    status.className="teacher-location-status info";
   }
+
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    try{
+      const lat=Number(pos.coords.latitude);
+      const lng=Number(pos.coords.longitude);
+      const accuracy=Number(pos.coords.accuracy);
+      const gpsTimestamp=Number(pos.timestamp);
+
+      // Browsers normally do not expose Android's mock-location flag.
+      // If Access UG is later wrapped in a native Android shell, the shell can
+      // expose these optional signals without changing the server contract.
+      const nativeSecurity = window.AccessUGNativeSecurity || null;
+      const nativeMock = Boolean(nativeSecurity && (nativeSecurity.isMockLocation === true || nativeSecurity.mockLocation === true));
+      const nativeVpn = Boolean(nativeSecurity && (nativeSecurity.isVpnActive === true || nativeSecurity.vpnActive === true));
+      const nativeProxy = Boolean(nativeSecurity && (nativeSecurity.isProxyActive === true || nativeSecurity.proxyActive === true));
+
+      if(nativeMock){
+        throw new Error("Simulated/mock location detected. Disable mock location or any location-spoofing app, then try again.");
+      }
+      if(nativeVpn || nativeProxy){
+        throw new Error("VPN/proxy detected. Disable the VPN or proxy connection, then try again so location verification can continue.");
+      }
+
+      if(!Number.isFinite(lat)||!Number.isFinite(lng)){
+        throw new Error("The browser returned invalid GPS coordinates.");
+      }
+      if(!Number.isFinite(accuracy) || accuracy < 0 || accuracy > 100){
+        throw new Error("GPS accuracy is insufficient (over 100 m). Turn on high-accuracy location and try again.");
+      }
+      if(Number.isFinite(gpsTimestamp) && Math.abs(Date.now()-gpsTimestamp) > 30000){
+        throw new Error("The GPS reading is too old. Please request a fresh location and try again.");
+      }
+
+      if(status){
+        status.textContent="GPS received. Securely checking your distance from the registered school location…";
+        status.className="teacher-location-status info";
+      }
+
+      const r=await supabaseClient.rpc("clock_in_teacher_with_location",{
+        p_lat:lat,
+        p_lng:lng,
+        p_accuracy:Number.isFinite(accuracy)?accuracy:null
+      });
+
+      if(r.error) throw r.error;
+
+      const row=Array.isArray(r.data)?r.data[0]:r.data;
+      const distance=Number(row?.distance_from_school_meters);
+      const radius=Number(row?.attendance_radius_meters);
+
+      $("clockStatus").textContent="GPS Verified";
+      $("todayStatus").textContent="Present";
+
+      if(status){
+        status.textContent=`Attendance granted ✓${Number.isFinite(distance)?` You are ${Math.round(distance)} m from the registered school point.`:""}${Number.isFinite(radius)?` Allowed radius: ${Math.round(radius)} m.`:""}${Number.isFinite(accuracy)?` GPS accuracy: about ${Math.round(accuracy)} m.`:""}`;
+        status.className="teacher-location-status ok";
+      }
+      toast("Location verified. Teacher attendance recorded.");
+      await loadTeacherAttendance();
+    }catch(e){
+      const msg=errorMessage(e);
+      if(status){
+        status.textContent=`Attendance not granted: ${msg}`;
+        status.className="teacher-location-status error";
+      }
+      $("clockStatus").textContent="Not verified";
+      $("todayStatus").textContent="Not checked in";
+    }finally{
+      btn.disabled=false;
+      btn.textContent="📍 Verify Location & Check In";
+    }
+  },err=>{
+    const messages={
+      1:"Location permission was denied. Enable location permission for this site and try again.",
+      2:"Your device could not determine your location. Try again with GPS/location services enabled.",
+      3:"The GPS request timed out. Try again."
+    };
+    if(status){
+      status.textContent=messages[err.code]||"Unable to obtain your GPS location.";
+      status.className="teacher-location-status error";
+    }
+    btn.disabled=false;
+    btn.textContent="📍 Verify Location & Check In";
+  },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
 }
+
+$("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);
 
 async function loadTeacherAttendance(){
   const since=new Date();
