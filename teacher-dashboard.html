@@ -670,9 +670,8 @@ async function automaticTeacherAttendance(){
 async function verifyTeacherLocation(){
   const btn=$("verifyLocationBtn");
   const status=$("teacherLocationStatus");
-  const now=new Date();
-return;
-  }
+  // No time-of-day restriction: teachers can verify attendance at any time.
+
 
   if(!navigator.geolocation){
     if(status){
