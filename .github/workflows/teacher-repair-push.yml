@@ -1,0 +1,71 @@
+name: Teacher dashboard repair on merge
+
+on:
+  push:
+    paths:
+      - '.github/workflows/teacher-repair-push.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Repair teacher dashboard
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('teacher-dashboard.html')
+          s=p.read_text(encoding='utf-8')
+          old='<div style="margin-top:18px" class="muted"><strong>Assigned classes & subjects:</strong> <span id="assignedClasses">Loading...</span></div>'
+          new='''<div class="teacher-assignments" style="margin-top:18px"><div class="teacher-assignments-head"><div><strong>My Teaching</strong><div class="muted">Your assigned classes and subjects</div></div><span class="teacher-assignment-count" id="assignedClassCountBadge">—</span></div><div id="assignedClasses" class="teacher-assignment-list"><div class="teacher-assignment-loading">Loading assignments…</div></div></div>'''
+          if old not in s: raise SystemExit('Assignment markup not found')
+          s=s.replace(old,new,1)
+          old2='''  const summaries=classes.map(c=>{
+    const subs=subjects.filter(s=>assignedSubjectIds(c.id).includes(String(s.id))).map(itemLabel);
+    return subs.length?`${className(c)} — ${subs.join(", ")}`:className(c);
+  });
+  $("assignedClasses").textContent=summaries.length?summaries.join(" | "):"No active assignments";
+  $("classCount").textContent=classes.length;'''
+          new2='''  const assignmentHost=$("assignedClasses");
+  const grouped=classes.map(c=>({c,subs:subjects.filter(s=>assignedSubjectIds(c.id).includes(String(s.id)))}));
+  if(assignmentHost){assignmentHost.innerHTML=grouped.length?grouped.map(({c,subs})=>{const labels=subs.map(itemLabel),visible=labels.slice(0,8),extra=Math.max(0,labels.length-visible.length);return `<div class="teacher-assignment-card"><div class="teacher-assignment-card-top"><div class="teacher-class-name">${esc(className(c))}</div><span class="teacher-subject-count">${labels.length} subject${labels.length===1?"":"s"}</span></div><div class="teacher-subject-chips">${visible.map(x=>`<span class="teacher-subject-chip">${esc(x)}</span>`).join("")}${extra?`<span class="teacher-subject-chip more">+${extra} more</span>`:""}</div></div>`;}).join(""):'<div class="teacher-assignment-empty">No active class assignments.</div>';} 
+  const badge=$("assignedClassCountBadge");if(badge)badge.textContent=`${classes.length} class${classes.length===1?"":"es"}`;
+  $("classCount").textContent=classes.length;'''
+          if old2 not in s: raise SystemExit('Assignment render not found')
+          s=s.replace(old2,new2,1)
+          pat=re.compile(r'async function verifyTeacherLocation\(\)\{.*?\n\}\n\n\$\("verifyLocationBtn"\)\?\.addEventListener\("click",verifyTeacherLocation\);',re.S)
+          robust=r'''async function verifyTeacherLocation(){
+            const btn=$("verifyLocationBtn"),status=$("teacherLocationStatus");
+            if(!btn)return;
+            if(!navigator.geolocation){if(status){status.textContent="Location services are not available in this browser.";status.className="teacher-location-status error";}return;}
+            btn.disabled=true;btn.textContent="📍 Finding your location…";
+            if(status){status.textContent="Getting a quick location fix…";status.className="teacher-location-status info";}
+            const deadline=Date.now()+60000;let watchId=null,finished=false,best=null;
+            const cleanup=()=>{if(watchId!==null){try{navigator.geolocation.clearWatch(watchId);}catch(_){ }watchId=null;}};
+            const fail=msg=>{cleanup();finished=true;if(status){status.textContent=`Attendance not granted: ${msg}`;status.className="teacher-location-status error";}$("clockStatus").textContent="Not verified";$("todayStatus").textContent="Not checked in";btn.disabled=false;btn.textContent="📍 Verify Location & Check In";};
+            const submit=async pos=>{if(finished)return false;const lat=Number(pos?.coords?.latitude),lng=Number(pos?.coords?.longitude),accuracy=Number(pos?.coords?.accuracy),ts=Number(pos?.timestamp);if(!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(accuracy)||accuracy<0||accuracy>500)return false;if(Number.isFinite(ts)&&Math.abs(Date.now()-ts)>120000)return false;if(status){status.textContent=`Location found (${Math.round(accuracy)} m accuracy). Securely checking the school boundary…`;status.className="teacher-location-status info";}try{const r=await supabaseClient.rpc("clock_in_teacher_with_location",{p_lat:lat,p_lng:lng,p_accuracy:accuracy});if(r.error)throw r.error;const row=Array.isArray(r.data)?r.data[0]:r.data;const distance=Number(row?.distance_from_school_meters),radius=Number(row?.attendance_radius_meters);finished=true;cleanup();$("clockStatus").textContent="GPS Verified";$("todayStatus").textContent="Present";if(status){status.textContent=`Attendance granted ✓${Number.isFinite(distance)?` You are ${Math.round(distance)} m from the registered school point.`:""}${Number.isFinite(radius)?` Allowed radius: ${Math.round(radius)} m.`:""} GPS accuracy: about ${Math.round(accuracy)} m.`;status.className="teacher-location-status ok";}toast("Location verified. Teacher attendance recorded.");await loadTeacherAttendance();btn.disabled=false;btn.textContent="✓ Location Verified";return true;}catch(e){return false;}};
+            const onPosition=async pos=>{if(finished)return;const a=Number(pos?.coords?.accuracy);if(!Number.isFinite(a))return;if(!best||a<Number(best.coords?.accuracy))best=pos;if(a<=500){if(await submit(best))return;}if(Date.now()<deadline&&status){status.textContent=`Improving location accuracy automatically… current estimate ${Math.round(a)} m`;status.className="teacher-location-status info";}};
+            try{const quick=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{enableHighAccuracy:false,timeout:10000,maximumAge:30000}));await onPosition(quick);if(finished)return;}catch(_){ }
+            try{watchId=navigator.geolocation.watchPosition(onPosition,()=>{},{enableHighAccuracy:true,timeout:50000,maximumAge:10000});}catch(_){fail("This browser could not start location tracking. Please reopen the page and try again.");return;}
+            const timer=setInterval(()=>{if(finished){clearInterval(timer);return;}if(Date.now()>=deadline){clearInterval(timer);const a=Number(best?.coords?.accuracy);fail(Number.isFinite(a)&&a>500?`The phone is still reporting a very uncertain location (${Math.round(a)} m). Move near a window or outdoors and try again.`:"GPS could not produce a reliable reading within 60 seconds. Move near a window or outdoors and try again.");}},1000);
+          }
+          $("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);'''
+          s,n=pat.subn(robust,s,1)
+          if n!=1: raise SystemExit('GPS function not found')
+          css='''<style id="teacher-assignment-polish">.teacher-assignments{border-top:1px solid #e7edf5;padding-top:16px}.teacher-assignments-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.teacher-assignments-head>div{display:grid;gap:3px}.teacher-assignments-head strong{font-size:14px;color:#18385f}.teacher-assignments-head .muted{font-size:11px}.teacher-assignment-count{min-width:32px;height:28px;padding:0 9px;border-radius:999px;background:#eef5ff;color:#1559b7;display:inline-grid;place-items:center;font-size:11px;font-weight:800}.teacher-assignment-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.teacher-assignment-card{border:1px solid #e1e9f3;background:#fbfdff;border-radius:13px;padding:12px;min-width:0}.teacher-assignment-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}.teacher-class-name{font-size:13px;font-weight:800;color:#102f55}.teacher-subject-count{font-size:10px;font-weight:800;color:#718096;background:#eef3f9;padding:5px 7px;border-radius:999px;white-space:nowrap}.teacher-subject-chips{display:flex;flex-wrap:wrap;gap:6px}.teacher-subject-chip{font-size:10px;line-height:1.2;font-weight:700;color:#315273;background:#edf4fd;border:1px solid #d8e6f7;padding:6px 8px;border-radius:999px}.teacher-subject-chip.more{color:#1559b7;background:#f1f6ff;border-style:dashed}.teacher-assignment-loading,.teacher-assignment-empty{padding:12px;border:1px dashed #d7e1ee;border-radius:12px;color:#718096;font-size:12px;background:#fafcff}@media(max-width:700px){.teacher-assignment-list{grid-template-columns:1fr}}</style>'''
+          if 'teacher-assignment-polish' not in s:s=s.replace('</head>',css+'</head>',1)
+          p.write_text(s,encoding='utf-8')
+      - name: Commit repaired dashboard
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add teacher-dashboard.html
+          git commit -m 'Repair teacher GPS and dashboard UI' || exit 0
+          git push origin HEAD:main
