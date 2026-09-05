@@ -1,0 +1,54 @@
+name: Apply teacher dashboard fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/one-time-teacher-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch teacher dashboard
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+
+          p = Path('teacher-dashboard.html')
+          s = p.read_text(encoding='utf-8')
+
+          # Remove the old 06:00–10:00 client-side restriction if present.
+          s = re.sub(
+              r'  const now=new Date\(\);\s*\n  const hour=now\.getHours\(\);\s*\n\s*\n  if\(hour<6 \|\| hour>=10\)\{.*?\n  \}\s*\n\s*\n',
+              '  // No time-of-day restriction: teachers can verify attendance at any time.\n\n',
+              s,
+              count=1,
+              flags=re.S,
+          )
+
+          # Make school loading fail explicitly instead of silently leaving the UI in a loading state.
+          old = '''  const r=await supabaseClient.from("schools").select("*").eq("id",teacherSchoolId).maybeSingle();\n  if(!r.error)school=r.data||null;'''
+          new = '''  const r=await supabaseClient.from("schools").select("*").eq("id",teacherSchoolId).maybeSingle();\n  if(r.error)throw new Error("Could not load teacher school: "+r.error.message);\n  school=r.data||null;\n  if(!school)throw new Error("The teacher's school could not be found.");'''
+          s = s.replace(old, new)
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Commit changes and remove one-time workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/one-time-teacher-fix.yml
+          git add teacher-dashboard.html .github/workflows/one-time-teacher-fix.yml
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git commit -m "Fix teacher dashboard loading and attendance time restriction"
+          git push
