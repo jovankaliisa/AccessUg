@@ -770,7 +770,7 @@ async function verifyTeacherLocation(){
     }
     btn.disabled=false;
     btn.textContent="📍 Verify Location & Check In";
-  },{enableHighAccuracy:true,timeout:20000,maximumAge:0});
+  },{enableHighAccuracy:true,timeout:30000,maximumAge:0});
 }
 
 $("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);
