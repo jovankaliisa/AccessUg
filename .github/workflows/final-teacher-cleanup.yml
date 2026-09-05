@@ -1,0 +1,31 @@
+name: Final teacher dashboard cleanup
+on:
+  push:
+permissions:
+  contents: write
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fix teacher attendance block
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('teacher-dashboard.html')
+          s=p.read_text(encoding='utf-8')
+          pattern=r'(async function verifyTeacherLocation\(\)\{\s*const btn=\$\("verifyLocationBtn"\);\s*const status=\$\("teacherLocationStatus"\);).*?(\s*if\(!navigator\.geolocation\)\{)'
+          repl=r'\1\n  // No time-of-day restriction: teachers can verify attendance at any time.\n\2'
+          ns,n=re.subn(pattern,repl,s,count=1,flags=re.S)
+          if n!=1:
+            raise SystemExit('Could not locate verifyTeacherLocation block')
+          p.write_text(ns,encoding='utf-8')
+      - name: Commit and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/final-teacher-cleanup.yml
+          git add teacher-dashboard.html .github/workflows/final-teacher-cleanup.yml
+          git commit -m "Clean up teacher attendance verification" || exit 0
+          git push
