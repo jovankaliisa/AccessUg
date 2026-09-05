@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACCESSUG.SCH | Smart School Management Platform</title>
+<title>ACCESS UG | Administrator Access</title>
 
 <style>
 /* =========================================================
@@ -1073,11 +1073,6 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 
         <section class="login-panel" id="login">
 
-            <div class="auth-mode-switch" aria-label="Portal access options">
-    <a href="#login" class="auth-mode active" aria-current="page">Login</a>
-    <a href="./register-school.html" class="auth-mode">Register</a>
-</div>
-
             <div class="login-wrapper">
 
                 <div class="portal-card">
@@ -1093,10 +1088,10 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                             </svg>
                         </div>
 
-                        <h2>Portal Login</h2>
+                        <h2>Administrator Access</h2>
 
                         <p>
-                            Enter your credentials to continue.
+                            Restricted administrator portal. Supabase must verify your administrator role.
                         </p>
 
                     </div>
@@ -1146,37 +1141,7 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                         </div>
 
 
-                        <div class="form-group">
-
-                            <label for="role">
-                                Role
-                            </label>
-
-                            <div class="input-box">
-
-                                <select id="role" required>
-
-                                    <option value="student">
-                                        Student
-                                    </option>
-
-                                    <option value="teacher">
-                                        Teacher
-                                    </option>
-
-                                    <option value="school">
-                                        School
-                                    </option>
-
-                                    <option value="parent">
-                                        Parent
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                        </div>
+                        <input id="role" type="hidden" value="administrator">
 
 
                         <div class="login-options">
