@@ -1,0 +1,39 @@
+name: Final teacher GPS fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/gps-final-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch teacher dashboard
+        shell: python
+        run: |
+          from pathlib import Path
+          p=Path('teacher-dashboard.html')
+          s=p.read_text(encoding='utf-8')
+          original=s
+          s=s.replace('accuracy > 100','accuracy > 250')
+          s=s.replace('over 100 m','over 250 m')
+          s=s.replace('timeout:30000','timeout:60000')
+          if s==original:
+              raise SystemExit('No GPS accuracy pattern found; refusing to change the dashboard.')
+          p.write_text(s,encoding='utf-8')
+      - name: Commit patch and remove workflow
+        shell: bash
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          rm -f .github/workflows/gps-final-fix.yml
+          git add teacher-dashboard.html .github/workflows/gps-final-fix.yml
+          git commit -m 'Fix teacher GPS accuracy handling'
+          git push origin HEAD:main
+
+# Triggered again after repository synchronization.
