@@ -1,0 +1,113 @@
+name: Robust GPS verification fix
+
+on:
+  push:
+    paths:
+      - '.github/workflows/robust-gps-fix.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Replace GPS verification with retrying high accuracy flow
+        shell: python
+        run: |
+          from pathlib import Path
+          import re
+          p=Path('teacher-dashboard.html')
+          s=p.read_text(encoding='utf-8')
+          start=s.find('async function verifyTeacherLocation(){')
+          end=s.find('$("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);', start)
+          if start<0 or end<0:
+              raise SystemExit('GPS function markers not found')
+          end += len('$("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);')
+          fn=r'''async function verifyTeacherLocation(){
+  const btn=$("verifyLocationBtn");
+  const status=$("teacherLocationStatus");
+
+  if(!navigator.geolocation){
+    if(status){status.textContent="This browser does not support location services. Use an updated Chrome browser with Android Location turned on.";status.className="teacher-location-status error";}
+    return;
+  }
+
+  try{
+    if(navigator.permissions?.query){
+      const perm=await navigator.permissions.query({name:"geolocation"});
+      if(perm.state==="denied"){
+        if(status){status.textContent="Chrome has blocked Location for this site. Open Chrome site settings → Permissions → Location → Allow, then reload.";status.className="teacher-location-status error";}
+        return;
+      }
+    }
+  }catch(_){ }
+
+  btn.disabled=true;
+  btn.textContent="Finding accurate GPS…";
+  if(status){status.textContent="Getting a fresh high-accuracy GPS reading. Keep Location ON and, if possible, move near a window or outside.";status.className="teacher-location-status info";}
+
+  const security=()=>{
+    const n=window.AccessUGNativeSecurity||null;
+    return {mock:Boolean(n&&(n.isMockLocation===true||n.mockLocation===true)),vpn:Boolean(n&&(n.isVpnActive===true||n.vpnActive===true)),proxy:Boolean(n&&(n.isProxyActive===true||n.proxyActive===true))};
+  };
+
+  const validate=(pos)=>{
+    const lat=Number(pos.coords.latitude),lng=Number(pos.coords.longitude),accuracy=Number(pos.coords.accuracy),ts=Number(pos.timestamp);
+    if(!Number.isFinite(lat)||!Number.isFinite(lng))throw new Error("The browser returned invalid GPS coordinates.");
+    if(!Number.isFinite(accuracy)||accuracy<0)throw new Error("The device returned an invalid GPS accuracy.");
+    if(Number.isFinite(ts)&&Math.abs(Date.now()-ts)>60000)throw new Error("The GPS reading is too old. Please try again.");
+    return {lat,lng,accuracy,ts};
+  };
+
+  const bestPosition=()=>new Promise((resolve,reject)=>{
+    let best=null,done=false,timer=null,watch=null;
+    const finish=()=>{if(done)return;done=true;if(timer)clearTimeout(timer);if(watch!==null)navigator.geolocation.clearWatch(watch);if(best)resolve(best);else reject(new Error("Your phone could not obtain a GPS position. Turn on Location and Google Location Accuracy, then try again."));};
+    const pos=(p)=>{try{const x=validate(p);if(!best||x.accuracy<best.accuracy)best=x;if(x.accuracy<=100)finish();else if(status){status.textContent=`GPS signal found, but accuracy is about ${Math.round(x.accuracy)} m. Waiting for a more accurate fix…`;status.className="teacher-location-status info";}}catch(_){}};
+    const err=(e)=>{if(e?.code===1&&!done){done=true;if(timer)clearTimeout(timer);if(watch!==null)navigator.geolocation.clearWatch(watch);reject(new Error("Location permission was denied. Enable Location permission for Chrome and try again."));}else if(status){status.textContent="GPS is still searching for a more accurate position…";status.className="teacher-location-status info";}};
+    try{
+      navigator.geolocation.getCurrentPosition(pos,err,{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+      watch=navigator.geolocation.watchPosition(pos,err,{enableHighAccuracy:true,timeout:60000,maximumAge:0});
+      timer=setTimeout(finish,60000);
+    }catch(e){reject(e);}
+  });
+
+  try{
+    let sec=security();
+    if(sec.mock)throw new Error("Simulated/mock location detected. Disable mock location or any location-spoofing app, then try again.");
+    if(sec.vpn||sec.proxy)throw new Error("VPN/proxy detected. Disable the VPN or proxy connection, then try again so location verification can continue.");
+
+    const pos=await bestPosition();
+    sec=security();
+    if(sec.mock)throw new Error("Simulated/mock location detected. Disable mock location or any location-spoofing app, then try again.");
+    if(sec.vpn||sec.proxy)throw new Error("VPN/proxy detected. Disable the VPN or proxy connection, then try again so location verification can continue.");
+    if(pos.accuracy>100)throw new Error(`GPS accuracy is still about ${Math.round(pos.accuracy)} m. Turn on Google Location Accuracy and try again outdoors or near a window.`);
+
+    if(status){status.textContent="Accurate GPS received. Securely checking your distance from the registered school location…";status.className="teacher-location-status info";}
+    const r=await supabaseClient.rpc("clock_in_teacher_with_location",{p_lat:pos.lat,p_lng:pos.lng,p_accuracy:pos.accuracy});
+    if(r.error)throw r.error;
+    const row=Array.isArray(r.data)?r.data[0]:r.data;
+    const distance=Number(row?.distance_from_school_meters),radius=Number(row?.attendance_radius_meters);
+    $("clockStatus").textContent="GPS Verified";$("todayStatus").textContent="Present";
+    if(status){status.textContent=`Attendance granted ✓${Number.isFinite(distance)?` You are ${Math.round(distance)} m from the registered school point.`:""}${Number.isFinite(radius)?` Allowed radius: ${Math.round(radius)} m.`:""} GPS accuracy: about ${Math.round(pos.accuracy)} m.`;status.className="teacher-location-status ok";}
+    toast("Location verified. Teacher attendance recorded.");
+    await loadTeacherAttendance();
+  }catch(e){
+    const msg=errorMessage(e);
+    if(status){status.textContent=`Attendance not granted: ${msg}`;status.className="teacher-location-status error";}
+    $("clockStatus").textContent="Not verified";$("todayStatus").textContent="Not checked in";
+  }finally{btn.disabled=false;btn.textContent="📍 Verify Location & Check In";}
+}
+
+$("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);'''
+          s=s[:start]+fn+s[end:]
+          p.write_text(s,encoding='utf-8')
+      - name: Commit and remove workflow
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          rm -f .github/workflows/robust-gps-fix.yml
+          git add teacher-dashboard.html .github/workflows/robust-gps-fix.yml
+          git commit -m "Improve teacher GPS accuracy and retry handling" || true
+          git push
