@@ -729,8 +729,8 @@ async function verifyTeacherLocation(){
       if(!Number.isFinite(lat)||!Number.isFinite(lng)){
         throw new Error("The browser returned invalid GPS coordinates.");
       }
-      if(!Number.isFinite(accuracy) || accuracy < 0 || accuracy > 100){
-        throw new Error("GPS accuracy is insufficient (over 100 m). Turn on high-accuracy location and try again.");
+      if(!Number.isFinite(accuracy) || accuracy < 0 || accuracy > 250){
+        throw new Error("GPS accuracy is insufficient (over 250 m). Turn on high-accuracy location and try again.");
       }
       if(Number.isFinite(gpsTimestamp) && Math.abs(Date.now()-gpsTimestamp) > 30000){
         throw new Error("The GPS reading is too old. Please request a fresh location and try again.");
