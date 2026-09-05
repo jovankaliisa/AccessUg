@@ -1,4 +1,4 @@
-name: Final teacher GPS fix
+name: Final teacher GPS reliability fix
 
 on:
   push:
@@ -13,27 +13,50 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch teacher dashboard
+
+      - name: Patch teacher GPS request for reliable mobile fixes
         shell: python
         run: |
           from pathlib import Path
-          p=Path('teacher-dashboard.html')
-          s=p.read_text(encoding='utf-8')
-          original=s
-          s=s.replace('accuracy > 100','accuracy > 250')
-          s=s.replace('over 100 m','over 250 m')
-          s=s.replace('timeout:30000','timeout:60000')
-          if s==original:
-              raise SystemExit('No GPS accuracy pattern found; refusing to change the dashboard.')
-          p.write_text(s,encoding='utf-8')
-      - name: Commit patch and remove workflow
+          import re
+
+          p = Path('teacher-dashboard.html')
+          s = p.read_text(encoding='utf-8')
+          original = s
+
+          # Keep the server-side uncertainty-aware geofence as the final authority.
+          # The browser should prefer a fast network/cached location instead of
+          # waiting for a fresh high-accuracy fix that often times out on Android.
+          s = re.sub(r'enableHighAccuracy\s*:\s*true', 'enableHighAccuracy:false', s)
+          s = re.sub(r'timeout\s*:\s*45000', 'timeout:20000', s)
+          s = re.sub(r'timeout\s*:\s*60000', 'timeout:20000', s)
+          s = re.sub(r'maximumAge\s*:\s*0', 'maximumAge:30000', s)
+          s = s.replace('accuracy > 100', 'accuracy > 250')
+          s = s.replace('over 100 m', 'over 250 m')
+          s = s.replace('GPS accuracy is insufficient (over 100 m).', 'GPS accuracy is insufficient (over 250 m).')
+
+          changed = s != original
+          if not changed:
+              raise SystemExit('No expected GPS patterns found; refusing to change the dashboard.')
+
+          p.write_text(s, encoding='utf-8')
+
+      - name: Validate dashboard contains safe GPS settings
+        shell: python
+        run: |
+          from pathlib import Path
+          s = Path('teacher-dashboard.html').read_text(encoding='utf-8')
+          assert 'enableHighAccuracy:false' in s, 'Fast GPS mode was not applied.'
+          assert 'timeout:20000' in s, 'GPS timeout was not reduced.'
+          assert 'maximumAge:30000' in s, 'GPS cache allowance was not applied.'
+          assert 'accuracy > 250' in s, 'Client accuracy threshold is not 250m.'
+
+      - name: Commit patch and remove one-time workflow
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           rm -f .github/workflows/gps-final-fix.yml
           git add teacher-dashboard.html .github/workflows/gps-final-fix.yml
-          git commit -m 'Fix teacher GPS accuracy handling'
+          git commit -m 'Improve teacher GPS reliability'
           git push origin HEAD:main
-
-# Triggered again after repository synchronization.
