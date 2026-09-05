@@ -135,6 +135,22 @@ tr:last-child td{border-bottom:0}
 .behaviour-choice input{width:18px;height:18px;cursor:pointer}.behaviour-choice:hover{background:#f1f6fd}
 </style>
 <style id="accessug-v3"></style>
+<style id="accessug-teaching-ui">
+.teaching-card{margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+.teaching-card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.teaching-card-head strong{font-size:14px;color:#17345b}
+.teaching-count{font-size:11px;font-weight:800;color:#0b3d82;background:#eaf2ff;border-radius:999px;padding:6px 9px}
+.teaching-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.teaching-item{border:1px solid #e1e9f3;background:#f8fbff;border-radius:12px;padding:12px}
+.teaching-item-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.teaching-class{font-size:13px;font-weight:800;color:#16365e}
+.teaching-subject-count{font-size:10px;font-weight:800;color:#60738e;white-space:nowrap}
+.teaching-subjects{display:flex;flex-wrap:wrap;gap:6px}
+.teaching-chip{display:inline-flex;align-items:center;padding:5px 8px;border-radius:999px;background:#fff;border:1px solid #dbe5f0;color:#3e5876;font-size:10px;font-weight:700}
+.teaching-more{font-size:10px;color:#60738e;font-weight:700;align-self:center}
+.teaching-empty{grid-column:1/-1;padding:13px;border:1px dashed #d5dfeb;border-radius:12px;color:#718096;font-size:12px;background:#fafcff}
+@media(max-width:700px){.teaching-grid{grid-template-columns:1fr}.teaching-card-head{align-items:flex-start}}
+</style>
 <style id="accessug-teacher-location">
 .teacher-location-check{
   margin:0 0 18px;
@@ -223,7 +239,15 @@ tr:last-child td{border-bottom:0}
           <p id="teacherPhone">Phone: —</p>
         </div>
       </div>
-      <div style="margin-top:18px" class="muted"><strong>Assigned classes & subjects:</strong> <span id="assignedClasses">Loading...</span></div>
+      <div class="teaching-card">
+        <div class="teaching-card-head">
+          <div><strong>My Teaching</strong><div class="muted">Classes and subjects assigned to you</div></div>
+          <span id="teachingSummary" class="teaching-count">Loading...</span>
+        </div>
+        <div id="assignedClasses" class="teaching-grid">
+          <div class="teaching-empty">Loading your assignments...</div>
+        </div>
+      </div>
     </div>
 
     <div class="card">
@@ -235,7 +259,7 @@ tr:last-child td{border-bottom:0}
             <strong>Verify your location</strong>
             <div class="muted">ACCESS UG checks your GPS position against the school's registered attendance point before marking you present.</div>
           </div>
-          <span class="teacher-radius-badge">Maximum 500 m</span>
+          <span class="teacher-radius-badge">Up to 500 m</span>
         </div>
         <button class="btn" id="verifyLocationBtn" type="button">📍 Verify Location & Check In</button>
         <div id="teacherLocationStatus" class="teacher-location-status">Location verification has not been performed yet.</div>
@@ -248,7 +272,7 @@ tr:last-child td{border-bottom:0}
   <div class="grid three" style="margin-top:18px">
     <div class="card stat"><div class="kpi-icon">◷</div><div class="label" style="margin-top:12px">Present days</div><div class="value" id="presentDays">—</div><div class="sub">Teacher attendance records</div></div>
     <div class="card stat"><div class="kpi-icon">▣</div><div class="label" style="margin-top:12px">Assigned classes</div><div class="value" id="classCount">—</div><div class="sub">Classes you can access</div></div>
-    <div class="card stat"><div class="kpi-icon">✓</div><div class="label" style="margin-top:12px">Today's status</div><div class="value" id="todayStatus">—</div><div class="sub">Automatic morning check-in</div></div>
+    <div class="card stat"><div class="kpi-icon">✓</div><div class="label" style="margin-top:12px">Today's status</div><div class="value" id="todayStatus">—</div><div class="sub">GPS-verified attendance</div></div>
   </div>
 
   <div class="card" style="margin-top:18px">
@@ -491,9 +515,7 @@ async function loadSchool(){
   school=null;
   if(!teacherSchoolId)return;
   const r=await supabaseClient.from("schools").select("*").eq("id",teacherSchoolId).maybeSingle();
-  if(r.error)throw new Error("Could not load teacher school: "+r.error.message);
-  school=r.data||null;
-  if(!school)throw new Error("The teacher's school could not be found.");
+  if(!r.error)school=r.data||null;
 }
 
 async function loadAssignments(){
@@ -603,11 +625,31 @@ function renderIdentity(){
   $("topAvatar").textContent=ini;
   $("topEmail").textContent=session.user.email||"";
 
-  const summaries=classes.map(c=>{
-    const subs=subjects.filter(s=>assignedSubjectIds(c.id).includes(String(s.id))).map(itemLabel);
-    return subs.length?`${className(c)} — ${subs.join(", ")}`:className(c);
-  });
-  $("assignedClasses").textContent=summaries.length?summaries.join(" | "):"No active assignments";
+  const assignedEl=$("assignedClasses");
+  const summaryEl=$("teachingSummary");
+  if(assignedEl){
+    if(!classes.length){
+      assignedEl.innerHTML='<div class="teaching-empty">No active teaching assignments.</div>';
+      if(summaryEl)summaryEl.textContent="0 classes";
+    }else{
+      assignedEl.innerHTML=classes.map(c=>{
+        const subs=subjects.filter(s=>assignedSubjectIds(c.id).includes(String(s.id))).map(itemLabel);
+        const shown=subs.slice(0,8);
+        const more=Math.max(0,subs.length-shown.length);
+        return `<div class="teaching-item">
+          <div class="teaching-item-top">
+            <span class="teaching-class">${esc(className(c))}</span>
+            <span class="teaching-subject-count">${subs.length} subject${subs.length===1?"":"s"}</span>
+          </div>
+          <div class="teaching-subjects">
+            ${shown.length?shown.map(s=>`<span class="teaching-chip">${esc(s)}</span>`).join(""):'<span class="teaching-more">No subjects assigned</span>'}
+            ${more?`<span class="teaching-more">+${more} more</span>`:""}
+          </div>
+        </div>`;
+      }).join("");
+      if(summaryEl)summaryEl.textContent=`${classes.length} class${classes.length===1?"":"es"}`;
+    }
+  }
   $("classCount").textContent=classes.length;
 }
 
@@ -670,84 +712,71 @@ async function automaticTeacherAttendance(){
 async function verifyTeacherLocation(){
   const btn=$("verifyLocationBtn");
   const status=$("teacherLocationStatus");
-  // No time-of-day restriction: teachers can verify attendance at any time.
-
 
   if(!navigator.geolocation){
     if(status){
-      status.textContent="This browser does not support GPS location. Use a current browser with location services enabled.";
+      status.textContent="This browser does not support location. Please use a current browser with location services enabled.";
       status.className="teacher-location-status error";
     }
     return;
   }
 
   btn.disabled=true;
-  btn.textContent="Checking GPS location…";
-
-  if(navigator.permissions && navigator.permissions.query){
-    try{
-      const permission=await navigator.permissions.query({name:"geolocation"});
-      if(permission.state==="denied"){
-        if(status){status.textContent="Location is blocked for this site. In Chrome open Site settings → Location → Allow, then try again.";status.className="teacher-location-status error";}
-        btn.disabled=false;
-        btn.textContent="📍 Verify Location & Check In";
-        return;
-      }
-      if(permission.state==="granted" && status){
-        status.textContent="Location permission is already allowed. Getting a fresh GPS position…";
-        status.className="teacher-location-status info";
-      }
-    }catch(_){ }
-  }
+  btn.textContent="Getting location…";
   if(status){
-    status.textContent="Requesting your current GPS position. Allow location permission when asked.";
+    status.textContent="Getting a quick location fix…";
     status.className="teacher-location-status info";
   }
 
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    try{
-      const lat=Number(pos.coords.latitude);
-      const lng=Number(pos.coords.longitude);
-      const accuracy=Number(pos.coords.accuracy);
-      const gpsTimestamp=Number(pos.timestamp);
+  const started=Date.now();
+  const deadline=60000;
+  let best=null;
+  let watchId=null;
+  let finished=false;
 
-      // Browsers normally do not expose Android's mock-location flag.
-      // If Access UG is later wrapped in a native Android shell, the shell can
-      // expose these optional signals without changing the server contract.
-      const nativeSecurity = window.AccessUGNativeSecurity || null;
-      const nativeMock = Boolean(nativeSecurity && (nativeSecurity.isMockLocation === true || nativeSecurity.mockLocation === true));
-      const nativeVpn = Boolean(nativeSecurity && (nativeSecurity.isVpnActive === true || nativeSecurity.vpnActive === true));
-      const nativeProxy = Boolean(nativeSecurity && (nativeSecurity.isProxyActive === true || nativeSecurity.proxyActive === true));
+  const finish=async (pos)=>{
+    if(finished)return;
+    const accuracy=Number(pos?.coords?.accuracy);
+    const lat=Number(pos?.coords?.latitude);
+    const lng=Number(pos?.coords?.longitude);
+    const ts=Number(pos?.timestamp);
 
-      if(nativeMock){
-        throw new Error("Simulated/mock location detected. Disable mock location or any location-spoofing app, then try again.");
-      }
-      if(nativeVpn || nativeProxy){
-        throw new Error("VPN/proxy detected. Disable the VPN or proxy connection, then try again so location verification can continue.");
-      }
+    if(!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(accuracy)||accuracy<0)return;
+    if(Number.isFinite(ts) && Math.abs(Date.now()-ts)>60000)return;
 
-      if(!Number.isFinite(lat)||!Number.isFinite(lng)){
-        throw new Error("The browser returned invalid GPS coordinates.");
-      }
-      if(!Number.isFinite(accuracy) || accuracy < 0 || accuracy > 250){
-        throw new Error("GPS accuracy is insufficient (over 250 m). Turn on high-accuracy location and try again.");
-      }
-      if(Number.isFinite(gpsTimestamp) && Math.abs(Date.now()-gpsTimestamp) > 30000){
-        throw new Error("The GPS reading is too old. Please request a fresh location and try again.");
-      }
-
+    best={lat,lng,accuracy};
+    // A reading at or below 250m is eligible for the server-side
+    // uncertainty-aware geofence check. The server remains authoritative.
+    if(accuracy>250 && Date.now()-started<deadline){
       if(status){
-        status.textContent="GPS received. Securely checking your distance from the registered school location…";
+        status.textContent=`Location received (about ${Math.round(accuracy)} m accuracy). Improving accuracy automatically…`;
         status.className="teacher-location-status info";
       }
+      return;
+    }
+
+    finished=true;
+    if(watchId!==null)navigator.geolocation.clearWatch(watchId);
+
+    if(status){
+      status.textContent="GPS received. Securely checking your distance from the registered school location…";
+      status.className="teacher-location-status info";
+    }
+
+    try{
+      const nativeSecurity=window.AccessUGNativeSecurity||null;
+      if(nativeSecurity && (nativeSecurity.isMockLocation===true || nativeSecurity.mockLocation===true))
+        throw new Error("Simulated/mock location detected. Disable location spoofing and try again.");
+      if(nativeSecurity && (nativeSecurity.isVpnActive===true || nativeSecurity.vpnActive===true ||
+                            nativeSecurity.isProxyActive===true || nativeSecurity.proxyActive===true))
+        throw new Error("VPN/proxy detected. Disable it and try again.");
 
       const r=await supabaseClient.rpc("clock_in_teacher_with_location",{
         p_lat:lat,
         p_lng:lng,
-        p_accuracy:Number.isFinite(accuracy)?accuracy:null
+        p_accuracy:accuracy
       });
-
-      if(r.error) throw r.error;
+      if(r.error)throw r.error;
 
       const row=Array.isArray(r.data)?r.data[0]:r.data;
       const distance=Number(row?.distance_from_school_meters);
@@ -755,9 +784,8 @@ async function verifyTeacherLocation(){
 
       $("clockStatus").textContent="GPS Verified";
       $("todayStatus").textContent="Present";
-
       if(status){
-        status.textContent=`Attendance granted ✓${Number.isFinite(distance)?` You are ${Math.round(distance)} m from the registered school point.`:""}${Number.isFinite(radius)?` Allowed radius: ${Math.round(radius)} m.`:""}${Number.isFinite(accuracy)?` GPS accuracy: about ${Math.round(accuracy)} m.`:""}`;
+        status.textContent=`Attendance granted ✓${Number.isFinite(distance)?` You are ${Math.round(distance)} m from the registered school point.`:""}${Number.isFinite(radius)?` Allowed radius: ${Math.round(radius)} m.`:""} GPS accuracy: about ${Math.round(accuracy)} m.`;
         status.className="teacher-location-status ok";
       }
       toast("Location verified. Teacher attendance recorded.");
@@ -774,21 +802,75 @@ async function verifyTeacherLocation(){
       btn.disabled=false;
       btn.textContent="📍 Verify Location & Check In";
     }
-  },err=>{
-    const messages={
-      1:"Location permission was denied. Enable location permission for this site and try again.",
-      2:"Your device could not determine your location. Try again with GPS/location services enabled.",
-      3:"The GPS request timed out. Try again."
-    };
+  };
+
+  const onError=(err)=>{
+    if(finished)return;
+    const elapsed=Date.now()-started;
+    if(err?.code===1){
+      finished=true;
+      if(watchId!==null)navigator.geolocation.clearWatch(watchId);
+      if(status){
+        status.textContent="Location permission was denied. Allow location permission for ACCESS UG, then try again.";
+        status.className="teacher-location-status error";
+      }
+      btn.disabled=false;
+      btn.textContent="📍 Verify Location & Check In";
+      return;
+    }
+    if(elapsed>=deadline){
+      finished=true;
+      if(watchId!==null)navigator.geolocation.clearWatch(watchId);
+      if(status){
+        status.textContent=best
+          ? `Could not get a usable GPS accuracy reading within 60 seconds. Last reading was about ${Math.round(best.accuracy)} m. Move to an open area and try again.`
+          : "Your device could not determine a usable location within 60 seconds. Check Location services and try again.";
+        status.className="teacher-location-status error";
+      }
+      btn.disabled=false;
+      btn.textContent="📍 Verify Location & Check In";
+    }
+  };
+
+  try{
+    navigator.geolocation.getCurrentPosition(pos=>{
+      if(finished)return;
+      const acc=Number(pos.coords.accuracy);
+      if(Number.isFinite(acc) && acc<=250){
+        finish(pos);
+      }else{
+        best={lat:Number(pos.coords.latitude),lng:Number(pos.coords.longitude),accuracy:acc};
+        if(status){
+          status.textContent=`Location received (about ${Math.round(acc)} m accuracy). Improving accuracy automatically…`;
+          status.className="teacher-location-status info";
+        }
+      }
+    },onError,{enableHighAccuracy:false,timeout:10000,maximumAge:30000});
+
+    watchId=navigator.geolocation.watchPosition(pos=>{
+      if(finished)return;
+      const acc=Number(pos.coords.accuracy);
+      if(status && Number.isFinite(acc))
+        status.textContent=`Improving location accuracy automatically… Current accuracy about ${Math.round(acc)} m.`;
+      finish(pos);
+    },onError,{enableHighAccuracy:true,timeout:50000,maximumAge:10000});
+
+    setTimeout(()=>{
+      if(finished)return;
+      if(best)finish({coords:{latitude:best.lat,longitude:best.lng,accuracy:best.accuracy},timestamp:Date.now()});
+      else onError({code:3});
+    },deadline+500);
+  }catch(e){
+    finished=true;
+    if(watchId!==null)navigator.geolocation.clearWatch(watchId);
     if(status){
-      status.textContent=messages[err.code]||"Unable to obtain your GPS location.";
+      status.textContent="Could not start location verification: "+errorMessage(e);
       status.className="teacher-location-status error";
     }
     btn.disabled=false;
     btn.textContent="📍 Verify Location & Check In";
-  },{enableHighAccuracy:false,timeout:20000,maximumAge:30000});
+  }
 }
-
 $("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);
 
 async function loadTeacherAttendance(){
