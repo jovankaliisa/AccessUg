@@ -703,6 +703,7 @@ async function submitTeacherAttendanceToken(){
 }
 $("submitAttendanceToken")?.addEventListener("click",submitTeacherAttendanceToken);
 
+/* QR SCAN — only the scan flow */
 const attendanceQrChoice=document.createElement("div");
 attendanceQrChoice.id="attendanceQrChoice";
 attendanceQrChoice.style.cssText="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;padding:20px";
@@ -743,18 +744,24 @@ async function startAttendanceCamera(){
   attendanceQrChoice.style.display="none";
   attendanceCameraPanel.style.display="flex";
   const status=$("attendanceCameraStatus");
-  if(!navigator.mediaDevices?.getUserMedia){
-    if(status)status.textContent="Camera access is unavailable here. Open this page over HTTPS (or localhost) and try again.";
+
+  if(!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    if(status)status.textContent="Camera access requires HTTPS (or localhost). You can still choose a QR image from the gallery.";
     return;
   }
+
   try{
-    attendanceCameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+    attendanceCameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:"environment"}},
+      audio:false
+    });
     const video=$("attendanceQrVideo");
+    if(!video)throw new Error("Camera preview could not be created.");
     video.srcObject=attendanceCameraStream;
     await video.play();
 
     if(!("BarcodeDetector" in window)){
-      if(status)status.textContent="Your browser does not support QR scanning here. Use 'Choose from gallery' or enter the token manually.";
+      if(status)status.textContent="QR scanning is not supported by this browser. Choose a QR image from the gallery or enter the token manually.";
       return;
     }
 
@@ -765,24 +772,17 @@ async function startAttendanceCamera(){
         const codes=await detector.detect(video);
         if(codes.length&&codes[0].rawValue){
           $("attendanceToken").value=codes[0].rawValue;
-          if(status)status.textContent="QR code read successfully.";
-          stopAttendanceCamera();
           if($("attendanceTokenStatus"))$("attendanceTokenStatus").textContent="QR code read. Submit the token to record attendance.";
+          stopAttendanceCamera();
         }
       }catch(err){}
     },350);
   }catch(err){
-    if(status){
-      status.textContent=(err&&err.name==="NotAllowedError")
-        ?"Camera permission was denied. Allow camera access in your browser settings, then try again."
-        :"Camera could not be opened here. If you are testing in SPCK, try the HTTPS preview.";
-    }
+    if(status)status.textContent=(err&&err.name==="NotAllowedError")
+      ?"Camera permission was denied. Allow camera access, then try Scan QR code again."
+      :"Camera could not be opened here. If SPCK blocks camera access, use the HTTPS preview.";
   }
 }
-
-$("attendanceUseCamera")?.addEventListener("click",startAttendanceCamera);
-
-$("attendanceCameraCancel")?.addEventListener("click",stopAttendanceCamera);
 
 async function readAttendanceQrFile(file){
   if(!file)return;
@@ -793,7 +793,9 @@ async function readAttendanceQrFile(file){
   }
   try{
     const d=new BarcodeDetector({formats:["qr_code"]});
-    const c=await d.detect(await createImageBitmap(file));
+    const bitmap=await createImageBitmap(file);
+    const c=await d.detect(bitmap);
+    bitmap.close?.();
     if(!c.length)throw new Error("No QR code found in that image.");
     $("attendanceToken").value=c[0].rawValue||"";
     if(status)status.textContent="QR code read. Submit the token to record attendance.";
@@ -802,12 +804,34 @@ async function readAttendanceQrFile(file){
   }
 }
 
+/* Use event delegation so the buttons remain responsive even though the
+   chooser is created dynamically. */
+document.addEventListener("click",e=>{
+  const id=e.target?.id;
+  if(id==="scanAttendanceQr"){
+    e.preventDefault();
+    attendanceQrChoice.style.display="flex";
+  }else if(id==="attendanceUseCamera"){
+    e.preventDefault();
+    startAttendanceCamera();
+  }else if(id==="attendanceUseGallery"){
+    e.preventDefault();
+    attendanceQrChoice.style.display="none";
+    $("attendanceQrInput")?.click();
+  }else if(id==="attendanceQrCancel"){
+    e.preventDefault();
+    attendanceQrChoice.style.display="none";
+  }else if(id==="attendanceCameraCancel"){
+    e.preventDefault();
+    stopAttendanceCamera();
+  }
+});
+
 $("attendanceQrInput")?.addEventListener("change",async e=>{
   const file=e.target.files?.[0];
   e.target.value="";
   await readAttendanceQrFile(file);
 });
-
 
 $("loadAttendance").addEventListener("click",loadAttendance);
 $("saveAttendance").addEventListener("click",saveAttendance);
