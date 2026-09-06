@@ -151,47 +151,7 @@ tr:last-child td{border-bottom:0}
 .teaching-empty{grid-column:1/-1;padding:13px;border:1px dashed #d5dfeb;border-radius:12px;color:#718096;font-size:12px;background:#fafcff}
 @media(max-width:700px){.teaching-grid{grid-template-columns:1fr}.teaching-card-head{align-items:flex-start}}
 </style>
-<style id="accessug-teacher-location">
-.teacher-location-check{
-  margin:0 0 18px;
-  padding:15px;
-  border:1px solid #dce6f2;
-  border-radius:14px;
-  background:#f8fbff;
-}
-.teacher-location-title{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:12px;
-  margin-bottom:12px;
-}
-.teacher-radius-badge{
-  white-space:nowrap;
-  padding:6px 9px;
-  border-radius:999px;
-  background:#eaf2ff;
-  color:#0b3d82;
-  font-size:11px;
-  font-weight:800;
-}
-.teacher-location-status{
-  margin-top:10px;
-  padding:10px 12px;
-  border-radius:9px;
-  background:#eef4fb;
-  color:#526581;
-  font-size:12px;
-  line-height:1.45;
-}
-.teacher-location-status.ok{background:#ecfdf3;color:#166534;border:1px solid #bbf7d0}
-.teacher-location-status.error{background:#fff1f2;color:#b42318;border:1px solid #fecdd3}
-.teacher-location-status.info{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
-@media(max-width:700px){
-  .teacher-location-title{flex-direction:column}
-  #verifyLocationBtn{width:100%}
-}
-</style>
+
 
 </head>
 
@@ -201,6 +161,7 @@ tr:last-child td{border-bottom:0}
   <div class="brand"><div class="logo">AU</div><div><h1>ACCESS UG</h1><small>Teacher Portal</small></div></div>
   <nav class="nav">
     <button class="active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</button>
+    <button data-page="teaching"><span class="nav-icon">▤</span>My Teaching</button>
     <button data-page="attendance"><span class="nav-icon">◷</span>Attendance</button>
     <button data-page="behaviour"><span class="nav-icon">◉</span>Behaviour</button>
     <button data-page="assessments"><span class="nav-icon">▤</span>Assessments</button>
@@ -239,31 +200,10 @@ tr:last-child td{border-bottom:0}
           <p id="teacherPhone">Phone: —</p>
         </div>
       </div>
-      <div class="teaching-card">
-        <div class="teaching-card-head">
-          <div><strong>My Teaching</strong><div class="muted">Classes and subjects assigned to you</div></div>
-          <span id="teachingSummary" class="teaching-count">Loading...</span>
-        </div>
-        <div id="assignedClasses" class="teaching-grid">
-          <div class="teaching-empty">Loading your assignments...</div>
-        </div>
-      </div>
     </div>
 
     <div class="card">
-      <div class="card-head"><div><h3>Teacher Attendance</h3><div class="muted">GPS-verified attendance at your registered school</div></div><span id="clockStatus" class="badge active">Checking</span></div>
-
-      <div class="teacher-location-check">
-        <div class="teacher-location-title">
-          <div>
-            <strong>Verify your location</strong>
-            <div class="muted">ACCESS UG checks your GPS position against the school's registered attendance point before marking you present.</div>
-          </div>
-          <span class="teacher-radius-badge">Up to 500 m</span>
-        </div>
-        <button class="btn" id="verifyLocationBtn" type="button">📍 Verify Location & Check In</button>
-        <div id="teacherLocationStatus" class="teacher-location-status">Location verification has not been performed yet.</div>
-      </div>
+      <div class="card-head"><div><h3>Teacher Attendance</h3><div class="muted">Your attendance record</div></div><span id="dashboardClockStatus" class="badge active">Checking</span></div>
 
       <div class="chart-wrap"><canvas id="teacherAttendanceChart"></canvas></div>
     </div>
@@ -272,7 +212,7 @@ tr:last-child td{border-bottom:0}
   <div class="grid three" style="margin-top:18px">
     <div class="card stat"><div class="kpi-icon">◷</div><div class="label" style="margin-top:12px">Present days</div><div class="value" id="presentDays">—</div><div class="sub">Teacher attendance records</div></div>
     <div class="card stat"><div class="kpi-icon">▣</div><div class="label" style="margin-top:12px">Assigned classes</div><div class="value" id="classCount">—</div><div class="sub">Classes you can access</div></div>
-    <div class="card stat"><div class="kpi-icon">✓</div><div class="label" style="margin-top:12px">Today's status</div><div class="value" id="todayStatus">—</div><div class="sub">GPS-verified attendance</div></div>
+    <div class="card stat"><div class="kpi-icon">✓</div><div class="label" style="margin-top:12px">Today's status</div><div class="value" id="todayStatus">—</div><div class="sub">Attendance status</div></div>
   </div>
 
   <div class="card" style="margin-top:18px">
@@ -282,6 +222,14 @@ tr:last-child td{border-bottom:0}
       <button class="btn" data-go="behaviour">Record Behaviour</button>
       <button class="btn" data-go="assessments">Enter Assessment</button>
     </div>
+  </div>
+</section>
+
+<section id="teaching" class="page">
+  <div class="hero"><h1>My Teaching</h1><p>Classes and subjects assigned to you.</p></div>
+  <div class="card">
+    <div class="card-head"><div><h3>Teaching assignments</h3><div class="muted">Your assigned classes and subjects</div></div><span id="teachingSummary" class="teaching-count">Loading...</span></div>
+    <div id="assignedClasses" class="teaching-grid"><div class="teaching-empty">Loading your assignments...</div></div>
   </div>
 </section>
 
@@ -296,6 +244,15 @@ tr:last-child td{border-bottom:0}
 <section id="attendance" class="page">
   <div class="hero"><h1>Attendance</h1><p>Record student attendance for your assigned classes.</p></div>
   <div id="attendanceNotice" class="notice"></div><div id="attendanceSaveState" class="save-state"></div>
+  <div class="card" style="margin-bottom:18px">
+    <div class="card-head"><div><h3>Teacher attendance</h3><div class="muted">Scan the school QR code or enter the attendance token provided by the school.</div></div><span id="clockStatus" class="badge active">Not checked in</span></div>
+    <div class="grid two">
+      <div class="field"><label for="attendanceToken">Attendance token</label><input id="attendanceToken" type="text" placeholder="Enter attendance token" autocomplete="off"></div>
+      <div class="actions" style="align-items:end"><button class="btn" id="scanAttendanceQr" type="button">Scan QR code</button><button class="btn success" id="submitAttendanceToken" type="button">Submit token</button></div>
+    </div>
+    <div id="attendanceTokenStatus" class="muted" style="margin-top:10px">Use the school’s current attendance QR or token.</div>
+    <input id="attendanceQrInput" type="file" accept="image/*" capture="environment" style="display:none">
+  </div>
   <div class="card">
     <div class="toolbar">
       <div class="field"><label>Class</label><select id="attendanceClass"></select></div>
@@ -482,6 +439,7 @@ function redirectLogin(){
    ========================= */
 const pageTitles={
   dashboard:"Teacher Dashboard",
+  teaching:"My Teaching",
   attendance:"Attendance",
   behaviour:"Behaviour",
   assessments:"Assessments",
@@ -681,197 +639,6 @@ async function getStudents(classId){
 /* =========================
    Teacher attendance
    ========================= */
-async function automaticTeacherAttendance(){
-  // Deliberately do NOT mark a teacher present merely because they logged in.
-  // A successful attendance record must come from the server-side GPS geofence RPC.
-  const old=await supabaseClient.from("teacher_attendance")
-    .select("id,status,location_verified,distance_from_school_meters,location_accuracy_meters")
-    .eq("teacher_id",teacher.id).eq("attendance_date",todayISO()).maybeSingle();
-
-  if(old.error){
-    console.warn("Teacher attendance check:",old.error.message);
-    return;
-  }
-
-  if(old.data){
-    $("clockStatus").textContent=old.data.location_verified ? "GPS Verified" : "Present";
-    $("todayStatus").textContent="Present";
-    const status=$("teacherLocationStatus");
-    if(status && old.data.location_verified){
-      const d=Number(old.data.distance_from_school_meters);
-      const acc=Number(old.data.location_accuracy_meters);
-      status.textContent=`Today's attendance is already GPS verified${Number.isFinite(d) ? ` — ${Math.round(d)} m from the school point` : ""}${Number.isFinite(acc) ? `, GPS accuracy about ${Math.round(acc)} m` : ""}.`;
-      status.className="teacher-location-status ok";
-    }
-  }else{
-    $("clockStatus").textContent="Not verified";
-    $("todayStatus").textContent="Not checked in";
-  }
-}
-
-async function verifyTeacherLocation(){
-  const btn=$("verifyLocationBtn");
-  const status=$("teacherLocationStatus");
-
-  if(!navigator.geolocation){
-    if(status){
-      status.textContent="This browser does not support location. Please use a current browser with location services enabled.";
-      status.className="teacher-location-status error";
-    }
-    return;
-  }
-
-  btn.disabled=true;
-  btn.textContent="Getting location…";
-  if(status){
-    status.textContent="Getting a quick location fix…";
-    status.className="teacher-location-status info";
-  }
-
-  const started=Date.now();
-  const deadline=60000;
-  let best=null;
-  let watchId=null;
-  let finished=false;
-
-  const finish=async (pos)=>{
-    if(finished)return;
-    const accuracy=Number(pos?.coords?.accuracy);
-    const lat=Number(pos?.coords?.latitude);
-    const lng=Number(pos?.coords?.longitude);
-    const ts=Number(pos?.timestamp);
-
-    if(!Number.isFinite(lat)||!Number.isFinite(lng)||!Number.isFinite(accuracy)||accuracy<0)return;
-    if(Number.isFinite(ts) && Math.abs(Date.now()-ts)>60000)return;
-
-    best={lat,lng,accuracy};
-    // A reading at or below 250m is eligible for the server-side
-    // uncertainty-aware geofence check. The server remains authoritative.
-    if(accuracy>250 && Date.now()-started<deadline){
-      if(status){
-        status.textContent=`Location received (about ${Math.round(accuracy)} m accuracy). Improving accuracy automatically…`;
-        status.className="teacher-location-status info";
-      }
-      return;
-    }
-
-    finished=true;
-    if(watchId!==null)navigator.geolocation.clearWatch(watchId);
-
-    if(status){
-      status.textContent="GPS received. Securely checking your distance from the registered school location…";
-      status.className="teacher-location-status info";
-    }
-
-    try{
-      const nativeSecurity=window.AccessUGNativeSecurity||null;
-      if(nativeSecurity && (nativeSecurity.isMockLocation===true || nativeSecurity.mockLocation===true))
-        throw new Error("Simulated/mock location detected. Disable location spoofing and try again.");
-      if(nativeSecurity && (nativeSecurity.isVpnActive===true || nativeSecurity.vpnActive===true ||
-                            nativeSecurity.isProxyActive===true || nativeSecurity.proxyActive===true))
-        throw new Error("VPN/proxy detected. Disable it and try again.");
-
-      const r=await supabaseClient.rpc("clock_in_teacher_with_location",{
-        p_lat:lat,
-        p_lng:lng,
-        p_accuracy:accuracy
-      });
-      if(r.error)throw r.error;
-
-      const row=Array.isArray(r.data)?r.data[0]:r.data;
-      const distance=Number(row?.distance_from_school_meters);
-      const radius=Number(row?.attendance_radius_meters);
-
-      $("clockStatus").textContent="GPS Verified";
-      $("todayStatus").textContent="Present";
-      if(status){
-        status.textContent=`Attendance granted ✓${Number.isFinite(distance)?` You are ${Math.round(distance)} m from the registered school point.`:""}${Number.isFinite(radius)?` Allowed radius: ${Math.round(radius)} m.`:""} GPS accuracy: about ${Math.round(accuracy)} m.`;
-        status.className="teacher-location-status ok";
-      }
-      toast("Location verified. Teacher attendance recorded.");
-      await loadTeacherAttendance();
-    }catch(e){
-      const msg=errorMessage(e);
-      if(status){
-        status.textContent=`Attendance not granted: ${msg}`;
-        status.className="teacher-location-status error";
-      }
-      $("clockStatus").textContent="Not verified";
-      $("todayStatus").textContent="Not checked in";
-    }finally{
-      btn.disabled=false;
-      btn.textContent="📍 Verify Location & Check In";
-    }
-  };
-
-  const onError=(err)=>{
-    if(finished)return;
-    const elapsed=Date.now()-started;
-    if(err?.code===1){
-      finished=true;
-      if(watchId!==null)navigator.geolocation.clearWatch(watchId);
-      if(status){
-        status.textContent="Location permission was denied. Allow location permission for ACCESS UG, then try again.";
-        status.className="teacher-location-status error";
-      }
-      btn.disabled=false;
-      btn.textContent="📍 Verify Location & Check In";
-      return;
-    }
-    if(elapsed>=deadline){
-      finished=true;
-      if(watchId!==null)navigator.geolocation.clearWatch(watchId);
-      if(status){
-        status.textContent=best
-          ? `Could not get a usable GPS accuracy reading within 60 seconds. Last reading was about ${Math.round(best.accuracy)} m. Move to an open area and try again.`
-          : "Your device could not determine a usable location within 60 seconds. Check Location services and try again.";
-        status.className="teacher-location-status error";
-      }
-      btn.disabled=false;
-      btn.textContent="📍 Verify Location & Check In";
-    }
-  };
-
-  try{
-    navigator.geolocation.getCurrentPosition(pos=>{
-      if(finished)return;
-      const acc=Number(pos.coords.accuracy);
-      if(Number.isFinite(acc) && acc<=250){
-        finish(pos);
-      }else{
-        best={lat:Number(pos.coords.latitude),lng:Number(pos.coords.longitude),accuracy:acc};
-        if(status){
-          status.textContent=`Location received (about ${Math.round(acc)} m accuracy). Improving accuracy automatically…`;
-          status.className="teacher-location-status info";
-        }
-      }
-    },onError,{enableHighAccuracy:false,timeout:10000,maximumAge:30000});
-
-    watchId=navigator.geolocation.watchPosition(pos=>{
-      if(finished)return;
-      const acc=Number(pos.coords.accuracy);
-      if(status && Number.isFinite(acc))
-        status.textContent=`Improving location accuracy automatically… Current accuracy about ${Math.round(acc)} m.`;
-      finish(pos);
-    },onError,{enableHighAccuracy:true,timeout:50000,maximumAge:10000});
-
-    setTimeout(()=>{
-      if(finished)return;
-      if(best)finish({coords:{latitude:best.lat,longitude:best.lng,accuracy:best.accuracy},timestamp:Date.now()});
-      else onError({code:3});
-    },deadline+500);
-  }catch(e){
-    finished=true;
-    if(watchId!==null)navigator.geolocation.clearWatch(watchId);
-    if(status){
-      status.textContent="Could not start location verification: "+errorMessage(e);
-      status.className="teacher-location-status error";
-    }
-    btn.disabled=false;
-    btn.textContent="📍 Verify Location & Check In";
-  }
-}
-$("verifyLocationBtn")?.addEventListener("click",verifyTeacherLocation);
 
 async function loadTeacherAttendance(){
   const since=new Date();
@@ -898,9 +665,25 @@ async function loadTeacherAttendance(){
   $("presentDays").textContent=present;
   if(charts.teacherAttendance)charts.teacherAttendance.destroy();
 
+  const attendanceTotal=present+absent+auth;
+  const presentPercentage=attendanceTotal?Math.round((present/attendanceTotal)*100):0;
+
+  const chartWrap=$("teacherAttendanceChart")?.parentElement;
+  if(chartWrap){
+    chartWrap.style.position="relative";
+    let pct=chartWrap.querySelector("#teacherAttendancePercentage");
+    if(!pct){
+      pct=document.createElement("div");
+      pct.id="teacherAttendancePercentage";
+      pct.style.cssText="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;pointer-events:none;transform:translateY(-2px);font-weight:800";
+      chartWrap.appendChild(pct);
+    }
+    pct.innerHTML=`<span style="font-size:30px;line-height:1">${presentPercentage}%</span><span style="font-size:13px;margin-top:5px;font-weight:600">Present</span>`;
+  }
+
   charts.teacherAttendance=new Chart($("teacherAttendanceChart"),{
     type:"doughnut",
-    data:{labels:["Present / Checked in","Absent","Authorized absence"],datasets:[{data:[present,absent,auth]}]},
+    data:{labels:[`Present / Checked in (${presentPercentage}%)`,"Absent","Authorized absence"],datasets:[{data:[present,absent,auth]}]},
     options:{responsive:true,maintainAspectRatio:false,cutout:"68%",plugins:{legend:{position:"bottom"}}}
   });
 }
@@ -909,6 +692,123 @@ async function loadTeacherAttendance(){
 /* =========================
    Attendance
    ========================= */
+async function submitTeacherAttendanceToken(){
+  const token=$("attendanceToken")?.value.trim(),status=$("attendanceTokenStatus"),btn=$("submitAttendanceToken");
+  if(!token){if(status)status.textContent="Enter an attendance token first.";return;}
+  if(btn){btn.disabled=true;btn.textContent="Submitting…";}
+  if(status)status.textContent="Submitting attendance token…";
+  try{const r=await supabaseClient.rpc("clock_in_teacher_with_token",{p_token:token});if(r.error)throw r.error;if($("clockStatus"))$("clockStatus").textContent="Present";if($("todayStatus"))$("todayStatus").textContent="Present";if(status)status.textContent="Attendance recorded successfully.";toast("Teacher attendance recorded.");await loadTeacherAttendance();}
+  catch(e){if(status)status.textContent="Attendance could not be recorded: "+errorMessage(e);}
+  finally{if(btn){btn.disabled=false;btn.textContent="Submit token";}}
+}
+$("submitAttendanceToken")?.addEventListener("click",submitTeacherAttendanceToken);
+
+const attendanceQrChoice=document.createElement("div");
+attendanceQrChoice.id="attendanceQrChoice";
+attendanceQrChoice.style.cssText="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;align-items:center;justify-content:center;padding:20px";
+attendanceQrChoice.innerHTML=`<div style="background:#fff;border-radius:16px;padding:22px;max-width:360px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.2)">
+  <h3 style="margin:0 0 8px">Scan QR code</h3>
+  <p style="margin:0 0 18px;color:#667085">Choose how you want to scan the school QR code.</p>
+  <div style="display:grid;gap:10px">
+    <button class="btn" id="attendanceUseCamera" type="button">Use camera</button>
+    <button class="btn" id="attendanceUseGallery" type="button">Choose from gallery</button>
+    <button class="btn" id="attendanceQrCancel" type="button">Cancel</button>
+  </div>
+</div>`;
+document.body.appendChild(attendanceQrChoice);
+
+const attendanceCameraPanel=document.createElement("div");
+attendanceCameraPanel.id="attendanceCameraPanel";
+attendanceCameraPanel.style.cssText="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:10000;align-items:center;justify-content:center;padding:20px";
+attendanceCameraPanel.innerHTML=`<div style="background:#fff;border-radius:16px;padding:18px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.25)">
+  <h3 style="margin:0 0 12px">Scan QR code with camera</h3>
+  <video id="attendanceQrVideo" autoplay playsinline muted style="display:block;width:100%;max-height:55vh;object-fit:cover;border-radius:12px;background:#111"></video>
+  <p id="attendanceCameraStatus" class="muted" style="margin:10px 0">Allow camera access and point the camera at the QR code.</p>
+  <button class="btn" id="attendanceCameraCancel" type="button" style="width:100%">Cancel</button>
+</div>`;
+document.body.appendChild(attendanceCameraPanel);
+
+let attendanceCameraStream=null;
+let attendanceCameraTimer=null;
+
+function stopAttendanceCamera(){
+  if(attendanceCameraTimer){clearInterval(attendanceCameraTimer);attendanceCameraTimer=null;}
+  if(attendanceCameraStream){attendanceCameraStream.getTracks().forEach(t=>t.stop());attendanceCameraStream=null;}
+  const video=$("attendanceQrVideo");
+  if(video)video.srcObject=null;
+  attendanceCameraPanel.style.display="none";
+}
+
+async function startAttendanceCamera(){
+  attendanceQrChoice.style.display="none";
+  attendanceCameraPanel.style.display="flex";
+  const status=$("attendanceCameraStatus");
+  if(!navigator.mediaDevices?.getUserMedia){
+    if(status)status.textContent="Camera access is unavailable here. Open this page over HTTPS (or localhost) and try again.";
+    return;
+  }
+  try{
+    attendanceCameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+    const video=$("attendanceQrVideo");
+    video.srcObject=attendanceCameraStream;
+    await video.play();
+
+    if(!("BarcodeDetector" in window)){
+      if(status)status.textContent="Your browser does not support QR scanning here. Use 'Choose from gallery' or enter the token manually.";
+      return;
+    }
+
+    const detector=new BarcodeDetector({formats:["qr_code"]});
+    attendanceCameraTimer=setInterval(async()=>{
+      if(!video.videoWidth||!video.videoHeight)return;
+      try{
+        const codes=await detector.detect(video);
+        if(codes.length&&codes[0].rawValue){
+          $("attendanceToken").value=codes[0].rawValue;
+          if(status)status.textContent="QR code read successfully.";
+          stopAttendanceCamera();
+          if($("attendanceTokenStatus"))$("attendanceTokenStatus").textContent="QR code read. Submit the token to record attendance.";
+        }
+      }catch(err){}
+    },350);
+  }catch(err){
+    if(status){
+      status.textContent=(err&&err.name==="NotAllowedError")
+        ?"Camera permission was denied. Allow camera access in your browser settings, then try again."
+        :"Camera could not be opened here. If you are testing in SPCK, try the HTTPS preview.";
+    }
+  }
+}
+
+$("attendanceUseCamera")?.addEventListener("click",startAttendanceCamera);
+
+$("attendanceCameraCancel")?.addEventListener("click",stopAttendanceCamera);
+
+async function readAttendanceQrFile(file){
+  if(!file)return;
+  const status=$("attendanceTokenStatus");
+  if(!("BarcodeDetector" in window)){
+    if(status)status.textContent="QR scanning is not supported here. Enter the attendance token manually.";
+    return;
+  }
+  try{
+    const d=new BarcodeDetector({formats:["qr_code"]});
+    const c=await d.detect(await createImageBitmap(file));
+    if(!c.length)throw new Error("No QR code found in that image.");
+    $("attendanceToken").value=c[0].rawValue||"";
+    if(status)status.textContent="QR code read. Submit the token to record attendance.";
+  }catch(err){
+    if(status)status.textContent=err.message||"Could not read that QR code.";
+  }
+}
+
+$("attendanceQrInput")?.addEventListener("change",async e=>{
+  const file=e.target.files?.[0];
+  e.target.value="";
+  await readAttendanceQrFile(file);
+});
+
+
 $("loadAttendance").addEventListener("click",loadAttendance);
 $("saveAttendance").addEventListener("click",saveAttendance);
 
@@ -1446,7 +1346,6 @@ async function init(){
 
     // Secondary panels are independent; one slow/failing query no longer freezes the page.
     void (async()=>{
-      await automaticTeacherAttendance();
       await loadTeacherAttendance();
       await Promise.allSettled([loadReportStudents(),loadReports()]);
     })();

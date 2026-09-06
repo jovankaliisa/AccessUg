@@ -1321,6 +1321,11 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
             Attendance
         </button>
 
+        <button data-page="qr-management" aria-label="QR Code Management">
+            <span class="nav-icon">▣</span>
+            QR Code Management
+        </button>
+
         <button data-page="teachers">
 
             <span class="nav-icon">
@@ -2126,6 +2131,17 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 <div class="modal" id="adminUserResetModal"><div class="modal-box users-reset-box"><div class="modal-head"><div><h3>Reset User Login</h3><p class="muted" id="adminResetUserLabel">User</p></div><button class="close" type="button" id="adminUserResetClose">×</button></div><div class="users-reset-warning"><strong>Reset to default credentials?</strong><p>This changes the selected user's login email where the ACCESS UG default law defines one, and resets the password to the matching default password. Existing sessions may need to sign in again.</p></div><div id="adminResetPreview" class="users-credential-preview"></div><div id="adminResetMessage" class="notice"></div><div class="actions"><button class="btn secondary" type="button" id="adminUserResetCancel">Cancel</button><button class="btn" type="button" id="adminUserResetConfirm">Reset Login</button></div></div></div>
 <div class="modal" id="adminFeeClassModal"><div class="modal-box" style="width:min(1100px,100%)"><div class="modal-head"><div><h3 id="adminFeeClassTitle">Class Fees</h3><p class="muted">Students in this class/stream with total fees, paid amount and balance.</p></div><button class="close" type="button" id="adminFeeClassClose">×</button></div><div id="adminFeeClassBody" class="empty">Loading students…</div></div></div>
 <div class="modal" id="adminFeePaymentModal"><div class="modal-box fees-modal-box"><div class="modal-head"><div><h3>Record Fees Payment</h3><p class="muted" id="adminFeePaymentStudentLabel">Student</p></div><button class="close" type="button" id="adminFeePaymentClose">×</button></div><div id="adminFeePaymentMessage" class="notice"></div><form id="adminFeePaymentForm"><input id="adminFeePaymentStudentId" type="hidden"><input id="adminFeePaymentYear" type="hidden"><div class="field"><label>Amount Paid (UGX) *</label><input id="adminFeePaymentAmount" type="number" min="1" step="0.01" required></div><div class="field" style="margin-top:12px"><label>Payment Date</label><input id="adminFeePaymentDate" type="date"></div><div class="field" style="margin-top:12px"><label>Reference / Receipt No.</label><input id="adminFeePaymentReference"></div><div class="field" style="margin-top:12px"><label>Note</label><textarea id="adminFeePaymentNote"></textarea></div><div class="actions"><button class="btn secondary" type="button" id="adminFeePaymentCancel">Cancel</button><button class="btn" type="submit" id="adminFeePaymentSave">Save Payment</button></div></form></div></div>
+
+<section id="qr-management" class="page">
+  <div class="hero"><h1>Daily QR Code Management</h1><p>Generate and revoke school-specific attendance QR codes.</p></div>
+  <div class="card">
+    <div class="toolbar"><div class="field"><label for="adminQrSchool">School</label><select id="adminQrSchool"><option value="">Select school</option></select></div></div>
+    <div id="adminQrNotice" class="notice"></div>
+    <div id="adminQrToken" class="empty">Select a school to view its QR code.</div>
+    <div class="actions"><button class="btn" id="adminQrGenerate" type="button">Generate today’s QR</button><button class="btn secondary" id="adminQrRevoke" type="button">Revoke current QR</button></div>
+  </div>
+</section>
+
 </main>
 
 </div>
@@ -4254,5 +4270,64 @@ $('adminUsersRefresh')?.addEventListener('click',load);$('adminUsersSearch')?.ad
 })();
 (function(){const SB=window.supabaseClient;if(!SB)return;const $=id=>document.getElementById(id);const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));const money=v=>'UGX '+Number(v||0).toLocaleString('en-UG',{maximumFractionDigits:2});let analysis=[],filter='all',adminClasses=[];function fillSchools(){const schools=window.schoolsData||[];['adminFeesSchool','adminAnalysisSchool'].forEach(id=>{const el=$(id);if(!el)return;el.innerHTML='<option value="">Select school</option>'+schools.map(s=>`<option value="${s.id}">${esc(s.name||s.code)}</option>`).join('')})}function fillYears(){['adminFeesYear','adminAnalysisYear'].forEach(id=>{const el=$(id);if(!el)return;const y=new Date().getFullYear();el.innerHTML=[y-1,y,y+1].map(x=>`<option value="${x}">${x}</option>`).join('');el.value=y})}async function loadSchoolsLocal(){const r=await SB.from('schools').select('id,name,code').order('name');if(r.error)throw r.error;window.schoolsData=r.data||[];fillSchools();fillYears()}async function loadClasses(){const sid=$('adminFeesSchool')?.value;if(!sid){$('adminFeesClasses').innerHTML='<div class="empty">Select a school to begin.</div>';return}const yr=Number($('adminFeesYear').value);const cr=await SB.from('classes').select('*').eq('school_id',sid).eq('academic_year',yr).order('level').order('stream');if(cr.error)throw cr.error;adminClasses=cr.data||[];const fr=adminClasses.length?await SB.from('fee_structures').select('class_id,total_amount').in('class_id',adminClasses.map(x=>x.id)).eq('academic_year',yr):{data:[],error:null};if(fr.error)throw fr.error;const fm=new Map((fr.data||[]).map(x=>[String(x.class_id),x.total_amount]));$('adminFeesClasses').innerHTML=adminClasses.length?`<div class="table-wrap"><table><thead><tr><th>Class</th><th>Stream</th><th>Fee (UGX)</th><th></th></tr></thead><tbody>${adminClasses.map(c=>`<tr class="fees-class-row"><td><strong>${esc(c.level||c.name)}</strong></td><td>${esc(c.stream||'—')}</td><td><input class="admin-fee-input" data-id="${c.id}" type="number" min="0" step="0.01" value="${fm.get(String(c.id))??''}" placeholder="Not set"></td><td><button class="btn small admin-save-fee" data-id="${c.id}" type="button">Save Fee</button><button class="btn small secondary admin-open-class" data-id="${c.id}" type="button" style="margin-left:6px">View Students</button></td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No classes for this academic year.</div>';document.querySelectorAll('.admin-save-fee').forEach(b=>b.onclick=async()=>{const amt=Number(document.querySelector(`.admin-fee-input[data-id="${CSS.escape(b.dataset.id)}"]`).value);if(!Number.isFinite(amt)||amt<0)return showAdminNotice('Enter a valid fee amount.','err');b.disabled=true;try{const r=await SB.rpc('set_fee_structure',{p_class_id:b.dataset.id,p_academic_year:yr,p_total_amount:amt});if(r.error)throw r.error;showAdminNotice('Fee structure updated successfully.','ok');await loadClasses();await loadAnalysis()}catch(e){showAdminNotice(e.message,'err')}finally{b.disabled=false}});document.querySelectorAll('.admin-open-class').forEach(b=>b.onclick=()=>openClassStudents(b.dataset.id,yr))}async function openClassStudents(cid,yr){const c=adminClasses.find(x=>String(x.id)===String(cid));$('adminFeeClassTitle').textContent='Fees — '+(c?.name||'Class');$('adminFeeClassBody').innerHTML='<div class="empty">Loading students…</div>';$('adminFeeClassModal').classList.add('show');const r=await SB.rpc('get_school_fee_students',{p_class_id:cid,p_academic_year:yr});if(r.error){$('adminFeeClassBody').innerHTML='<div class="notice show err">'+esc(r.error.message)+'</div>';return}const rows=r.data||[];$('adminFeeClassBody').innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Student No.</th><th>Total</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(x.student_name)}</strong></td><td>${esc(x.student_number||'—')}</td><td>${money(x.total_fees)}</td><td class="fees-paid">${money(x.paid)}</td><td class="fees-balance ${Number(x.balance)>0?'fees-due':'fees-paid'}">${money(x.balance)}</td><td>${esc(x.status)}</td><td>${Number(x.balance)>0?`<button class="btn small" onclick="window.accessugAdminOpenPayment('${x.student_id}','${String(x.student_name).replace(/'/g,"\'")}',${yr})">Record Payment</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No active students in this class/stream.</div>'}
 async function loadAnalysis(){const sid=$('adminAnalysisSchool')?.value;if(!sid){$('adminFeesAnalysis').innerHTML='<div class="empty">Select a school to begin.</div>';return}const yr=Number($('adminAnalysisYear').value);const r=await SB.rpc('get_fee_analysis',{p_school_id:sid,p_academic_year:yr});if(r.error)throw r.error;analysis=r.data||[];renderAnalysis()}function renderAnalysis(){const rows=filter==='paid'?analysis.filter(x=>x.status==='Paid'):filter==='due'?analysis.filter(x=>x.status==='Balance due'):filter==='none'?analysis.filter(x=>x.status==='No fee set'):analysis;const paid=analysis.filter(x=>x.status==='Paid').length,due=analysis.filter(x=>x.status==='Balance due').length,total=analysis.reduce((n,x)=>n+Number(x.balance||0),0);$('adminFeesCount').textContent=analysis.length;$('adminFeesPaidCount').textContent=paid;$('adminFeesDueCount').textContent=due;$('adminFeesBalanceTotal').textContent=money(total);$('adminFeesAnalysis').innerHTML=rows.length?`<div class="table-wrap"><table><thead><tr><th>Student</th><th>Class / Stream</th><th>Total Fees</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody>${rows.map(x=>`<tr><td><strong>${esc(x.student_name)}</strong></td><td>${esc(x.class_name||'—')}</td><td>${money(x.total_fees)}</td><td class="fees-paid">${money(x.paid)}</td><td class="fees-balance ${Number(x.balance)>0?'fees-due':'fees-paid'}">${money(x.balance)}</td><td>${esc(x.status)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">No students match this filter.</div>'}function showAdminNotice(msg,type){const e=$('adminFeesNotice');e.textContent=msg;e.className='notice show '+type}function openPay(id,name,yr){$('adminFeePaymentStudentId').value=id;$('adminFeePaymentYear').value=yr;$('adminFeePaymentStudentLabel').textContent=name;$('adminFeePaymentDate').value=new Date().toISOString().slice(0,10);$('adminFeePaymentAmount').value='';$('adminFeePaymentReference').value='';$('adminFeePaymentNote').value='';$('adminFeePaymentMessage').className='notice';$('adminFeePaymentModal').classList.add('show')}window.accessugAdminOpenPayment=openPay;document.querySelectorAll('[data-admin-fees-filter]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-admin-fees-filter]').forEach(x=>x.classList.remove('active'));b.classList.add('active');filter=b.dataset.adminFeesFilter;renderAnalysis()});$('adminFeePaymentForm')?.addEventListener('submit',async e=>{e.preventDefault();const b=$('adminFeePaymentSave');b.disabled=true;try{const r=await SB.rpc('record_fee_payment',{p_student_id:$('adminFeePaymentStudentId').value,p_academic_year:Number($('adminFeePaymentYear').value),p_amount:Number($('adminFeePaymentAmount').value),p_payment_date:$('adminFeePaymentDate').value||null,p_reference:$('adminFeePaymentReference').value.trim()||null,p_note:$('adminFeePaymentNote').value.trim()||null});if(r.error)throw r.error;$('adminFeePaymentModal').classList.remove('show');showAdminNotice('Payment recorded. Student and linked parent were notified.','ok');await loadAnalysis();await loadClasses()}catch(e){$('adminFeePaymentMessage').textContent=e.message;$('adminFeePaymentMessage').className='notice show err'}finally{b.disabled=false}});['adminFeePaymentClose','adminFeePaymentCancel'].forEach(id=>$(id)?.addEventListener('click',()=>$('adminFeePaymentModal').classList.remove('show')));$('adminFeesSchool')?.addEventListener('change',loadClasses);$('adminFeesYear')?.addEventListener('change',loadClasses);$('adminAnalysisSchool')?.addEventListener('change',loadAnalysis);$('adminAnalysisYear')?.addEventListener('change',loadAnalysis);window.accessugAdminLoadFees=()=>loadClasses();window.accessugAdminLoadFeeAnalysis=()=>loadAnalysis();$('adminFeeClassClose')?.addEventListener('click',()=>$('adminFeeClassModal').classList.remove('show'));$('adminFeeClassModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)$('adminFeeClassModal').classList.remove('show')});loadSchoolsLocal().catch(e=>console.error('Fees school list:',e));})();</script>
+
+<script>
+(function(){
+  const sb=window.supabaseClient;
+  const $=id=>document.getElementById(id);
+  const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const select=$('adminQrSchool');
+  if(!sb || !select) return;
+  let qrSchools=[];
+  async function loadQrSchools(){
+    select.disabled=true;
+    select.innerHTML='<option value="">Loading schools…</option>';
+    const r=await sb.from('schools').select('id,name,code').order('name',{ascending:true});
+    if(r.error){
+      select.innerHTML='<option value="">Unable to load schools</option>';
+      const n=$('adminQrNotice'); if(n){n.textContent=r.error.message;n.className='notice show err';}
+      return;
+    }
+    qrSchools=r.data||[];
+    select.innerHTML='<option value="">Select school</option>'+qrSchools.map(x=>`<option value="${esc(x.id)}">${esc(x.name||x.code||x.id)}${x.code&&x.name?' ('+esc(x.code)+')':''}</option>`).join('');
+    select.disabled=false;
+  }
+  async function loadQr(){
+    const sid=select.value, box=$('adminQrToken'), notice=$('adminQrNotice');
+    if(!sid){if(box)box.textContent='Select a school to view its QR code.';return;}
+    if(box)box.textContent='Loading QR code…';
+    const r=await sb.from('school_qr_codes').select('id,school_id,token,version,active,generated_at,revoked_at').eq('school_id',sid).eq('active',true).order('generated_at',{ascending:false}).limit(1).maybeSingle();
+    if(r.error){if(box)box.textContent='Unable to load QR code.';if(notice){notice.textContent=r.error.message;notice.className='notice show err';}return;}
+    if(!r.data){if(box)box.textContent='No active QR code.';return;}
+    if(box)box.innerHTML='<strong>Current QR token</strong><div class="qr-token">'+esc(r.data.token)+'</div>';
+  }
+  async function generateQr(){
+    const sid=select.value, notice=$('adminQrNotice'), box=$('adminQrToken'), btn=$('adminQrGenerate');
+    if(!sid){if(notice){notice.textContent='Select a school first.';notice.className='notice show err';}return;}
+    if(btn) {btn.disabled=true;btn.textContent='Generating…';}
+    try{
+      const r=await sb.rpc('issue_school_qr',{p_school_id:sid});
+      if(r.error) throw r.error;
+      const row=Array.isArray(r.data)?r.data[0]:r.data;
+      if(!row?.token) throw new Error('Supabase did not return a QR token.');
+      if(box) box.innerHTML='<strong>Current QR code</strong><div style="display:flex;justify-content:center;margin:16px 0"><img alt="School attendance QR code" style="width:min(320px,100%);height:auto;background:#fff;padding:12px;border-radius:12px" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&data='+encodeURIComponent(row.token)+'"></div><div class="qr-token">'+esc(row.token)+'</div>';
+      if(notice){notice.textContent='QR code generated successfully.';notice.className='notice show ok';}
+    }catch(e){if(notice){notice.textContent='QR generation failed: '+(e.message||e);notice.className='notice show err';}}
+    finally{if(btn){btn.disabled=false;btn.textContent='Generate today’s QR';}}
+  }
+  async function revokeQr(){
+    const sid=select.value, notice=$('adminQrNotice');
+    if(!sid){if(notice){notice.textContent='Select a school first.';notice.className='notice show err';}return;}
+    const r=await sb.from('school_qr_codes').update({active:false,revoked_at:new Date().toISOString()}).eq('school_id',sid).eq('active',true);
+    if(r.error){if(notice){notice.textContent='QR revocation failed: '+r.error.message;notice.className='notice show err';}return;}
+    await loadQr(); if(notice){notice.textContent='Current QR revoked.';notice.className='notice show ok';}
+  }
+  select.addEventListener('change',loadQr);
+  $('adminQrRefresh')?.addEventListener('click',loadQr);
+  $('adminQrGenerate')?.addEventListener('click',generateQr);
+  $('adminQrRevoke')?.addEventListener('click',revokeQr);
+  loadQrSchools();
+})();
+</script>
 </body>
 </html>
