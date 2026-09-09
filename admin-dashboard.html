@@ -1221,6 +1221,84 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 }
 </style>
 
+
+<style id="final-mobile-fixes">
+/* Final mobile fixes: admin dashboard recent-schools table + sidebar menu only */
+@media (max-width: 750px) {
+    /* Keep the full sidebar menu accessible on smaller screens */
+    .sidebar {
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-bottom: 28px;
+    }
+
+    .nav {
+        margin-top: 18px;
+        padding-bottom: 10px;
+    }
+
+    .nav button {
+        padding: 11px 12px;
+        margin: 3px 0;
+        font-size: 14px;
+        line-height: 1.25;
+    }
+
+    .fees-subnav {
+        margin: 3px 6px 6px 10px;
+        padding-left: 10px;
+        gap: 2px;
+    }
+
+    .fees-subnav button {
+        padding: 8px 9px !important;
+        font-size: 12px !important;
+    }
+
+    /* Prevent long school names from forcing horizontal scrolling */
+    #dashboard .section-grid > .card:first-child {
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    #dashboard .section-grid > .card:first-child table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    #dashboard .section-grid > .card:first-child th,
+    #dashboard .section-grid > .card:first-child td {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    #dashboard .section-grid > .card:first-child th:nth-child(1),
+    #dashboard .section-grid > .card:first-child td:nth-child(1) {
+        width: 52%;
+    }
+
+    #dashboard .section-grid > .card:first-child th:nth-child(2),
+    #dashboard .section-grid > .card:first-child td:nth-child(2) {
+        width: 25%;
+    }
+
+    #dashboard .section-grid > .card:first-child th:nth-child(3),
+    #dashboard .section-grid > .card:first-child td:nth-child(3) {
+        width: 23%;
+    }
+
+    #dashboard .section-grid > .card:first-child td {
+        padding: 10px 7px;
+    }
+
+    #dashboard .section-grid > .card:first-child .status {
+        white-space: nowrap;
+        padding: 4px 7px;
+    }
+}
+</style>
+
 </head>
 
 <body>
@@ -3219,13 +3297,14 @@ async function openStudentDetails(id){
 }
 async function deleteSchoolCompletely(schoolId){
   const school=schoolsCache.find(x=>String(x.id)===String(schoolId)); if(!school)return;
-  if(!confirm(`Delete ${school.name}? This cannot be undone.`))return;
+  if(!confirm(`Permanently delete ${school.name}? This will permanently remove the school, its teachers, students, school login, parent accounts linked to its students, attendance/academic/fee records and their authentication accounts. This cannot be undone.`))return;
   try{
-    const {error}=await supabaseClient.from("schools").delete().eq("id",schoolId);
+    const {data,error}=await supabaseClient.rpc("admin_delete_school_permanently",{p_school_id:schoolId});
     if(error)throw error;
     closeSchoolDetails(); await loadAllCounts(); show("schools");
-    alert("School deleted successfully from Supabase.");
-  }catch(e){alert("School was NOT deleted: "+(e.message||e)+". Your database may have dependent records without ON DELETE CASCADE; use the cleanup SQL provided with this dashboard.");}
+    const deleted=Number(data?.deleted_auth_users||0);
+    alert(`School deleted permanently. ${deleted} associated authentication account(s) were also permanently deleted. The administrator account was preserved.`);
+  }catch(e){alert("School was NOT deleted: "+(e.message||e));}
 }
 
 async function loadClasses(){
@@ -4278,50 +4357,110 @@ async function loadAnalysis(){const sid=$('adminAnalysisSchool')?.value;if(!sid)
   const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const select=$('adminQrSchool');
   if(!sb || !select) return;
-  let qrSchools=[];
+
+  let qrRows=[];
+
+  function renderQr(row){
+    const box=$('adminQrToken');
+    if(!box) return;
+    if(!row || !row.token){
+      box.innerHTML='<div class="empty">No active QR code for this school today.</div>';
+      return;
+    }
+    const generated=row.generated_at
+      ? new Date(row.generated_at).toLocaleString('en-UG',{dateStyle:'medium',timeStyle:'short'})
+      : 'Today';
+    box.innerHTML=
+      '<strong>Current active QR code</strong>'+
+      '<div style="display:flex;justify-content:center;margin:16px 0">'+
+      '<img alt="School attendance QR code" style="width:min(320px,100%);height:auto;background:#fff;padding:12px;border-radius:12px" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&data='+encodeURIComponent(row.token)+'">'+
+      '</div>'+
+      '<div class="qr-token">'+esc(row.token)+'</div>'+
+      '<div class="muted" style="margin-top:8px">Generated: '+esc(generated)+'</div>';
+  }
+
   async function loadQrSchools(){
     select.disabled=true;
     select.innerHTML='<option value="">Loading schools…</option>';
-    const r=await sb.from('schools').select('id,name,code').order('name',{ascending:true});
+    const r=await sb.rpc('admin_list_school_qrs');
     if(r.error){
       select.innerHTML='<option value="">Unable to load schools</option>';
-      const n=$('adminQrNotice'); if(n){n.textContent=r.error.message;n.className='notice show err';}
+      const n=$('adminQrNotice');
+      if(n){n.textContent=r.error.message;n.className='notice show err';}
       return;
     }
-    qrSchools=r.data||[];
-    select.innerHTML='<option value="">Select school</option>'+qrSchools.map(x=>`<option value="${esc(x.id)}">${esc(x.name||x.code||x.id)}${x.code&&x.name?' ('+esc(x.code)+')':''}</option>`).join('');
+    qrRows=r.data||[];
+    select.innerHTML='<option value="">Select school</option>'+
+      qrRows.map(x=>`<option value="${esc(x.school_id)}">${esc(x.school_name||x.school_code||x.school_id)}${x.school_code&&x.school_name?' ('+esc(x.school_code)+')':''}</option>`).join('');
     select.disabled=false;
   }
+
   async function loadQr(){
     const sid=select.value, box=$('adminQrToken'), notice=$('adminQrNotice');
-    if(!sid){if(box)box.textContent='Select a school to view its QR code.';return;}
+    if(!sid){
+      if(box)box.textContent='Select a school to view its QR code.';
+      return;
+    }
     if(box)box.textContent='Loading QR code…';
-    const r=await sb.from('school_qr_codes').select('id,school_id,token,version,active,generated_at,revoked_at').eq('school_id',sid).eq('active',true).order('generated_at',{ascending:false}).limit(1).maybeSingle();
-    if(r.error){if(box)box.textContent='Unable to load QR code.';if(notice){notice.textContent=r.error.message;notice.className='notice show err';}return;}
-    if(!r.data){if(box)box.textContent='No active QR code.';return;}
-    if(box)box.innerHTML='<strong>Current QR token</strong><div class="qr-token">'+esc(r.data.token)+'</div>';
+
+    // Use the administrator RPC instead of querying school_qr_codes directly.
+    // This keeps the admin view consistent with the school panel and its RLS boundary.
+    const r=await sb.rpc('admin_list_school_qrs');
+    if(r.error){
+      if(box)box.textContent='Unable to load QR code.';
+      if(notice){notice.textContent=r.error.message;notice.className='notice show err';}
+      return;
+    }
+    qrRows=r.data||[];
+    const row=qrRows.find(x=>String(x.school_id)===String(sid));
+    renderQr(row);
   }
+
   async function generateQr(){
-    const sid=select.value, notice=$('adminQrNotice'), box=$('adminQrToken'), btn=$('adminQrGenerate');
-    if(!sid){if(notice){notice.textContent='Select a school first.';notice.className='notice show err';}return;}
-    if(btn) {btn.disabled=true;btn.textContent='Generating…';}
+    const sid=select.value, notice=$('adminQrNotice'), btn=$('adminQrGenerate');
+    if(!sid){
+      if(notice){notice.textContent='Select a school first.';notice.className='notice show err';}
+      return;
+    }
+    if(btn){btn.disabled=true;btn.textContent='Generating…';}
     try{
       const r=await sb.rpc('issue_school_qr',{p_school_id:sid});
       if(r.error) throw r.error;
       const row=Array.isArray(r.data)?r.data[0]:r.data;
       if(!row?.token) throw new Error('Supabase did not return a QR token.');
-      if(box) box.innerHTML='<strong>Current QR code</strong><div style="display:flex;justify-content:center;margin:16px 0"><img alt="School attendance QR code" style="width:min(320px,100%);height:auto;background:#fff;padding:12px;border-radius:12px" src="https://api.qrserver.com/v1/create-qr-code/?size=320x320&data='+encodeURIComponent(row.token)+'"></div><div class="qr-token">'+esc(row.token)+'</div>';
+      renderQr({
+        school_id:row.school_id,
+        school_name:row.school_name,
+        version:row.version,
+        active:true,
+        generated_at:row.generated_at,
+        token:row.token
+      });
       if(notice){notice.textContent='QR code generated successfully.';notice.className='notice show ok';}
-    }catch(e){if(notice){notice.textContent='QR generation failed: '+(e.message||e);notice.className='notice show err';}}
-    finally{if(btn){btn.disabled=false;btn.textContent='Generate today’s QR';}}
+    }catch(e){
+      if(notice){notice.textContent='QR generation failed: '+(e.message||e);notice.className='notice show err';}
+    }finally{
+      if(btn){btn.disabled=false;btn.textContent='Generate today’s QR';}
+    }
   }
+
   async function revokeQr(){
     const sid=select.value, notice=$('adminQrNotice');
-    if(!sid){if(notice){notice.textContent='Select a school first.';notice.className='notice show err';}return;}
-    const r=await sb.from('school_qr_codes').update({active:false,revoked_at:new Date().toISOString()}).eq('school_id',sid).eq('active',true);
-    if(r.error){if(notice){notice.textContent='QR revocation failed: '+r.error.message;notice.className='notice show err';}return;}
-    await loadQr(); if(notice){notice.textContent='Current QR revoked.';notice.className='notice show ok';}
+    if(!sid){
+      if(notice){notice.textContent='Select a school first.';notice.className='notice show err';}
+      return;
+    }
+    const r=await sb.from('school_qr_codes')
+      .update({active:false,revoked_at:new Date().toISOString()})
+      .eq('school_id',sid).eq('active',true);
+    if(r.error){
+      if(notice){notice.textContent='QR revocation failed: '+r.error.message;notice.className='notice show err';}
+      return;
+    }
+    await loadQr();
+    if(notice){notice.textContent='Current QR revoked.';notice.className='notice show ok';}
   }
+
   select.addEventListener('change',loadQr);
   $('adminQrRefresh')?.addEventListener('click',loadQr);
   $('adminQrGenerate')?.addEventListener('click',generateQr);
