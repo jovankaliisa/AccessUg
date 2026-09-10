@@ -22,9 +22,6 @@ Welcome Page, Secure Role-Based Login, Admin Dashboard, Teacher Dashboard S3 Nor
 ### 🔑 Test The Live System
 
 Live Link: https://jovankaliisa.github.io/AccessUg/
-Admin Account: jkaliisa256@outlook.com
-Teacher Account: jkaliisa456@gmail.com
-
 ### 📞 Contact - Jovan Kaliisa, S3 Student, Rural Uganda
 
 **Developer:** Jovan Kaliisa - S3 Student, 16 Years, Rural Uganda
