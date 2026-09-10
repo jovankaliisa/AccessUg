@@ -1,3 +1,4 @@
+![Jovan Kaliisa Founder AccessUg Masaka](Jovan-Kaliisa.jpg)
 # ACCESS UG SCH - School Management System 🇺🇬
 
 **Live Demo:** https://jovankaliisa.github.io/AccessUg/
