@@ -67,6 +67,15 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
  .profile-crop-card{width:calc(100vw - 24px);max-width:560px;padding:16px;border-radius:18px}
 }
 
+
+/* Report-only styling. */
+.official-school-report{background:#fff;position:relative;border:1px solid #cbd6e3;max-width:1100px;margin:0 auto 18px;padding:24px;color:#182b43}
+.official-school-report .report-print-actions{display:flex;justify-content:flex-end;margin-bottom:8px}
+.school-report-header{text-align:center;border-bottom:1px solid #b9c5d3;padding-bottom:14px;margin-bottom:14px}
+.school-report-name{font-weight:900;font-size:20px;letter-spacing:.3px}.school-motto{font-weight:700;margin-top:2px}.report-title{display:inline-block;margin-top:10px;padding:5px 34px;border:1px solid #68788c;border-radius:12px;font-weight:900;letter-spacing:.5px}
+.report-student-row{display:flex;gap:16px;align-items:flex-start;margin-bottom:14px}.report-student-grid{flex:1;display:grid;grid-template-columns:repeat(3,minmax(130px,1fr));border:1px solid #cbd6e3}.report-student-grid>div{padding:8px 10px;border-right:1px solid #d8e0e8;border-bottom:1px solid #d8e0e8}.report-student-grid span,.report-summary-row span,.report-mini-grid span{display:block;font-size:10px;text-transform:uppercase;color:#617087;font-weight:800}.report-student-grid strong{display:block;margin-top:3px}.report-photo{width:82px;flex:none}
+.report-section-label{font-weight:900;background:#eef3f8;border:1px solid #cbd6e3;padding:6px 9px;margin-top:12px}.report-table table,.grading-table,.report-behaviour-table table{width:100%;border-collapse:collapse}.report-table th,.report-table td,.grading-table th,.grading-table td,.report-behaviour-table th,.report-behaviour-table td{border:1px solid #cbd6e3;padding:6px 7px;font-size:11px}.report-table th,.grading-table th,.report-behaviour-table th{font-weight:900;background:#f6f8fa}.report-summary-row{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #cbd6e3;margin-top:8px}.report-summary-row>div{padding:8px;border-right:1px solid #d8e0e8}.report-summary-row strong{display:block;font-size:15px;margin-top:2px}.report-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #cbd6e3;border-top:0}.report-mini-grid>div{padding:8px;border-right:1px solid #d8e0e8}.report-mini-grid strong{display:block;margin-top:3px}.report-mini-grid .positive{color:#1457a6}.report-mini-grid .negative{color:#b42318}.report-remarks{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd6e3;border-top:0}.report-remarks>div{padding:10px;border-right:1px solid #d8e0e8;min-height:52px;font-size:11px}.report-remarks>div:last-child{border-right:0}.report-remarks div div{margin-top:6px;line-height:1.4}.report-footer{display:grid;gap:4px;margin-top:12px;font-size:11px}.report-footer .muted{margin-top:5px}
+@media(max-width:700px){.official-school-report{padding:14px}.report-student-row{flex-direction:column-reverse}.report-student-grid{width:100%;grid-template-columns:repeat(2,minmax(120px,1fr))}.report-photo{align-self:flex-end}.report-summary-row{grid-template-columns:repeat(2,1fr)}.report-mini-grid{grid-template-columns:repeat(2,1fr)}.report-remarks{grid-template-columns:1fr}.report-remarks>div{border-right:0;border-bottom:1px solid #d8e0e8}.report-table,.report-behaviour-table{overflow-x:auto}.report-table table{min-width:760px}.report-behaviour-table table{min-width:620px}}
 </style>
 
 <style id="accessug-profile-system">
@@ -866,13 +875,23 @@ async function loadStudentResults(){
    const queries=[
     supabaseClient.from("assessments").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
     supabaseClient.from("end_term_results").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
-    supabaseClient.from("student_result_reports").select("*").eq("student_id",student.id).eq("term_id",termId).order("report_type")
+    supabaseClient.from("student_result_reports").select("*").eq("student_id",student.id).eq("term_id",termId).order("report_type"),
+    supabaseClient.from("behaviour_records").select("id,behaviour_date,recorded_date,grade,points,comment,created_at").eq("student_id",student.id).eq("term_id",termId).eq("school_id",student.school_id).order("behaviour_date",{ascending:true}).order("created_at",{ascending:true})
    ];
    const result=await withResultsTimeout(Promise.all(queries),5500);
-   const [ar,er,rr]=result;
+   const [ar,er,rr,br]=result;
    if(ar.error)throw new Error("Assessment results could not be checked: "+ar.error.message);
    if(er.error)throw new Error("End-of-term results could not be checked: "+er.error.message);
    if(rr.error)throw new Error("Student reports could not be checked: "+rr.error.message);
+   if(br.error)throw new Error("Behaviour records could not be loaded for the report: "+br.error.message);
+   const behaviourRecords=br.data||[];
+   const reportsWithBehaviour=(rr.data||[]).map(report=>({
+     ...report,
+     report_data:{
+       ...(report.report_data||{}),
+       behaviour:{...((report.report_data||{}).behaviour||{}),records:behaviourRecords}
+     }
+   }));
    const ac=new Set((ar.data||[]).map(x=>x.subject_id).filter(Boolean)).size;
    const ec=new Set((er.data||[]).map(x=>x.subject_id).filter(Boolean)).size;
    const aReady=ac>=9, eReady=aReady&&ec>=9;
@@ -880,8 +899,8 @@ async function loadStudentResults(){
    $("assessmentReportMeta").textContent=aReady?`${ac} subjects recorded — report generated automatically.`:`${ac}/9 assessment subjects recorded.`;
    $("endReportStatus").textContent=eReady?"Ready":"Not ready yet";
    $("endReportMeta").textContent=eReady?`${ec} end-term subjects recorded — report generated automatically.`:`Assessment ${ac}/9 · End-term ${ec}/9.`;
-   $("resultReportList").innerHTML=(rr.data||[]).length
-     ? (rr.data||[]).map(renderStudentResultReport).join("")
+   $("resultReportList").innerHTML=reportsWithBehaviour.length
+     ? reportsWithBehaviour.map(renderStudentResultReport).join("")
      : '<div class="card"><div class="empty">No official report is available for this term yet. It will appear automatically when the required marks are recorded.</div></div>';
    if(noticeEl)noticeEl.innerHTML="";
   };
@@ -907,84 +926,124 @@ async function loadStudentResults(){
    // into a whole-dashboard loading/error state.
  }
 }
+function reportGrade(percent){
+ const n=Number(percent);
+ if(!Number.isFinite(n))return "—";
+ if(n>=90)return "A*";
+ if(n>=80)return "A";
+ if(n>=70)return "B";
+ if(n>=60)return "C";
+ if(n>=50)return "D";
+ if(n>=40)return "E";
+ if(n>=30)return "F";
+ return "G";
+}
+function reportDescriptor(grade){
+ return ({'A*':'Outstanding','A':'Excellent','B':'Very Good','C':'Good','D':'Basic','E':'Minimum','F':'Below Competent','G':'Very Limited'})[grade]||'—';
+}
+function reportComment(grade){
+ return ({
+  'A*':'Outstanding achievement. Keep challenging yourself.',
+  'A':'Excellent achievement. Maintain this high standard.',
+  'B':'Very good achievement. Continue strengthening the remaining competencies.',
+  'C':'Good achievement. Continue practising to strengthen more competencies.',
+  'D':'Basic achievement. More practice and support are recommended.',
+  'E':'Minimum achievement. Focused support and more practice are needed.',
+  'F':'Some competencies achieved, but further improvement is required.',
+  'G':'Very limited achievement. Intensive support and practice are required.'
+ })[grade]||'';
+}
 function renderStudentResultReport(r){
- const d=r.report_data||{},b=d.behaviour||{},a=d.attendance||{},subs=Array.isArray(d.subjects)?d.subjects:[];
- const identity = [
-   ["Student", d.student_name],
-   ["Student ID", d.student_id||d.student_number],
-   ["Gender", d.gender],
-   ["Class", d.class||d.class_level],
-   ["Stream", d.stream],
-   ["Email", d.email],
-   ["Term", d.term_name||d.term],
-   ["Academic year", d.academic_year]
- ].filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="");
+ const d=r.report_data||{},b=d.behaviour||{},a=d.attendance||{},subs=Array.isArray(d.subjects)?d.subjects:[],records=Array.isArray(b.records)?b.records:[];
+ const isAssessment=r.report_type==='assessment';
+ const title=isAssessment?'ASSESSMENT REPORT':`END OF TERM ${esc(String(d.term_name||'').replace(/^Term\s*/i,'').trim()||'REPORT')}`;
+ const photo=d.student_photo_url||d.profile_photo_url||d.photo_url||'';
+ const photoHtml=photo?`<img src="${esc(photo)}" alt="Student photo" style="width:82px;height:100px;object-fit:cover;border:1px solid #b9c5d3;border-radius:4px;background:#eef3f9">`:`<div style="width:82px;height:100px;border:1px solid #b9c5d3;background:#eef3f9;display:grid;place-items:center;color:#64748b;font-size:10px;text-align:center">PHOTO<br>NOT AVAILABLE</div>`;
 
- const summary = [
-   ["Average", d.average??d.average_score],
-   ["Class rank", d.rank??d.position??d.class_position],
-   ["Overall grade", d.grade??d.overall_grade],
-   ["Subjects completed", d.subjects_completed??subs.length],
-   ["Attendance", (a.present!==undefined||a.absent!==undefined||a.authorized_absence!==undefined)
-      ? `${a.present||0} present · ${a.absent||0} absent · ${a.authorized_absence||0} authorized` : null],
-   ["Positive behaviour", b.positive_points??b.total_positive??d.total_positive_behavior],
-   ["Negative behaviour", b.negative_points??b.total_negative??d.total_negative_behavior]
- ].filter(x=>x[1]!==undefined&&x[1]!==null&&String(x[1]).trim()!=="");
+ const mapped=subs.map(x=>{
+   const score=isAssessment?Number(x.percentage):Number(x.final_mark);
+   const grade=reportGrade(score);
+   return {...x,computed_grade:grade,computed_descriptor:reportDescriptor(grade),computed_comment:reportComment(grade)};
+ });
+ const rows=mapped.map((x,i)=>isAssessment
+  ? `<tr><td>${i+1}</td><td>${esc(x.subject||'—')}</td><td>${esc(x.mark??'—')}</td><td>${esc(x.max_mark??20)}</td><td><strong>${esc(x.computed_grade)}</strong></td><td>${esc(x.computed_descriptor)}</td><td>${esc(x.computed_comment)}</td></tr>`
+  : `<tr><td>${i+1}</td><td>${esc(x.subject||'—')}</td><td>${esc(x.assessment_mark??'—')}</td><td>${esc(x.end_term_mark??'—')}</td><td><strong>${esc(x.final_mark??'—')}</strong></td><td><strong>${esc(x.computed_grade)}</strong></td><td>${esc(x.computed_descriptor)}</td><td>${esc(x.computed_comment)}</td></tr>`).join('');
+ const head=isAssessment
+  ? '<tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>Max</th><th>Grade</th><th>Descriptor</th><th>Facilitator remark</th></tr>'
+  : '<tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>EOT /80</th><th>Total /100</th><th>Grade</th><th>Descriptor</th><th>Facilitator remark</th></tr>';
 
- const gradeKey = d.grading_key || d.grade_key || [
-   ["A","80–100"],["B","70–79"],["C","50–69"],["D","35–49"],["E","0–34"]
- ];
- const rows=subs.map((s,i)=>r.report_type==="assessment"
-  ? `<tr><td>${i+1}</td><td>${esc(s.subject||"—")}</td><td>${esc(s.mark??"—")}</td><td>${esc(s.max_mark??20)}</td><td>${esc(s.grade??"—")}</td><td>${esc(s.remark??s.remarks??"—")}</td></tr>`
-  : `<tr><td>${i+1}</td><td>${esc(s.subject||"—")}</td><td>${esc(s.assessment_mark??"—")}</td><td>${esc(s.end_term_mark??"—")}</td><td><strong>${esc(s.final_mark??"—")}</strong></td><td>${esc(s.grade??"—")}</td><td>${esc(s.remark??s.remarks??"—")}</td></tr>`).join("");
+ const overallNum=Number(d.average_percentage);
+ const overall=Number.isFinite(overallNum)?overallNum.toFixed(2):'—';
+ const overallGrade=reportGrade(overallNum);
+ const performance=reportDescriptor(overallGrade);
+ const overallComment=reportComment(overallGrade);
+ const positive=Number(b.positive_points||0),negative=Number(b.negative_points||0),net=Number(b.net_points??(positive-negative));
+ const attendanceText=`${Number(a.present||0)} present · ${Number(a.absent||0)} absent · ${Number(a.authorized_absence||0)} authorized`;
 
- const head=r.report_type==="assessment"
-   ? '<tr><th>#</th><th>Subject</th><th>Assessment</th><th>Max</th><th>Grade</th><th>Remark</th></tr>'
-   : '<tr><th>#</th><th>Subject</th><th>Assessment /20</th><th>End Term /80</th><th>Final /100</th><th>Grade</th><th>Remark</th></tr>';
+ const behaviourRows=records.map((x,i)=>{
+   const pts=Number(x.points||0);
+   const type=pts>0?'Positive':pts<0?'Negative':'Neutral';
+   const date=x.behaviour_date||x.recorded_date||'—';
+   return `<tr><td>${i+1}</td><td>${esc(date)}</td><td>${esc(type)}</td><td>${pts>0?'+'+pts:String(pts)}</td><td>${esc(x.grade||'—')}</td><td>${esc(x.comment||'—')}</td></tr>`;
+ }).join('');
 
- const photo=d.student_photo_url||d.profile_photo_url||d.photo_url||"";
- const photoHtml=photo
-   ? `<img src="${esc(photo)}" alt="Student identification photo" style="width:92px;height:112px;object-fit:cover;border-radius:12px;border:1px solid var(--border);background:#eef3f9">`
-   : `<div style="width:92px;height:112px;border-radius:12px;border:1px solid var(--border);background:#eef3f9;display:grid;place-items:center;color:var(--muted);font-size:12px;text-align:center;padding:6px;box-sizing:border-box">Student photo<br>not available</div>`;
+ const identity=`<div class="report-student-grid">
+   <div><span>Student</span><strong>${esc(d.student_name||'—')}</strong></div>
+   <div><span>Student ID</span><strong>${esc(d.student_number||'—')}</strong></div>
+   <div><span>Gender</span><strong>${esc(d.gender||'—')}</strong></div>
+   <div><span>Class</span><strong>${esc(d.class||d.class_level||'—')}</strong></div>
+   <div><span>Stream</span><strong>${esc(d.stream||'—')}</strong></div>
+   <div><span>Term</span><strong>${esc(d.term_name||'—')}</strong></div>
+   <div><span>Academic year</span><strong>${esc(d.academic_year||'—')}</strong></div>
+ </div>`;
 
- const identityHtml=identity.map(x=>`<div><div class="muted">${esc(x[0])}</div><strong>${esc(x[1])}</strong></div>`).join("");
- const summaryHtml=summary.map(x=>`<div class="card" style="box-shadow:none"><div class="muted">${esc(x[0])}</div><strong>${esc(x[1])}</strong></div>`).join("");
- const keyHtml=Array.isArray(gradeKey)
-   ? gradeKey.map(x=>`<span class="pill">${esc(Array.isArray(x)?x[0]:x.label||x.grade||"")} ${esc(Array.isArray(x)?x[1]:x.range||"")}</span>`).join("")
-   : "";
-
- return `<article class="card result-report" style="margin-bottom:18px">
-   <div class="card-head">
-    <div><h2>${r.report_type==="assessment"?"Assessment Report":"End-of-Term Report"}</h2>
-      <div class="muted">Official ACCESS UG student result</div>
-    </div>
-    <button class="btn secondary" onclick="printStudentResult('${esc(r.id)}')">Print / Save PDF</button>
-   </div>
-   <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px">
-     ${photoHtml}
-     <div style="flex:1;min-width:230px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">${identityHtml}</div>
-   </div>
-   ${summaryHtml?`<div class="grid three" style="margin-bottom:18px">${summaryHtml}</div>`:""}
-   ${rows
-      ? `<div class="table-wrap"><table><thead>${head}</thead><tbody>${rows}</tbody></table></div>`
-      : `<div class="empty-state">No subject results are available in this report yet.</div>`}
-   ${d.overall_performance||d.class_teacher_remarks||d.headteacher_remarks
-      ? `<div class="grid two" style="margin-top:18px">
-          ${d.overall_performance?`<div class="interpret"><strong>Overall performance</strong><br>${esc(d.overall_performance)}</div>`:""}
-          ${d.class_teacher_remarks?`<div class="interpret"><strong>Class teacher remarks</strong><br>${esc(d.class_teacher_remarks)}</div>`:""}
-          ${d.headteacher_remarks?`<div class="interpret"><strong>Headteacher remarks</strong><br>${esc(d.headteacher_remarks)}</div>`:""}
-        </div>`:""}
-   ${keyHtml?`<div style="margin-top:18px"><div class="muted" style="margin-bottom:8px"><strong>ABC grade key</strong></div><div class="pill-row">${keyHtml}</div></div>`:""}
+ return `<article class="card result-report official-school-report" data-report-id="${esc(r.id)}">
+  <div class="report-print-actions"><button class="btn secondary" onclick="printStudentResult('${esc(r.id)}')">Print / Save PDF</button></div>
+  <div class="school-report-header">
+    <div class="school-report-name">${esc(d.school_name||'ACCESS UG')}</div>
+    ${d.school_address?`<div>${esc(d.school_address)}</div>`:''}
+    ${d.school_phone?`<div>Tel: ${esc(d.school_phone)}</div>`:''}
+    <div class="school-motto">SMART SCHOOLS • CONNECTED COMMUNITIES</div>
+    <div class="report-title">${title}</div>
+  </div>
+  <div class="report-student-row">${identity}<div class="report-photo">${photoHtml}</div></div>
+  <div class="report-section-label">ACADEMIC PERFORMANCE</div>
+  <div class="table-wrap report-table"><table><thead>${head}</thead><tbody>${rows||'<tr><td colspan="8">No subject results available.</td></tr>'}</tbody></table></div>
+  <div class="report-summary-row">
+    <div><span>AVERAGE SCORE</span><strong>${overall}</strong></div>
+    ${!isAssessment?`<div><span>FORMATIVE /20</span><strong>${d.average_assessment_score!=null?Number(d.average_assessment_score).toFixed(2):'—'}</strong></div><div><span>END TERM /80</span><strong>${d.average_end_term_score!=null?Number(d.average_end_term_score).toFixed(2):'—'}</strong></div>`:''}
+    <div><span>OVERALL PERFORMANCE</span><strong>${esc(performance)}</strong></div>
+  </div>
+  <div class="report-section-label">STUDENT PROGRESS</div>
+  <div class="report-mini-grid">
+    <div><span>Attendance</span><strong>${esc(attendanceText)}</strong></div>
+    <div><span>Positive behaviour points</span><strong class="positive">+${positive}</strong></div>
+    <div><span>Negative behaviour points</span><strong class="negative">-${negative}</strong></div>
+    <div><span>Net behaviour points</span><strong>${net>=0?'+':''}${net}</strong></div>
+  </div>
+  <div class="report-section-label">BEHAVIOUR RECORD</div>
+  <div class="table-wrap report-behaviour-table"><table><thead><tr><th>#</th><th>Date</th><th>Type</th><th>Points</th><th>Grade</th><th>Comment</th></tr></thead><tbody>${behaviourRows||'<tr><td colspan="6">No behaviour records were recorded for this term.</td></tr>'}</tbody></table></div>
+  <div class="report-remarks">
+    <div><strong>Teacher / Facilitator Remark</strong><div>${esc(overallComment)}</div></div>
+    <div><strong>Head Teacher Remark</strong><div>${esc(overallComment)}</div></div>
+  </div>
+  <div class="report-section-label">GRADING SCALE</div>
+  <table class="grading-table"><thead><tr><th>Grade</th><th>A*</th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th><th>F</th><th>G</th></tr></thead><tbody><tr><th>Range</th><td>90–100</td><td>80–89</td><td>70–79</td><td>60–69</td><td>50–59</td><td>40–49</td><td>30–39</td><td>0–29</td></tr></tbody></table>
+  <div class="report-footer">
+    <div><strong>Overall grade:</strong> ${esc(overallGrade)} &nbsp; <strong>Descriptor:</strong> ${esc(performance)}</div>
+    <div><strong>Term:</strong> ${esc(d.term_name||'—')} &nbsp; <strong>Academic year:</strong> ${esc(d.academic_year||'—')}</div>
+    <div><strong>Term dates:</strong> ${esc(d.term_start||'—')} to ${esc(d.term_end||'—')}</div>
+    <div class="muted">Generated automatically by ACCESS UG from the school's recorded student data.</div>
+  </div>
  </article>`;
 }
 window.printStudentResult=function(id){
- const el=document.querySelector('.result-report');if(!el)return;
+ const el=document.querySelector(`.result-report[data-report-id="${CSS.escape(String(id))}"]`)||document.querySelector('.result-report');if(!el)return;
  const w=window.open('','_blank');if(!w)return;
- const clone=el.cloneNode(true);const buttons=clone.querySelectorAll('button');buttons.forEach(b=>b.remove());
- w.document.write('<!doctype html><html><head><title>ACCESS UG Result</title><style>body{font-family:Arial,sans-serif;color:#102a50;padding:28px}table{width:100%;border-collapse:collapse;margin-top:18px}th,td{border:1px solid #cbd6e3;padding:8px;text-align:left}h1,h2{color:#0b2b57}</style></head><body>'+clone.innerHTML+'</body></html>');
+ const clone=el.cloneNode(true);clone.querySelectorAll('button').forEach(b=>b.remove());
+ w.document.write('<!doctype html><html><head><title>ACCESS UG Result</title><style>body{font-family:Arial,sans-serif;color:#182b43;padding:16px;margin:0}*{box-sizing:border-box}.official-school-report{border:0;max-width:none;margin:0;padding:0}.report-print-actions{display:none!important}.school-report-header{text-align:center;border-bottom:1px solid #b9c5d3;padding-bottom:10px;margin-bottom:10px}.school-report-name{font-weight:900;font-size:18px}.school-motto{font-weight:700;margin-top:2px}.report-title{display:inline-block;margin-top:7px;padding:4px 25px;border:1px solid #68788c;border-radius:9px;font-weight:900}.report-student-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}.report-student-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #cbd6e3}.report-student-grid>div{padding:5px 7px;border-right:1px solid #d8e0e8;border-bottom:1px solid #d8e0e8}.report-student-grid span,.report-summary-row span,.report-mini-grid span{display:block;font-size:7px;text-transform:uppercase;color:#617087;font-weight:800}.report-student-grid strong{display:block;margin-top:2px;font-size:9px}.report-photo{width:68px;flex:none}.report-photo img,.report-photo>div{width:68px!important;height:84px!important}.report-section-label{font-weight:900;background:#eef3f8;border:1px solid #cbd6e3;padding:4px 6px;margin-top:7px}.report-table table,.grading-table,.report-behaviour-table table{width:100%;border-collapse:collapse}.report-table th,.report-table td,.grading-table th,.grading-table td,.report-behaviour-table th,.report-behaviour-table td{border:1px solid #cbd6e3;padding:3px 4px;font-size:7px}.report-table th,.grading-table th,.report-behaviour-table th{font-weight:900;background:#f6f8fa}.report-summary-row{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #cbd6e3;margin-top:4px}.report-summary-row>div{padding:4px;border-right:1px solid #d8e0e8}.report-summary-row strong{display:block;font-size:10px;margin-top:1px}.report-mini-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #cbd6e3;border-top:0}.report-mini-grid>div{padding:4px;border-right:1px solid #d8e0e8}.report-mini-grid strong{display:block;margin-top:1px;font-size:8px}.report-remarks{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd6e3;border-top:0}.report-remarks>div{padding:5px;border-right:1px solid #d8e0e8;min-height:36px;font-size:7px}.report-remarks>div:last-child{border-right:0}.report-remarks div div{margin-top:3px;line-height:1.3}.report-footer{display:grid;gap:2px;margin-top:6px;font-size:7px}@page{size:A4;margin:8mm}@media print{body{padding:0}.official-school-report{page-break-inside:auto}.official-school-report tr{page-break-inside:avoid;break-inside:avoid}}</style></head><body>'+clone.outerHTML+'</body></html>');
  w.document.close();w.focus();w.print();
 };
-
 async function loadAll(){
  /*
   * Load every section independently.
