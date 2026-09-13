@@ -935,10 +935,55 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 }
 </style>
 
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<style id="accessug-account-setup-styles">
+.account-setup-modal{display:none;position:fixed;inset:0;z-index:99999;background:rgba(4,18,42,.72);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px}
+.account-setup-modal.show{display:flex}
+.account-setup-card{width:min(500px,100%);max-height:92vh;overflow:auto;background:#fff;border:1px solid #dce5f2;border-radius:22px;box-shadow:0 30px 90px rgba(5,25,60,.32);padding:28px}
+.account-setup-badge{width:48px;height:48px;border-radius:14px;background:#eaf1ff;color:#1559b7;display:grid;place-items:center;font-size:22px;margin-bottom:16px}
+.account-setup-card h3{margin:0 0 8px;color:#102a50;font-size:22px}
+.account-setup-card>p{margin:0 0 22px;color:#65758b;font-size:13px;line-height:1.55}
+.account-setup-group{margin-bottom:15px}
+.account-setup-group label{display:block;color:#405673;font-size:12px;font-weight:800;margin:0 0 6px}
+.account-setup-group input{width:100%;border:1px solid #d7e0ec;border-radius:11px;padding:12px 13px;background:#fff;color:#13233a;outline:none}
+.account-setup-group input:focus{border-color:#4b82cf;box-shadow:0 0 0 3px rgba(40,100,190,.1)}
+.account-setup-hint{font-size:11px;color:#8190a4;margin-top:5px}
+.account-setup-status{min-height:18px;margin:8px 0 12px;font-size:12px;color:#a8322e}
+.account-setup-status.ok{color:#117052}
+.account-setup-btn{width:100%;border:0;border-radius:11px;padding:13px 16px;background:#1559b7;color:#fff;font-weight:800;cursor:pointer}
+.account-setup-btn:hover{background:#0d4798}
+.account-setup-btn:disabled{opacity:.65;cursor:not-allowed}
+</style>
+
 </head>
 
 <body>
+
+<div id="accountSetupModal" class="account-setup-modal" aria-hidden="true">
+  <div class="account-setup-card" role="dialog" aria-modal="true" aria-labelledby="accountSetupTitle">
+    <div class="account-setup-badge">🔐</div>
+    <h3 id="accountSetupTitle">Secure Your ACCESS UG Account</h3>
+    <p id="accountSetupDescription">Before you continue, create your own username and a new password. This is required for your first secure login.</p>
+    <form id="accountSetupForm" novalidate>
+      <div class="account-setup-group">
+        <label for="accountSetupUsername">New Username</label>
+        <input id="accountSetupUsername" type="text" autocomplete="username" maxlength="40" placeholder="Enter your new username" required>
+        <div class="account-setup-hint">3–40 characters: letters, numbers, dot, underscore or hyphen.</div>
+      </div>
+      <div class="account-setup-group">
+        <label for="accountSetupPassword">New Password</label>
+        <input id="accountSetupPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Enter a new password" required>
+      </div>
+      <div class="account-setup-group">
+        <label for="accountSetupConfirm">Confirm New Password</label>
+        <input id="accountSetupConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter your new password" required>
+      </div>
+      <div id="accountSetupStatus" class="account-setup-status"></div>
+      <button id="accountSetupButton" class="account-setup-btn" type="submit">Save &amp; Continue</button>
+    </form>
+  </div>
+</div>
+
 
 <div class="site-background">
 
@@ -1108,16 +1153,17 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
                         <div class="form-group">
 
                             <label for="email">
-                                Email Address
+                                Username / Email / Phone
                             </label>
 
                             <div class="input-box">
 
                                 <input
                                     id="email"
-                                    type="email"
-                                    placeholder="Enter your email"
-                                    autocomplete="email"
+                                    type="text"
+                                    inputmode="text"
+                                    placeholder="Username, email, or parent phone"
+                                    autocomplete="username"
                                     required
                                 >
 
@@ -1283,25 +1329,41 @@ if (loginForm && loginButton) {
             /*
              * STEP 1 — Authenticate with Supabase Auth.
              */
-            const { data: authData, error: authError } =
-                await supabaseClient.auth.signInWithPassword({
-                    email,
+            let loginResult = null;
+            let loginError = null;
+            // Existing email logins use Supabase directly first.
+            if (email.includes("@")) {
+                const direct = await supabaseClient.auth.signInWithPassword({
+                    email: email.toLowerCase(),
                     password
                 });
-
-            if (authError) {
-                throw new Error(authError.message);
+                if (!direct.error && direct.data?.session && direct.data?.user) {
+                    loginResult = {
+                        session: direct.data.session,
+                        user: direct.data.user,
+                        email: direct.data.user.email
+                    };
+                } else {
+                    loginError = direct.error;
+                }
             }
-
-            if (!authData?.user || !authData?.session) {
-                throw new Error(
-                    "Login succeeded, but no active session was created."
+            // Usernames and parent phone numbers are resolved by the
+            // identifier function; email also falls back here.
+            if (!loginResult) {
+                const r = await supabaseClient.functions.invoke(
+                    "login-with-identifier",
+                    { body: { identifier: email, password } }
                 );
+                loginError = r.error;
+                loginResult = r.data;
             }
-
-            const user = authData.user;
-            const authenticatedEmail =
-                String(user.email || email).trim().toLowerCase();
+            if (loginError) throw new Error(loginError.message || "Login failed. Please check your credentials.");
+            if (loginResult?.error) throw new Error(loginResult.error);
+            if (!loginResult?.session || !loginResult?.user) throw new Error("Login succeeded, but no active session was created.");
+            const { data: sessionData, error: sessionError } = await supabaseClient.auth.setSession({ access_token: loginResult.session.access_token, refresh_token: loginResult.session.refresh_token });
+            if (sessionError || !sessionData?.user) throw new Error(sessionError?.message || "Could not establish the ACCESS UG session.");
+            const user = sessionData.user;
+            const authenticatedEmail = String(loginResult.email || user.email || email).trim().toLowerCase();
 
             /*
              * =========================================================
@@ -1312,6 +1374,16 @@ if (loginForm && loginButton) {
              * tables, then route to the correct dashboard.
              */
             let detectedRole = selectedRole;
+            if (detectedRole === "auto") {
+                const profileCheckFirst = await supabaseClient
+                    .from("profiles")
+                    .select("id,full_name,role")
+                    .eq("id", user.id)
+                    .maybeSingle();
+                if (!profileCheckFirst.error && profileCheckFirst.data?.role) {
+                    detectedRole = String(profileCheckFirst.data.role).trim().toLowerCase();
+                }
+            }
             if (detectedRole === "auto") {
                 const schoolCheck = await supabaseClient
                     .from("schools")
@@ -1467,6 +1539,7 @@ if (loginForm && loginButton) {
                  * Supabase has already persisted the authenticated session.
                  * Do not append access/refresh tokens to the HTML filename.
                  */
+                await window.accessugAccountSetupGate("teacher");
                 window.location.replace("./teacher-dashboard.html");
                 return;
             }
@@ -1546,6 +1619,7 @@ if (loginForm && loginButton) {
                     );
                 }
 
+                await window.accessugAccountSetupGate("student");
                 window.location.replace("./student-dashboard.html");
                 return;
             }
@@ -1605,6 +1679,7 @@ if (loginForm && loginButton) {
                 }
 
                 // Parent opens the same student dashboard, but in read-only parent mode.
+                await window.accessugAccountSetupGate("parent");
                 window.location.replace("./student-dashboard.html");
                 return;
             }
@@ -1651,6 +1726,7 @@ if (loginForm && loginButton) {
                 localStorage.setItem("accessug_school_id", String(school.id));
                 localStorage.setItem("accessug_school_name", school.name || "");
 
+                await window.accessugAccountSetupGate("school");
                 window.location.replace("./school-dashboard.html");
                 return;
             }
@@ -1748,6 +1824,85 @@ if (loginForm && loginButton) {
         }
     });
 }
+</script>
+
+<script id="accessug-account-setup-gate">
+(function(){
+  const modal=document.getElementById("accountSetupModal");
+  const form=document.getElementById("accountSetupForm");
+  const usernameInput=document.getElementById("accountSetupUsername");
+  const passwordInput=document.getElementById("accountSetupPassword");
+  const confirmInput=document.getElementById("accountSetupConfirm");
+  const status=document.getElementById("accountSetupStatus");
+  const button=document.getElementById("accountSetupButton");
+  let active=false;
+  let pendingResolve=null;
+
+  function showStatus(message,ok=false){
+    if(!status)return;
+    status.textContent=message||"";
+    status.className="account-setup-status"+(ok?" ok":"");
+  }
+
+  function openModal(){
+    if(!modal)return;
+    active=true;
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden","false");
+    showStatus("");
+    usernameInput.value="";
+    passwordInput.value="";
+    confirmInput.value="";
+    setTimeout(()=>usernameInput?.focus(),60);
+  }
+
+  async function gate(role){
+    if(!role || role==="administrator" || role==="admin") return;
+    const check=await supabaseClient.functions.invoke("complete-account-setup-v2",{body:{action:"status"}});
+    if(check.error) throw new Error(check.error.message||"Could not verify your account setup.");
+    if(check.data?.error) throw new Error(check.data.error);
+    if(!check.data?.needs_setup) return;
+
+    openModal();
+    return await new Promise((resolve,reject)=>{
+      pendingResolve={resolve,reject};
+    });
+  }
+
+  form?.addEventListener("submit",async function(e){
+    e.preventDefault();
+    if(!active || !pendingResolve || button.disabled) return;
+    const username=usernameInput.value.trim();
+    const password=passwordInput.value;
+    const confirm=confirmInput.value;
+    if(!username){showStatus("Please enter a new username.");usernameInput.focus();return;}
+    if(!/^[A-Za-z0-9._-]{3,40}$/.test(username)){showStatus("Username must be 3–40 characters and may contain only letters, numbers, dot, underscore or hyphen.");usernameInput.focus();return;}
+    if(password.length<8){showStatus("Password must be at least 8 characters.");passwordInput.focus();return;}
+    if(password!==confirm){showStatus("The new passwords do not match.");confirmInput.focus();return;}
+
+    button.disabled=true;
+    button.textContent="Saving…";
+    showStatus("Updating your secure account…",true);
+    try{
+      const r=await supabaseClient.functions.invoke("complete-account-setup-v2",{body:{action:"complete",username,password,confirm_password:confirm}});
+      if(r.error) throw new Error(r.error.message||"Could not save your new account details.");
+      if(r.data?.error) throw new Error(r.data.error);
+      if(!r.data?.ok) throw new Error("Your account setup could not be completed.");
+      try{await supabaseClient.auth.refreshSession();}catch(_){ }
+      active=false;
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden","true");
+      const done=pendingResolve; pendingResolve=null;
+      done?.resolve(true);
+    }catch(err){
+      showStatus(err?.message||"Could not save your new account details.");
+      button.disabled=false;
+      button.textContent="Save & Continue";
+    }
+  });
+
+  window.accessugAccountSetupGate=gate;
+})();
 </script>
 
 </body>

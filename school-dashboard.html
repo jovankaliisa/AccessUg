@@ -208,9 +208,15 @@ function openStudentModal(){clearMessage('studentMessage');document.getElementBy
 function closeStudentModal(){document.getElementById('studentModal').classList.remove('show');clearMessage('studentMessage');}
 async function loadSchoolStudentClasses(){const cls=document.getElementById('studentClass');try{const r=await supabaseClient.from('classes').select('id,name,level,stream,academic_year,status').eq('school_id',schoolId).order('academic_year',{ascending:false}).order('level').order('stream');if(r.error)throw r.error;cls.innerHTML='<option value="">Select a class / stream</option>'+(r.data||[]).filter(x=>!x.status||String(x.status).toLowerCase()==='active').map(x=>`<option value="${x.id}">${String(x.name||([x.level,x.stream].filter(Boolean).join(' '))) }${x.academic_year?' — '+x.academic_year:''}</option>`).join('');cls.disabled=false;}catch(e){cls.innerHTML='<option value="">Unable to load classes</option>';notify('Could not load classes: '+e.message,'err');}}
 
-document.getElementById('teacherForm')?.addEventListener('submit',async function(e){e.preventDefault();clearMessage('teacherMessage');const btn=document.getElementById('saveTeacherBtn');btn.disabled=true;btn.textContent='Creating teacher account…';try{const plan=getTeacherAssignmentsFromForm();const subjectNames=[...new Set(plan.flatMap(p=>p.subjectIds.map(id=>subjectDisplayName(teacherAvailableSubjects.find(s=>String(s.id)===String(id))))))];const body={type:'teacher',school_id:schoolId,first_name:document.getElementById('teacherFirstName').value.trim(),last_name:document.getElementById('teacherLastName').value.trim(),gender:document.getElementById('teacherGender').value||null,date_of_birth:document.getElementById('teacherDob').value||null,phone:document.getElementById('teacherPhone').value.trim()||null,employee_number:document.getElementById('teacherEmployeeNumber').value.trim()||null,subject:subjectNames.join(', '),address:document.getElementById('teacherAddress').value.trim()||null};const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);const teacherId=r.data?.record?.id;if(!teacherId)throw new Error('Teacher account was created but no teacher record ID was returned.');const rows=plan.flatMap(p=>p.subjectIds.map(subjectId=>{const c=teacherAvailableClasses.find(x=>String(x.id)===String(p.classId));return {teacher_id:teacherId,class_id:p.classId,subject_id:subjectId,academic_year:c?.academic_year||new Date().getFullYear(),status:'active'}}));const ar=await supabaseClient.from('teacher_class_assignments').insert(rows);if(ar.error)throw new Error('Teacher was created, but assignments could not be saved: '+ar.error.message);showMessage('teacherMessage',`✓ ${body.first_name} ${body.last_name} registered successfully with ${rows.length} class/subject assignments. Login credentials were generated automatically.`,'ok');await Promise.all([loadTeachers(),loadNotifications()]);renderTeachers();renderInbox();setTimeout(closeTeacherModal,900)}catch(err){showMessage('teacherMessage','Could not save teacher: '+(err.message||err),'error')}finally{btn.disabled=false;btn.textContent='Save Teacher & Assignments'}});
+function accessugUsernameSuggestions(first,last){const clean=v=>String(v||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]/g,'');const f=clean(first).toLowerCase(),l=clean(last).toLowerCase();if(!f||!l)return [];return [...new Set([`${f}.${l}`,`${f}${l}`,`${f[0]}${l}`,`${l}.${f}`])].slice(0,2);}
+function wireUsernameSuggestions(firstId,lastId,inputId,suggestionsId){const update=()=>{const a=accessugUsernameSuggestions(document.getElementById(firstId)?.value,document.getElementById(lastId)?.value);const input=document.getElementById(inputId),box=document.getElementById(suggestionsId);if(!a.length){if(box)box.textContent='Enter first and last name to generate suggestions.';return;}if(box)box.innerHTML=a.map(x=>`<button type="button" class="secondary" style="margin:3px" data-username-choice="${x}">${x}</button>`).join('');if(input&&!input.value.trim())input.value=a[0];box?.querySelectorAll('[data-username-choice]').forEach(b=>b.onclick=()=>{if(input)input.value=b.dataset.usernameChoice;});};[firstId,lastId].forEach(id=>document.getElementById(id)?.addEventListener('input',update));update();}
+function wireParentUsernameSuggestions(nameId,inputId,suggestionsId){const update=()=>{const raw=String(document.getElementById(nameId)?.value||'').trim();const words=raw.split(/\s+/).filter(Boolean);const box=document.getElementById(suggestionsId);const input=document.getElementById(inputId);if(words.length<2){if(box)box.textContent='Enter the parent / guardian first and last name to generate suggestions.';return;}const clean=v=>String(v||'').normalize("NFD").replace(/[\u0300-\u036f]/g,'').replace(/[^A-Za-z0-9]/g,'').toLowerCase();const first=clean(words[0]),last=clean(words[words.length-1]);const a=[`${first}.${last}`,`${first}${last}`];if(box)box.innerHTML=a.map(x=>`<button type="button" class="secondary" style="margin:3px" data-username-choice="${x}">${x}</button>`).join('');if(input&&!input.value)input.value=a[0]||'';box?.querySelectorAll('[data-username-choice]').forEach(b=>b.onclick=()=>{if(input)input.value=b.dataset.usernameChoice;});};document.getElementById(nameId)?.addEventListener('input',update);update();}
+function wireUsernameSuggestions(firstId,lastId,inputId,suggestionsId){const update=()=>{const a=accessugUsernameSuggestions(document.getElementById(firstId)?.value,document.getElementById(lastId)?.value);const box=document.getElementById(suggestionsId);const input=document.getElementById(inputId);if(box)box.innerHTML=a.length?a.map(x=>`<button type="button" class="secondary" style="margin:3px" data-username-choice="${x}">${x}</button>`).join(''):'Enter first and last name to generate suggestions.';if(input&&!input.value&&a.length)input.value=a[0];box?.querySelectorAll('[data-username-choice]').forEach(b=>b.onclick=()=>{if(input)input.value=b.dataset.usernameChoice;});};[firstId,lastId].forEach(id=>document.getElementById(id)?.addEventListener('input',update));update();}
+wireUsernameSuggestions('teacherFirstName','teacherLastName','teacherUsername','teacherUsernameSuggestions');wireUsernameSuggestions('studentFirstName','studentLastName','studentUsername','studentUsernameSuggestions');
+wireParentUsernameSuggestions('studentParentName','studentParentUsername','studentParentUsernameSuggestions');
+document.getElementById('teacherForm')?.addEventListener('submit',async function(e){e.preventDefault();e.stopPropagation();clearMessage('teacherMessage');const btn=document.getElementById('saveTeacherBtn');btn.disabled=true;btn.textContent='Creating teacher account…';try{const plan=getTeacherAssignmentsFromForm();const subjectNames=[...new Set(plan.flatMap(p=>p.subjectIds.map(id=>subjectDisplayName(teacherAvailableSubjects.find(s=>String(s.id)===String(id))))))];const body={type:'teacher',school_id:schoolId,username:document.getElementById('teacherUsername').value.trim(),first_name:document.getElementById('teacherFirstName').value.trim(),last_name:document.getElementById('teacherLastName').value.trim(),gender:document.getElementById('teacherGender').value||null,date_of_birth:document.getElementById('teacherDob').value||null,phone:document.getElementById('teacherPhone').value.trim()||null,employee_number:document.getElementById('teacherEmployeeNumber').value.trim()||null,subject:subjectNames.join(', '),address:document.getElementById('teacherAddress').value.trim()||null};if(!body.first_name||!body.last_name)throw new Error('Teacher first name and last name are required.');if(!body.username)throw new Error('Teacher username is required.');const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);const teacherId=r.data?.record_id||r.data?.record?.id||r.data?.record;if(!teacherId)throw new Error('Teacher account was created but no teacher record ID was returned.');const rows=plan.flatMap(p=>p.subjectIds.map(subjectId=>{const c=teacherAvailableClasses.find(x=>String(x.id)===String(p.classId));return {teacher_id:teacherId,class_id:p.classId,subject_id:subjectId,academic_year:c?.academic_year||new Date().getFullYear(),status:'active'}}));const ar=await supabaseClient.from('teacher_class_assignments').insert(rows);if(ar.error)throw new Error('Teacher was created, but assignments could not be saved: '+ar.error.message);showMessage('teacherMessage',`✓ ${body.first_name} ${body.last_name} registered successfully with ${rows.length} class/subject assignments.\nUsername: ${r.data?.username||body.username}\nEmail: ${r.data?.teacher_email||'—'}\nPassword: ${r.data?.teacher_password||'—'}`,'ok');Promise.all([loadTeachers(),loadNotifications()]).then(()=>{renderTeachers();renderInbox()}).catch(err=>console.warn('Post-registration refresh:',err))}catch(err){showMessage('teacherMessage','Could not save teacher: '+(err.message||err),'error')}finally{btn.disabled=false;btn.textContent='Save Teacher & Assignments'}});
 
-document.getElementById('studentForm')?.addEventListener('submit',async function(e){e.preventDefault();clearMessage('studentMessage');const btn=document.getElementById('saveStudentBtn');btn.disabled=true;btn.textContent='Creating student & parent accounts…';try{const classId=document.getElementById('studentClass').value;if(!classId)throw new Error('Select a class / stream.');const c=(await supabaseClient.from('classes').select('id,name,level,stream,academic_year').eq('id',classId).eq('school_id',schoolId).maybeSingle());if(c.error)throw c.error;if(!c.data)throw new Error('Selected class does not belong to this school.');const body={type:'student',school_id:schoolId,first_name:document.getElementById('studentFirstName').value.trim(),last_name:document.getElementById('studentLastName').value.trim(),gender:document.getElementById('studentGender').value||null,date_of_birth:document.getElementById('studentDob').value||null,student_number:null,class_id:classId,class_level:classDisplayName(c.data),parent_name:document.getElementById('studentParentName').value.trim(),parent_phone:document.getElementById('studentParentPhone').value.trim()||null,parent_email:document.getElementById('studentParentEmail').value.trim()||null,parent_password:document.getElementById('studentParentPassword').value||null,address:document.getElementById('studentAddress').value.trim()||null};if(!body.first_name||!body.last_name)throw new Error('Student first name and last name are required.');if(!body.parent_name)throw new Error('Parent / guardian first and last name are required.');if(!body.parent_email)throw new Error('Parent / guardian email is required.');if(!body.parent_password||body.parent_password.length<6)throw new Error('Parent / guardian password must be at least 6 characters.');const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);showMessage('studentMessage',`✓ ${body.first_name} ${body.last_name} registered successfully. Student, parent and login credentials were generated automatically.`,'ok');await Promise.all([loadStudents(),loadNotifications()]);renderStudents();renderInbox();setTimeout(closeStudentModal,900)}catch(err){showMessage('studentMessage','Could not save student: '+(err.message||err),'error')}finally{btn.disabled=false;btn.textContent='Save Student'}});
+document.getElementById('studentForm')?.addEventListener('submit',async function(e){e.preventDefault();e.stopPropagation();clearMessage('studentMessage');const btn=document.getElementById('saveStudentBtn');btn.disabled=true;btn.textContent='Creating student & parent accounts…';try{const classId=document.getElementById('studentClass').value;if(!classId)throw new Error('Select a class / stream.');const c=(await supabaseClient.from('classes').select('id,name,level,stream,academic_year').eq('id',classId).eq('school_id',schoolId).maybeSingle());if(c.error)throw c.error;if(!c.data)throw new Error('Selected class does not belong to this school.');const body={type:'student',school_id:schoolId,username:document.getElementById('studentUsername').value.trim(),first_name:document.getElementById('studentFirstName').value.trim(),last_name:document.getElementById('studentLastName').value.trim(),gender:document.getElementById('studentGender').value||null,date_of_birth:document.getElementById('studentDob').value||null,student_number:null,class_id:classId,class_level:classDisplayName(c.data),parent_name:document.getElementById('studentParentName').value.trim(),parent_username:document.getElementById('studentParentUsername').value.trim(),parent_phone:document.getElementById('studentParentPhone').value.trim()||null,parent_email:document.getElementById('studentParentEmail').value.trim()||null,parent_password:document.getElementById('studentParentPassword').value||null,address:document.getElementById('studentAddress').value.trim()||null};if(!body.first_name||!body.last_name)throw new Error('Student first name and last name are required.');if(!body.username)throw new Error('Student username is required.');if(!body.parent_name)throw new Error('Parent / guardian first and last name are required.');if(!body.parent_username)throw new Error('Parent / guardian username is required.');if(!body.parent_phone)throw new Error('Parent / guardian phone is required for parent login.');if(!body.parent_email)throw new Error('Parent / guardian email is required.');if(!body.parent_password||body.parent_password.length<6)throw new Error('Parent / guardian password must be at least 6 characters.');const r=await supabaseClient.functions.invoke('school-register-user',{body});if(r.error)throw new Error(r.error.message);if(r.data?.error)throw new Error(r.data.error);const studentId=r.data?.record_id||r.data?.record?.id||r.data?.record;if(!studentId)throw new Error('Student account was created but no student record ID was returned.');showMessage('studentMessage',`✓ ${body.first_name} ${body.last_name} registered successfully.\nStudent username: ${r.data?.student_username||body.username}\nStudent email: ${r.data?.student_email||'—'}\nStudent password: ${r.data?.student_password||'—'}\nParent phone login: ${body.parent_phone}\nParent username: ${r.data?.parent_username||body.parent_username}\nParent email: ${r.data?.parent_email||'—'}\nParent password: ${r.data?.parent_password||'—'}`,'ok');Promise.all([loadStudents(),loadNotifications()]).then(()=>{renderStudents();renderInbox()}).catch(err=>console.warn('Post-registration refresh:',err))}catch(err){showMessage('studentMessage','Could not save student: '+(err.message||err),'error')}finally{btn.disabled=false;btn.textContent='Save Student'}});
 
 document.getElementById('teacherModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeTeacherModal()});document.getElementById('studentModal')?.addEventListener('click',e=>{if(e.target===e.currentTarget)closeStudentModal()});
 async function withTimeout(promise, ms=5000, label='Request'){
@@ -442,7 +448,7 @@ setTimeout(()=>{if($('topEmail')?.textContent==='Loading...'){notice('dashNotice
   stage?.addEventListener('pointerup',()=>dragging=false);stage?.addEventListener('pointercancel',()=>dragging=false);
   stage?.addEventListener('wheel',e=>{if(!cropImage)return;e.preventDefault();cropScale=Math.min(3.5,Math.max(.5,cropScale+(e.deltaY<0?.05:-.05)));zoom.value=cropScale;drawCrop()},{passive:false});
   $('removeProfileBtn')?.addEventListener('click',async()=>{const btn=$('removeProfileBtn');if(btn)btn.disabled=true;status('Removing photo…');try{const old=oldAvatarUrl||currentUser?.user_metadata?.avatar_url||'';const u=await SB.auth.updateUser({data:{avatar_url:null}});if(u.error)throw u.error;currentUser=u.data.user;if(old){const marker='/storage/v1/object/public/avatars/';const i=old.indexOf(marker);if(i>=0){const p=decodeURIComponent(old.slice(i+marker.length).split('?')[0]);if(p)await SB.storage.from('avatars').remove([p])}}render(await getIdentity());status('Profile photo removed.','ok')}catch(e){status('Could not remove photo: '+(e.message||'Please try again.'),'error')}finally{if(btn)btn.disabled=false}});
-  $('changePasswordBtn')?.addEventListener('click',async()=>{const a=$('newPassword')?.value||'',b=$('confirmPassword')?.value||'',btn=$('changePasswordBtn');if(a.length<8){status('Password must be at least 8 characters.','error');return}if(a!==b){status('The passwords do not match.','error');return}if(btn){btn.disabled=true;btn.textContent='Updating…'}status('Updating your secure password…');try{const r=await SB.auth.updateUser({password:a});if(r.error)throw r.error;$('newPassword').value='';$('confirmPassword').value='';status('Password updated successfully. Your next login will use the new password.','ok')}catch(e){status('Password update failed: '+(e.message||'Please try again.'),'error')}finally{if(btn){btn.disabled=false;btn.textContent='Update password'}}});
+  $('changePasswordBtn')?.addEventListener('click',async()=>{const a=$('newPassword')?.value||'',b=$('confirmPassword')?.value||'',btn=$('changePasswordBtn');if(a.length<8){status('Password must be at least 8 characters.','error');return}if(a!==b){status('The passwords do not match.','error');return}if(btn){btn.disabled=true;btn.textContent='Updating…'}status('Updating your secure password…');try{const r=await SB.auth.updateUser({password:a,data:{...(currentUser?.user_metadata||{}),force_password_change:false}});if(r.error)throw r.error;$('newPassword').value='';$('confirmPassword').value='';status('Password updated successfully. Your next login will use the new password.','ok')}catch(e){status('Password update failed: '+(e.message||'Please try again.'),'error')}finally{if(btn){btn.disabled=false;btn.textContent='Update password'}}});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(cropModal?.classList.contains('show'))closeCrop();else if(modal.classList.contains('show'))closeProfile()}});
   // Initialize the visible avatar immediately; profile loading never blocks the dashboard.
   void refreshProfile();
@@ -476,6 +482,15 @@ setTimeout(()=>{if($('topEmail')?.textContent==='Loading...'){notice('dashNotice
                 <div class="field">
                     <label>Last Name *</label>
                     <input id="teacherLastName" required>
+                </div>
+                <div class="field">
+                    <label>Username *</label>
+                    <input id="teacherUsername" required autocomplete="off">
+                    <div class="fees-help">Type a username or choose one of the two suggestions generated from the name.</div>
+                </div>
+                <div class="field">
+                    <label>Username suggestions</label>
+                    <div id="teacherUsernameSuggestions" class="fees-help">Enter first and last name to generate suggestions.</div>
                 </div>
                 <div class="field">
                     <label>Gender</label>
@@ -563,6 +578,15 @@ setTimeout(()=>{if($('topEmail')?.textContent==='Loading...'){notice('dashNotice
                     <input id="studentLastName" required>
                 </div>
                 <div class="field">
+                    <label>Username *</label>
+                    <input id="studentUsername" required autocomplete="off">
+                    <div class="fees-help">Type a username or choose one of the two suggestions generated from the name.</div>
+                </div>
+                <div class="field">
+                    <label>Username suggestions</label>
+                    <div id="studentUsernameSuggestions" class="fees-help">Enter first and last name to generate suggestions.</div>
+                </div>
+                <div class="field">
                     <label>Gender</label>
                     <select id="studentGender">
                         <option value="">Select gender</option>
@@ -593,20 +617,26 @@ setTimeout(()=>{if($('topEmail')?.textContent==='Loading...'){notice('dashNotice
                     </select>
                 </div>
                 <div class="field">
-                    <label>Parent / Guardian Name</label>
-                    <input id="studentParentName">
+                    <label>Parent / Guardian Name *</label>
+                    <input id="studentParentName" required>
                 </div>
                 <div class="field">
-                    <label>Parent / Guardian Phone</label>
-                    <input id="studentParentPhone" type="tel">
+                    <label>Parent / Guardian Username *</label>
+                    <input id="studentParentUsername" required autocomplete="off" placeholder="Create a parent username">
+                    <div class="fees-help">Choose one of the two suggestions generated from the parent / guardian name, or type your own unique username. If email/password are left blank, ACCESS UG generates them from this username.</div>
+                    <div id="studentParentUsernameSuggestions" class="fees-help">Enter the parent / guardian first and last name to generate suggestions.</div>
                 </div>
                 <div class="field">
-                    <label>Parent / Guardian Email *</label>
-                    <input id="studentParentEmail" type="email" required>
+                    <label>Parent / Guardian Phone *</label>
+                    <input id="studentParentPhone" type="tel" required>
                 </div>
                 <div class="field">
-                    <label>Parent / Guardian Password *</label>
-                    <input id="studentParentPassword" type="password" minlength="6" autocomplete="new-password" placeholder="At least 6 characters" required>
+                    <label>Parent / Guardian Email</label>
+                    <input id="studentParentEmail" type="email" autocomplete="email" placeholder="Optional — generated from parent username if blank">
+                </div>
+                <div class="field">
+                    <label>Parent / Guardian Password</label>
+                    <input id="studentParentPassword" type="password" minlength="6" autocomplete="new-password" placeholder="Optional — generated from parent username if blank">
                 </div>
                 <div class="field">
                     <label>Address</label>
@@ -697,4 +727,132 @@ $('schoolQrRefresh')?.addEventListener('click',loadSchoolQr);
     if(studentBtn){studentBtn.onclick=e=>{e.preventDefault();e.stopPropagation();openStudentModal();};}
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',bind,{once:true}); else bind();
-})();</script></body></html>
+})();</script><script id="accessug-registration-submit-fix-v2">
+(()=>{
+  // Registration-only fix: intercept the two registration forms in capture phase.
+  // This prevents the browser/default form submission from navigating away from the modal.
+  const install=()=>{
+    const studentForm=document.getElementById('studentForm');
+    const teacherForm=document.getElementById('teacherForm');
+
+    const invokeSchoolRegistration=async body=>{
+      const auth=await supabaseClient.auth.getSession();
+      if(auth.error) throw auth.error;
+      if(!auth.data?.session?.access_token) throw new Error('Your school session has expired. Please sign in again.');
+      const response=await fetch(`${SUPABASE_URL}/functions/v1/school-register-user`,{
+        method:'POST',
+        headers:{
+          Authorization:`Bearer ${auth.data.session.access_token}`,
+          apikey:SUPABASE_PUBLISHABLE_KEY,
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify(body)
+      });
+      let data=null;
+      try{data=await response.json();}catch(_){data=null;}
+      if(!response.ok) throw new Error(data?.error||`Registration service returned HTTP ${response.status}.`);
+      return {data,error:null};
+    };
+
+    const studentSubmit=async e=>{
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+      const btn=document.getElementById('saveStudentBtn');
+      if(!btn || btn.dataset.accessugBusy==='1') return;
+      btn.dataset.accessugBusy='1'; btn.disabled=true; btn.textContent='Saving student…';
+      clearMessage('studentMessage');
+      try{
+        const classId=document.getElementById('studentClass')?.value||'';
+        if(!classId) throw new Error('Select a class / stream.');
+        const first=document.getElementById('studentFirstName')?.value.trim()||'';
+        const last=document.getElementById('studentLastName')?.value.trim()||'';
+        const username=document.getElementById('studentUsername')?.value.trim()||'';
+        const parentName=document.getElementById('studentParentName')?.value.trim()||'';
+        const parentUsername=document.getElementById('studentParentUsername')?.value.trim()||'';
+        const parentPhone=document.getElementById('studentParentPhone')?.value.trim()||'';
+        const parentEmail=document.getElementById('studentParentEmail')?.value.trim()||'';
+        const parentPassword=document.getElementById('studentParentPassword')?.value||'';
+        if(!first||!last) throw new Error('Student first name and last name are required.');
+        if(!username) throw new Error('Student username is required.');
+        if(!parentName) throw new Error('Parent / guardian name is required.');
+        if(!parentUsername) throw new Error('Parent / guardian username is required.');
+        if(!parentPhone) throw new Error('Parent / guardian phone is required.');
+        if((parentEmail && !parentPassword) || (!parentEmail && parentPassword)) throw new Error('Enter both parent / guardian email and password, or leave both blank so ACCESS UG can generate them.');
+        if(parentPassword && parentPassword.length<6) throw new Error('Parent / guardian password must be at least 6 characters.');
+
+        const cls=await supabaseClient.from('classes').select('id,name,level,stream,academic_year').eq('id',classId).eq('school_id',schoolId).maybeSingle();
+        if(cls.error) throw cls.error;
+        if(!cls.data) throw new Error('Selected class does not belong to this school.');
+
+        const body={type:'student',school_id:schoolId,username,first_name:first,last_name:last,
+          gender:document.getElementById('studentGender')?.value||null,
+          date_of_birth:document.getElementById('studentDob')?.value||null,
+          student_number:null,class_id:classId,class_level:classDisplayName(cls.data),
+          parent_name:parentName,parent_username:parentUsername,parent_phone:parentPhone,
+          parent_email:parentEmail,parent_password:parentPassword,
+          address:document.getElementById('studentAddress')?.value.trim()||null};
+
+        const r=await invokeSchoolRegistration(body);
+        if(r.error) throw new Error(r.error.message||'The registration service could not be reached.');
+        if(r.data?.error) throw new Error(r.data.error);
+        const studentId=r.data?.record_id||r.data?.record?.id||r.data?.record;
+        if(!studentId) throw new Error('The registration service did not return the new student record.');
+
+        showMessage('studentMessage',`✓ ${first} ${last} registered successfully.\nStudent username: ${r.data?.student_username||username}\nStudent email: ${r.data?.student_email||'—'}\nStudent password: ${r.data?.student_password||'—'}\nParent phone login: ${parentPhone}\nParent username: ${r.data?.parent_username||parentUsername}\nParent email: ${r.data?.parent_email||'—'}\nParent password: ${r.data?.parent_password||'—'}`,'ok');
+        // Refresh lists in the background only; never let them close/navigate the registration screen.
+        Promise.all([loadStudents(),loadNotifications()]).then(()=>{renderStudents();renderInbox()}).catch(err=>console.warn('Post-registration refresh:',err));
+      }catch(err){
+        showMessage('studentMessage','Could not save student: '+(err?.message||String(err)),'error');
+      }finally{
+        btn.dataset.accessugBusy='0'; btn.disabled=false; btn.textContent='Save Student';
+      }
+    };
+
+    const teacherSubmit=async e=>{
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+      const btn=document.getElementById('saveTeacherBtn');
+      if(!btn || btn.dataset.accessugBusy==='1') return;
+      btn.dataset.accessugBusy='1'; btn.disabled=true; btn.textContent='Saving teacher…';
+      clearMessage('teacherMessage');
+      try{
+        const first=document.getElementById('teacherFirstName')?.value.trim()||'';
+        const last=document.getElementById('teacherLastName')?.value.trim()||'';
+        const username=document.getElementById('teacherUsername')?.value.trim()||'';
+        if(!first||!last) throw new Error('Teacher first name and last name are required.');
+        if(!username) throw new Error('Teacher username is required.');
+        const plan=getTeacherAssignmentsFromForm();
+        const subjectNames=[...new Set(plan.flatMap(p=>p.subjectIds.map(id=>subjectDisplayName(teacherAvailableSubjects.find(s=>String(s.id)===String(id))))))];
+        const body={type:'teacher',school_id:schoolId,username,first_name:first,last_name:last,
+          gender:document.getElementById('teacherGender')?.value||null,
+          date_of_birth:document.getElementById('teacherDob')?.value||null,
+          phone:document.getElementById('teacherPhone')?.value.trim()||null,
+          employee_number:document.getElementById('teacherEmployeeNumber')?.value.trim()||null,
+          subject:subjectNames.join(', '),address:document.getElementById('teacherAddress')?.value.trim()||null};
+
+        const r=await invokeSchoolRegistration(body);
+        if(r.error) throw new Error(r.error.message||'The registration service could not be reached.');
+        if(r.data?.error) throw new Error(r.data.error);
+        const teacherId=r.data?.record_id||r.data?.record?.id||r.data?.record;
+        if(!teacherId) throw new Error('The registration service did not return the new teacher record.');
+
+        const rows=plan.flatMap(p=>p.subjectIds.map(subjectId=>{
+          const c=teacherAvailableClasses.find(x=>String(x.id)===String(p.classId));
+          return {teacher_id:teacherId,class_id:p.classId,subject_id:subjectId,academic_year:c?.academic_year||new Date().getFullYear(),status:'active'};
+        }));
+        const ar=await supabaseClient.from('teacher_class_assignments').insert(rows);
+        if(ar.error) throw new Error('Teacher was created, but the class/subject assignments could not be saved: '+ar.error.message);
+
+        showMessage('teacherMessage',`✓ ${first} ${last} registered successfully with ${rows.length} class/subject assignments.\nUsername: ${r.data?.username||username}\nEmail: ${r.data?.teacher_email||'—'}\nPassword: ${r.data?.teacher_password||'—'}`,'ok');
+        Promise.all([loadTeachers(),loadNotifications()]).then(()=>{renderTeachers();renderInbox()}).catch(err=>console.warn('Post-registration refresh:',err));
+      }catch(err){
+        showMessage('teacherMessage','Could not save teacher: '+(err?.message||String(err)),'error');
+      }finally{
+        btn.dataset.accessugBusy='0'; btn.disabled=false; btn.textContent='Save Teacher & Assignments';
+      }
+    };
+
+    if(studentForm && !studentForm.dataset.accessugRegistrationFix){studentForm.dataset.accessugRegistrationFix='1';studentForm.addEventListener('submit',studentSubmit,true);}
+    if(teacherForm && !teacherForm.dataset.accessugRegistrationFix){teacherForm.dataset.accessugRegistrationFix='1';teacherForm.addEventListener('submit',teacherSubmit,true);}
+  };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',install,{once:true}); else install();
+})();
+</script></body></html>

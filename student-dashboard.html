@@ -1423,7 +1423,7 @@ init();
     status('Updating your secure password…');
 
     try{
-      const r=await SB.auth.updateUser({password:a});
+      const r=await SB.auth.updateUser({password:a,data:{...(currentUser?.user_metadata||{}),force_password_change:false}});
       if(r.error)throw r.error;
       $('newPassword').value='';$('confirmPassword').value='';
       status('Password updated successfully. Your next login will use the new password.','ok');
