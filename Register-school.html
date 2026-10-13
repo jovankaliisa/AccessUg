@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Register School — ACCESS UG</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root{
+  --navy:#061a38;
+  --navy2:#0b3d82;
+  --blue:#0b3d82;
+  --blue2:#1457a6;
+  --sky:#edf4fd;
+  --line:#d9e3f0;
+  --text:#13233a;
+  --muted:#6d7b8e;
+  --white:#fff;
+  --green:#0f9f6e;
+  --red:#d64545;
+  --amber:#c47a00;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f5f8fc;
+  color:var(--text);
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+.page-shell{
+  width:min(1180px,calc(100% - 32px));
+  margin:0 auto;
+  padding:28px 0 40px;
+}
+
+/* Same visual language as the admin dashboard welcome/hero */
+.welcome{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;
+  border-radius:18px;
+  padding:30px;
+  margin-bottom:20px;
+  box-shadow:0 14px 32px rgba(6,26,56,.16);
+  position:relative;
+  overflow:hidden;
+}
+.welcome:after{
+  content:"";
+  position:absolute;
+  width:260px;height:260px;
+  right:-90px;top:-120px;
+  border-radius:50%;
+  background:rgba(255,255,255,.07);
+}
+.welcome h1{
+  margin:0 0 8px;
+  font-size:25px;
+  letter-spacing:-.2px;
+  position:relative;z-index:1;
+}
+.welcome p{
+  margin:0;
+  color:#dbe7fa;
+  line-height:1.55;
+  max-width:760px;
+  position:relative;z-index:1;
+}
+.welcome-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  margin-top:17px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.16);
+  font-size:12px;
+  font-weight:800;
+  position:relative;z-index:1;
+}
+
+.card{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:23px;
+  box-shadow:0 5px 18px rgba(6,26,56,.05);
+  margin-bottom:18px;
+}
+.card-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:16px;
+  margin-bottom:18px;
+}
+.card-head h2,.card-head h3{margin:0;color:#102a56}
+.card-head p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.5}
+
+.section-label{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  color:var(--navy);
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:6px;
+}
+.section-number{
+  width:25px;height:25px;
+  border-radius:8px;
+  display:grid;place-items:center;
+  background:#edf4fd;color:var(--navy2);
+}
+
+.formgrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+.full{grid-column:1/-1}
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:700;
+  margin-bottom:6px;
+  color:#304866;
+}
+.field input,.field select{
+  width:100%;
+  padding:11px 12px;
+  border:1px solid #cbd8e8;
+  border-radius:9px;
+  background:#fff;
+  color:var(--text);
+}
+.field input:focus,.field select:focus{
+  outline:none;
+  border-color:var(--blue);
+  box-shadow:0 0 0 3px rgba(11,61,130,.10);
+}
+.help{
+  margin-top:6px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45;
+}
+
+
+.class-builder,.subject-builder{
+  margin-top:20px;
+  padding:18px;
+  border:1px solid #dfe7f2;
+  border-radius:14px;
+  background:#f8fafd;
+}
+.builder-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:13px;
+}
+.builder-head h3{margin:0;color:#102a56;font-size:16px}
+.builder-head p{margin:4px 0 0}
+.add-class-btn{
+  border:0;
+  background:#edf4ff;
+  color:#0b3d82;
+  border-radius:9px;
+  padding:10px 14px;
+  font-weight:700;
+}
+.class-rows{display:flex;flex-direction:column;gap:10px}
+.class-row{
+  display:grid;
+  grid-template-columns:1fr 1fr auto;
+  gap:10px;
+  align-items:center;
+}
+.class-row input{
+  width:100%;
+  padding:11px;
+  border:1px solid #d4dfed;
+  border-radius:8px;
+  background:#fff;
+}
+.remove-class{
+  border:1px solid #fecdd3;
+  background:#fff1f2;
+  color:#b42318;
+  border-radius:8px;
+  padding:10px 12px;
+  font-weight:600;
+}
+.class-hint{margin-top:9px;color:#718096;font-size:12px}
+
+.subject-list{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.subject-item{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:10px 12px;
+  border:1px solid #dfe7f0;
+  border-radius:10px;
+  background:#fff;
+  color:#243b5a;
+  font-size:13px;
+}
+.subject-item input{width:17px;height:17px;accent-color:#0b3d82}
+.subject-status{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#eef4fb;
+  color:#60738c;
+  font-size:13px;
+  margin-bottom:10px;
+}
+
+
+.subscription-builder{
+  margin-top:20px;
+  padding:18px;
+  border:1px solid #dfe7f2;
+  border-radius:14px;
+  background:#f8fafd;
+}
+.subscription-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:14px;
+}
+.subscription-head h3{margin:0;color:#102a56;font-size:16px}
+.subscription-head p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.45}
+.plan-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.plan-option{
+  position:relative;
+  display:block;
+  cursor:pointer;
+}
+.plan-option input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+.plan-card{
+  height:100%;
+  padding:17px;
+  border:1px solid #d6e1ee;
+  border-radius:13px;
+  background:#fff;
+  transition:.18s ease;
+}
+.plan-card:hover{
+  border-color:#8fb1da;
+  box-shadow:0 7px 18px rgba(6,26,56,.07);
+  transform:translateY(-1px);
+}
+.plan-option input:checked + .plan-card{
+  border:2px solid #0b3d82;
+  padding:16px;
+  background:#f4f8ff;
+  box-shadow:0 8px 22px rgba(11,61,130,.10);
+}
+.plan-card.featured{
+  border-color:#9fd4bd;
+}
+.plan-option input:checked + .plan-card.featured{
+  border-color:#0f9f6e;
+  background:#f2fbf7;
+}
+.plan-name{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:9px;
+}
+.plan-name strong{color:#102a56;font-size:14px}
+.plan-price{
+  font-size:22px;
+  font-weight:900;
+  color:#0b3d82;
+  margin-bottom:7px;
+}
+.plan-price.free{color:#0f9f6e}
+.plan-desc{
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+  min-height:48px;
+}
+.plan-tag{
+  display:inline-flex;
+  margin-top:11px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#edf4ff;
+  color:#0b3d82;
+  font-size:10px;
+  font-weight:800;
+}
+.plan-tag.free{
+  background:#e7f7f0;
+  color:#116d50;
+}
+.payment-box{
+  margin-top:14px;
+  padding:14px;
+  border:1px solid #d6e1ee;
+  border-radius:12px;
+  background:#fff;
+}
+.payment-box h4{margin:0 0 5px;color:#102a56;font-size:13px}
+.payment-box p{margin:0 0 10px;color:var(--muted);font-size:11px}
+.payment-methods{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+}
+.payment-method{
+  border:1px solid #d6e1ee;
+  border-radius:9px;
+  padding:10px;
+  background:#f8fafd;
+}
+.payment-method label{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:12px;
+  font-weight:700;
+  color:#304866;
+}
+.payment-method input{width:auto}
+#paidPaymentBox{display:none}
+#paidPaymentBox.show{display:block}
+.subscription-summary{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:9px;
+  background:#eef4ff;
+  color:#1455a0;
+  font-size:12px;
+  line-height:1.45;
+}
+
+.trial-card{
+  border:1px solid #bcd0ea;
+  background:linear-gradient(180deg,#f7faff,#fff);
+  border-radius:15px;
+  padding:20px;
+}
+.trial-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.trial-badge{
+  background:#e7f7f0;
+  color:#116d50;
+  border:1px solid #bce8d5;
+  padding:7px 10px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.trial-card h3{margin:0 0 6px;color:#102a56;font-size:19px}
+.trial-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.55}
+.trial-points{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:15px;
+}
+.trial-point{
+  padding:12px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:11px;
+}
+.trial-point strong{display:block;color:#102a56;font-size:13px;margin-bottom:3px}
+.trial-point span{color:var(--muted);font-size:11px;line-height:1.4}
+
+.actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  align-items:center;
+  margin-top:20px;
+}
+.btn,.secondary{
+  border-radius:10px;
+  padding:11px 16px;
+  font-weight:800;
+  border:0;
+}
+.btn{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;
+  box-shadow:0 8px 18px rgba(6,26,56,.16);
+}
+.btn:hover{background:linear-gradient(135deg,#081f47,#1457a6)}
+.btn:disabled{opacity:.65;cursor:not-allowed}
+.secondary{
+  background:#edf4fd;
+  color:var(--navy);
+  border:1px solid #d5e2f2;
+}
+.notice{
+  display:none;
+  margin-top:15px;
+  padding:12px 14px;
+  border-radius:10px;
+  font-size:13px;
+  line-height:1.5;
+}
+.notice.show{display:block}
+.notice.ok{background:#e7f7f0;color:#116d50;border:1px solid #bce8d5}
+.notice.error{background:#fdebea;color:#9d2e29;border:1px solid #f3c4c1}
+.notice.info{background:#eef4ff;color:#1455a0;border:1px solid #c7dcf7}
+
+.success-screen{display:none;text-align:center;padding:28px 12px}
+.success-screen.show{display:block}
+.success-icon{
+  width:64px;height:64px;border-radius:50%;
+  display:grid;place-items:center;
+  margin:0 auto 14px;
+  background:#e7f7f0;color:#116d50;
+  font-size:30px;font-weight:900;
+}
+.success-screen h2{margin:0 0 8px;color:#102a56}
+.success-screen p{color:var(--muted);line-height:1.55}
+.credentials{
+  max-width:500px;
+  margin:18px auto;
+  text-align:left;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f8fafd;
+  padding:15px;
+}
+.cred-row{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:9px 0;
+  border-bottom:1px solid #e5ebf3;
+  font-size:13px;
+}
+.cred-row:last-child{border-bottom:0}
+.cred-row span{color:var(--muted)}
+.cred-row strong{color:#102a56;word-break:break-word}
+
+.footer{
+  text-align:center;
+  color:#718096;
+  font-size:11px;
+  padding:3px 0 0;
+}
+
+@media(max-width:750px){
+  .page-shell{width:min(100% - 20px,1180px);padding:12px 0 28px}
+  .welcome{padding:20px 17px;border-radius:14px}
+  .welcome h1{font-size:21px}
+  .card{padding:16px;border-radius:14px}
+  .formgrid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .class-row{grid-template-columns:1fr 1fr}
+  .class-row .remove-class{grid-column:1/-1}
+  .subject-list{grid-template-columns:1fr}
+  .trial-points{grid-template-columns:1fr}
+  .trial-top{flex-direction:column}
+  .actions{flex-direction:column-reverse}
+  .actions .btn,.actions .secondary{width:100%}
+}
+</style>
+</head>
+
+<body>
+<div class="page-shell">
+
+  <header class="welcome">
+    <h1>Welcome to ACCESS UG — Register Your School</h1>
+    <p>
+      Complete your school registration using the same school information structure
+      used by the ACCESS UG administrator. Choose a paid subscription or start with the
+      <strong>one-month free trial</strong> and create your school administrator login.
+      No GPS setup is required on this registration page.
+    </p>
+    <span class="welcome-badge">✓ 1 month free · Paid plans also available</span>
+  </header>
+
+  <main id="registrationArea">
+
+    <section class="card">
+      <div class="card-head">
+        <div>
+          <div class="section-label"><span class="section-number">1</span> School registration</div>
+          <h2>School details</h2>
+          <p>Enter the core school information used by the ACCESS UG administrator.</p>
+        </div>
+      </div>
+
+      <form id="reg">
+        <div class="formgrid">
+
+          <div class="field">
+            <label for="name">School Name *</label>
+            <input id="name" required placeholder="Enter school name">
+          </div>
+
+          <div class="field">
+            <label for="code">School Code *</label>
+            <input id="code" required placeholder="Example: SCH001" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="district">District *</label>
+            <input id="district" required placeholder="Enter district">
+          </div>
+
+          <div class="field">
+            <label for="location">Location / Address</label>
+            <input id="location" placeholder="e.g. Bunamwaya, Kampala">
+            <div class="help">Enter the school's general location or postal/address information.</div>
+          </div>
+
+          <div class="field">
+            <label for="head">Head Teacher</label>
+            <input id="head" placeholder="Head teacher name">
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input id="phone" type="tel" placeholder="School phone">
+          </div>
+
+          <div class="field">
+            <label for="email">School Email / Login Email *</label>
+            <input id="email" type="email" required placeholder="school@example.com" autocomplete="email">
+            <div class="help">This email will be used for the school administrator login.</div>
+          </div>
+
+          <div class="field">
+            <label for="schoolPassword">School Login Password *</label>
+            <input id="schoolPassword" type="password" minlength="6" required autocomplete="new-password" placeholder="At least 6 characters">
+          </div>
+
+          <div class="field">
+            <label for="schoolType">School Type *</label>
+            <select id="schoolType">
+              <option>Secondary School</option>
+              <option>Primary School</option>
+              <option>Mixed School</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="estimatedUsers">Estimated Total Users *</label>
+            <input id="estimatedUsers" type="number" min="1" required placeholder="e.g. 800">
+            <div class="help">Used to help identify the most suitable paid plan.</div>
+          </div>
+        </div>
+
+        <div class="class-builder">
+          <div class="builder-head">
+            <div>
+              <h3>Classes / Streams</h3>
+              <p class="help">Register the classes that belong to this school.</p>
+            </div>
+            <button type="button" class="add-class-btn" id="addClassBtn">+ Add class</button>
+          </div>
+
+          <div class="field" style="margin-bottom:12px">
+            <label for="classAcademicYear">Academic Year *</label>
+            <input id="classAcademicYear" type="number" min="2000" max="2100" required>
+          </div>
+
+          <div id="classRows" class="class-rows"></div>
+          <div id="classHint" class="class-hint">Add at least one class/stream. Example: S3 + North → S3 North.</div>
+        </div>
+
+        <div class="subject-builder">
+          <div class="builder-head">
+            <div>
+              <h3>Subjects offered by this school</h3>
+              <p class="help">Select the subjects already available in the ACCESS UG subjects catalogue.</p>
+            </div>
+            <button type="button" class="add-class-btn" id="refreshSubjectsBtn">↻ Refresh</button>
+          </div>
+          <div id="subjectStatus" class="subject-status">Loading subjects…</div>
+          <div id="subjectList" class="subject-list"></div>
+        </div>
+
+        <div class="subscription-builder">
+          <div class="subscription-head">
+            <div>
+              <h3>Choose Your ACCESS UG Subscription</h3>
+              <p>Choose the option that suits your school. The one-month free trial is available alongside the paid plans.</p>
+            </div>
+          </div>
+
+          <div class="plan-grid">
+            <label class="plan-option">
+              <input type="radio" name="subscriptionPlan" value="trial" checked>
+              <div class="plan-card featured">
+                <div class="plan-name">
+                  <strong>1 Month Free Trial</strong>
+                  <span class="plan-tag free">NO PAYMENT</span>
+                </div>
+                <div class="plan-price free">FREE</div>
+                <div class="plan-desc">Try ACCESS UG for one month with no payment required today.</div>
+                <span class="plan-tag free">Create login immediately</span>
+              </div>
+            </label>
+
+            <label class="plan-option">
+              <input type="radio" name="subscriptionPlan" value="50000">
+              <div class="plan-card">
+                <div class="plan-name">
+                  <strong>ACCESS UG Plan</strong>
+                  <span class="plan-tag">PAID</span>
+                </div>
+                <div class="plan-price">UGX 50,000</div>
+                <div class="plan-desc">For fewer than 1,000 total users.</div>
+                <span class="plan-tag">Payment required</span>
+              </div>
+            </label>
+
+            <label class="plan-option">
+              <input type="radio" name="subscriptionPlan" value="100000">
+              <div class="plan-card">
+                <div class="plan-name">
+                  <strong>ACCESS UG Plan</strong>
+                  <span class="plan-tag">PAID</span>
+                </div>
+                <div class="plan-price">UGX 100,000</div>
+                <div class="plan-desc">For 1,000+ total users.</div>
+                <span class="plan-tag">Payment required</span>
+              </div>
+            </label>
+          </div>
+
+          <div id="paidPaymentBox" class="payment-box">
+            <h4>Payment method</h4>
+            <p>Select how you would like to complete payment for the selected paid plan.</p>
+            <div class="payment-methods">
+              <div class="payment-method">
+                <label><input type="radio" name="paymentMethod" value="MTN Mobile Money" checked> MTN Mobile Money</label>
+              </div>
+              <div class="payment-method">
+                <label><input type="radio" name="paymentMethod" value="Airtel Money"> Airtel Money</label>
+              </div>
+              <div class="payment-method">
+                <label><input type="radio" name="paymentMethod" value="Credit/Debit Card"> Credit/Debit Card</label>
+              </div>
+            </div>
+            <div id="subscriptionSummary" class="subscription-summary"></div>
+          </div>
+        </div>
+
+        <div class="trial-card" style="margin-top:14px">
+          <div class="trial-top">
+            <div>
+              <h3>One-Month Free Trial Available</h3>
+              <p>
+                Select the free-trial card above and submit the form. ACCESS UG will
+                register the school, create the school administrator login and prepare
+                the account for immediate access without asking for payment.
+              </p>
+            </div>
+            <span class="trial-badge">1 MONTH FREE</span>
+          </div>
+
+          <div class="trial-points">
+            <div class="trial-point">
+              <strong>✓ No payment today</strong>
+              <span>The trial can be started without a payment method.</span>
+            </div>
+            <div class="trial-point">
+              <strong>✓ School account</strong>
+              <span>Your school, classes, subjects and terms are registered.</span>
+            </div>
+            <div class="trial-point">
+              <strong>✓ Admin login</strong>
+              <span>The login is created from the email and password you provide.</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="notice" class="notice" role="status"></div>
+
+        <div class="actions">
+          <button type="reset" class="secondary" id="resetBtn">Clear form</button>
+          <button type="submit" class="btn" id="trialBtn">Start 1-Month Free Trial & Create Login</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card success-screen" id="successScreen">
+      <div class="success-icon">✓</div>
+      <h2>Your one-month free trial is ready</h2>
+      <p id="successText">
+        Your school has been registered and the administrator login has been created.
+      </p>
+      <div class="credentials">
+        <div class="cred-row"><span>School</span><strong id="successSchool">—</strong></div>
+        <div class="cred-row"><span>Login email</span><strong id="successEmail">—</strong></div>
+        <div class="cred-row"><span>Trial</span><strong>1 month free</strong></div>
+      </div>
+      <button type="button" class="btn" id="goToLoginBtn">Continue to ACCESS UG Login</button>
+    </section>
+
+  </main>
+
+  <div class="footer">Developed and designed by Jovan Kaliisa · ACCESS UG</div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  {
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
+);
+
+let schoolSubjectCatalog = [];
+
+function safe(value){
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+
+function showNotice(message,type="info"){
+  const el=document.getElementById("notice");
+  el.textContent=message;
+  el.className="notice show "+type;
+}
+function clearNotice(){
+  const el=document.getElementById("notice");
+  el.textContent="";
+  el.className="notice";
+}
+
+function addClassRow(level="",stream=""){
+  const rows=document.getElementById("classRows");
+  const row=document.createElement("div");
+  row.className="class-row";
+  row.innerHTML=`
+    <input class="class-level" placeholder="Level e.g. S3" value="${safe(level)}" required>
+    <input class="class-stream" placeholder="Stream e.g. North" value="${safe(stream)}" required>
+    <button type="button" class="remove-class">Remove</button>
+  `;
+  row.querySelector(".remove-class").addEventListener("click",()=>{
+    row.remove();
+    updateClassHint();
+  });
+  rows.appendChild(row);
+  updateClassHint();
+}
+function updateClassHint(){
+  const n=document.getElementById("classRows").children.length;
+  document.getElementById("classHint").textContent=n
+    ? `${n} class/stream group${n===1?"":"s"} will be saved. Example: S3 + North → S3 North.`
+    : "Add at least one class/stream. Example: S3 + North → S3 North.";
+}
+document.getElementById("addClassBtn").addEventListener("click",()=>addClassRow());
+
+function subjectName(subject){
+  return subject?.name || subject?.subject_name || subject?.title || "Unnamed subject";
+}
+async function loadSubjects(){
+  const status=document.getElementById("subjectStatus");
+  const list=document.getElementById("subjectList");
+  status.textContent="Loading subjects from Supabase…";
+  list.innerHTML="";
+  try{
+    const result=await supabaseClient.from("subjects").select("*");
+    if(result.error) throw result.error;
+    schoolSubjectCatalog=(result.data||[])
+      .filter(s=>{
+        if(s.active===false || s.is_active===false) return false;
+        if(typeof s.status==="string" && ["inactive","disabled","archived"].includes(s.status.trim().toLowerCase())) return false;
+        return true;
+      })
+      .sort((a,b)=>subjectName(a).localeCompare(subjectName(b)));
+
+    if(!schoolSubjectCatalog.length){
+      status.textContent="No subjects were returned from the ACCESS UG subjects catalogue.";
+      return;
+    }
+    status.textContent=`${schoolSubjectCatalog.length} subjects available. Select the ones this school teaches.`;
+    list.innerHTML=schoolSubjectCatalog.map(s=>`
+      <label class="subject-item">
+        <input type="checkbox" class="school-subject-check" value="${safe(s.id)}">
+        <span>${safe(subjectName(s))}</span>
+      </label>
+    `).join("");
+  }catch(error){
+    console.error(error);
+    status.textContent="Could not load subjects: "+(error.message||error);
+  }
+}
+document.getElementById("refreshSubjectsBtn").addEventListener("click",loadSubjects);
+
+
+function buildClassRows(){
+  return [...document.querySelectorAll(".class-row")]
+    .map(row=>{
+      const level=row.querySelector(".class-level").value.trim().toUpperCase();
+      const stream=row.querySelector(".class-stream").value.trim();
+      return {
+        level,
+        stream,
+        name:`${level} ${stream}`.trim(),
+        academic_year:Number(document.getElementById("classAcademicYear").value),
+        status:"Active"
+      };
+    })
+    .filter(row=>row.level&&row.stream);
+}
+
+async function rollbackSchool(schoolId){
+  if(!schoolId) return;
+  try{ await supabaseClient.from("academic_terms").delete().eq("school_id",schoolId); }catch(e){}
+  try{ await supabaseClient.from("classes").delete().eq("school_id",schoolId); }catch(e){}
+  try{ await supabaseClient.from("school_subjects").delete().eq("school_id",schoolId); }catch(e){}
+  try{ await supabaseClient.from("schools").delete().eq("id",schoolId); }catch(e){}
+}
+
+document.getElementById("reg").addEventListener("submit", async event => {
+  event.preventDefault();
+  clearNotice();
+  const button = document.getElementById("trialBtn");
+  button.disabled = true;
+  button.textContent = "Creating your free trial…";
+
+  try {
+    const academicYear = Number(document.getElementById("classAcademicYear").value);
+    if (!Number.isInteger(academicYear) || academicYear < 2000 || academicYear > 2100)
+      throw new Error("Enter a valid academic year.");
+
+    const classRows = buildClassRows();
+    if (!classRows.length) throw new Error("Add at least one class/stream.");
+    const names = classRows.map(x => x.name.toLowerCase());
+    if (new Set(names).size !== names.length) throw new Error("Each class/stream must be unique.");
+
+    const selectedSubjectIds = [...document.querySelectorAll(".school-subject-check:checked")].map(x => x.value);
+    if (!selectedSubjectIds.length) throw new Error("Select at least one subject offered by this school.");
+
+    const plan = document.querySelector('input[name="subscriptionPlan"]:checked')?.value || "trial";
+    if (plan !== "trial") {
+      throw new Error("Paid subscriptions will be enabled after the payment gateway is connected. Please select the 1-month free trial.");
+    }
+
+    const estimatedUsers = Number(document.getElementById("estimatedUsers").value);
+    if (!Number.isInteger(estimatedUsers) || estimatedUsers < 1) throw new Error("Enter a valid estimated number of users.");
+
+    const email = document.getElementById("email").value.trim().toLowerCase();
+    const password = document.getElementById("schoolPassword").value;
+    if (!email) throw new Error("School email is required.");
+    if (password.length < 6) throw new Error("School login password must be at least 6 characters.");
+
+    showNotice("Creating your school, administrator login and 1-month trial…", "info");
+
+    // First create the email/password Auth user in the browser. The Edge Function
+    // requires this user's JWT and creates only the linked school records.
+    const signup = await supabaseClient.auth.signUp({
+      email,
+      password,
+      options: { data: { role: "school", school_name: document.getElementById("name").value.trim() } }
+    });
+    if (signup.error) throw new Error(signup.error.message || "Could not create the login account.");
+    if (!signup.data?.session || !signup.data?.user) {
+      throw new Error("Supabase requires email confirmation before login. In Supabase Dashboard, open Authentication → Sign In / Providers → Email and turn off Confirm email to allow immediate trial sign-in, then try again with a new email.");
+    }
+
+    const result = await supabaseClient.functions.invoke("complete-school-trial", {
+      headers: { Authorization: `Bearer ${signup.data.session.access_token}` },
+      body: {
+        school_name: document.getElementById("name").value.trim(),
+        school_code: document.getElementById("code").value.trim().toUpperCase(),
+        district: document.getElementById("district").value.trim(),
+        location: document.getElementById("location").value.trim(),
+        head_teacher: document.getElementById("head").value.trim(),
+        phone: document.getElementById("phone").value.trim(),
+        school_type: document.getElementById("schoolType").value,
+        estimated_users: estimatedUsers,
+        academic_year: academicYear,
+        classes: classRows,
+        subject_ids: selectedSubjectIds,
+        subscription_plan: "trial"
+      }
+    });
+
+    if (result.error) {
+      await supabaseClient.auth.signOut();
+      throw new Error(result.error.message || "Registration service could not be reached.");
+    }
+    if (!result.data?.ok) {
+      await supabaseClient.auth.signOut();
+      throw new Error(result.data?.error || "The school account could not be created.");
+    }
+
+    showNotice("School created. Your account is signed in…", "info");
+
+    localStorage.setItem("accessug_selected_role", "school");
+    localStorage.setItem("accessug_school_id", String(result.data.school_id));
+    localStorage.setItem("accessug_login_email", email);
+    localStorage.setItem("accessug_full_name", document.getElementById("head").value.trim() || document.getElementById("name").value.trim());
+    localStorage.setItem("accessug_subscription_plan", "trial");
+    localStorage.setItem("accessug_trial_started_at", result.data.trial_started_at || new Date().toISOString());
+    localStorage.setItem("accessug_trial_ends_at", result.data.trial_ends_at || "");
+
+    document.getElementById("registrationArea").querySelector(".card").style.display = "none";
+    document.getElementById("successScreen").classList.add("show");
+    document.getElementById("successSchool").textContent = document.getElementById("name").value.trim();
+    document.getElementById("successEmail").textContent = email;
+    document.getElementById("successText").textContent = "Your school account is active and you are signed in. Your 1-month free trial has started.";
+
+    document.getElementById("goToLoginBtn").onclick = () => window.location.replace("./ACCESS.html");
+  } catch (error) {
+    console.error("Public school registration error:", error);
+    showNotice("Registration could not be completed: " + (error.message || error), "error");
+  } finally {
+    button.disabled = false;
+    button.textContent = "Start 1-Month Free Trial & Create Login";
+  }
+});
+
+function updateSubscriptionUI(){
+  const plan = document.querySelector('input[name="subscriptionPlan"]:checked')?.value || "trial";
+  const paidBox = document.getElementById("paidPaymentBox");
+  const button = document.getElementById("trialBtn");
+  const summary = document.getElementById("subscriptionSummary");
+  const users = Number(document.getElementById("estimatedUsers").value || 0);
+  if(plan === "trial"){
+    paidBox.classList.remove("show");
+    button.textContent = "Start 1-Month Free Trial & Create Login";
+    return;
+  }
+  paidBox.classList.add("show");
+  const amount = Number(plan);
+  summary.textContent = users >= 1000
+    ? "Your school currently falls in the UGX 100,000 plan range."
+    : "Your school currently falls in the UGX 50,000 plan range.";
+  button.textContent = "Continue to Payment";
+}
+
+document.querySelectorAll('input[name="subscriptionPlan"]').forEach(r => r.addEventListener("change", updateSubscriptionUI));
+document.getElementById("estimatedUsers").addEventListener("input", updateSubscriptionUI);
+
+addClassRow();
+loadSubjects();
+updateSubscriptionUI();
+</script>
+</body>
+</html>
