@@ -487,6 +487,7 @@ button{cursor:pointer}
   .class-row .remove-class{grid-column:1/-1}
   .subject-list{grid-template-columns:1fr}
   .trial-points{grid-template-columns:1fr}
+  .payment-methods{grid-template-columns:1fr}
   .trial-top{flex-direction:column}
   .actions{flex-direction:column-reverse}
   .actions .btn,.actions .secondary{width:100%}
@@ -614,7 +615,7 @@ button{cursor:pointer}
           <div class="subscription-head">
             <div>
               <h3>Choose Your ACCESS UG Subscription</h3>
-              <p>Choose the option that suits your school. The one-month free trial is available alongside the paid plans.</p>
+              <p>Prices are per term. Choose based on total users: fewer than 1,000 or 1,000 and above. The one-calendar-month free trial is also available.</p>
             </div>
           </div>
 
@@ -633,27 +634,27 @@ button{cursor:pointer}
             </label>
 
             <label class="plan-option">
-              <input type="radio" name="subscriptionPlan" value="50000">
+              <input type="radio" name="subscriptionPlan" value="standard">
               <div class="plan-card">
                 <div class="plan-name">
-                  <strong>ACCESS UG Plan</strong>
+                  <strong>Standard — Per Term</strong>
                   <span class="plan-tag">PAID</span>
                 </div>
-                <div class="plan-price">UGX 50,000</div>
-                <div class="plan-desc">For fewer than 1,000 total users.</div>
+                <div class="plan-price">£9.99</div>
+                <div class="plan-desc">For fewer than 1,000 total users. Local mobile-money payments are charged in UGX using the checkout exchange rate.</div>
                 <span class="plan-tag">Payment required</span>
               </div>
             </label>
 
             <label class="plan-option">
-              <input type="radio" name="subscriptionPlan" value="100000">
+              <input type="radio" name="subscriptionPlan" value="large">
               <div class="plan-card">
                 <div class="plan-name">
-                  <strong>ACCESS UG Plan</strong>
+                  <strong>Large School — Per Term</strong>
                   <span class="plan-tag">PAID</span>
                 </div>
-                <div class="plan-price">UGX 100,000</div>
-                <div class="plan-desc">For 1,000+ total users.</div>
+                <div class="plan-price">£19.99</div>
+                <div class="plan-desc">For 1,000 or more total users. Local mobile-money payments are charged in UGX using the checkout exchange rate.</div>
                 <span class="plan-tag">Payment required</span>
               </div>
             </label>
@@ -673,7 +674,13 @@ button{cursor:pointer}
                 <label><input type="radio" name="paymentMethod" value="Credit/Debit Card"> Credit/Debit Card</label>
               </div>
             </div>
-            <div id="subscriptionSummary" class="subscription-summary"></div>
+            <div class="field" id="mobileMoneyPhoneWrap" style="margin-top:12px">
+              <label for="mobileMoneyPhone">Mobile Money Phone Number</label>
+              <input id="mobileMoneyPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="e.g. 2567XXXXXXXX">
+              <div class="help">Enter the number registered with the selected MTN or Airtel Money service.</div>
+            </div>
+            <div id="subscriptionSummary" class="subscription-summary" aria-live="polite"></div>
+            <p class="help" style="margin-top:9px">Card payments will use Flutterwave's secure checkout; ACCESS UG will not store your card number or CVV. Mobile Money is charged in UGX, with the final amount shown before you approve payment.</p>
           </div>
         </div>
 
@@ -876,12 +883,16 @@ document.getElementById("reg").addEventListener("submit", async event => {
     if (!selectedSubjectIds.length) throw new Error("Select at least one subject offered by this school.");
 
     const plan = document.querySelector('input[name="subscriptionPlan"]:checked')?.value || "trial";
-    if (plan !== "trial") {
-      throw new Error("Paid subscriptions will be enabled after the payment gateway is connected. Please select the 1-month free trial.");
-    }
-
     const estimatedUsers = Number(document.getElementById("estimatedUsers").value);
     if (!Number.isInteger(estimatedUsers) || estimatedUsers < 1) throw new Error("Enter a valid estimated number of users.");
+    if (plan === "standard" && estimatedUsers >= 1000) throw new Error("Schools with 1,000 or more users must choose the £19.99 Large School plan.");
+    if (plan === "large" && estimatedUsers < 1000) throw new Error("Schools with fewer than 1,000 users should choose the £9.99 Standard plan.");
+    if (plan !== "trial") {
+      const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || "MTN Mobile Money";
+      const phone = document.getElementById("mobileMoneyPhone").value.trim();
+      if (method !== "Credit/Debit Card" && !phone) throw new Error("Enter the mobile money phone number that will approve the payment.");
+      throw new Error("Flutterwave checkout is not yet activated for this website. No payment or school account has been created. The secure payment backend and Flutterwave secret key must be configured first. You can still choose the free trial.");
+    }
 
     const email = document.getElementById("email").value.trim().toLowerCase();
     const password = document.getElementById("schoolPassword").value;
@@ -890,20 +901,42 @@ document.getElementById("reg").addEventListener("submit", async event => {
 
     showNotice("Creating your school, administrator login and 1-month trial…", "info");
 
-    // First create the email/password Auth user in the browser. The Edge Function
-    // requires this user's JWT and creates only the linked school records.
+    // First try to create the email/password Auth user. If an earlier failed
+    // registration already created this Auth user, sign in with the password
+    // entered now and continue completing/recovering the school registration.
+    let authSession = null;
+    let authUser = null;
     const signup = await supabaseClient.auth.signUp({
       email,
       password,
       options: { data: { role: "school", school_name: document.getElementById("name").value.trim() } }
     });
-    if (signup.error) throw new Error(signup.error.message || "Could not create the login account.");
-    if (!signup.data?.session || !signup.data?.user) {
-      throw new Error("Supabase requires email confirmation before login. In Supabase Dashboard, open Authentication → Sign In / Providers → Email and turn off Confirm email to allow immediate trial sign-in, then try again with a new email.");
+
+    if (!signup.error && signup.data?.session && signup.data?.user) {
+      authSession = signup.data.session;
+      authUser = signup.data.user;
+    } else {
+      const signupMessage = signup.error?.message || "";
+      const looksAlreadyRegistered = /already registered|already exists|user exists/i.test(signupMessage);
+      if (looksAlreadyRegistered) {
+        const signin = await supabaseClient.auth.signInWithPassword({ email, password });
+        if (signin.error || !signin.data?.session || !signin.data?.user) {
+          throw new Error("This email already has an account from an earlier attempt. Enter the original password for that email, or use the ACCESS UG login page to recover/reset the password. Details: " + (signin.error?.message || "Could not sign in."));
+        }
+        authSession = signin.data.session;
+        authUser = signin.data.user;
+      } else if (!signup.error && signup.data?.user && !signup.data?.session) {
+        throw new Error("This email requires confirmation before the account can sign in. Check the email inbox for a Supabase confirmation link, or disable Confirm email in Supabase Authentication settings to allow immediate trial sign-in.");
+      } else {
+        throw new Error(signupMessage || "Could not create or sign in to the login account.");
+      }
+    }
+    if (!authSession || !authUser) {
+      throw new Error("No active login session was created. Please sign in and try again.");
     }
 
     const result = await supabaseClient.functions.invoke("complete-school-trial", {
-      headers: { Authorization: `Bearer ${signup.data.session.access_token}` },
+      headers: { Authorization: `Bearer ${authSession.access_token}` },
       body: {
         school_name: document.getElementById("name").value.trim(),
         school_code: document.getElementById("code").value.trim().toUpperCase(),
@@ -921,11 +954,10 @@ document.getElementById("reg").addEventListener("submit", async event => {
     });
 
     if (result.error) {
-      await supabaseClient.auth.signOut();
+      // Keep the valid session so the user can retry without losing access.
       throw new Error(result.error.message || "Registration service could not be reached.");
     }
     if (!result.data?.ok) {
-      await supabaseClient.auth.signOut();
       throw new Error(result.data?.error || "The school account could not be created.");
     }
 
@@ -945,7 +977,7 @@ document.getElementById("reg").addEventListener("submit", async event => {
     document.getElementById("successEmail").textContent = email;
     document.getElementById("successText").textContent = "Your school account is active and you are signed in. Your 1-month free trial has started.";
 
-    document.getElementById("goToLoginBtn").onclick = () => window.location.replace("./ACCESS.html");
+    document.getElementById("goToLoginBtn").onclick = () => window.location.assign("https://jovankaliisa.github.io/AccessUg/");
   } catch (error) {
     console.error("Public school registration error:", error);
     showNotice("Registration could not be completed: " + (error.message || error), "error");
@@ -961,21 +993,33 @@ function updateSubscriptionUI(){
   const button = document.getElementById("trialBtn");
   const summary = document.getElementById("subscriptionSummary");
   const users = Number(document.getElementById("estimatedUsers").value || 0);
+  const method = document.querySelector('input[name="paymentMethod"]:checked')?.value || "MTN Mobile Money";
+  const phoneWrap = document.getElementById("mobileMoneyPhoneWrap");
+  const phone = document.getElementById("mobileMoneyPhone");
   if(plan === "trial"){
     paidBox.classList.remove("show");
+    phone.required = false;
     button.textContent = "Start 1-Month Free Trial & Create Login";
     return;
   }
   paidBox.classList.add("show");
-  const amount = Number(plan);
-  summary.textContent = users >= 1000
-    ? "Your school currently falls in the UGX 100,000 plan range."
-    : "Your school currently falls in the UGX 50,000 plan range.";
-  button.textContent = "Continue to Payment";
+  const expectedPlan = users >= 1000 ? "large" : "standard";
+  const price = expectedPlan === "large" ? "£19.99" : "£9.99";
+  const planMatches = plan === expectedPlan;
+  phoneWrap.style.display = method === "Credit/Debit Card" ? "none" : "block";
+  phone.required = method !== "Credit/Debit Card";
+  summary.textContent = (planMatches
+    ? `Selected plan: ${price} per term. `
+    : `Based on ${users || "your school's"} users, the correct plan is ${price} per term. Change the selected plan to continue. `)
+    + (method === "Credit/Debit Card"
+      ? "Card details will be entered in Flutterwave's secure checkout."
+      : `Choose ${method}; the final UGX amount will be confirmed by Flutterwave before you approve payment.`);
+  button.textContent = "Continue to Secure Payment";
 }
 
 document.querySelectorAll('input[name="subscriptionPlan"]').forEach(r => r.addEventListener("change", updateSubscriptionUI));
 document.getElementById("estimatedUsers").addEventListener("input", updateSubscriptionUI);
+document.querySelectorAll('input[name="paymentMethod"]').forEach(r => r.addEventListener("change", updateSubscriptionUI));
 
 addClassRow();
 loadSubjects();
