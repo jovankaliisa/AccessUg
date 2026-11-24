@@ -955,7 +955,12 @@ body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(1
 .account-setup-btn:disabled{opacity:.65;cursor:not-allowed}
 </style>
 
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <meta name="theme-color" content="#061a3b">
+    <meta name="application-name" content="Access UG">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
 </head>
 
 <body>
@@ -1904,6 +1909,17 @@ if (loginForm && loginButton) {
 
   window.accessugAccountSetupGate=gate;
 })();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./service-worker.js", { scope: "./" })
+      .catch(function (error) {
+        console.error("ACCESS UG offline support could not be registered:", error);
+      });
+  });
+}
 </script>
 
 </body>
