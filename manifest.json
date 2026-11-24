@@ -1,0 +1,27 @@
+{
+  "background_color": "#a6d6e9",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "Access.Sch Ug",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Access Ug",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://jovankaliisa.github.io/AccessUg/favicon.svg",
+      "type": "image/svg+xml",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "id": "/AccessUg/",
+  "description": "Smart School Management Platform for students, teachers, and school administration"
+}
