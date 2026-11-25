@@ -876,11 +876,14 @@ async function loadStudentResults(){
     supabaseClient.from("assessments").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
     supabaseClient.from("end_term_results").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
     supabaseClient.from("student_result_reports").select("*").eq("student_id",student.id).eq("term_id",termId).order("report_type"),
-    supabaseClient.from("behaviour_records").select("id,behaviour_date,recorded_date,grade,points,comment,created_at").eq("student_id",student.id).eq("term_id",termId).eq("school_id",student.school_id).order("behaviour_date",{ascending:true}).order("created_at",{ascending:true}),
-    supabaseClient.from("students").select("profile_photo_url").eq("id",student.id).maybeSingle()
+    supabaseClient.from("behaviour_records").select("id,behaviour_date,recorded_date,grade,points,comment,created_at").eq("student_id",student.id).eq("term_id",termId).eq("school_id",student.school_id).order("behaviour_date",{ascending:true}).order("created_at",{ascending:true})
    ];
    const result=await withResultsTimeout(Promise.all(queries),5500);
-   const [ar,er,rr,br,profilePhotoResult]=result;
+   const [ar,er,rr,br]=result;
+   // Fetch the live profile photo separately so a slow photo lookup cannot block report results.
+   const profilePhotoResult=await withResultsTimeout(
+     supabaseClient.from("students").select("profile_photo_url").eq("id",student.id).maybeSingle(),2500
+   ).catch(()=>null);
    // Always prefer the live student profile photo over the report's saved snapshot.
    // A photo lookup failure must not prevent academic reports from loading.
    const liveStudentPhoto=String(profilePhotoResult?.data?.profile_photo_url||student.profile_photo_url||authUser?.user_metadata?.avatar_url||"");
