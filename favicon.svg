@@ -1,21 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Access UG">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Access UG logo">
   <defs>
-    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#38d6f2"/><stop offset=".52" stop-color="#1675f5"/><stop offset="1" stop-color="#0644b8"/>
+    <linearGradient id="ribbonA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#062a9e"/>
+      <stop offset=".48" stop-color="#0757d8"/>
+      <stop offset="1" stop-color="#18c5ee"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffe88b"/><stop offset="1" stop-color="#e9a91c"/>
+    <linearGradient id="ribbonB" x1="0" y1="0" x2=".9" y2="1">
+      <stop offset="0" stop-color="#0b2b9d"/>
+      <stop offset=".55" stop-color="#0756d8"/>
+      <stop offset="1" stop-color="#12bce9"/>
     </linearGradient>
-    <radialGradient id="glow"><stop stop-color="#f8c84b" stop-opacity=".5"/><stop offset="1" stop-color="#f8c84b" stop-opacity="0"/></radialGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="#061a3b"/>
-  <circle cx="256" cy="220" r="150" fill="url(#glow)"/>
-  <path d="M95 291V112l133 66v150L95 291Z" fill="url(#blue)"/>
-  <path d="M417 291V112l-133 66v150l133-37Z" fill="url(#blue)"/>
-  <path d="M228 178 256 193l28-15v151l-28 19-28-19V178Z" fill="#0a2b62" stroke="#8beaff" stroke-width="7" stroke-linejoin="round"/>
-  <path d="M256 260c-36-29-61-33-93-25v62c34-7 63 1 93 26 30-25 59-33 93-26v-62c-32-8-57-4-93 25Z" fill="url(#gold)"/>
-  <path d="M256 254c-32-24-61-31-93-25M256 254c32-24 61-31 93-25" fill="none" stroke="#fff4c6" stroke-width="7" stroke-linecap="round"/>
-  <circle cx="256" cy="137" r="24" fill="#ffe27a"/>
-  <path d="M256 78v-18M205 94l-13-13M307 94l13-13" stroke="#ffe27a" stroke-width="8" stroke-linecap="round"/>
-  <path d="M108 337c56-15 104-4 148 30 44-34 92-45 148-30" fill="none" stroke="#35c9ef" stroke-width="13" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="76" fill="#fff"/>
+  <path d="M" fill="none"/>
+  <path d="M471.7 157.3 L458 144 L441 133 L422 125.7 L405.3 122.7 L418 130.7 L424 136.3 L431 147 L434 158 L434 167.7 L430 183 L423 196.7 L414.3 208.7 L401.7 221.7 L385.7 234.7 L371.7 244 L351.7 255.3 L232 307 L204.3 320.3 L183 332 L178.7 336 L173.3 343.3 L170 351.7 L168.7 360 L170 373.7 L174 383.7 L178.3 390 L187.7 398.3 L200.3 403.3 L210.3 403.7 L221 400.7 L385 310.3 L414.3 292.3 L433 279.3 L450 265 L466.3 247.3 L477 231.3 L483.7 215.3 L486.3 201.7 L485.3 184.7 L481.7 173.3 Z" fill="url(#ribbonB)"/>
+  <path d="M397.3 168.7 L392.7 164 L223.3 63.3 L209.3 56.3 L191 51 L170.3 49.3 L152.7 52 L142 56 L131.3 62.3 L120.3 73 L113.3 84 L109 94 L105 111.7 L104 134.7 L104 251.7 L106 277.7 L108.3 288 L125 245.7 L137 223.7 L149 206.7 L162.3 193 L175 183.7 L184 179 L198 174.3 L207.7 173 L221.3 173.7 L233 176.7 L248.3 182.7 L263.7 190 L284.3 201.7 L336.3 235.7 L253.7 251 L183.7 269 L137 285.3 L117.7 294.3 L100 304.3 L80 318.3 L64.7 332.3 L54.3 345 L47.3 357.3 L43.3 369.7 L42.3 385 L43.3 392.7 L46.3 403 L52.3 414 L64.7 426.7 L80.3 435.3 L100.7 440.7 L120.3 441.3 L137.3 439.3 L161 432.7 L182.7 423.7 L208.3 409 L195.7 412 L184.3 413.3 L163 412.7 L143.3 407 L134.3 402 L128.3 397.3 L122.7 391.7 L118.3 385.3 L112.3 370.3 L112.3 368.3 L117.7 357 L127.7 341.7 L144.3 324.3 L160.3 311.7 L180.3 299.3 L198.3 290 L229.7 276.7 L262.7 265 L337.3 242.7 L359.3 234 L368.7 229 L380.7 220.3 L388.3 213 L395 205 L400.3 195.7 L402.7 187 L402.7 181 L401 174.7 Z" fill="url(#ribbonA)"/>
 </svg>

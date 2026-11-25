@@ -8,17 +8,11 @@
   "start_url": "/AccessUg/",
   "scope": "/AccessUg/",
   "display": "standalone",
-  "display_override": [
-    "standalone",
-    "minimal-ui"
-  ],
+  "display_override": ["standalone", "minimal-ui"],
   "orientation": "any",
-  "background_color": "#061a3b",
-  "theme_color": "#061a3b",
-  "categories": [
-    "education",
-    "productivity"
-  ],
+  "background_color": "#ffffff",
+  "theme_color": "#0b3d91",
+  "categories": ["education", "productivity"],
   "icons": [
     {
       "src": "./favicon.svg",

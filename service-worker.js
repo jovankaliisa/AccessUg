@@ -1,5 +1,5 @@
 /* ACCESS UG service worker — GitHub Pages subpath safe. */
-const CACHE_NAME = "accessug-shell-v1";
+const CACHE_NAME = "accessug-shell-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
