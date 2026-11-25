@@ -876,10 +876,14 @@ async function loadStudentResults(){
     supabaseClient.from("assessments").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
     supabaseClient.from("end_term_results").select("subject_id").eq("student_id",student.id).eq("term_id",termId),
     supabaseClient.from("student_result_reports").select("*").eq("student_id",student.id).eq("term_id",termId).order("report_type"),
-    supabaseClient.from("behaviour_records").select("id,behaviour_date,recorded_date,grade,points,comment,created_at").eq("student_id",student.id).eq("term_id",termId).eq("school_id",student.school_id).order("behaviour_date",{ascending:true}).order("created_at",{ascending:true})
+    supabaseClient.from("behaviour_records").select("id,behaviour_date,recorded_date,grade,points,comment,created_at").eq("student_id",student.id).eq("term_id",termId).eq("school_id",student.school_id).order("behaviour_date",{ascending:true}).order("created_at",{ascending:true}),
+    supabaseClient.from("students").select("profile_photo_url").eq("id",student.id).maybeSingle()
    ];
    const result=await withResultsTimeout(Promise.all(queries),5500);
-   const [ar,er,rr,br]=result;
+   const [ar,er,rr,br,profilePhotoResult]=result;
+   // Always prefer the live student profile photo over the report's saved snapshot.
+   // A photo lookup failure must not prevent academic reports from loading.
+   const liveStudentPhoto=String(profilePhotoResult?.data?.profile_photo_url||student.profile_photo_url||authUser?.user_metadata?.avatar_url||"");
    if(ar.error)throw new Error("Assessment results could not be checked: "+ar.error.message);
    if(er.error)throw new Error("End-of-term results could not be checked: "+er.error.message);
    if(rr.error)throw new Error("Student reports could not be checked: "+rr.error.message);
@@ -889,6 +893,8 @@ async function loadStudentResults(){
      ...report,
      report_data:{
        ...(report.report_data||{}),
+       // Use the current profile photo for every report, including older report records.
+       student_photo_url:liveStudentPhoto||report.report_data?.student_photo_url||report.report_data?.profile_photo_url||report.report_data?.photo_url||"",
        behaviour:{...((report.report_data||{}).behaviour||{}),records:behaviourRecords}
      }
    }));
@@ -958,7 +964,8 @@ function renderStudentResultReport(r){
  const isAssessment=r.report_type==='assessment';
  const title=isAssessment?'ASSESSMENT REPORT':`END OF TERM ${esc(String(d.term_name||'').replace(/^Term\s*/i,'').trim()||'REPORT')}`;
  const photo=d.student_photo_url||d.profile_photo_url||d.photo_url||'';
- const photoHtml=photo?`<img src="${esc(photo)}" alt="Student photo" style="width:82px;height:100px;object-fit:cover;border:1px solid #b9c5d3;border-radius:4px;background:#eef3f9">`:`<div style="width:82px;height:100px;border:1px solid #b9c5d3;background:#eef3f9;display:grid;place-items:center;color:#64748b;font-size:10px;text-align:center">PHOTO<br>NOT AVAILABLE</div>`;
+ const photoFallback=`<div style="width:82px;height:100px;border:1px solid #b9c5d3;background:#eef3f9;display:grid;place-items:center;color:#64748b;font-size:10px;text-align:center">PHOTO<br>NOT AVAILABLE</div>`;
+ const photoHtml=photo?`<img src="${esc(photo)}" alt="Student photo" loading="eager" decoding="async" onerror="this.outerHTML='${photoFallback.replace(/'/g,"&#39;")}'" style="width:82px;height:100px;object-fit:cover;border:1px solid #b9c5d3;border-radius:4px;background:#eef3f9">`:photoFallback;
 
  const mapped=subs.map(x=>{
    const score=isAssessment?Number(x.percentage):Number(x.final_mark);
