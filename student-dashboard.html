@@ -965,7 +965,7 @@ function renderStudentResultReport(r){
  const title=isAssessment?'ASSESSMENT REPORT':`END OF TERM ${esc(String(d.term_name||'').replace(/^Term\s*/i,'').trim()||'REPORT')}`;
  const photo=d.student_photo_url||d.profile_photo_url||d.photo_url||'';
  const photoFallback=`<div style="width:82px;height:100px;border:1px solid #b9c5d3;background:#eef3f9;display:grid;place-items:center;color:#64748b;font-size:10px;text-align:center">PHOTO<br>NOT AVAILABLE</div>`;
- const photoHtml=photo?`<img src="${esc(photo)}" alt="Student photo" loading="eager" decoding="async" onerror="this.outerHTML='${photoFallback.replace(/'/g,"&#39;")}'" style="width:82px;height:100px;object-fit:cover;border:1px solid #b9c5d3;border-radius:4px;background:#eef3f9">`:photoFallback;
+ const photoHtml=photo?`<img src="${esc(photo)}" alt="Student photo" loading="eager" decoding="async" data-fallback="${esc(photoFallback)}" onerror="this.outerHTML=this.dataset.fallback" style="width:82px;height:100px;object-fit:cover;border:1px solid #b9c5d3;border-radius:4px;background:#eef3f9">`:photoFallback;
 
  const mapped=subs.map(x=>{
    const score=isAssessment?Number(x.percentage):Number(x.final_mark);
