@@ -344,7 +344,7 @@ input,select,textarea{width:100%;border:1px solid #d7e0ec;border-radius:10px;pad
 <script>
 const SUPABASE_URL="https://iotmozwesvmieqvsonov.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 window.supabaseClient=supabaseClient;
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
