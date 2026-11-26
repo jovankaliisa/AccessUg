@@ -1834,6 +1834,29 @@ if (loginForm && loginButton) {
 }
 </script>
 
+<script id="accessug-restore-saved-session">
+/* Restore an authenticated user when the installed app launches at index.html. */
+(async function restoreSavedAccessUgSession(){
+  try {
+    const { data, error } = await supabaseClient.auth.getSession();
+    if (error || !data?.session?.user) return;
+    const role = String(localStorage.getItem("accessug_selected_role") || "").trim().toLowerCase();
+    const destinations = {
+      administrator: "./admin-dashboard.html",
+      admin: "./admin-dashboard.html",
+      teacher: "./teacher-dashboard.html",
+      student: "./student-dashboard.html",
+      parent: "./student-dashboard.html",
+      school: "./school-dashboard.html"
+    };
+    const destination = destinations[role];
+    if (destination) window.location.replace(destination);
+  } catch (error) {
+    console.warn("ACCESS UG could not restore the saved session:", error);
+  }
+})();
+</script>
+
 <script id="accessug-account-setup-gate">
 (function(){
   const modal=document.getElementById("accountSetupModal");
