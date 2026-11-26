@@ -1835,25 +1835,61 @@ if (loginForm && loginButton) {
 </script>
 
 <script id="accessug-restore-saved-session">
-/* Restore an authenticated user when the installed app launches at index.html. */
-(async function restoreSavedAccessUgSession(){
-  try {
-    const { data, error } = await supabaseClient.auth.getSession();
-    if (error || !data?.session?.user) return;
+/*
+ * Reliable PWA session restoration.
+ * Listen for Supabase's INITIAL_SESSION event as well as checking getSession().
+ * This avoids depending on a single timing-sensitive startup check.
+ */
+(function restoreSavedAccessUgSession(){
+  const destinations = {
+    administrator: "./admin-dashboard.html",
+    admin: "./admin-dashboard.html",
+    teacher: "./teacher-dashboard.html",
+    student: "./student-dashboard.html",
+    parent: "./student-dashboard.html",
+    school: "./school-dashboard.html"
+  };
+  let redirected = false;
+
+  function routeIfAuthenticated(session) {
+    if (redirected || !session?.user) return false;
     const role = String(localStorage.getItem("accessug_selected_role") || "").trim().toLowerCase();
-    const destinations = {
-      administrator: "./admin-dashboard.html",
-      admin: "./admin-dashboard.html",
-      teacher: "./teacher-dashboard.html",
-      student: "./student-dashboard.html",
-      parent: "./student-dashboard.html",
-      school: "./school-dashboard.html"
-    };
     const destination = destinations[role];
-    if (destination) window.location.replace(destination);
-  } catch (error) {
-    console.warn("ACCESS UG could not restore the saved session:", error);
+    if (!destination) {
+      console.warn("ACCESS UG has a saved session but no recognized saved role.");
+      return false;
+    }
+    redirected = true;
+    window.location.replace(destination);
+    return true;
   }
+
+  // Supabase emits INITIAL_SESSION once persisted auth storage has been restored.
+  supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+      routeIfAuthenticated(session);
+    }
+  });
+
+  // Keep getSession as a second path for SDK/browser combinations where the
+  // initial auth event has already fired before this listener is attached.
+  (async () => {
+    for (let attempt = 0; attempt < 4 && !redirected; attempt++) {
+      try {
+        const result = await Promise.race([
+          supabaseClient.auth.getSession(),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Session restore check timed out")), 7000))
+        ]);
+        if (routeIfAuthenticated(result?.data?.session)) return;
+        if (result?.data?.session?.user) return; // Do not override an unknown role.
+      } catch (error) {
+        console.warn("ACCESS UG session restore attempt", attempt + 1, "did not complete:", error);
+      }
+      if (!redirected && attempt < 3) {
+        await new Promise(resolve => setTimeout(resolve, 1200));
+      }
+    }
+  })();
 })();
 </script>
 
