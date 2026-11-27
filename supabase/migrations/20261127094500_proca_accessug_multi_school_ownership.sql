@@ -1,1 +1,0 @@
-drop index if exists public.proca_schools_owner_unique; drop index if exists public.proca_schools_owner_user_id_idx; create index proca_schools_owner_user_id_idx on public.proca_schools(owner_user_id);
