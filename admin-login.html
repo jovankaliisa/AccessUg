@@ -264,6 +264,15 @@ footer{border-top:1px solid var(--line);background:var(--surface)}
 </div>
 
 <script>
+(function routeNonAdminPortalLogout(){
+  const portal = String(new URLSearchParams(location.search).get("portal") || "").trim().toLowerCase();
+  if(["school", "teacher", "student", "parent"].includes(portal)){
+    ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));
+    ["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k));
+    location.replace("./index.html?portal=" + encodeURIComponent(portal));
+  }
+})();
+
 const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {

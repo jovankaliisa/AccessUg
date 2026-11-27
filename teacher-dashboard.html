@@ -2611,7 +2611,8 @@ function fail(msg) {
   if ($("errorModal")) $("errorModal").classList.add("show");
 }
 function redirectLogin() {
-  location.replace("./admin-login.html?portal=teacher");
+  ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k));
+  location.replace("./index.html?portal=teacher");
 }
 function normClass(v) {
   return String(v ?? "").trim().toLowerCase().replace(/\s+/g, " ");

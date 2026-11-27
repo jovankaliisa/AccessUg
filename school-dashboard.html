@@ -12,6 +12,8 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style data-embedded-from="school-dashboard.css">
 :root{
   --navy:#061a38;
@@ -600,6 +602,11 @@ tbody tr:hover td{background:var(--accent-soft)}
 .checkline{display:flex!important;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
 .checkline input{width:18px;height:18px;accent-color:var(--blue);flex-shrink:0}
 
+.switch{position:relative;width:42px;height:23px;border-radius:999px;border:0;background:rgba(148,163,184,.38);padding:0;flex-shrink:0;cursor:pointer}
+.switch[aria-checked="true"]{background:var(--accent)}
+.switch span{position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch[aria-checked="true"] span{transform:translateX(19px)}
+
 @media print{
   body *{visibility:hidden}
   #rcPreviewSheet,#rcPreviewSheet *{visibility:visible}
@@ -681,7 +688,14 @@ tbody tr:hover td{background:var(--accent-soft)}
 <button data-page="fees-codes" type="button">Payment Codes</button>
 </div>
 <button data-page="reports" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4M12 17h.01"></path></svg></span>Reports &amp; Triage</button>
-<div class="nav-group-label"></div>
+<div class="nav-group-label">PROCA Device Control</div>
+<button data-page="proca-overview" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></span>PROCA Policies</button>
+<button data-page="proca-devices" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path></svg></span>Devices &amp; Fleet <span class="nav-badge" id="navDevCount">0</span></button>
+<button data-page="proca-agent" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg></span>Launcher &amp; Simulator</button>
+<button data-page="proca-apps" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><path d="M3 9h18M9 21V9"></path></svg></span>App Whitelisting</button>
+<button data-page="proca-filtering" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>Web Filtering</button>
+<button data-page="proca-monitoring" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></span>Live Telemetry</button>
+<button data-page="proca-branding" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg></span>Device Branding</button>
 <div class="nav-group-label">System &amp; Studio</div>
 <button data-page="appearance" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg></span>Appearance Studio</button>
 <button data-page="settings" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>Settings &amp; Governance</button>
@@ -1217,10 +1231,100 @@ tbody tr:hover td{background:var(--accent-soft)}
 <div class="card"><div class="card-head"><h3>Account Security</h3></div><p class="muted" style="margin-bottom:14px">Request a password reset email or end your current administrative session.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="selfPasswordReset" type="button">Send Password Reset Email</button><button class="btn danger" id="settingsSignOut" type="button">Sign Out</button></div></div>
 </div>
 </section>
+    <!-- PROCA OVERVIEW & POLICIES -->
+    <section class="page" id="proca-overview">
+      <div class="pagecard">
+        <div class="title">
+          <div><h3>PROCA Device Policy &amp; Kiosk Control</h3><p class="muted">Enforce Windows &amp; Android restrictions per enrolled school workstation.</p></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+            <span class="badge ok" id="procaActiveSchoolBadge">School Fleet</span>
+            <select id="procaDeviceSelect" style="width:auto;min-width:200px"></select>
+            <button class="btn" type="button" id="procaOpenEnrollBtn">+ Enroll Device</button>
+          </div>
+        </div>
+        <div class="seg-bar" style="margin-bottom:14px">
+          <button class="seg-btn active" type="button" data-proca-pgroup="all">All Controls</button>
+          <button class="seg-btn" type="button" data-proca-pgroup="System controls">System Controls</button>
+          <button class="seg-btn" type="button" data-proca-pgroup="Device access">Device Access</button>
+          <button class="seg-btn" type="button" data-proca-pgroup="Web protection">Web Protection</button>
+        </div>
+        <div id="procaPolicyGrid" class="grid-3"></div>
+      </div>
+    </section>
+    <!-- PROCA DEVICES & FLEET -->
+    <section class="page" id="proca-devices">
+      <div class="pagecard">
+        <div class="title">
+          <div><h3>PROCA Devices &amp; Fleet Inventory</h3><p class="muted">Manage enrolled lab PCs, tablets, and kiosk workstations.</p></div>
+          <button class="btn" type="button" onclick="openProcaEnrollModal()">+ Enroll Endpoint</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Hostname</th><th>Platform</th><th>Status</th><th>Last Sync</th><th>Actions</th></tr></thead>
+            <tbody id="procaDevicesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+    <!-- PROCA LAUNCHER & SIMULATOR -->
+    <section class="page" id="proca-agent">
+      <div class="pagecard">
+        <div class="title">
+          <div><h3>PROCA Launcher Builder &amp; Live OS Simulator</h3><p class="muted">Build Windows Auto-Chrome &amp; Android DPC packages, or test student vs. teacher policies live in the browser simulator.</p></div>
+          <div class="seg-bar">
+            <button class="seg-btn active" type="button" id="procaTabBuilder">Policy &amp; Bundle Builder</button>
+            <button class="seg-btn" type="button" id="procaTabSim">Live OS Simulator</button>
+          </div>
+        </div>
+        <div id="procaAgentBody"></div>
+      </div>
+    </section>
+    <!-- PROCA APP WHITELISTING -->
+    <section class="page" id="proca-apps">
+      <div class="pagecard">
+        <div class="title"><div><h3>PROCA App Whitelisting &amp; Chrome Web Apps</h3><p class="muted">Approve educational Windows executables, Chrome --app web apps (ACCESS UG, Word, OneDrive, Copilot), and safe Android apps.</p></div></div>
+        <div id="procaAppsBody"></div>
+      </div>
+    </section>
+    <!-- PROCA WEB FILTERING -->
+    <section class="page" id="proca-filtering">
+      <div class="pagecard">
+        <div class="title"><div><h3>PROCA Web Content Filtering</h3><p class="muted">Block chatting apps and distracting domains for students while preserving teacher instructional access.</p></div></div>
+        <div id="procaFilteringBody"></div>
+      </div>
+    </section>
+    <!-- PROCA MONITORING & TELEMETRY -->
+    <section class="page" id="proca-monitoring">
+      <div class="pagecard">
+        <div class="title"><div><h3>PROCA Live Lab Telemetry &amp; Network Health</h3><p class="muted">Inspect Chrome SafeSearch queries, OneDrive syncs, blocked attempts, and lab bandwidth.</p></div></div>
+        <div id="procaMonitoringBody"></div>
+      </div>
+    </section>
+    <!-- PROCA DEVICE BRANDING -->
+    <section class="page" id="proca-branding">
+      <div class="pagecard">
+        <div class="title"><div><h3>PROCA Device Lock-Screen Branding</h3><p class="muted">Customize the boot and lock-screen identity displayed on managed school endpoints.</p></div></div>
+        <div id="procaBrandingBody"></div>
+      </div>
+    </section>
 </div>
 </main>
 </div>
 <!-- MODALS -->
+<!-- PROCA ENROLL DEVICE MODAL -->
+<div class="modal" id="procaEnrollModal">
+  <div class="modalbox" style="width:min(460px,100%)">
+    <div class="modalhead"><h3>Enroll PROCA Endpoint</h3><button class="close" type="button" onclick="closeProcaEnrollModal()">×</button></div>
+    <form id="procaEnrollForm">
+      <div class="formgrid" style="grid-template-columns:1fr">
+        <div class="field"><label>Hostname *</label><input id="procaEnrollName" class="font-mono" required="" placeholder="LAB-2-PC01"></div>
+        <div class="field"><label>Platform</label><select id="procaEnrollPlatform"><option value="windows">Windows 11 PC</option><option value="android">Android Tablet / Phone</option></select></div>
+        <div class="field"><label>Initial Status</label><select id="procaEnrollStatus"><option value="online">online</option><option value="pending">pending</option><option value="offline">offline</option></select></div>
+      </div>
+      <div class="actions"><button type="button" class="secondary" onclick="closeProcaEnrollModal()">Cancel</button><button type="submit" class="btn">Enroll Device</button></div>
+    </form>
+  </div>
+</div>
 <div class="modal" id="modal"><div class="modal-box"><div class="modal-head"><h3 id="modalTitle">Details</h3><button class="close" id="closeModal" type="button">×</button></div><div id="modalBody"></div></div></div>
 <div class="modal" id="teacherModal"><div class="modal-box"><div class="modal-head"><h3>Add Teacher &amp; Create Login</h3><button class="close" onclick="closeTeacherModal()" type="button">×</button></div><div class="db-message" id="teacherMessage"></div><form id="teacherForm">
 <div class="formgrid">
@@ -2834,13 +2938,13 @@ const titles = {
   "fees-codes": "Payment Codes Registry",
   reports: "Reports & Triage",
   users: "School Users & Password Reset",
-
-
-
-
-
-
-
+  "proca-overview": "PROCA Device Policies",
+  "proca-devices": "PROCA Devices & Fleet",
+  "proca-agent": "PROCA Launcher & Simulator",
+  "proca-apps": "PROCA App Whitelisting",
+  "proca-filtering": "PROCA Web Filtering",
+  "proca-monitoring": "PROCA Live Telemetry",
+  "proca-branding": "PROCA Device Branding",
   appearance: "Appearance Studio",
   settings: "School Settings & Governance"
 };
@@ -2872,6 +2976,7 @@ function showPage(p) {
   if (p === "fees-update" && window.accessugLoadSchoolFees) window.accessugLoadSchoolFees("update");
   if (p === "fees-analysis" && window.accessugLoadSchoolFees) window.accessugLoadSchoolFees("analysis");
   if (p === "fees-codes" && window.renderPaymentCodesRegistry) window.renderPaymentCodesRegistry();
+  if (p.startsWith("proca-") && typeof window.renderProcaView === "function") window.renderProcaView(p);
 
   if (p === "settings" && window.loadSchoolSettingsModule) window.loadSchoolSettingsModule();
   if (p === "appearance") applyAppearance(getSavedAppearance());
@@ -3664,9 +3769,31 @@ async function initialLoad() {
     const auth = await withTimeout(supabaseClient.auth.getSession(), 3500, "Auth check");
     if (auth.error) throw auth.error;
     session = auth.data.session;
-    if (!session?.user) { location.replace("./admin-login.html?portal=school"); return; }
+    if (!session?.user) { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); return; }
 
     const meta = session.user.user_metadata || {};
+    const appMeta = session.user.app_metadata || {};
+    const authEmail = String(session.user.email || "").trim().toLowerCase();
+    const explicitRole = String(appMeta.role || meta.role || "").trim().toLowerCase();
+    if (explicitRole === "teacher") { location.replace("./teacher-dashboard.html"); return; }
+    if (explicitRole === "student" || explicitRole === "parent") { location.replace("./student-dashboard.html"); return; }
+    if (authEmail && explicitRole !== "school" && !["administrator","platform_admin","admin","super_admin"].includes(explicitRole)) {
+      try {
+        const [schCheck, tchCheck] = await Promise.all([
+          supabaseClient.from("schools").select("id").ilike("email", authEmail).limit(1),
+          supabaseClient.from("teachers").select("id,school_id").ilike("email", authEmail).limit(1)
+        ]);
+        if ((!schCheck.data || !schCheck.data.length) && tchCheck.data && tchCheck.data.length) {
+          localStorage.setItem("accessug_selected_role", "teacher");
+          localStorage.setItem("accessug_login_email", authEmail);
+          sessionStorage.setItem("accessug_teacher_email", authEmail);
+          sessionStorage.setItem("accessug_teacher_id", String(tchCheck.data[0].id));
+          if (tchCheck.data[0].school_id != null) sessionStorage.setItem("accessug_teacher_school_id", String(tchCheck.data[0].school_id));
+          location.replace("./teacher-dashboard.html");
+          return;
+        }
+      } catch {}
+    }
     const storedId = sessionStorage.getItem("accessug_school_id") || localStorage.getItem("accessug_school_id");
     const storedName = sessionStorage.getItem("accessug_school_name") || localStorage.getItem("accessug_school_name");
     try {
@@ -3703,6 +3830,7 @@ async function initialLoad() {
     timetableSlots = readSchoolJson("accessug_timetable_slots", []);
     officialCalendarEvents = readSchoolJson("accessug_official_calendar", []);
     reportTemplatesCache = readSchoolJson("accessug_report_templates", []);
+    if (typeof window.syncProcaFromSupabase === "function") void window.syncProcaFromSupabase();
 
     void withTimeout(loadSchool(), 3500, "School details").then(() => {
       localStorage.setItem("accessug_school_name", school?.name || "");
@@ -3741,8 +3869,8 @@ $("refreshStudentAttendance")?.addEventListener("click", async () => { await loa
 $("teacherSearch")?.addEventListener("input", renderTeachers);
 $("studentSearch")?.addEventListener("input", renderStudents);
 $("studentClassFilter")?.addEventListener("change", renderStudents);
-$("logoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); location.replace("./admin-login.html?portal=school"); });
-supabaseClient.auth.onAuthStateChange((e) => { if (e === "SIGNED_OUT") location.replace("./admin-login.html?portal=school"); });
+$("logoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); }; });
+supabaseClient.auth.onAuthStateChange((e) => { if (e === "SIGNED_OUT") { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); } });
 
 window.addEventListener("DOMContentLoaded", initialLoad);
 
@@ -6130,7 +6258,7 @@ $("selfPasswordReset")?.addEventListener("click", async () => {
   const r = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
   notice("settingsNotice", r.error ? r.error.message : "Password reset link sent to " + email, r.error ? "err" : "ok");
 });
-$("settingsSignOut")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); location.replace("./admin-login.html?portal=school"); });
+$("settingsSignOut")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); }; });
 
 // Appearance Studio controls
 document.querySelectorAll("[data-ui-mode]").forEach((b) => b.addEventListener("click", () => saveAppearance({ mode: b.dataset.uiMode })));
@@ -6283,6 +6411,895 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }, 1200);
 });
+
+
+function getProcaSchoolId() {
+  return String(schoolId || sessionStorage.getItem("accessug_school_id") || localStorage.getItem("accessug_school_id") || "default");
+}
+function getProcaSchoolName() {
+  return school?.name || sessionStorage.getItem("accessug_school_name") || localStorage.getItem("accessug_school_name") || (typeof procaState !== "undefined" && procaState.branding?.school_display_name) || "ACCESS UG School";
+}
+/* =========================
+   PROCA CONTROL CENTER
+========================= */
+const PROCA_POLICY_DEFAULTS = {
+  lockdown_enabled: true, allow_task_manager: false, allow_control_panel: false, allow_settings: false,
+  allow_powershell: false, allow_command_prompt: false, allow_usb_storage: false, allow_windows_store: false,
+  allow_task_switching: false, block_social_media: true, enforce_browser_profile: true
+};
+const PROCA_POLICY_OPTIONS = [
+  { key: "lockdown_enabled", label: "Kiosk / Launcher lockdown", desc: "Enforce the PROCA Launcher or shell restriction.", group: "System controls" },
+  { key: "allow_task_manager", label: "Task Manager", desc: "Allow students to open Task Manager.", group: "System controls", inverted: true },
+  { key: "allow_control_panel", label: "Control Panel", desc: "Allow classic system configuration.", group: "System controls", inverted: true },
+  { key: "allow_settings", label: "Windows Settings", desc: "Allow system Settings access.", group: "System controls", inverted: true },
+  { key: "allow_powershell", label: "PowerShell", desc: "Allow PowerShell execution.", group: "System controls", inverted: true },
+  { key: "allow_command_prompt", label: "Command Prompt", desc: "Allow cmd.exe for sessions.", group: "System controls", inverted: true },
+  { key: "allow_usb_storage", label: "USB storage", desc: "Allow removable USB storage.", group: "Device access", inverted: true },
+  { key: "allow_windows_store", label: "Microsoft Store", desc: "Allow Store app installation.", group: "Device access", inverted: true },
+  { key: "allow_task_switching", label: "Task switching", desc: "Allow Alt+Tab switching.", group: "Device access", inverted: true },
+  { key: "block_social_media", label: "Social media blocking (Students)", desc: "Block social domains for student accounts.", group: "Web protection" },
+  { key: "enforce_browser_profile", label: "Mandatory Google Chrome", desc: "Require Google Chrome & auto-install if missing.", group: "Web protection" }
+];
+const PROCA_AUTH_DEFAULTS = {
+  deploymentMode: "proca_launcher",
+  requireStudentLoginAtBoot: true,
+  rebootIntoProcaShell: false,
+  requireMicrosoftEmailLogin: true,
+  allowMicrosoftEntraSso: true,
+  autoMountOneDrive: true,
+  allowMicrosoftCopilot: true,
+  requireMandatoryChrome: true,
+  autoInstallChromeIfMissing: true,
+  allowSafeAndroidDefaults: true,
+  teacherAllowSocialAndYouTube: true,
+  teacherBlockChattingApps: true,
+  allowedEmailDomains: "outlook.com, onmicrosoft.com",
+  customBootSubtitle: "PROCA Managed Launcher · Safe Boot Preserved"
+};
+const PROCA_QUICK_PRESETS = [
+  { app_name: "AccessUg Learning Portal", executable_name: "chrome.exe --app=https://jovankaliisa.github.io/AccessUg/" },
+  { app_name: "Google Chrome (Mandatory)", executable_name: "chrome.exe" },
+  { app_name: "Microsoft Word (OneDrive Sync)", executable_name: "chrome.exe --app=https://word.office.com" },
+  { app_name: "Microsoft Copilot", executable_name: "chrome.exe --app=https://copilot.microsoft.com" },
+  { app_name: "Microsoft OneDrive", executable_name: "chrome.exe --app=https://onedrive.live.com" },
+  { app_name: "Files (Android Safe Default)", executable_name: "com.google.android.documentsui" }
+];
+const PROCA_CHATTING_DOMAINS = ["web.whatsapp.com", "whatsapp.com", "telegram.org", "web.telegram.org", "discord.com", "messenger.com", "snapchat.com"];
+const PROCA_SEED_TELEMETRY = [
+  { id: "pt1", userName: "Jovan Kalisa", userRole: "student", labLocation: "Computer Lab 2", deviceName: "LAB-2-PC01", eventType: "login", summary: "Signed into Computer Lab 2 with Microsoft 365 & mounted OneDrive", target: "LAB-2-PC01", outcome: "allowed", latencyMs: 18, bandwidthMbps: 84.5, timestamp: new Date(Date.now() - 12 * 60000).toISOString() },
+  { id: "pt2", userName: "Jovan Kalisa", userRole: "student", labLocation: "Computer Lab 2", deviceName: "LAB-2-PC01", eventType: "search", summary: "Searched in Chrome: UNEB Physics practical electricity notes", target: "google.com/search?q=UNEB+Physics", outcome: "allowed", latencyMs: 19, bandwidthMbps: 82.0, timestamp: new Date(Date.now() - 8 * 60000).toISOString() },
+  { id: "pt3", userName: "Jovan Kalisa", userRole: "student", labLocation: "Computer Lab 2", deviceName: "LAB-2-PC01", eventType: "app_launch", summary: "Opened AccessUg Learning Portal (Chrome Web App)", target: "https://jovankaliisa.github.io/AccessUg/", outcome: "allowed", latencyMs: 17, bandwidthMbps: 86.1, timestamp: new Date(Date.now() - 5 * 60000).toISOString() },
+  { id: "pt4", userName: "Grace Nalubega", userRole: "teacher", labLocation: "Staff Prep Room", deviceName: "LAB-1-PC01", eventType: "app_launch", summary: "Teacher educational YouTube instructional streaming unlocked", target: "youtube.com/watch?v=edu-physics", outcome: "allowed", latencyMs: 16, bandwidthMbps: 91.2, timestamp: new Date(Date.now() - 4 * 60000).toISOString() },
+  { id: "pt5", userName: "Jovan Kalisa", userRole: "student", labLocation: "Computer Lab 2", deviceName: "LAB-2-PC01", eventType: "blocked_attempt", summary: "Blocked WhatsApp Web attempt under PROCA chatting shield", target: "web.whatsapp.com", outcome: "blocked", latencyMs: 18, bandwidthMbps: 84.0, timestamp: new Date(Date.now() - 2 * 60000).toISOString() }
+];
+
+function getProcaAuthPolicy() {
+  const sid = getProcaSchoolId();
+  try {
+    const saved = JSON.parse(localStorage.getItem("proca_auth_policy_" + sid) || "null");
+    if (saved) return { ...PROCA_AUTH_DEFAULTS, ...saved };
+  } catch {}
+  return { ...PROCA_AUTH_DEFAULTS };
+}
+function saveProcaAuthPolicy(policy) {
+  const sid = getProcaSchoolId();
+  localStorage.setItem("proca_auth_policy_" + sid, JSON.stringify(policy));
+}
+
+const procaState = {
+  devices: JSON.parse(localStorage.getItem("proca_devices_cache") || JSON.stringify([
+    { id: "dev-1", device_name: "LAB-1-PC01", platform: "windows", status: "online", updated_at: new Date().toISOString() },
+    { id: "dev-2", device_name: "LAB-2-PC01", platform: "windows", status: "online", updated_at: new Date().toISOString() },
+    { id: "dev-3", device_name: "LIB-TAB-01", platform: "android", status: "offline", updated_at: new Date().toISOString() }
+  ])),
+  policies: JSON.parse(localStorage.getItem("proca_policies_cache") || "{}"),
+  whitelist: JSON.parse(localStorage.getItem("proca_whitelist_cache") || JSON.stringify([
+    { id: "w1", app_name: "AccessUg Learning Portal", executable_name: "chrome.exe --app=https://jovankaliisa.github.io/AccessUg/", enabled: true },
+    { id: "w2", app_name: "Google Chrome (Mandatory)", executable_name: "chrome.exe", enabled: true },
+    { id: "w3", app_name: "Microsoft Word (OneDrive)", executable_name: "chrome.exe --app=https://word.office.com", enabled: true }
+  ])),
+  domains: JSON.parse(localStorage.getItem("proca_domains_cache") || JSON.stringify([
+    { id: "d1", domain: "web.whatsapp.com", category: "Chatting", enabled: true },
+    { id: "d2", domain: "telegram.org", category: "Chatting", enabled: true },
+    { id: "d3", domain: "discord.com", category: "Chatting", enabled: true }
+  ])),
+  branding: JSON.parse(localStorage.getItem("proca_branding_cache") || JSON.stringify({
+    school_display_name: "ACCESS UG Managed Lab", motto: "LEARN. FOCUS. ACHIEVE.",
+    welcome_banner: "Sign in with your school Microsoft 365 account.", accent_color: "#0648ef"
+  })),
+  telemetry: JSON.parse(localStorage.getItem("proca_telemetry_cache") || JSON.stringify(PROCA_SEED_TELEMETRY)),
+  authPolicy: getProcaAuthPolicy(),
+  policyGroup: "all",
+  agentSubTab: "builder",
+  appAddType: "chrome_webapp",
+  appSearch: "",
+  domainSearch: "",
+  monRoleFilter: "all",
+  monSearch: "",
+  simPlatform: "windows",
+  simRole: "student",
+  simPhase: "desktop",
+  simChromeMissing: false,
+  simChromePct: 0,
+  simFullscreen: false,
+  simMsEmail: "",
+  simSession: { name: "Jovan Kalisa", role: "student", email: "jovan.kalisa@accessug.onmicrosoft.com" },
+  simActiveApp: "chrome",
+  simOmnibox: "",
+  simWordTitle: "Physics_Notes.docx",
+  simWordText: "Term 2 Revision Notes — Waves & Optics\nSaved automatically to School OneDrive.",
+  simCalcVal: "0",
+  simSyncedFiles: [
+    { name: "Physics_Notes.docx", folder: "OneDrive", updated: "Synced" },
+    { name: "Timetable_Term2.pdf", folder: "School Docs", updated: "Yesterday" }
+  ],
+  simChromeTabs: [{ id: "tab_1", title: "New Tab", url: "chrome://newtab" }],
+  simChromeActiveTab: "tab_1",
+  procaTablesAvailable: false
+};
+
+function recordProcaTelemetry(ev) {
+  procaState.telemetry.unshift({
+    id: "pt_" + Date.now(),
+    userName: ev.userName || procaState.simSession?.name || "Lab User",
+    userRole: ev.userRole || procaState.simRole || "student",
+    labLocation: ev.labLocation || "Computer Lab 2",
+    deviceName: ev.deviceName || (procaState.simPlatform === "windows" ? "LAB-2-PC01" : "LIB-TAB-01"),
+    eventType: ev.eventType || "app_launch",
+    summary: ev.summary || "",
+    target: ev.target || "",
+    outcome: ev.outcome || "allowed",
+    latencyMs: 17,
+    bandwidthMbps: 83.4,
+    timestamp: new Date().toISOString()
+  });
+  procaState.telemetry = procaState.telemetry.slice(0, 100);
+  localStorage.setItem("proca_telemetry_cache", JSON.stringify(procaState.telemetry));
+}
+
+function saveProcaLocal() {
+  localStorage.setItem("proca_devices_cache", JSON.stringify(procaState.devices));
+  localStorage.setItem("proca_policies_cache", JSON.stringify(procaState.policies));
+  localStorage.setItem("proca_whitelist_cache", JSON.stringify(procaState.whitelist));
+  localStorage.setItem("proca_domains_cache", JSON.stringify(procaState.domains));
+  localStorage.setItem("proca_branding_cache", JSON.stringify(procaState.branding));
+  localStorage.setItem("proca_telemetry_cache", JSON.stringify(procaState.telemetry));
+  if ($("navDevCount")) $("navDevCount").textContent = procaState.devices.length;
+  if ($("dashDevicesSub")) $("dashDevicesSub").textContent = `${procaState.devices.length} managed endpoints`;
+}
+
+async function syncProcaFromSupabase() {
+  const sid = getProcaSchoolId();
+  procaState.authPolicy = getProcaAuthPolicy();
+  if (!sid) return;
+  try {
+    const devRes = await supabaseClient.from("devices").select("*").eq("school_id", sid).order("device_name");
+    if (!devRes.error && Array.isArray(devRes.data)) {
+      procaState.procaTablesAvailable = true;
+      if (devRes.data.length) procaState.devices = devRes.data;
+      const [polRes, appRes, domRes, brRes] = await Promise.all([
+        supabaseClient.from("device_policies").select("*").eq("school_id", sid),
+        supabaseClient.from("app_whitelist").select("*").eq("school_id", sid),
+        supabaseClient.from("blocked_domains").select("*").eq("school_id", sid),
+        supabaseClient.from("device_branding").select("*").eq("school_id", sid).maybeSingle()
+      ]);
+      if (!polRes.error && polRes.data) {
+        polRes.data.forEach((p) => { if (p.device_id) procaState.policies[p.device_id] = p; });
+      }
+      if (!appRes.error && appRes.data?.length) procaState.whitelist = appRes.data;
+      if (!domRes.error && domRes.data?.length) procaState.domains = domRes.data;
+      if (!brRes.error && brRes.data) procaState.branding = brRes.data;
+      saveProcaLocal();
+    }
+  } catch { /* fallback to localStorage cache */ }
+}
+
+
+
+function evaluateSimUrl(urlVal) {
+  const raw = (urlVal || "").trim();
+  if (!raw || raw === "chrome://newtab") return { kind: "newtab", url: "chrome://newtab" };
+  if (!raw.includes(".") || raw.includes(" ")) return { kind: "search", query: raw, url: "https://google.com/search?q=" + encodeURIComponent(raw) };
+  const full = raw.startsWith("http") ? raw : "https://" + raw;
+  const host = full.replace(/^https?:\/\//i, "").split("/")[0].toLowerCase();
+  const role = procaState.simSession?.role || procaState.simRole || "student";
+  if (PROCA_CHATTING_DOMAINS.some((k) => host.includes(k.split(".")[0])) && (role === "student" || procaState.authPolicy.teacherBlockChattingApps)) {
+    return { kind: "blocked", url: full, reason: `Chatting apps (${host}) are blocked for both Students and Teachers.` };
+  }
+  if (procaState.domains.some((d) => d.enabled !== false && host.includes(String(d.domain || "").toLowerCase()))) {
+    if (role === "teacher" && procaState.authPolicy.teacherAllowSocialAndYouTube && ["youtube", "youtu.be"].some((k) => host.includes(k))) {
+      return { kind: "youtube_teacher", url: full };
+    }
+    return { kind: "blocked", url: full, reason: `${host} is blocked under PROCA Web Filtering policy.` };
+  }
+  if (["youtube", "youtu.be", "tiktok", "instagram", "facebook"].some((k) => host.includes(k))) {
+    if (role === "teacher" && procaState.authPolicy.teacherAllowSocialAndYouTube) return { kind: "youtube_teacher", url: full };
+    return { kind: "blocked", url: full, reason: `${host} is restricted for Student accounts.` };
+  }
+  if (host.includes("accessug")) return { kind: "accessug", url: "https://jovankaliisa.github.io/AccessUg/" };
+  return { kind: "web", url: full, host };
+}
+
+function renderProcaView(page) {
+  saveProcaLocal();
+  const schoolName = getProcaSchoolName();
+  const schoolSlug = schoolName.toLowerCase().replace(/[^a-z0-9]+/g, "") || "accessug";
+  if ($("procaActiveSchoolBadge")) $("procaActiveSchoolBadge").textContent = schoolName;
+
+  if (page === "proca-overview") {
+    const devSel = $("procaDeviceSelect");
+    const curDev = devSel.value || procaState.devices[0]?.id || "";
+    devSel.innerHTML = procaState.devices.map((d) => `<option value="${safe(d.id)}">${safe(d.device_name)} · ${safe(d.status)}</option>`).join("") || '<option value="">No devices</option>';
+    if (curDev) devSel.value = curDev;
+    const pol = { ...PROCA_POLICY_DEFAULTS, ...(procaState.policies[devSel.value] || {}) };
+    const list = PROCA_POLICY_OPTIONS.filter((p) => procaState.policyGroup === "all" || p.group === procaState.policyGroup);
+    $("procaPolicyGrid").innerHTML = list.map((p) => {
+      const on = Boolean(pol[p.key]);
+      return `
+        <article class="card" style="display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="muted">${safe(p.group)}</span><span class="badge ${on ? "ok" : "warn"}">${on ? (p.inverted ? "Allowed" : "Enforced") : (p.inverted ? "Restricted" : "Disabled")}</span></div>
+            <h4>${safe(p.label)}</h4><p class="muted" style="margin-top:4px">${safe(p.desc)}</p>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+            <span class="font-mono muted" style="font-size:11px">${safe(p.key)}</span>
+            <button type="button" class="switch" aria-checked="${on}" onclick="toggleProcaPolicy('${safe(devSel.value)}','${p.key}')"><span></span></button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+  else if (page === "proca-devices") {
+    $("procaDevicesTable").innerHTML = procaState.devices.map((d) => `
+      <tr>
+        <td class="font-mono"><strong>${safe(d.device_name)}</strong></td>
+        <td>${safe(d.platform || "windows")}</td>
+        <td><span class="badge ${d.status === "online" ? "ok" : "warn"}">${safe(d.status)}</span></td>
+        <td class="muted">${d.updated_at ? new Date(d.updated_at).toLocaleString() : "—"}</td>
+        <td><button class="small-btn" onclick="showPage('proca-overview')">Configure Policy</button> <button class="small-btn danger-btn" onclick="removeProcaDevice('${safe(d.id)}')">Remove</button></td>
+      </tr>
+    `).join("") || '<tr><td colspan="5" class="empty">No devices enrolled yet.</td></tr>';
+  }
+  else if (page === "proca-apps") {
+    const rows = procaState.whitelist.filter((w) => !procaState.appSearch.trim() || JSON.stringify(w).toLowerCase().includes(procaState.appSearch.toLowerCase()));
+    $("procaAppsBody").innerHTML = `
+      <div class="card" style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:700;margin-bottom:10px">PROCA Chrome Web App, Microsoft 365 &amp; Safe Default Presets</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          ${PROCA_QUICK_PRESETS.map((p, idx) => {
+            const exists = procaState.whitelist.some((w) => String(w.executable_name || "").toLowerCase() === p.executable_name.toLowerCase());
+            return `<button type="button" class="small-btn" onclick="addProcaPreset(${idx})" ${exists ? "disabled" : ""}>${exists ? "✓ " : "+ "}${safe(p.app_name)}</button>`;
+          }).join("")}
+        </div>
+      </div>
+      <form id="procaAppForm" class="card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+          <h4>Add Whitelisted App or Chrome Web App</h4>
+          <div class="seg-bar">
+            <button type="button" class="seg-btn ${procaState.appAddType === "chrome_webapp" ? "active" : ""}" onclick="procaState.appAddType='chrome_webapp';renderProcaView('proca-apps')">Chrome Web App (URL)</button>
+            <button type="button" class="seg-btn ${procaState.appAddType === "native" ? "active" : ""}" onclick="procaState.appAddType='native';renderProcaView('proca-apps')">Native EXE / Package</button>
+          </div>
+        </div>
+        <div class="toolbar" style="margin-bottom:0">
+          <div class="field"><label>Application Name</label><input id="pAppName" required placeholder="${procaState.appAddType === "chrome_webapp" ? "e.g. Khan Academy" : "e.g. Microsoft Copilot"}"></div>
+          <div class="field"><label>${procaState.appAddType === "chrome_webapp" ? "Web App URL" : "Executable / Package"}</label><input id="pAppExe" class="font-mono" required placeholder="${procaState.appAddType === "chrome_webapp" ? "https://jovankaliisa.github.io/AccessUg/" : "chrome.exe"}"></div>
+          <button class="btn" type="submit">+ Add Whitelist Rule</button>
+        </div>
+      </form>
+      <div class="toolbar" style="justify-content:space-between">
+        <strong>Whitelist Rules (${rows.length})</strong>
+        <input id="pAppSearchIn" type="search" value="${safe(procaState.appSearch)}" placeholder="Filter applications…" style="max-width:260px">
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>App</th><th>Target</th><th>Status</th><th>Action</th></tr></thead><tbody>
+        ${rows.map((w) => `<tr><td><strong>${safe(w.app_name)}</strong></td><td class="font-mono">${safe(w.executable_name)}</td><td><span class="badge ${w.enabled !== false ? "ok" : ""}">${w.enabled !== false ? "Enabled" : "Paused"}</span></td><td><button type="button" class="small-btn" onclick="togProcaApp('${safe(w.id)}')">${w.enabled !== false ? "Disable" : "Enable"}</button> <button type="button" class="small-btn danger-btn" onclick="delProcaApp('${safe(w.id)}')">Delete</button></td></tr>`).join("") || '<tr><td colspan="4" class="empty">No matching whitelist rules.</td></tr>'}
+      </tbody></table></div>
+    `;
+    $("pAppSearchIn")?.addEventListener("input", (e) => { procaState.appSearch = e.target.value; renderProcaView("proca-apps"); $("pAppSearchIn")?.focus(); });
+    $("procaAppForm").onsubmit = async (e) => {
+      e.preventDefault();
+      let exe = $("pAppExe").value.trim();
+      if ((procaState.appAddType === "chrome_webapp" && !exe.startsWith("chrome.exe")) || /^https?:\/\//i.test(exe)) {
+        const url = /^https?:\/\//i.test(exe) ? exe : "https://" + exe;
+        exe = "chrome.exe --app=" + url;
+      }
+      const item = { id: "w_" + Date.now(), app_name: $("pAppName").value.trim(), executable_name: exe, enabled: true };
+      procaState.whitelist.unshift(item);
+      if (procaState.procaTablesAvailable && schoolId) {
+        await supabaseClient.from("app_whitelist").insert({ school_id: getProcaSchoolId(), app_name: item.app_name, executable_name: item.executable_name, enabled: true });
+      }
+      logAudit("PROCA App Whitelisted", item.app_name, exe);
+      toast("Added " + item.app_name);
+      renderProcaView("proca-apps");
+    };
+  }
+  else if (page === "proca-filtering") {
+    const rows = procaState.domains.filter((d) => !procaState.domainSearch.trim() || JSON.stringify(d).toLowerCase().includes(procaState.domainSearch.toLowerCase()));
+    $("procaFilteringBody").innerHTML = `
+      <form id="procaDomForm" class="toolbar">
+        <div class="field"><label>Domain to Block</label><input id="pDomName" class="font-mono" required placeholder="e.g. tiktok.com or web.whatsapp.com"></div>
+        <div class="field"><label>Category</label><select id="pDomCat"><option>Social Media</option><option>Chatting</option><option>Gaming</option><option>Streaming</option><option>Proxy / VPN</option><option>Custom</option></select></div>
+        <button class="btn" type="submit">+ Block Domain</button>
+      </form>
+      <div class="toolbar" style="justify-content:space-between">
+        <strong>Blocked Domains (${rows.length})</strong>
+        <input id="pDomSearchIn" type="search" value="${safe(procaState.domainSearch)}" placeholder="Search domains…" style="max-width:260px">
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Domain</th><th>Category</th><th>Status</th><th>Action</th></tr></thead><tbody>
+        ${rows.map((d) => `<tr><td class="font-mono"><strong>${safe(d.domain)}</strong></td><td>${safe(d.category)}</td><td><span class="badge ${d.enabled !== false ? "err" : ""}">${d.enabled !== false ? "Blocked" : "Paused"}</span></td><td><button type="button" class="small-btn" onclick="togProcaDom('${safe(d.id)}')">${d.enabled !== false ? "Pause" : "Enable"}</button> <button type="button" class="small-btn danger-btn" onclick="delProcaDom('${safe(d.id)}')">Remove</button></td></tr>`).join("") || '<tr><td colspan="4" class="empty">No blocked domains matching filter.</td></tr>'}
+      </tbody></table></div>
+    `;
+    $("pDomSearchIn")?.addEventListener("input", (e) => { procaState.domainSearch = e.target.value; renderProcaView("proca-filtering"); $("pDomSearchIn")?.focus(); });
+    $("procaDomForm").onsubmit = async (e) => {
+      e.preventDefault();
+      const domain = $("pDomName").value.trim().toLowerCase().replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+      if (!domain || !domain.includes(".")) { toast("Enter a valid domain."); return; }
+      const item = { id: "d_" + Date.now(), domain, category: $("pDomCat").value, enabled: true };
+      procaState.domains.unshift(item);
+      if (procaState.procaTablesAvailable && schoolId) {
+        await supabaseClient.from("blocked_domains").insert({ school_id: getProcaSchoolId(), domain: item.domain, category: item.category, enabled: true });
+      }
+      logAudit("PROCA Domain Blocked", item.domain, item.category);
+      toast("Blocked " + item.domain);
+      renderProcaView("proca-filtering");
+    };
+  }
+  else if (page === "proca-monitoring") {
+    const rows = procaState.telemetry.filter((t) => {
+      if (procaState.monRoleFilter !== "all" && t.userRole !== procaState.monRoleFilter) return false;
+      if (!procaState.monSearch.trim()) return true;
+      return JSON.stringify(t).toLowerCase().includes(procaState.monSearch.toLowerCase());
+    });
+    const searches = procaState.telemetry.filter((t) => t.eventType === "search").length;
+    const syncs = procaState.telemetry.filter((t) => t.eventType === "onedrive_sync").length;
+    const blocked = procaState.telemetry.filter((t) => t.eventType === "blocked_attempt").length;
+    $("procaMonitoringBody").innerHTML = `
+      <div class="cards" style="margin-bottom:16px">
+        <div class="card"><span class="muted">Fleet Avg Latency</span><h3>18 ms</h3><span class="muted font-mono">84.2 Mbps · 0.1% loss</span></div>
+        <div class="card"><span class="muted">Chrome Searches</span><h3>${searches}</h3><span class="muted">SafeSearch active</span></div>
+        <div class="card"><span class="muted">OneDrive Syncs</span><h3>${syncs}</h3><span class="muted">Microsoft 365 files</span></div>
+        <div class="card"><span class="muted">Blocked Attempts</span><h3 style="color:var(--red)">${blocked}</h3><span class="muted">Chatting &amp; restricted URLs</span></div>
+      </div>
+      <div class="grid-2">
+        <div class="card" style="padding:0;overflow:hidden">
+          <div style="padding:12px 14px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center">
+            <div class="seg-bar">
+              ${["all", "student", "teacher"].map((rf) => `<button type="button" class="seg-btn ${procaState.monRoleFilter === rf ? "active" : ""}" onclick="procaState.monRoleFilter='${rf}';renderProcaView('proca-monitoring')">${rf === "all" ? "All Roles" : rf + "s"}</button>`).join("")}
+            </div>
+            <input id="pMonSearchIn" type="search" value="${safe(procaState.monSearch)}" placeholder="Search user, lab…" style="max-width:200px">
+          </div>
+          <div style="max-height:420px;overflow:auto">
+            ${rows.map((ev) => `
+              <div style="padding:12px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:10px">
+                <div>
+                  <div style="font-size:12.5px"><strong>${safe(ev.userName)}</strong> <span class="badge" style="margin-left:4px">${safe(ev.userRole)}</span> <span class="muted">· ${safe(ev.labLocation)} (${safe(ev.deviceName)})</span></div>
+                  <div style="font-size:12.5px;margin-top:3px">${safe(ev.summary)}</div>
+                  <div class="font-mono muted" style="font-size:11px;margin-top:3px">${safe(ev.target)} · ${ev.latencyMs || 18}ms · ${ev.bandwidthMbps || 80} Mbps</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0">
+                  <span class="badge ${ev.outcome === "blocked" ? "err" : "ok"}">${safe(ev.outcome)}</span>
+                  <div class="font-mono muted" style="font-size:11px;margin-top:4px">${new Date(ev.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                </div>
+              </div>
+            `).join("") || '<div class="empty">No telemetry logs match filter.</div>'}
+          </div>
+        </div>
+        <div class="card">
+          <h4 style="margin-bottom:6px">Endpoint Connectivity &amp; Chrome Health</h4>
+          <p class="muted" style="margin-bottom:14px">Live device throughput and mandatory Google Chrome verification across enrolled endpoints.</p>
+          ${procaState.devices.map((d, i) => {
+            const mbps = d.status === "online" ? (76 + (i * 7) % 22).toFixed(1) : "0.0";
+            const lat = d.status === "online" ? (15 + (i * 4) % 16) : "—";
+            return `
+              <div style="padding:12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);margin-bottom:10px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px"><strong class="font-mono">${safe(d.device_name)}</strong><span class="badge ${d.status === "online" ? "ok" : "warn"}">${safe(d.status)} · Chrome Ready</span></div>
+                <div class="font-mono muted" style="font-size:11px;margin-top:6px">Speed: ${mbps} Mbps · Latency: ${lat} ms</div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </div>
+    `;
+    $("pMonSearchIn")?.addEventListener("input", (e) => { procaState.monSearch = e.target.value; renderProcaView("proca-monitoring"); $("pMonSearchIn")?.focus(); });
+  }
+  else if (page === "proca-branding") {
+    const b = procaState.branding;
+    $("procaBrandingBody").innerHTML = `
+      <div class="grid-2">
+        <div class="lockscreen-preview" style="background:radial-gradient(circle at 75% 20%,${safe(b.accent_color)},#041d59 60%,#040d21)">
+          <div style="display:flex;justify-content:space-between;font-size:11px"><span>PROCA MANAGED</span><span>08:30</span></div>
+          <div style="text-align:center">
+            <strong style="font-size:20px;display:block">${safe(b.school_display_name)}</strong>
+            <span class="font-mono" style="font-size:11px;color:#12c7f5">${safe(b.motto)}</span>
+            <div style="font-size:12px;margin-top:8px">${safe(b.welcome_banner)}</div>
+          </div>
+          <div style="font-size:11px;opacity:.75">PROCA Managed Launcher</div>
+        </div>
+        <form id="procaBrandForm" style="display:grid;gap:12px">
+          <div class="field"><label>Display Name</label><input id="pbName" value="${safe(b.school_display_name)}"></div>
+          <div class="field"><label>Motto</label><input id="pbMotto" value="${safe(b.motto)}"></div>
+          <div class="field"><label>Welcome Banner</label><input id="pbBanner" value="${safe(b.welcome_banner)}"></div>
+          <div class="field"><label>Accent Color</label><input id="pbColor" type="color" value="${safe(b.accent_color)}" style="height:40px;padding:3px"></div>
+          <button class="btn" type="submit">Save Device Branding</button>
+        </form>
+      </div>
+    `;
+    $("procaBrandForm").onsubmit = async (e) => {
+      e.preventDefault();
+      procaState.branding = {
+        school_display_name: $("pbName").value, motto: $("pbMotto").value,
+        welcome_banner: $("pbBanner").value, accent_color: $("pbColor").value
+      };
+      if (procaState.procaTablesAvailable && schoolId) {
+        await supabaseClient.from("device_branding").upsert({ school_id: getProcaSchoolId(), ...procaState.branding }, { onConflict: "school_id" });
+      }
+      saveProcaLocal();
+      toast("Device branding updated.");
+      renderProcaView("proca-branding");
+    };
+  }
+  else if (page === "proca-agent") {
+    const ap = procaState.authPolicy;
+    const enabledApps = procaState.whitelist.filter((w) => w.enabled !== false);
+    const qrPayload = JSON.stringify({
+      "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME": "com.proca.kiosk/.ProcaDeviceAdminReceiver",
+      "android.app.extra.PROVISIONING_ADMIN_EXTRAS_BUNDLE": {
+        school_id: getProcaSchoolId(),
+        school_name: schoolName,
+        deployment_mode: ap.deploymentMode,
+        mandatory_chrome: ap.requireMandatoryChrome,
+        allow_safe_android_defaults: ap.allowSafeAndroidDefaults,
+        allow_microsoft_sso: ap.allowMicrosoftEntraSso,
+        allowed_packages: enabledApps.map((w) => w.executable_name)
+      }
+    });
+    let qrImg = "";
+    if (typeof window.qrcode === "function") {
+      const qr = window.qrcode(0, "M");
+      qr.addData(qrPayload);
+      qr.make();
+      qrImg = qr.createImgTag(4, 4);
+    }
+    if (procaState.agentSubTab === "builder") {
+      $("procaAgentBody").innerHTML = `
+        <div class="grid-2">
+          <form id="procaAuthPolicyForm" class="card" style="display:grid;gap:12px;align-content:start">
+            <h4>Launcher Mode, Chrome &amp; Role Policy</h4>
+            <div class="grid-2">
+              <button type="button" onclick="setProcaDeployMode('proca_launcher')" class="card" style="padding:12px;text-align:left;background:${ap.deploymentMode === "proca_launcher" ? "var(--accent-soft)" : "var(--surface-2)"};border-color:${ap.deploymentMode === "proca_launcher" ? "var(--accent)" : "var(--line)"}">
+                <strong style="font-size:12.5px">PROCA Managed Launcher (Default)</strong>
+                <div class="muted" style="font-size:11px;margin-top:4px">Safe OS boot preserved · Locks app menu &amp; launches login.</div>
+              </button>
+              <button type="button" onclick="setProcaDeployMode('shell_replace')" class="card" style="padding:12px;text-align:left;background:${ap.deploymentMode === "shell_replace" ? "var(--accent-soft)" : "var(--surface-2)"};border-color:${ap.deploymentMode === "shell_replace" ? "var(--accent)" : "var(--line)"}">
+                <strong style="font-size:12.5px">Boot-Replace Kiosk Shell</strong>
+                <div class="muted" style="font-size:11px;margin-top:4px">Replaces Windows Explorer shell with full-screen splash.</div>
+              </button>
+            </div>
+            ${[
+              { k: "requireMandatoryChrome", t: "Require Google Chrome (Mandatory Browser)", d: "All school apps (AccessUg, Word, OneDrive, Copilot) launch via Chrome." },
+              { k: "autoInstallChromeIfMissing", t: "Auto-Download & Install Chrome if Missing", d: "Silently downloads Chrome when absent on endpoint." },
+              { k: "allowSafeAndroidDefaults", t: "Keep Safe Android Defaults (Files, Calculator, Clock)", d: "Restricts harmful apps while leaving essential student tools intact." },
+              { k: "requireMicrosoftEmailLogin", t: "Require Microsoft 365 Login & OneDrive Sync", d: "Authenticates students/teachers via provisioned Microsoft email." },
+              { k: "teacherAllowSocialAndYouTube", t: "Teacher Exemption: Allow YouTube & Social Channels", d: "Teachers are not blocked from YouTube learning videos." },
+              { k: "teacherBlockChattingApps", t: "Block Chatting Apps (Teachers & Students)", d: "WhatsApp, Telegram, Discord, Messenger stay blocked for all." }
+            ].map((item) => `
+              <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)">
+                <div><div style="font-size:12.5px;font-weight:700">${safe(item.t)}</div><div class="muted" style="font-size:11px;margin-top:2px">${safe(item.d)}</div></div>
+                <button type="button" class="switch" aria-checked="${Boolean(ap[item.k])}" onclick="toggleProcaAuthKey('${item.k}')"><span></span></button>
+              </div>
+            `).join("")}
+            <div class="grid-2">
+              <div class="field"><label>Allowed Email Domains</label><input id="procaApDomains" class="font-mono" value="${safe(ap.allowedEmailDomains)}"></div>
+              <div class="field"><label>Launcher Welcome Subtitle</label><input id="procaApSubtitle" value="${safe(ap.customBootSubtitle)}"></div>
+            </div>
+            <button type="submit" class="btn">Save Launcher &amp; Chrome Policy</button>
+          </form>
+
+          <div style="display:grid;gap:16px;align-content:start">
+            <div class="card">
+              <h4>Windows Auto-Chrome &amp; Launcher Bundle</h4>
+              <p class="muted" style="margin:8px 0 12px">Generates UAC installer (<code>Install-PROCA-Agent.cmd</code>), <code>PROCA-Provisioner.ps1</code> with silent Google Chrome auto-installer, <code>Uninstall-BreakGlass.ps1</code>, and C# <code>Build-PROCA-EXE.bat</code>.</p>
+              <div class="grid-3" style="padding:10px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:12px">
+                <div><small class="muted">Startup Mode</small><div class="font-mono" style="font-weight:700;font-size:11px">${ap.deploymentMode === "proca_launcher" ? "Launcher" : "Shell"}</div></div>
+                <div><small class="muted">Pinned Apps</small><div class="font-mono" style="font-weight:700">${enabledApps.length}</div></div>
+                <div><small class="muted">Auto-Chrome</small><div class="font-mono" style="font-weight:700;color:var(--green)">${ap.autoInstallChromeIfMissing ? "Active" : "Manual"}</div></div>
+              </div>
+              <button class="btn" type="button" onclick="downloadProcaZip('windows')" style="width:100%">Download Windows Agent (.zip)</button>
+            </div>
+            <div class="card" style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+              <div style="flex:1;min-width:210px">
+                <h4>Android DPC &amp; QR Provisioning</h4>
+                <p class="muted" style="margin:8px 0 14px">Locks Android app menu cleanly without disrupting OS boot, installs Chrome + AccessUg TWA, and keeps Files/Calculator/Clock safe.</p>
+                <button class="btn" type="button" onclick="downloadProcaZip('android')">Download Android DPC (.zip)</button>
+              </div>
+              <div style="background:#fff;padding:8px;border-radius:10px;border:1px solid var(--line)">${qrImg}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      $("procaAuthPolicyForm")?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        procaState.authPolicy.allowedEmailDomains = $("procaApDomains").value.trim();
+        procaState.authPolicy.customBootSubtitle = $("procaApSubtitle").value.trim();
+        saveProcaAuthPolicy(procaState.authPolicy);
+        logAudit("PROCA Launcher Policy Saved", schoolName, procaState.authPolicy.deploymentMode);
+        toast("Launcher, mandatory Chrome, and role policies saved.");
+      });
+    } else {
+      const osApps = [
+        { id: "chrome", label: "Chrome", icon: "🌐" },
+        { id: "accessug", label: "AccessUg", icon: "🎓" },
+        { id: "word", label: "MS Word", icon: "📝" },
+        { id: "onedrive", label: "OneDrive", icon: "☁️" },
+        { id: "files", label: procaState.simPlatform === "windows" ? "Explorer" : "Files", icon: "📁" },
+        { id: "calc", label: "Calculator", icon: "🧮" }
+      ];
+      const activeTab = procaState.simChromeTabs.find((t) => t.id === procaState.simChromeActiveTab) || procaState.simChromeTabs[0];
+      const tabState = evaluateSimUrl(activeTab?.url);
+      const b = procaState.branding;
+      const appBody = () => {
+        if (procaState.simActiveApp === "chrome") {
+          return `
+            <div style="display:flex;flex-direction:column;height:100%;background:#fff;color:#0f172a">
+              <div style="display:flex;gap:4px;background:#dee4ef;padding:6px 8px 0">
+                ${procaState.simChromeTabs.map((t) => `<button type="button" onclick="simSelectTab('${safe(t.id)}')" style="border:0;padding:5px 10px;border-radius:7px 7px 0 0;font-size:11px;font-weight:${t.id === activeTab.id ? "700" : "500"};background:${t.id === activeTab.id ? "#fff" : "transparent"}">${safe(t.title)}</button>`).join("")}
+                <button type="button" onclick="simNewTab()" style="border:0;background:transparent;font-weight:700;padding:4px 8px">+</button>
+              </div>
+              <form id="simNavForm" style="display:flex;gap:6px;padding:8px;border-bottom:1px solid #e2e8f0">
+                <button type="button" class="small-btn" onclick="simNavigate('chrome://newtab')">🏠</button>
+                <input id="simNavInput" value="${safe(procaState.simOmnibox)}" placeholder="Search or enter URL (AccessUg, youtube.com, web.whatsapp.com)" style="flex:1;border-radius:999px;background:#f1f5f9">
+                <button class="btn small" type="submit">Go</button>
+              </form>
+              <div style="display:flex;gap:10px;padding:6px 10px;background:#f8faff;border-bottom:1px solid #e2e8f0;font-size:11px;flex-wrap:wrap">
+                <button type="button" class="small-btn" onclick="simNavigate('https://jovankaliisa.github.io/AccessUg/')">AccessUg</button>
+                <button type="button" class="small-btn" onclick="simNavigate('UNEB Physics Notes')">SafeSearch</button>
+                <button type="button" class="small-btn" onclick="simNavigate('https://youtube.com')">YouTube</button>
+                <button type="button" class="small-btn" onclick="simNavigate('https://web.whatsapp.com')">WhatsApp Web</button>
+              </div>
+              <div style="flex:1;padding:16px;overflow:auto">
+                ${tabState.kind === "newtab" ? `<div style="text-align:center;margin-top:20px"><h3>Google Chrome · PROCA Managed</h3><p class="muted">Signed in as <strong>${safe(procaState.simSession?.email || procaState.simRole)}</strong></p></div>`
+                : tabState.kind === "blocked" ? `<div style="padding:18px;border-radius:10px;background:#fff1f2;color:#881337;border:1px solid #fecdd3"><strong>Blocked by PROCA Web Shield</strong><p style="margin-top:4px">${safe(tabState.reason)}</p></div>`
+                : tabState.kind === "youtube_teacher" ? `<div style="padding:16px;border-radius:10px;background:#041d59;color:#fff"><strong>YouTube Teacher Instructional Mode</strong><p style="margin-top:4px;color:#cbd5e1">Allowed for Teacher role. Chatting apps remain strictly blocked.</p></div>`
+                : tabState.kind === "accessug" ? `<iframe title="AccessUg Live" src="https://jovankaliisa.github.io/AccessUg/" style="width:100%;height:260px;border:1px solid #e2e8f0;border-radius:8px"></iframe>`
+                : `<div style="padding:14px;border:1px solid #dbeafe;border-radius:8px"><strong>${safe(tabState.url)}</strong><p class="muted" style="margin-top:4px">Loaded in Mandatory Google Chrome under PROCA SafeSearch policy.</p></div>`}
+              </div>
+            </div>`;
+        }
+        if (procaState.simActiveApp === "accessug") {
+          return `<iframe title="AccessUg App" src="https://jovankaliisa.github.io/AccessUg/" style="width:100%;height:100%;border:0;background:#fff"></iframe>`;
+        }
+        if (procaState.simActiveApp === "word") {
+          return `
+            <div style="display:flex;flex-direction:column;height:100%;background:#f3f6fc;color:#0f172a">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#0648ef;color:#fff">
+                <input id="simWordTitleIn" value="${safe(procaState.simWordTitle)}" style="width:220px;background:rgba(255,255,255,.18);border:0;color:#fff">
+                <button type="button" class="small-btn" onclick="simSyncOneDrive()">Save &amp; Sync OneDrive</button>
+              </div>
+              <textarea id="simWordArea" style="flex:1;margin:10px;resize:none">${safe(procaState.simWordText)}</textarea>
+            </div>`;
+        }
+        if (procaState.simActiveApp === "onedrive" || procaState.simActiveApp === "files") {
+          return `<div style="height:100%;background:#fff;color:#0f172a;padding:14px;overflow:auto"><h4 style="margin-bottom:10px">${procaState.simActiveApp === "onedrive" ? "Microsoft OneDrive (" + safe(procaState.simSession?.email || procaState.simRole) + ")" : "Files & Documents (Safe Default)"}</h4>${procaState.simSyncedFiles.map((f) => `<div style="padding:10px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center"><div><strong>${safe(f.name)}</strong><div class="muted" style="font-size:11px">${safe(f.folder)} · ${safe(f.updated)}</div></div>${f.name.endsWith(".docx") ? `<button type="button" class="small-btn" onclick="procaState.simActiveApp='word';renderProcaView('proca-agent')">Open Word</button>` : ""}</div>`).join("")}</div>`;
+        }
+        return `
+          <div style="height:100%;background:#071432;color:#fff;padding:16px;display:flex;flex-direction:column;justify-content:space-between">
+            <div style="background:#040d21;padding:14px;border-radius:10px;text-align:right;font-size:24px;color:#12c7f5" class="font-mono">${safe(procaState.simCalcVal)}</div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">
+              ${["C","(",")","/","7","8","9","*","4","5","6","-","1","2","3","+","0",".","⌫","="].map((k) => `<button type="button" onclick="simCalcPress('${k}')" style="height:36px;border:0;border-radius:8px;background:${k === "=" ? "#0648ef" : "rgba(255,255,255,.12)"};color:#fff;font-weight:700">${k}</button>`).join("")}
+            </div>
+          </div>`;
+      };
+
+      const phaseBody = () => {
+        if (procaState.simPhase === "chrome_check") {
+          return `<div style="text-align:center;margin:auto;max-width:380px;padding:30px">
+            <h3 style="color:#12c7f5">Google Chrome Not Found</h3>
+            <p style="font-size:12px;color:#cbd5e1;margin:8px 0 18px">Mandatory Chrome browser is required for AccessUg &amp; Microsoft 365 Web Apps. Auto-downloading installer…</p>
+            <div style="height:10px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden"><div style="height:100%;width:${procaState.simChromePct}%;background:#12c7f5"></div></div>
+            <div class="font-mono" style="font-size:11px;color:#12c7f5;margin-top:8px">${procaState.simChromePct}% · Installing Chrome…</div>
+          </div>`;
+        }
+        if (procaState.simPhase === "rebooting") {
+          return `<div style="text-align:center;margin:auto;padding:30px">
+            <div style="margin:0 auto 12px;width:54px;height:54px;border-radius:14px;background:#0648ef;display:grid;place-items:center;font-weight:800;font-size:24px">P</div>
+            <h3>${safe(b.school_display_name)}</h3>
+            <div class="font-mono" style="font-size:11px;letter-spacing:.14em;margin-top:4px;color:#12c7f5">${safe(b.motto)}</div>
+            <p class="font-mono" style="font-size:12px;color:#cbd5e1;margin-top:16px">${ap.deploymentMode === "proca_launcher" ? "OS booted safely · Launching PROCA Sign-In Screen…" : safe(ap.customBootSubtitle)}</p>
+          </div>`;
+        }
+        if (procaState.simPhase === "login") {
+          return `<div style="width:min(94%,420px);margin:auto;padding:24px;border-radius:16px;border:1px solid rgba(18,199,245,.28);background:rgba(7,20,50,.96)">
+            <strong style="font-size:16px">${safe(b.school_display_name)}</strong>
+            <div style="font-size:12px;color:#94a3b8;margin-bottom:14px">PROCA Managed Launcher · ${procaState.simPlatform === "windows" ? "Windows 11 PC" : "Android Device"}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+              <button type="button" onclick="enterProcaSimOs('student','Jovan Kalisa','jovan.kalisa@${safe(schoolSlug)}.onmicrosoft.com')" style="text-align:left;padding:10px;border-radius:10px;border:1px solid rgba(18,199,245,.4);background:#0b1f48;color:#fff">
+                <div style="font-weight:700;font-size:12px">Jovan Kalisa</div>
+                <div class="font-mono" style="font-size:10px;color:#12c7f5">STUDENT · Enter OS</div>
+              </button>
+              <button type="button" onclick="enterProcaSimOs('teacher','Grace Nalubega','grace.nalubega@${safe(schoolSlug)}.onmicrosoft.com')" style="text-align:left;padding:10px;border-radius:10px;border:1px solid rgba(18,199,245,.4);background:#0b1f48;color:#fff">
+                <div style="font-weight:700;font-size:12px">Grace Nalubega</div>
+                <div class="font-mono" style="font-size:10px;color:#12c7f5">TEACHER · Enter OS</div>
+              </button>
+            </div>
+            <div class="seg-bar" style="width:100%;margin-bottom:12px;background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)">
+              <button type="button" class="seg-btn ${procaState.simRole === "student" ? "active" : ""}" onclick="procaState.simRole='student';renderProcaView('proca-agent')" style="flex:1">Student Login</button>
+              <button type="button" class="seg-btn ${procaState.simRole === "teacher" ? "active" : ""}" onclick="procaState.simRole='teacher';renderProcaView('proca-agent')" style="flex:1">Teacher Login</button>
+            </div>
+            <form id="procaSimLoginForm" style="display:grid;gap:10px">
+              <input id="procaSimMsIn" type="email" required value="${safe(procaState.simRole === "teacher" ? "grace.nalubega@" + schoolSlug + ".onmicrosoft.com" : "jovan.kalisa@" + schoolSlug + ".onmicrosoft.com")}" style="background:#040d21;border-color:rgba(255,255,255,.18);color:#fff">
+              <div style="font-size:11px;color:#94a3b8">${procaState.simRole === "teacher" ? "Teacher policy: YouTube & social allowed · Chatting apps blocked." : "Student policy: Syncs MS Word to OneDrive & logs lab activity."}</div>
+              <button type="submit" class="btn">Sign in &amp; Open OS</button>
+            </form>
+          </div>`;
+        }
+        return `<div style="flex:1;display:flex;gap:12px;padding-top:14px;min-height:420px">
+          <div style="width:92px;display:grid;gap:8px;align-content:start">
+            ${osApps.map((apItem) => `<button type="button" onclick="procaState.simActiveApp='${apItem.id}';renderProcaView('proca-agent')" style="border:1px solid ${procaState.simActiveApp === apItem.id ? "#12c7f5" : "rgba(255,255,255,.15)"};background:rgba(255,255,255,.06);color:#fff;padding:8px 4px;border-radius:10px;display:grid;gap:3px;place-items:center;font-size:11px"><span style="font-size:18px">${apItem.icon}</span><span>${apItem.label}</span></button>`).join("")}
+          </div>
+          <div style="flex:1;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.2);min-height:400px">${appBody()}</div>
+        </div>`;
+      };
+
+      $("procaAgentBody").innerHTML = `
+        <div class="card" style="${procaState.simFullscreen ? "position:fixed;inset:0;z-index:999;border-radius:0;" : "min-height:540px;"}background:#040d21;color:#fff;display:flex;flex-direction:column">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.14);flex-wrap:wrap;gap:8px">
+            <strong>PROCA OS Simulator · ${procaState.simPlatform.toUpperCase()} (${(procaState.simSession?.role || procaState.simRole).toUpperCase()})</strong>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
+              <label style="font-size:11px;display:inline-flex;align-items:center;gap:5px;margin-right:4px"><input type="checkbox" ${procaState.simChromeMissing ? "checked" : ""} onchange="procaState.simChromeMissing=this.checked"> Simulate Chrome Missing</label>
+              <button type="button" class="small-btn" onclick="procaState.simPlatform='windows';renderProcaView('proca-agent')">Windows</button>
+              <button type="button" class="small-btn" onclick="procaState.simPlatform='android';renderProcaView('proca-agent')">Android</button>
+              <button type="button" class="small-btn" onclick="enterProcaSimOs('student','Jovan Kalisa','jovan.kalisa@${safe(schoolSlug)}.onmicrosoft.com')">Student</button>
+              <button type="button" class="small-btn" onclick="enterProcaSimOs('teacher','Grace Nalubega','grace.nalubega@${safe(schoolSlug)}.onmicrosoft.com')">Teacher</button>
+              <button type="button" class="small-btn" onclick="triggerProcaSimBoot()">Boot &amp; Login Gate</button>
+              <button type="button" class="small-btn" onclick="procaState.simFullscreen=!procaState.simFullscreen;renderProcaView('proca-agent')">${procaState.simFullscreen ? "Exit Fullscreen" : "Fullscreen OS"}</button>
+            </div>
+          </div>
+          ${phaseBody()}
+        </div>
+      `;
+      $("simNavForm")?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        simNavigate($("simNavInput").value);
+      });
+      $("procaSimLoginForm")?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const em = $("procaSimMsIn").value.trim().toLowerCase();
+        enterProcaSimOs(procaState.simRole, procaState.simRole === "teacher" ? "Grace Nalubega" : "Jovan Kalisa", em);
+      });
+    }
+  }
+}
+
+window.setProcaDeployMode = (mode) => {
+  procaState.authPolicy.deploymentMode = mode;
+  procaState.authPolicy.rebootIntoProcaShell = mode === "shell_replace";
+  saveProcaAuthPolicy(procaState.authPolicy);
+  renderProcaView("proca-agent");
+};
+window.toggleProcaAuthKey = (k) => {
+  procaState.authPolicy[k] = !procaState.authPolicy[k];
+  saveProcaAuthPolicy(procaState.authPolicy);
+  renderProcaView("proca-agent");
+};
+window.addProcaPreset = async (idx) => {
+  const preset = PROCA_QUICK_PRESETS[idx];
+  if (!preset) return;
+  const item = { id: "w_" + Date.now(), app_name: preset.app_name, executable_name: preset.executable_name, enabled: true };
+  procaState.whitelist.unshift(item);
+  if (procaState.procaTablesAvailable && schoolId) {
+    await supabaseClient.from("app_whitelist").insert({ school_id: getProcaSchoolId(), app_name: item.app_name, executable_name: item.executable_name, enabled: true });
+  }
+  logAudit("PROCA App Preset Added", item.app_name, item.executable_name);
+  toast("Added " + preset.app_name + " to whitelist.");
+  renderProcaView("proca-apps");
+};
+window.togProcaApp = async (id) => {
+  procaState.whitelist = procaState.whitelist.map((w) => w.id === id ? { ...w, enabled: w.enabled === false } : w);
+  const tgt = procaState.whitelist.find((w) => w.id === id);
+  if (tgt && procaState.procaTablesAvailable) await supabaseClient.from("app_whitelist").update({ enabled: tgt.enabled }).eq("id", id);
+  saveProcaLocal();
+  renderProcaView("proca-apps");
+};
+window.togProcaDom = async (id) => {
+  procaState.domains = procaState.domains.map((d) => d.id === id ? { ...d, enabled: d.enabled === false } : d);
+  const tgt = procaState.domains.find((d) => d.id === id);
+  if (tgt && procaState.procaTablesAvailable) await supabaseClient.from("blocked_domains").update({ enabled: tgt.enabled }).eq("id", id);
+  saveProcaLocal();
+  renderProcaView("proca-filtering");
+};
+window.triggerProcaSimBoot = () => {
+  procaState.simSession = null;
+  if (procaState.simChromeMissing && procaState.authPolicy.requireMandatoryChrome) {
+    procaState.simPhase = "chrome_check";
+    procaState.simChromePct = 25;
+    renderProcaView("proca-agent");
+    setTimeout(() => { procaState.simChromePct = 70; renderProcaView("proca-agent"); }, 450);
+    setTimeout(() => { procaState.simChromePct = 100; procaState.simPhase = "rebooting"; renderProcaView("proca-agent"); }, 950);
+    setTimeout(() => { procaState.simPhase = "login"; renderProcaView("proca-agent"); }, 1800);
+  } else {
+    procaState.simPhase = "rebooting";
+    renderProcaView("proca-agent");
+    setTimeout(() => { procaState.simPhase = "login"; renderProcaView("proca-agent"); }, 900);
+  }
+};
+window.enterProcaSimOs = (role, name, email) => {
+  procaState.simRole = role;
+  procaState.simSession = { role, name, email };
+  procaState.simPhase = "desktop";
+  recordProcaTelemetry({
+    userName: name,
+    userRole: role,
+    eventType: "login",
+    summary: `Signed into PROCA ${procaState.simPlatform === "windows" ? "Windows Desktop" : "Android Device"} (${email})`,
+    target: procaState.simPlatform === "windows" ? "LAB-2-PC01" : "LIB-TAB-01",
+    outcome: "allowed"
+  });
+  renderProcaView("proca-agent");
+};
+window.simNavigate = (raw) => {
+  const target = (raw || "").trim() || "chrome://newtab";
+  procaState.simOmnibox = target === "chrome://newtab" ? "" : target;
+  procaState.simChromeTabs = procaState.simChromeTabs.map((t) =>
+    t.id === procaState.simChromeActiveTab ? { ...t, url: target, title: target === "chrome://newtab" ? "New Tab" : target.slice(0, 18) } : t
+  );
+  if (target !== "chrome://newtab") {
+    const res = evaluateSimUrl(target);
+    recordProcaTelemetry({
+      eventType: res.kind === "blocked" ? "blocked_attempt" : res.kind === "search" ? "search" : "app_launch",
+      summary: res.kind === "blocked" ? "Blocked: " + target : res.kind === "search" ? "Chrome SafeSearch: " + target : "Opened " + target,
+      target,
+      outcome: res.kind === "blocked" ? "blocked" : "allowed"
+    });
+  }
+  renderProcaView("proca-agent");
+};
+window.simSelectTab = (id) => {
+  procaState.simChromeActiveTab = id;
+  const tab = procaState.simChromeTabs.find((t) => t.id === id);
+  procaState.simOmnibox = tab && tab.url !== "chrome://newtab" ? tab.url : "";
+  renderProcaView("proca-agent");
+};
+window.simNewTab = () => {
+  const id = "tab_" + Date.now();
+  procaState.simChromeTabs.push({ id, title: "New Tab", url: "chrome://newtab" });
+  procaState.simChromeActiveTab = id;
+  procaState.simOmnibox = "";
+  renderProcaView("proca-agent");
+};
+window.simSyncOneDrive = () => {
+  const title = $("simWordTitleIn")?.value.trim() || "Classwork.docx";
+  procaState.simWordTitle = title;
+  procaState.simWordText = $("simWordArea")?.value || procaState.simWordText;
+  procaState.simSyncedFiles.unshift({ name: title, folder: "OneDrive", updated: "Just now" });
+  recordProcaTelemetry({ eventType: "onedrive_sync", summary: "Synced " + title + " to OneDrive", target: "onedrive.live.com", outcome: "synced" });
+  toast("Synced " + title + " to OneDrive.");
+};
+window.simCalcPress = (k) => {
+  if (k === "C") procaState.simCalcVal = "0";
+  else if (k === "⌫") procaState.simCalcVal = procaState.simCalcVal.length <= 1 ? "0" : procaState.simCalcVal.slice(0, -1);
+  else if (k === "=") {
+    try { if (/^[0-9+\-*/().\s]+$/.test(procaState.simCalcVal)) procaState.simCalcVal = String(Function("return (" + procaState.simCalcVal + ")")()); }
+    catch { procaState.simCalcVal = "Error"; }
+  } else {
+    procaState.simCalcVal = procaState.simCalcVal === "0" ? k : procaState.simCalcVal + k;
+  }
+  renderProcaView("proca-agent");
+};
+
+$("procaTabBuilder")?.addEventListener("click", () => { procaState.agentSubTab = "builder"; $("procaTabBuilder").classList.add("active"); $("procaTabSim").classList.remove("active"); renderProcaView("proca-agent"); });
+$("procaTabSim")?.addEventListener("click", () => { procaState.agentSubTab = "simulator"; $("procaTabSim").classList.add("active"); $("procaTabBuilder").classList.remove("active"); renderProcaView("proca-agent"); });
+
+window.toggleProcaPolicy = async (deviceId, key) => {
+  if (!deviceId) return;
+  const cur = { ...PROCA_POLICY_DEFAULTS, ...(procaState.policies[deviceId] || {}) };
+  cur[key] = !cur[key];
+  procaState.policies[deviceId] = cur;
+  if (procaState.procaTablesAvailable && schoolId) {
+    await supabaseClient.from("device_policies").upsert({ school_id: getProcaSchoolId(), device_id: deviceId, ...cur }, { onConflict: "device_id" });
+  }
+  saveProcaLocal();
+  logAudit("PROCA Policy Updated", deviceId, `${key} = ${cur[key]}`);
+  toast("PROCA policy updated.");
+  renderProcaView("proca-overview");
+};
+document.querySelectorAll("[data-proca-pgroup]").forEach((b) => b.addEventListener("click", () => {
+  procaState.policyGroup = b.dataset.procaPgroup;
+  document.querySelectorAll("[data-proca-pgroup]").forEach((x) => x.classList.toggle("active", x === b));
+  renderProcaView("proca-overview");
+}));
+$("procaDeviceSelect")?.addEventListener("change", () => renderProcaView("proca-overview"));
+
+function openProcaEnrollModal() { $("procaEnrollModal").classList.add("show"); }
+function closeProcaEnrollModal() { $("procaEnrollModal").classList.remove("show"); }
+$("procaOpenEnrollBtn")?.addEventListener("click", openProcaEnrollModal);
+$("procaEnrollForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("procaEnrollName").value.trim().toUpperCase();
+  const dev = { id: "dev_" + Date.now(), device_name: name, platform: $("procaEnrollPlatform").value, status: $("procaEnrollStatus").value, updated_at: new Date().toISOString() };
+  procaState.devices.unshift(dev);
+  if (procaState.procaTablesAvailable && schoolId) {
+    await supabaseClient.from("devices").insert({ school_id: getProcaSchoolId(), device_name: dev.device_name, platform: dev.platform, status: dev.status });
+  }
+  saveProcaLocal();
+  logAudit("PROCA Device Enrolled", name, dev.platform);
+  closeProcaEnrollModal();
+  renderProcaView("proca-devices");
+  toast("Enrolled endpoint " + name);
+});
+window.removeProcaDevice = async (id) => {
+  procaState.devices = procaState.devices.filter((d) => d.id !== id);
+  if (procaState.procaTablesAvailable) await supabaseClient.from("devices").delete().eq("id", id);
+  saveProcaLocal();
+  renderProcaView("proca-devices");
+};
+window.delProcaApp = async (id) => {
+  procaState.whitelist = procaState.whitelist.filter((w) => w.id !== id);
+  if (procaState.procaTablesAvailable) await supabaseClient.from("app_whitelist").delete().eq("id", id);
+  saveProcaLocal();
+  renderProcaView("proca-apps");
+};
+window.delProcaDom = async (id) => {
+  procaState.domains = procaState.domains.filter((d) => d.id !== id);
+  if (procaState.procaTablesAvailable) await supabaseClient.from("blocked_domains").delete().eq("id", id);
+  saveProcaLocal();
+  renderProcaView("proca-filtering");
+};
+
+window.downloadProcaZip = async (type) => {
+  if (typeof window.JSZip !== "function") { toast("JSZip loading…"); return; }
+  const zip = new window.JSZip();
+  const sid = getProcaSchoolId();
+  const schoolName = getProcaSchoolName();
+  const enabledApps = procaState.whitelist.filter((w) => w.enabled !== false);
+  const blockedDoms = procaState.domains.filter((d) => d.enabled !== false);
+  const selDevId = $("procaDeviceSelect")?.value || procaState.devices[0]?.id;
+  const manifest = {
+    schemaVersion: "3.0",
+    generatedAt: new Date().toISOString(),
+    school: { id: sid, name: schoolName },
+    branding: procaState.branding,
+    studentAuth: procaState.authPolicy,
+    devicePolicy: { ...PROCA_POLICY_DEFAULTS, ...(procaState.policies[selDevId] || {}) },
+    allowedExecutables: enabledApps.map((w) => ({ appName: w.app_name, executable: w.executable_name })),
+    blockedDomains: blockedDoms.map((d) => d.domain)
+  };
+  zip.file("proca-policy.json", JSON.stringify(manifest, null, 2));
+  if (type === "windows") {
+    zip.file("Install-PROCA-Agent.cmd", "@echo off\nnet session >nul 2>&1 || (powershell -Command \"Start-Process '%~f0' -Verb RunAs\" & exit /b)\npowershell -ExecutionPolicy Bypass -File \"%~dp0PROCA-Provisioner.ps1\"\npause\n");
+    zip.file("PROCA-Provisioner.ps1", "$Root='C:\\ProgramData\\PROCA'; New-Item -ItemType Directory -Force -Path $Root | Out-Null; Copy-Item -Force \"$PSScriptRoot\\proca-policy.json\" \"$Root\\proca-policy.json\"; $chromePath = \"${env:ProgramFiles}\\Google\\Chrome\\Application\\chrome.exe\"; if (-not (Test-Path $chromePath)) { Write-Host 'Downloading mandatory Google Chrome...'; Invoke-WebRequest -Uri 'https://dl.google.com/dl/chrome/install/googlechromestandaloneenterprise64.msi' -OutFile \"$env:TEMP\\chrome.msi\"; Start-Process msiexec.exe -Wait -ArgumentList \"/i `\"$env:TEMP\\chrome.msi`\" /qn /norestart\" }; Write-Host 'PROCA Managed Launcher & Chrome configured.'");
+    zip.file("Uninstall-BreakGlass.ps1", "Set-ItemProperty -Path 'HKLM:\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon' -Name 'Shell' -Value 'explorer.exe'");
+    zip.file("Build-PROCA-EXE.bat", "dotnet publish src\\PROCA.Agent.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o C:\\ProgramData\\PROCA\npause\n");
+  } else {
+    zip.file("android-provisioning-qr.json", JSON.stringify({
+      "android.app.extra.PROVISIONING_DEVICE_ADMIN_COMPONENT_NAME": "com.proca.kiosk/.ProcaDeviceAdminReceiver",
+      "android.app.extra.PROVISIONING_ADMIN_EXTRAS_BUNDLE": {
+        school_id: sid,
+        school_name: schoolName,
+        deployment_mode: procaState.authPolicy.deploymentMode,
+        mandatory_chrome: procaState.authPolicy.requireMandatoryChrome,
+        allow_safe_android_defaults: procaState.authPolicy.allowSafeAndroidDefaults,
+        allow_microsoft_sso: procaState.authPolicy.allowMicrosoftEntraSso,
+        allowed_packages: enabledApps.map((w) => w.executable_name)
+      }
+    }, null, 2));
+    zip.file("build-apk.sh", "#!/usr/bin/env bash\n./gradlew assembleRelease\n");
+  }
+  const blob = await zip.generateAsync({ type: "blob" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `PROCA-${type}-bundle.zip`;
+  a.click();
+  toast(`Downloaded PROCA ${type} package.`);
+};
+
+
+if ($("procaActiveSchoolBadge") && school?.name) $("procaActiveSchoolBadge").textContent = school.name;
+$("procaEnrollModal")?.addEventListener("click", (e) => { if (e.target === $("procaEnrollModal")) closeProcaEnrollModal(); });
+window.procaState = procaState;
+window.renderProcaView = renderProcaView;
+window.syncProcaFromSupabase = syncProcaFromSupabase;
+window.openProcaEnrollModal = openProcaEnrollModal;
+window.closeProcaEnrollModal = closeProcaEnrollModal;
+saveProcaLocal();
 
 </script>
 </body>

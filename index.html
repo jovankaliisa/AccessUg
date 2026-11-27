@@ -798,29 +798,55 @@ $("setupForm").addEventListener("submit",async e=>{
   }catch(err){st.className="notice-box notice-error";st.textContent=err.message;$("setupSaveBtn").disabled=false;}
 });
 
+function clearStalePortalStorage(){
+  [
+    "accessug_selected_role",
+    "accessug_school_id",
+    "accessug_school_name",
+    "accessug_student_id",
+    "accessug_student_name",
+    "accessug_student_school_id",
+    "accessug_student_class_level",
+    "accessug_parent_mode",
+    "accessug_parent_email",
+    "accessug_admin_id"
+  ].forEach(k=>localStorage.removeItem(k));
+  [
+    "accessug_school_id",
+    "accessug_school_name",
+    "accessug_teacher_id",
+    "accessug_teacher_email",
+    "accessug_teacher_school_id"
+  ].forEach(k=>sessionStorage.removeItem(k));
+}
+
 async function findSchoolRecord(mail, user){
   const byEmail = await sb.from("schools").select("id,name,email,status").ilike("email", mail).limit(5);
   if(!byEmail.error && Array.isArray(byEmail.data) && byEmail.data.length){
     return byEmail.data.find(x=>!x.status || x.status.toLowerCase()==="active") || byEmail.data[0];
   }
+  // Only trust user_metadata.school_id when auth metadata explicitly says role === 'school'.
+  // Teacher/student accounts also carry their school_id in user_metadata and must not match schools.
+  const metaRole = String(user?.app_metadata?.role || user?.user_metadata?.role || "").trim().toLowerCase();
   const metaSchoolId = user?.user_metadata?.school_id;
-  if(metaSchoolId != null){
+  if(metaRole === "school" && metaSchoolId != null){
     const byMeta = await sb.from("schools").select("id,name,email,status").eq("id", metaSchoolId).limit(1);
     if(!byMeta.error && byMeta.data?.length) return byMeta.data[0];
-  }
-  const storedMail = String(localStorage.getItem("accessug_login_email") || "").trim().toLowerCase();
-  const storedId = localStorage.getItem("accessug_school_id");
-  if(storedId && storedMail === mail){
-    const byStored = await sb.from("schools").select("id,name,email,status").eq("id", storedId).limit(1);
-    if(!byStored.error && byStored.data?.length) return byStored.data[0];
   }
   return null;
 }
 
 async function resolveRoleAndProfile(preferredRole, mail, user){
+  const allRoles = ["school", "teacher", "student", "parent"];
+  const metaRoleRaw = String(user?.app_metadata?.role || user?.user_metadata?.role || "").trim().toLowerCase();
+  const metaRole = allRoles.includes(metaRoleRaw) ? metaRoleRaw : null;
+  const defaultOrder = metaRole
+    ? [metaRole, ...allRoles.filter(r => r !== metaRole)]
+    : ["teacher", "student", "parent", "school"];
+
   const order = preferredRole === "auto"
-    ? ["school", "teacher", "student", "parent"]
-    : [preferredRole, ...["school", "teacher", "student", "parent"].filter(r=>r !== preferredRole)];
+    ? defaultOrder
+    : [preferredRole, ...defaultOrder.filter(r => r !== preferredRole)];
 
   for(const role of order){
     if(role === "school"){
@@ -828,7 +854,11 @@ async function resolveRoleAndProfile(preferredRole, mail, user){
       if(sch) return { role: "school", sch };
     }
     if(role === "teacher"){
-      const {data:rows, error} = await sb.from("teachers").select("id,status,school_id").ilike("email", mail).limit(20);
+      let {data:rows, error} = await sb.from("teachers").select("id,status,school_id").ilike("email", mail).limit(20);
+      if((!rows || !rows.length) && user?.id){
+        const byUid = await sb.from("teachers").select("id,status,school_id").eq("user_id", user.id).limit(20);
+        if(!byUid.error && byUid.data?.length){ rows = byUid.data; error = null; }
+      }
       if(!error && rows && rows.length){
         const t = rows.find(x=>!x.status || x.status.toLowerCase()==="active") || rows[0];
         return { role: "teacher", t };
@@ -946,6 +976,8 @@ $("loginForm").addEventListener("submit",async e=>{
       throw new Error("Your login credentials succeeded, but no active School, Teacher, Student, or Parent profile was found for " + mail + ". If this is a new school, complete school registration first.");
     }
 
+    clearStalePortalStorage();
+
     const role = resolved.role;
     if(role === "teacher"){
       const t = resolved.t;
@@ -962,7 +994,6 @@ $("loginForm").addEventListener("submit",async e=>{
     if(role === "student" || role === "parent"){
       const ch = resolved.ch;
       const nm = ch.student_name || ch.full_name || "Student";
-      if(role==="student"){localStorage.removeItem("accessug_parent_mode");localStorage.removeItem("accessug_parent_email");}
       localStorage.setItem("accessug_selected_role",role);
       localStorage.setItem("accessug_login_email",mail);
       if(role==="parent"){localStorage.setItem("accessug_parent_mode","true");localStorage.setItem("accessug_parent_email",mail);}
@@ -990,6 +1021,16 @@ $("loginForm").addEventListener("submit",async e=>{
     btn.textContent = "Sign In to Portal →";
   }
 });
+
+(function handleLogoutOrPortalQuery(){
+  const sp = new URLSearchParams(location.search);
+  const portal = String(sp.get("portal") || "").trim().toLowerCase();
+  if(["school","teacher","student","parent"].includes(portal)){
+    clearStalePortalStorage();
+    openSignIn(portal);
+    if(history.replaceState) history.replaceState({}, document.title, location.pathname);
+  }
+})();
 
 /* CREATE ACCOUNT + SUBJECTS + PAYMENT OPTIONS + EMAIL OTP VERIFICATION */
 $("regYear").value = String(new Date().getFullYear());
