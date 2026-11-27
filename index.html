@@ -1,1987 +1,961 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ACCESSUG.SCH | Smart School Management Platform</title>
-
+<meta name="theme-color" content="#061a3b">
+<title>ACCESS UG SCH | Smart School Management Platform</title>
+<meta name="description" content="Smart school management platform uniting School Administration, Teachers, Students, and Parents in one secure workspace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-/* =========================================================
-   ACCESS UG — PREMIUM LOGIN REDESIGN
-   Visual layer redesigned from the supplied reference.
-   Existing IDs/classes required by the login logic are kept.
-   ========================================================= */
-
 :root{
-    --navy:#061a3b;
-    --navy-2:#082b61;
-    --blue:#1d5fe9;
-    --blue-2:#3e7cff;
-    --blue-soft:#eaf1ff;
-    --ink:#12264b;
-    --muted:#73809a;
-    --line:#dce4f0;
-    --white:#ffffff;
-    --bg:#f5f7fb;
-    --success:#2fc477;
-    --radius:22px;
-    --shadow:0 24px 70px rgba(7,28,67,.16);
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-html{
-    scroll-behavior:smooth;
-}
-
-body{
-    min-height:100vh;
-    font-family:Inter, "Segoe UI", Arial, sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-    overflow-x:hidden;
-}
-
-button,
-input,
-select{
-    font:inherit;
-}
-
-/* =========================================================
-   PAGE SHELL
-   ========================================================= */
-
-.site-background{
-    min-height:100vh;
-    padding:18px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-        radial-gradient(circle at 7% 15%, rgba(54,111,235,.09), transparent 28%),
-        radial-gradient(circle at 95% 85%, rgba(36,92,210,.08), transparent 30%),
-        #f4f6fa;
-}
-
-.portal-shell{
-    width:min(1420px, 100%);
-    min-height:min(860px, calc(100vh - 36px));
-    display:grid;
-    grid-template-columns:1.06fr .94fr;
-    position:relative;
-    overflow:hidden;
-    border-radius:30px;
-    background:#fff;
-    box-shadow:
-        0 35px 90px rgba(8,28,62,.18),
-        0 8px 25px rgba(8,28,62,.07);
-}
-
-/* =========================================================
-   LEFT WELCOME PANEL
-   ========================================================= */
-
-.welcome-panel{
-    position:relative;
-    min-height:820px;
-    padding:42px 54px 34px;
-    overflow:hidden;
-    isolation:isolate;
-    color:#fff;
-    background:
-        linear-gradient(135deg, rgba(4,20,51,.97), rgba(8,48,105,.93)),
-        #061a3b;
-}
-
-.welcome-panel::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    z-index:-3;
-    background:
-        linear-gradient(rgba(4,22,52,.28), rgba(4,22,52,.80)),
-        url("https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?auto=format&fit=crop&w=1600&q=80")
-        center/cover no-repeat;
-    opacity:.38;
-    filter:saturate(.75) contrast(1.05);
-}
-
-.welcome-panel::after{
-    content:"";
-    position:absolute;
-    width:760px;
-    height:760px;
-    right:-515px;
-    top:-80px;
-    border-radius:50%;
-    background:linear-gradient(120deg, rgba(42,110,255,.98), rgba(22,76,196,.96));
-    box-shadow:-18px 0 55px rgba(3,20,52,.28);
-    z-index:-1;
-}
-
-/* Inner curved white edge */
-.welcome-curve{
-    position:absolute;
-    z-index:1;
-    top:-70px;
-    right:-495px;
-    width:690px;
-    height:990px;
-    border-radius:50%;
-    border-left:5px solid rgba(255,255,255,.88);
-    pointer-events:none;
-}
-
-.welcome-content{
-    position:relative;
-    z-index:4;
-    max-width:560px;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-}
-
-/* =========================================================
-   BRAND
-   ========================================================= */
-
-.brand{
-    display:flex;
-    align-items:center;
-    gap:13px;
-    text-decoration:none;
-    color:#fff;
-}
-
-.brand-mark{
-    width:45px;
-    height:45px;
-    flex:0 0 45px;
-    border:1px solid rgba(255,255,255,.55);
-    border-radius:13px;
-    display:grid;
-    place-items:center;
-    background:rgba(255,255,255,.11);
-    box-shadow:
-        inset 0 1px 0 rgba(255,255,255,.22),
-        0 10px 25px rgba(0,0,0,.12);
-    backdrop-filter:blur(10px);
-}
-
-.brand-mark svg{
-    width:25px;
-    height:25px;
-    stroke:#fff;
-    fill:none;
-    stroke-width:1.8;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-}
-
-.brand-name{
-    font-size:17px;
-    line-height:1.05;
-    font-weight:850;
-    letter-spacing:-.35px;
-}
-
-.brand-tagline{
-    margin-top:4px;
-    font-size:9px;
-    letter-spacing:.15px;
-    color:rgba(255,255,255,.72);
-}
-
-/* =========================================================
-   WELCOME COPY
-   ========================================================= */
-
-.welcome-copy{
-    margin-top:110px;
-    max-width:475px;
-}
-
-.eyebrow-line{
-    width:42px;
-    height:2px;
-    margin-bottom:16px;
-    border-radius:20px;
-    background:#4d8aff;
-    box-shadow:0 0 15px rgba(77,138,255,.65);
-}
-
-.welcome-copy h1{
-    font-size:clamp(42px, 4.4vw, 66px);
-    line-height:.98;
-    letter-spacing:-3px;
-    font-weight:850;
-    margin-bottom:18px;
-}
-
-.welcome-copy p{
-    max-width:390px;
-    color:rgba(255,255,255,.72);
-    font-size:14px;
-    line-height:1.75;
-}
-
-/* =========================================================
-   FEATURE ROW
-   ========================================================= */
-
-.features{
-    display:grid;
-    grid-template-columns:repeat(3, minmax(0,1fr));
-    gap:25px;
-    max-width:530px;
-    margin-top:72px;
-}
-
-.feature{
-    min-width:0;
-}
-
-.feature-icon{
-    width:36px;
-    height:36px;
-    margin-bottom:12px;
-    display:grid;
-    place-items:center;
-    color:#fff;
-}
-
-.feature-icon svg{
-    width:100%;
-    height:100%;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:1.45;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-}
-
-.feature h3{
-    font-size:11px;
-    font-weight:800;
-    margin-bottom:7px;
-}
-
-.feature p{
-    color:rgba(255,255,255,.57);
-    font-size:9px;
-    line-height:1.55;
-}
-
-/* =========================================================
-   HELP BAR
-   ========================================================= */
-
-.help-box{
-    margin-top:auto;
-    width:min(370px,100%);
-    padding:12px 15px;
-    display:flex;
-    align-items:center;
-    gap:11px;
-    border:1px solid rgba(255,255,255,.12);
-    border-radius:10px;
-    background:rgba(255,255,255,.055);
-    backdrop-filter:blur(12px);
-}
-
-.help-icon{
-    width:27px;
-    height:27px;
-    display:grid;
-    place-items:center;
-    flex:0 0 27px;
-    border-radius:50%;
-    color:#76a5ff;
-    background:rgba(57,115,231,.18);
-}
-
-.help-icon svg{
-    width:14px;
-    height:14px;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:1.7;
-}
-
-.help-title{
-    font-size:9px;
-    font-weight:750;
-    margin-bottom:2px;
-}
-
-.help-text{
-    color:rgba(255,255,255,.46);
-    font-size:8px;
-    line-height:1.4;
-}
-
-.help-text a{
-    color:#74a1ff;
-    text-decoration:none;
-}
-
-/* =========================================================
-   RIGHT LOGIN PANEL
-   ========================================================= */
-
-.login-panel{
-    min-height:820px;
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:48px 48px 44px;
-    background:
-        radial-gradient(circle at 80% 15%, rgba(63,120,241,.07), transparent 25%),
-        linear-gradient(135deg,#fbfcfe,#f5f7fb);
-}
-
-.login-panel::before{
-    content:"";
-    position:absolute;
-    width:330px;
-    height:330px;
-    right:-130px;
-    top:-120px;
-    border-radius:50%;
-    border:1px solid rgba(37,94,211,.08);
-}
-
-.login-panel::after{
-    content:"";
-    position:absolute;
-    width:240px;
-    height:240px;
-    left:-160px;
-    bottom:-130px;
-    border-radius:50%;
-    border:1px solid rgba(37,94,211,.06);
-}
-
-.login-wrapper{
-    width:min(440px,100%);
-    position:relative;
-    z-index:5;
-    animation:cardIn .7s cubic-bezier(.2,.75,.25,1) both;
-}
-
-@keyframes cardIn{
-    from{
-        opacity:0;
-        transform:translateY(24px) scale(.985);
-    }
-    to{
-        opacity:1;
-        transform:translateY(0) scale(1);
-    }
-}
-
-/* =========================================================
-   LOGIN CARD
-   ========================================================= */
-
-.portal-card{
-    width:100%;
-    padding:38px 42px 32px;
-    border:1px solid rgba(207,216,229,.9);
-    border-radius:15px;
-    background:rgba(255,255,255,.97);
-    box-shadow:
-        0 22px 55px rgba(14,37,75,.12),
-        0 5px 16px rgba(14,37,75,.05);
-}
-
-.login-header{
-    text-align:center;
-    margin-bottom:26px;
-}
-
-.login-icon{
-    width:48px;
-    height:48px;
-    margin:0 auto 15px;
-    display:grid;
-    place-items:center;
-    border-radius:50%;
-    color:#1d58d4;
-    background:#edf3ff;
-    box-shadow:0 6px 16px rgba(36,91,211,.08);
-}
-
-.login-icon svg{
-    width:20px;
-    height:20px;
-    fill:none;
-    stroke:currentColor;
-    stroke-width:1.8;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-}
-
-.login-header h2{
-    color:#102754;
-    font-size:22px;
-    line-height:1.15;
-    font-weight:850;
-    letter-spacing:-.6px;
-    margin-bottom:7px;
-}
-
-.login-header p{
-    color:#7b879b;
-    font-size:10px;
-    line-height:1.55;
-}
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.form-group{
-    margin-bottom:15px;
-}
-
-.form-group label{
-    display:flex;
-    align-items:center;
-    gap:5px;
-    margin-bottom:6px;
-    color:#304566;
-    font-size:9px;
-    line-height:1.2;
-    font-weight:800;
-}
-
-.input-box{
-    position:relative;
-}
-
-.input-box::before{
-    content:"";
-    position:absolute;
-    z-index:2;
-    left:11px;
-    top:50%;
-    width:13px;
-    height:13px;
-    transform:translateY(-50%);
-    opacity:.62;
-    background-repeat:no-repeat;
-    background-position:center;
-    background-size:contain;
-    pointer-events:none;
-}
-
-.form-group:nth-child(1) .input-box::before{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b83' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='5' width='18' height='14' rx='2'/%3E%3Cpath d='m3 7 9 6 9-6'/%3E%3C/svg%3E");
-}
-
-.form-group:nth-child(2) .input-box::before{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b83' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='10' width='14' height='10' rx='2'/%3E%3Cpath d='M8 10V7a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E");
-}
-
-.form-group:nth-child(3) .input-box::before{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b83' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 21a8 8 0 0 0-16 0'/%3E%3Ccircle cx='12' cy='7' r='4'/%3E%3C/svg%3E");
-}
-
-.input-box input,
-.input-box select{
-    width:100%;
-    min-height:38px;
-    padding:10px 11px 10px 33px;
-    border:1px solid #dce4ef;
-    border-radius:6px;
-    outline:none;
-    color:#24395b;
-    background:#fff;
-    font-size:9px;
-    transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
-}
-
-.input-box select{
-    appearance:auto;
-    cursor:pointer;
-}
-
-.input-box input::placeholder{
-    color:#a4adba;
-}
-
-.input-box input:hover,
-.input-box select:hover{
-    border-color:#bccbe0;
-}
-
-.input-box input:focus,
-.input-box select:focus{
-    border-color:#2a63dc;
-    background:#fff;
-    box-shadow:0 0 0 3px rgba(42,99,220,.08);
-}
-
-/* =========================================================
-   REMEMBER / FORGOT
-   ========================================================= */
-
-.login-options{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin:-1px 0 17px;
-}
-
-.remember{
-    display:flex;
-    align-items:center;
-    gap:5px;
-    color:#7d899b;
-    font-size:8px;
-}
-
-.remember input{
-    width:11px;
-    height:11px;
-    accent-color:#1d58d4;
-}
-
-.forgot-link{
-    color:#3569cf;
-    text-decoration:none;
-    font-size:8px;
-    font-weight:700;
-}
-
-.forgot-link:hover{
-    text-decoration:underline;
-}
-
-/* =========================================================
-   LOGIN BUTTON
-   ========================================================= */
-
-.login-button{
-    position:relative;
-    width:100%;
-    min-height:38px;
-    border:0;
-    border-radius:6px;
-    background:linear-gradient(135deg,#09235a,#061a43);
-    color:#fff;
-    font-size:10px;
-    font-weight:800;
-    cursor:pointer;
-    overflow:hidden;
-    box-shadow:0 8px 18px rgba(7,29,73,.18);
-    transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
-}
-
-.login-button::after{
-    content:"";
-    position:absolute;
-    top:0;
-    left:-120%;
-    width:65%;
-    height:100%;
-    transform:skewX(-25deg);
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent);
-    transition:left .55s ease;
-}
-
-.login-button:hover{
-    transform:translateY(-1px);
-    box-shadow:0 11px 25px rgba(7,29,73,.25);
-}
-
-.login-button:hover::after{
-    left:150%;
-}
-
-.login-button:active{
-    transform:translateY(0);
-}
-
-.login-button:disabled{
-    opacity:.65;
-    cursor:not-allowed;
-    transform:none;
-}
-
-/* =========================================================
-   SECURITY NOTE / COPYRIGHT
-   ========================================================= */
-
-.login-note{
-    margin-top:18px;
-    padding-top:13px;
-    border-top:1px solid #eef1f5;
-    text-align:center;
-    color:#9aa4b3;
-    font-size:7px;
-    line-height:1.55;
-}
-
-.login-note .security-inline{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-}
-
-.security-inline svg{
-    width:10px;
-    height:10px;
-    fill:none;
-    stroke:#8090a8;
-    stroke-width:1.7;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-}
-
-/* =========================================================
-   TOP LOGIN LABEL
-   ========================================================= */
-
-.top-login{
-    position:absolute;
-    top:27px;
-    right:32px;
-    z-index:8;
-    padding:8px 13px;
-    border:1px solid #dce4ef;
-    border-radius:999px;
-    background:rgba(255,255,255,.75);
-    color:#24416f;
-    font-size:9px;
-    font-weight:800;
-    backdrop-filter:blur(10px);
-}
-
-/* =========================================================
-   RESPONSIVE
-   ========================================================= */
-
-@media(max-width:1050px){
-    .site-background{
-        padding:12px;
-    }
-
-    .portal-shell{
-        grid-template-columns:1fr;
-        min-height:auto;
-    }
-
-    .welcome-panel{
-        min-height:520px;
-        padding:35px 42px;
-    }
-
-    .welcome-copy{
-        margin-top:80px;
-    }
-
-    .features{
-        margin-top:50px;
-    }
-
-    .welcome-panel::after{
-        width:800px;
-        height:520px;
-        right:-600px;
-        top:auto;
-        bottom:-300px;
-    }
-
-    .welcome-curve{
-        display:none;
-    }
-
-    .login-panel{
-        min-height:650px;
-        padding:75px 25px 55px;
-    }
-
-    .top-login{
-        top:25px;
-        right:25px;
-    }
-}
-
-@media(max-width:650px){
-    .site-background{
-        padding:0;
-        display:block;
-    }
-
-    .portal-shell{
-        width:100%;
-        min-height:100vh;
-        border-radius:0;
-        box-shadow:none;
-    }
-
-    .welcome-panel{
-        min-height:500px;
-        padding:28px 24px 28px;
-    }
-
-    .brand-mark{
-        width:40px;
-        height:40px;
-        flex-basis:40px;
-    }
-
-    .brand-name{
-        font-size:15px;
-    }
-
-    .welcome-copy{
-        margin-top:75px;
-    }
-
-    .welcome-copy h1{
-        font-size:43px;
-        letter-spacing:-2px;
-    }
-
-    .welcome-copy p{
-        font-size:12px;
-        max-width:330px;
-    }
-
-    .features{
-        grid-template-columns:1fr 1fr 1fr;
-        gap:12px;
-        margin-top:45px;
-    }
-
-    .feature h3{
-        font-size:9px;
-    }
-
-    .feature p{
-        font-size:7.5px;
-    }
-
-    .help-box{
-        width:100%;
-        margin-top:42px;
-    }
-
-    .login-panel{
-        min-height:auto;
-        padding:68px 16px 40px;
-    }
-
-    .portal-card{
-        padding:31px 23px 26px;
-        border-radius:13px;
-    }
-
-    .top-login{
-        top:20px;
-        right:20px;
-    }
-}
-
-@media(max-width:420px){
-    .welcome-panel{
-        min-height:525px;
-    }
-
-    .welcome-copy h1{
-        font-size:38px;
-    }
-
-    .features{
-        grid-template-columns:1fr;
-        gap:18px;
-    }
-
-    .feature{
-        display:grid;
-        grid-template-columns:34px 1fr;
-        column-gap:10px;
-    }
-
-    .feature-icon{
-        grid-row:span 2;
-        margin:0;
-    }
-
-    .feature h3{
-        margin:1px 0 4px;
-    }
-
-    .login-header h2{
-        font-size:20px;
-    }
-}
-
-@media(prefers-reduced-motion:reduce){
-    *,
-    *::before,
-    *::after{
-        animation-duration:.01ms !important;
-        animation-iteration-count:1 !important;
-        transition-duration:.01ms !important;
-        scroll-behavior:auto !important;
-    }
+  --navy:#061a3b;
+  --navy-2:#082b61;
+  --blue:#1d5fe9;
+  --blue-2:#3e7cff;
+  --blue-soft:#eaf1ff;
+  --bg:#f5f7fb;
+  --surface:#ffffff;
+  --surface-2:#f8fafd;
+  --ink:#12264b;
+  --muted:#5a6b88;
+  --line:#dce4f0;
+  --green:#0f9f6e;
+  --red:#d64545;
+  --amber:#b45309;
+  --shadow:0 24px 60px rgba(8,28,62,.14);
+}
+html.dark{
+  --bg:#020617;
+  --surface:#0f172a;
+  --surface-2:#1e293b;
+  --ink:#f1f5f9;
+  --muted:#94a3b8;
+  --line:#1e293b;
+  --blue-soft:#0c234d;
+  --shadow:0 24px 60px rgba(0,0,0,.45);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-family:"DM Sans",system-ui,-apple-system,sans-serif}
+body{background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;transition:background .15s,color .15s}
+h1,h2,h3,h4,.font-display{font-family:"Plus Jakarta Sans",system-ui,sans-serif}
+.font-mono{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+.wrap{max-width:1380px;margin:0 auto;padding:0 24px}
+
+/* TOP HEADER */
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+html.dark .topbar{background:rgba(2,6,23,.94)}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:14px 24px;max-width:1380px;margin:0 auto}
+.brand-wordmark{font-family:"Plus Jakarta Sans",sans-serif;font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--navy);white-space:nowrap;flex-shrink:0}
+html.dark .brand-wordmark{color:#fff}
+.nav-links{display:flex;align-items:center;gap:26px}
+.nav-link{background:none;border:0;font-size:14px;font-weight:600;color:var(--muted);padding:4px 0;white-space:nowrap;flex-shrink:0;transition:color .15s}
+.nav-link:hover,.nav-link.active{color:var(--blue);text-decoration:underline;text-underline-offset:5px}
+html.dark .nav-link:hover,html.dark .nav-link.active{color:#60a5fa}
+.top-cta{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:9px 18px;font-size:13px;font-weight:700;white-space:nowrap;flex-shrink:0;transition:background .15s}
+.top-cta:hover{background:var(--blue)}
+html.dark .top-cta{background:var(--blue)}
+.menu-btn{display:none;width:40px;height:40px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);align-items:center;justify-content:center;font-size:18px}
+.mobile-drawer{display:none;border-top:1px solid var(--line);background:var(--surface);padding:14px 20px;flex-direction:column;gap:8px}
+.mobile-drawer.open{display:flex}
+.mobile-drawer .nav-link{text-align:left;padding:10px 12px;border-radius:8px}
+.mobile-drawer .nav-link:hover{background:var(--blue-soft);text-decoration:none}
+
+/* MAIN CONTAINER */
+main{max-width:1380px;margin:0 auto;padding:28px 24px 48px;display:flex;flex-direction:column;gap:42px}
+
+/* BANNERS */
+.status-banner{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:18px 22px;border-radius:16px;border:1px solid var(--line);background:var(--surface)}
+.status-banner.success{border-color:#86efac;background:#ecfdf5;color:#065f46}
+html.dark .status-banner.success{border-color:#065f46;background:rgba(6,78,59,.4);color:#a7f3d0}
+.status-banner.error{border-color:#fca5a5;background:#fef2f2;color:#991b1b}
+html.dark .status-banner.error{border-color:#7f1d1d;background:rgba(127,29,29,.35);color:#fecaca}
+
+/* WELCOME HERO */
+.hero{position:relative;isolation:isolate;overflow:hidden;border-radius:26px;background:linear-gradient(135deg,#041433 0%,#061a3b 52%,#082b61 100%);color:#fff;padding:42px;box-shadow:0 30px 80px rgba(8,28,62,.22)}
+.hero-orb{position:absolute;top:-110px;right:-160px;width:540px;height:540px;border-radius:50%;background:linear-gradient(135deg,rgba(42,110,255,.78),rgba(22,76,196,.72));z-index:-1;pointer-events:none}
+.hero-curve{position:absolute;top:-70px;right:-130px;width:620px;height:620px;border-radius:50%;border-left:4px solid rgba(255,255,255,.72);z-index:-1;pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:stretch}
+.hero-brand{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.hero-logo{width:48px;height:48px;border-radius:12px;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.1);display:grid;place-items:center}
+.hero-logo svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.8}
+.hero-rule{width:44px;height:2px;border-radius:99px;background:#4d8aff;box-shadow:0 0 16px rgba(77,138,255,.75);margin-bottom:16px}
+.hero h1{font-size:clamp(32px,4vw,52px);line-height:1.06;letter-spacing:-.03em;margin-bottom:16px}
+.hero-desc{max-width:560px;font-size:15px;line-height:1.7;color:rgba(226,232,240,.9)}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.btn-hero-white{background:#fff;color:#061a3b;border:0;border-radius:12px;padding:12px 20px;font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 10px 24px rgba(0,0,0,.15)}
+.btn-hero-white:hover{background:#eaf1ff}
+.btn-hero-blue{background:#1d5fe9;color:#fff;border:1px solid rgba(125,211,252,.45);border-radius:12px;padding:12px 20px;font-size:14px;font-weight:700}
+.btn-hero-blue:hover{background:#3e7cff}
+.btn-hero-ghost{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:12px 18px;font-size:14px;font-weight:600}
+.btn-hero-ghost:hover{background:rgba(255,255,255,.2)}
+.hero-pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+.pillar strong{display:block;font-size:12px;margin-bottom:4px}
+.pillar span{display:block;font-size:11.5px;color:rgba(203,213,225,.85);line-height:1.45}
+
+/* PREVIEW PANEL */
+.preview-card{background:var(--surface);color:var(--ink);border-radius:18px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 20px 50px rgba(4,14,40,.28);border:1px solid rgba(255,255,255,.2)}
+.preview-top{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:12px}
+.role-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--blue-soft);padding:4px;border-radius:11px;margin-bottom:18px}
+.role-tab{border:0;background:transparent;color:var(--muted);padding:8px 6px;border-radius:8px;font-size:12px;font-weight:700}
+.role-tab.active{background:var(--navy);color:#fff}
+html.dark .role-tab.active{background:var(--blue)}
+.preview-list{list-style:none;margin:16px 0;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px;font-size:12.5px;color:var(--muted)}
+.preview-list strong{color:var(--ink)}
+.preview-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+
+/* KPI STRIP & CARDS */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px}
+.kpi-val{font-family:"JetBrains Mono",monospace;font-size:22px;font-weight:700;color:var(--navy);margin:6px 0 4px}
+html.dark .kpi-val{color:#fff}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.section-head h2{font-size:clamp(24px,2.5vw,30px);color:var(--navy);letter-spacing:-.02em}
+html.dark .section-head h2{color:#fff}
+.filter-group{display:inline-flex;flex-wrap:wrap;gap:4px;background:var(--surface);border:1px solid var(--line);padding:4px;border-radius:11px}
+.filter-btn{border:0;background:transparent;color:var(--muted);padding:7px 12px;border-radius:8px;font-size:12px;font-weight:700}
+.filter-btn.active{background:var(--navy);color:#fff}
+html.dark .filter-btn.active{background:var(--blue)}
+.dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.dash-card{display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+.dash-highlights{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding-top:16px;border-top:1px solid var(--line)}
+.dash-foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding-top:14px;border-top:1px solid var(--line)}
+.cap-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:26px}
+.cap-item{border-top:1px solid var(--line);padding-top:16px}
+.support-banner{border-radius:20px;background:linear-gradient(90deg,#061a3b,#082b61);color:#fff;padding:34px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+
+/* BUTTONS */
+.btn-primary{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:10px 16px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.btn-primary:hover{background:var(--blue)}
+html.dark .btn-primary{background:var(--blue)}
+.btn-secondary{background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:9px 15px;font-size:12.5px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.btn-secondary:hover{background:var(--blue-soft)}
+
+/* MODALS */
+.modal-backdrop{position:fixed;inset:0;z-index:60;background:rgba(6,26,56,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-backdrop.show{display:flex}
+.modal-box{width:100%;max-width:450px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px;position:relative;box-shadow:var(--shadow);max-height:92vh;overflow:auto}
+.modal-close{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:8px;border:0;background:transparent;color:var(--muted);font-size:18px}
+.modal-close:hover{background:var(--blue-soft);color:var(--ink)}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:700;margin-bottom:6px;color:var(--ink)}
+.field input,.field select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:13.5px;outline:none}
+.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(29,95,233,.12)}
+.notice-box{padding:11px 13px;border-radius:9px;font-size:12px;line-height:1.5;margin:10px 0}
+.notice-error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+.notice-info{background:var(--blue-soft);border:1px solid #bfdbfe;color:#0b3d82}
+.notice-ok{background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46}
+
+/* CREATE ACCOUNT FORM */
+.reg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.split-2{display:grid;grid-template-columns:1fr 1.35fr;gap:22px}
+.class-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px}
+.subject-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:240px;overflow:auto;margin-top:12px}
+.subject-item{display:flex;align-items:center;gap:8px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;font-size:12.5px;cursor:pointer}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.plan-card{border:1px solid var(--line);border-radius:14px;padding:18px;text-align:left;background:var(--surface);display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+.plan-card.active{border:2px solid var(--blue);background:var(--blue-soft)}
+.plan-card.trial.active{border:2px solid var(--green);background:rgba(15,159,110,.08)}
+.payment-studio{margin-top:20px;border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--surface-2)}
+.payment-grid{display:grid;grid-template-columns:1.35fr .9fr;gap:20px;margin-top:14px}
+.method-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.method-card{border:1px solid var(--line);border-radius:11px;padding:12px;background:var(--surface);text-align:left}
+.method-card.active{border:2px solid var(--blue);background:var(--blue-soft)}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);background:var(--surface);margin-top:24px}
+.footer-inner{max-width:1380px;margin:0 auto;padding:22px 24px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;font-size:12px;color:var(--muted)}
+.footer-actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px}
+.download-btn{background:var(--navy);color:#fff;border:0;border-radius:9px;padding:8px 14px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:7px}
+.download-btn:hover{background:var(--blue)}
+html.dark .download-btn{background:var(--blue)}
+
+@media(max-width:960px){
+  .hero-grid,.split-2,.payment-grid{grid-template-columns:1fr}
+  .kpi-strip,.cap-grid{grid-template-columns:repeat(2,1fr)}
+  .plan-grid,.dash-grid{grid-template-columns:1fr}
+}
+@media(max-width:740px){
+  .nav-links,.top-cta{display:none}
+  .menu-btn{display:inline-flex}
+  .hero{padding:24px}
+  .hero-pillars,.kpi-strip,.cap-grid,.reg-grid,.subject-grid,.method-cards,.dash-highlights{grid-template-columns:1fr}
+  .role-tabs{grid-template-columns:repeat(2,1fr)}
 }
 </style>
-<style id="accessug-premium-overrides">
-:root{--navy:#071b3a;--navy2:#0b2d5c;--blue:#1769d2;--sky:#eaf2ff;--line:#d9e3f0;--text:#10233f;--muted:#64748b;--white:#fff;--green:#0f9f6e;--red:#d64545;--amber:#c47a00}
-body{background:#f5f8fc;color:var(--text)} .sidebar{background:linear-gradient(180deg,var(--navy),#0b2d5c)!important;color:#fff} .sidebar a,.sidebar button{color:#dbeafe!important}.sidebar .active{background:rgba(255,255,255,.13)!important;color:#fff!important;border-left:3px solid #60a5fa}.topbar,.card,.modal,.hero{background:#fff;border:1px solid var(--line);box-shadow:0 10px 30px rgba(7,27,58,.07)} .hero{border-left:4px solid var(--blue)} .btn{background:var(--blue)!important;color:#fff!important;border:none;border-radius:10px;box-shadow:0 5px 12px rgba(23,105,210,.18)} .btn.secondary{background:#e8f0fb!important;color:var(--navy)!important;box-shadow:none}.card-head,.toolbar{border-color:var(--line)} table{border-collapse:separate;border-spacing:0;width:100%;overflow:hidden;border:1px solid var(--line);border-radius:12px} th{background:#eef4fb!important;color:#183252!important;font-weight:700} td,th{padding:12px 14px;border-bottom:1px solid var(--line)} tr:last-child td{border-bottom:0} tr:hover td{background:#f8fbff}.notice{border-radius:10px}.badge,.status{border-radius:999px}.page{max-width:1500px;margin:auto}.grid,.stats{gap:18px}.field input,.field select,.field textarea{border:1px solid #cbd8e8;border-radius:9px;background:#fff}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(23,105,210,.12);outline:0}.mobile-only{display:none}@media(max-width:800px){.sidebar{transform:translateX(-100%)}.sidebar.open{transform:translateX(0)}.mobile-only{display:block}.page{padding:12px}.hero{padding:18px}.toolbar{display:grid;grid-template-columns:1fr;gap:10px}table{min-width:760px}.table-wrap{overflow-x:auto}.card{border-radius:14px}.stats,.grid{grid-template-columns:1fr!important}}
-</style>
-<style id="accessug-register-premium">
-.auth-mode-switch{
-    position:absolute;
-    top:28px;
-    right:30px;
-    z-index:12;
-    display:flex;
-    align-items:center;
-    min-width:205px;
-    height:48px;
-    padding:4px;
-    border:1px solid rgba(210,220,234,.95);
-    border-radius:999px;
-    background:rgba(255,255,255,.86);
-    box-shadow:0 10px 28px rgba(8,30,66,.10);
-    backdrop-filter:blur(16px);
-    overflow:hidden;
-}
-.auth-mode{
-    flex:1;
-    height:40px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    text-decoration:none;
-    color:#41618e;
-    font-size:14px;
-    font-weight:800;
-    letter-spacing:-.15px;
-    border-radius:999px;
-    transition:all .22s ease;
-}
-.auth-mode.active{
-    color:#fff;
-    background:linear-gradient(135deg,#061a3b,#0b3d82);
-    box-shadow:0 7px 18px rgba(6,26,59,.20);
-}
-.auth-mode:not(.active):hover{
-    color:#123665;
-    background:#edf3fb;
-}
-.auth-mode-switch::after{
-    content:"";
-    position:absolute;
-    left:50%;
-    top:10px;
-    width:2px;
-    height:28px;
-    background:linear-gradient(to bottom,transparent,#d7e0ec,transparent);
-    opacity:.7;
-    pointer-events:none;
-}
-@media(max-width:1050px){
-    .auth-mode-switch{top:22px;right:24px}
-}
-@media(max-width:600px){
-    .auth-mode-switch{
-        position:relative;
-        top:auto;
-        right:auto;
-        width:min(245px,calc(100% - 32px));
-        margin:0 auto 18px;
-        min-width:0;
-    }
-    .login-panel{
-        flex-direction:column;
-        padding-top:24px;
-    }
-    .login-wrapper{width:100%}
-}
-</style>
-
-<style id="accessug-developer-credit">
-.accessug-developer-credit{
-    color:#0b3d82 !important;
-    font-weight:800;
-    letter-spacing:.1px;
-}
-</style>
-
-
-<style id="accessug-developer-credit-style">
-.accessug-developer-credit{
-    margin-top:14px;
-    padding:2px 0 0;
-    text-align:center;
-    color:#0b3d82 !important;
-    font-size:12px;
-    line-height:1.5;
-    font-weight:800;
-    letter-spacing:.1px;
-}
-</style>
-
-
-<style id="accessug-account-setup-styles">
-.account-setup-modal{display:none;position:fixed;inset:0;z-index:99999;background:rgba(4,18,42,.72);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:18px}
-.account-setup-modal.show{display:flex}
-.account-setup-card{width:min(500px,100%);max-height:92vh;overflow:auto;background:#fff;border:1px solid #dce5f2;border-radius:22px;box-shadow:0 30px 90px rgba(5,25,60,.32);padding:28px}
-.account-setup-badge{width:48px;height:48px;border-radius:14px;background:#eaf1ff;color:#1559b7;display:grid;place-items:center;font-size:22px;margin-bottom:16px}
-.account-setup-card h3{margin:0 0 8px;color:#102a50;font-size:22px}
-.account-setup-card>p{margin:0 0 22px;color:#65758b;font-size:13px;line-height:1.55}
-.account-setup-group{margin-bottom:15px}
-.account-setup-group label{display:block;color:#405673;font-size:12px;font-weight:800;margin:0 0 6px}
-.account-setup-group input{width:100%;border:1px solid #d7e0ec;border-radius:11px;padding:12px 13px;background:#fff;color:#13233a;outline:none}
-.account-setup-group input:focus{border-color:#4b82cf;box-shadow:0 0 0 3px rgba(40,100,190,.1)}
-.account-setup-hint{font-size:11px;color:#8190a4;margin-top:5px}
-.account-setup-status{min-height:18px;margin:8px 0 12px;font-size:12px;color:#a8322e}
-.account-setup-status.ok{color:#117052}
-.account-setup-btn{width:100%;border:0;border-radius:11px;padding:13px 16px;background:#1559b7;color:#fff;font-weight:800;cursor:pointer}
-.account-setup-btn:hover{background:#0d4798}
-.account-setup-btn:disabled{opacity:.65;cursor:not-allowed}
-</style>
-
-    <meta name="theme-color" content="#061a3b">
-    <meta name="application-name" content="Access UG">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="./manifest.json">
-    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="./favicon.svg">
-    <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
-
 <body>
 
-<div id="accountSetupModal" class="account-setup-modal" aria-hidden="true">
-  <div class="account-setup-card" role="dialog" aria-modal="true" aria-labelledby="accountSetupTitle">
-    <div class="account-setup-badge">🔐</div>
-    <h3 id="accountSetupTitle">Secure Your ACCESS UG Account</h3>
-    <p id="accountSetupDescription">Before you continue, create your own username and a new password. This is required for your first secure login.</p>
-    <form id="accountSetupForm" novalidate>
-      <div class="account-setup-group">
-        <label for="accountSetupUsername">New Username</label>
-        <input id="accountSetupUsername" type="text" autocomplete="username" maxlength="40" placeholder="Enter your new username" required>
-        <div class="account-setup-hint">3–40 characters: letters, numbers, dot, underscore or hyphen.</div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#welcome" class="brand-wordmark" id="navBrandBtn">ACCESS UG SCH</a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <button type="button" class="nav-link active" data-go-overview="welcome">Welcome</button>
+      <button type="button" class="nav-link" data-go-overview="dashboards">Dashboards</button>
+      <button type="button" class="nav-link" data-go-overview="capabilities">Capabilities</button>
+      <button type="button" class="nav-link" id="navCreateAccountBtn">Create Account</button>
+      <button type="button" class="nav-link" data-go-overview="support">Support</button>
+    </nav>
+    <button type="button" class="top-cta" id="topSignInBtn">Sign In</button>
+    <button type="button" class="menu-btn" id="mobileMenuBtn" aria-label="Open menu">☰</button>
+  </div>
+  <div class="mobile-drawer" id="mobileDrawer">
+    <button type="button" class="nav-link" data-go-overview="welcome">Welcome</button>
+    <button type="button" class="nav-link" data-go-overview="dashboards">Dashboards</button>
+    <button type="button" class="nav-link" data-go-overview="capabilities">Capabilities</button>
+    <button type="button" class="nav-link" id="mobileCreateBtn">Create Account</button>
+    <button type="button" class="nav-link" data-go-overview="support">Support</button>
+    <button type="button" class="btn-primary" id="mobileSignInBtn" style="justify-content:center;padding:12px">Sign In to Portal →</button>
+  </div>
+</header>
+
+<main>
+  <div id="verifyBannerHost"></div>
+
+  <!-- OVERVIEW PAGE -->
+  <div id="overviewSection" style="display:flex;flex-direction:column;gap:40px">
+    <section class="hero" id="welcome">
+      <div class="hero-orb"></div>
+      <div class="hero-curve"></div>
+      <div class="hero-grid">
+        <div style="display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <div class="hero-brand">
+              <div class="hero-logo" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M4 9.5 12 5l8 4.5-8 4.5-8-4.5Z"/><path d="M7 12.2V17l5 2.7 5-2.7v-4.8"/><path d="M20 10v5"/></svg>
+              </div>
+              <div>
+                <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:18px">ACCESS UG SCH</div>
+                <div style="font-size:12px;color:#bae6fd">Access. Choose. Succeed.</div>
+              </div>
+            </div>
+            <div class="hero-rule"></div>
+            <h1>Smart School Management, Built for Every Role.</h1>
+            <p class="hero-desc">Welcome to ACCESS UG SCH — the connected workspace where school leaders, teachers, students, and parents stay aligned on attendance, academics, fees, timetables, and real-time school messaging.</p>
+            <div class="hero-actions">
+              <button type="button" class="btn-hero-white" id="heroSignInBtn">Sign In to Portal →</button>
+              <button type="button" class="btn-hero-blue" id="heroCreateBtn">Create School Account</button>
+              <a href="#dashboards" class="btn-hero-ghost">Explore Dashboards</a>
+            </div>
+          </div>
+          <div class="hero-pillars">
+            <div class="pillar"><strong>Verified Access</strong><span>School email verification and guided first-time password protection.</span></div>
+            <div class="pillar"><strong>Connected Messaging</strong><span>Instant announcements and direct threads across all portals.</span></div>
+            <div class="pillar"><strong>Real-Time Insights</strong><span>Live attendance, marks, timetables, and fee balances.</span></div>
+          </div>
+        </div>
+
+        <div class="preview-card">
+          <div>
+            <div class="preview-top">
+              <span style="font-weight:700;color:var(--blue)">Interactive Portal Preview</span>
+              <span class="font-mono" style="color:var(--muted)">4 Role Views</span>
+            </div>
+            <div class="role-tabs" id="previewTabs">
+              <button type="button" class="role-tab active" data-preview="school">School</button>
+              <button type="button" class="role-tab" data-preview="teacher">Teacher</button>
+              <button type="button" class="role-tab" data-preview="student">Student</button>
+              <button type="button" class="role-tab" data-preview="parent">Parent</button>
+            </div>
+            <div id="previewAudience" style="font-size:12px;color:var(--muted)">Headteachers, Principals, Bursars &amp; School Office</div>
+            <h2 id="previewTitle" style="font-size:21px;margin:4px 0 8px">School Control Dashboard</h2>
+            <p id="previewHeadline" style="font-size:13.5px;color:var(--muted)">Run admissions, academics, finance, and school-wide communication from one desk.</p>
+            <ul class="preview-list" id="previewList"></ul>
+          </div>
+          <div class="preview-foot">
+            <button type="button" id="previewRegisterLink" style="background:none;border:0;color:var(--blue);font-size:12px;font-weight:700">Register new school →</button>
+            <button type="button" class="btn-primary" id="previewSignInBtn">Sign In to School Portal →</button>
+          </div>
+        </div>
       </div>
-      <div class="account-setup-group">
-        <label for="accountSetupPassword">New Password</label>
-        <input id="accountSetupPassword" type="password" autocomplete="new-password" minlength="8" placeholder="Enter a new password" required>
+    </section>
+
+    <section class="kpi-strip" aria-label="Included portal workspaces">
+      <div class="card"><div style="font-size:12px;color:var(--muted);font-weight:600">School Control</div><div class="kpi-val">All-in-One</div><div style="font-size:12px;color:var(--muted)">Admissions, fees, timetables, QR check-in, and report cards</div></div>
+      <div class="card"><div style="font-size:12px;color:var(--muted);font-weight:600">Teacher Command</div><div class="kpi-val">06 Quick Tiles</div><div style="font-size:12px;color:var(--muted)">Class attendance, gradebook entry, and parent broadcasts</div></div>
+      <div class="card"><div style="font-size:12px;color:var(--muted);font-weight:600">Student Hub</div><div class="kpi-val">Live Schedule</div><div style="font-size:12px;color:var(--muted)">Daily lessons, marks history, report readiness, and inbox</div></div>
+      <div class="card"><div style="font-size:12px;color:var(--muted);font-weight:600">Parent &amp; Guardian</div><div class="kpi-val">Direct Updates</div><div style="font-size:12px;color:var(--muted)">Fee balances, payment codes, attendance alerts, and chat</div></div>
+    </section>
+
+    <section id="dashboards">
+      <div class="section-head">
+        <div>
+          <h2>What You Can Do in Every Dashboard</h2>
+          <p style="font-size:14px;color:var(--muted);margin-top:6px">Every member of your school community gets a dedicated workspace tailored to their daily responsibilities.</p>
+        </div>
+        <div class="filter-group" id="dashFilters">
+          <button type="button" class="filter-btn active" data-filter="all">All Dashboards</button>
+          <button type="button" class="filter-btn" data-filter="school">School</button>
+          <button type="button" class="filter-btn" data-filter="teacher">Teacher</button>
+          <button type="button" class="filter-btn" data-filter="student">Student</button>
+          <button type="button" class="filter-btn" data-filter="parent">Parent</button>
+        </div>
       </div>
-      <div class="account-setup-group">
-        <label for="accountSetupConfirm">Confirm New Password</label>
-        <input id="accountSetupConfirm" type="password" autocomplete="new-password" minlength="8" placeholder="Re-enter your new password" required>
+      <div class="dash-grid" id="dashCardsGrid"></div>
+    </section>
+
+    <section class="card" id="capabilities">
+      <div class="section-head" style="margin-bottom:0">
+        <div>
+          <h2>Designed to Keep Every School Connected</h2>
+          <p style="font-size:14px;color:var(--muted);margin-top:6px">From morning attendance to term-end report cards, every workflow shares reliable live data across portals.</p>
+        </div>
+        <button type="button" class="btn-secondary" id="autoDetectLoginBtn">Auto-Detect My Portal</button>
       </div>
-      <div id="accountSetupStatus" class="account-setup-status"></div>
-      <button id="accountSetupButton" class="account-setup-btn" type="submit">Save &amp; Continue</button>
+      <div class="cap-grid">
+        <div class="cap-item"><span class="font-mono" style="font-size:12px;font-weight:700;color:var(--blue)">01.</span><h3 style="margin:8px 0 6px;font-size:16px">Real-Time Cross-Portal Messaging</h3><p style="font-size:12.5px;color:var(--muted)">Announcements and direct replies flow reliably between School Leadership, Teachers, Students, and Parents.</p></div>
+        <div class="cap-item"><span class="font-mono" style="font-size:12px;font-weight:700;color:var(--blue)">02.</span><h3 style="margin:8px 0 6px;font-size:16px">Attendance, QR Check-In &amp; Timetables</h3><p style="font-size:12.5px;color:var(--muted)">Daily roll calls, scannable school QR attendance, class timetables, and term calendars keep every campus synchronized.</p></div>
+        <div class="cap-item"><span class="font-mono" style="font-size:12px;font-weight:700;color:var(--blue)">03.</span><h3 style="margin:8px 0 6px;font-size:16px">Transparent Fee Structures</h3><p style="font-size:12.5px;color:var(--muted)">Schools configure clear fee schedules and payment codes while families track exact balances without confusion.</p></div>
+        <div class="cap-item"><span class="font-mono" style="font-size:12px;font-weight:700;color:var(--blue)">04.</span><h3 style="margin:8px 0 6px;font-size:16px">Guided First-Login Protection</h3><p style="font-size:12.5px;color:var(--muted)">New teachers, students, and parents activate their account on first sign in by setting a private username and password.</p></div>
+      </div>
+    </section>
+
+    <section class="support-banner" id="support">
+      <div style="max-width:680px">
+        <div style="font-size:12px;font-weight:700;color:#7dd3fc;margin-bottom:6px">Dedicated School &amp; Family Support</div>
+        <h2 style="font-size:clamp(22px,2.8vw,30px);margin-bottom:8px">Start your school’s 1-month free trial or sign in to your account.</h2>
+        <p style="font-size:14px;color:rgba(226,232,240,.88)">Create a school account with email verification, choose your classes and subjects, and explore Mobile Money &amp; Card options. Support: <a href="mailto:jkaliisa256@outlook.com" style="color:#7dd3fc;text-decoration:underline;font-weight:700">jkaliisa256@outlook.com</a></p>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <button type="button" class="btn-hero-white" id="supportCreateBtn">Create School Account →</button>
+        <button type="button" class="btn-hero-ghost" id="supportSignInBtn">Sign In Now</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- CREATE ACCOUNT / REGISTER SCHOOL VIEW -->
+  <div id="createAccountSection" class="hidden" style="display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+      <button type="button" class="btn-secondary" id="backToOverviewBtn">← Back to Welcome Page</button>
+      <div style="font-size:12.5px;color:var(--muted)">Already verified? <button type="button" id="regQuickSignInBtn" style="background:none;border:0;color:var(--blue);font-weight:700">Sign in to School Portal</button></div>
+    </div>
+
+    <div class="hero" style="padding:32px;border-radius:20px">
+      <h1 style="font-size:clamp(24px,3vw,36px);margin-bottom:10px">Register Your School on ACCESS UG SCH</h1>
+      <p class="hero-desc" style="max-width:760px">Set up your institution’s academic classes, subjects, and school login in one step. A verification link will be sent directly to your provided school email.</p>
+    </div>
+
+    <div id="verificationSentScreen" class="card hidden" style="text-align:center;max-width:740px;margin:0 auto;padding:38px">
+      <h2 style="font-size:24px;margin-bottom:10px">Verify Your School Email to Activate Account</h2>
+      <p id="verificationSentCopy" style="font-size:14px;color:var(--muted);max-width:560px;margin:0 auto 22px"></p>
+      <div id="resendMsg" class="notice-box notice-info hidden" style="max-width:520px;margin:0 auto 16px"></div>
+      <div style="display:flex;justify-content:center;gap:12px;flex-wrap:wrap">
+        <button type="button" class="btn-primary" id="resendVerificationBtn">Resend Verification Email</button>
+        <button type="button" class="btn-secondary" id="sentBackHomeBtn">Back to Homepage</button>
+      </div>
+    </div>
+
+    <form id="schoolRegForm" style="display:flex;flex-direction:column;gap:22px">
+      <div class="card">
+        <h3 style="font-size:18px;margin-bottom:4px">01. Institution Details &amp; School Login</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:18px">Your verification email will be sent to the school email address provided below.</p>
+        <div class="reg-grid">
+          <div class="field"><label for="regName">School Name *</label><input id="regName" required placeholder="Enter school name"></div>
+          <div class="field"><label for="regCode">School Code *</label><input id="regCode" required placeholder="Example: SCH001"></div>
+          <div class="field"><label for="regDistrict">District *</label><input id="regDistrict" required placeholder="e.g. Wakiso"></div>
+          <div class="field"><label for="regLocation">Location / Address</label><input id="regLocation" placeholder="e.g. Bunamwaya, Kampala"></div>
+          <div class="field"><label for="regHead">Head Teacher</label><input id="regHead" placeholder="Head teacher full name"></div>
+          <div class="field"><label for="regPhone">School Phone Number</label><input id="regPhone" type="tel" placeholder="+256 7XX XXX XXX"></div>
+          <div class="field"><label for="regEmail">School Email / Login Email *</label><input id="regEmail" type="email" required placeholder="school@example.com"></div>
+          <div class="field"><label for="regPass">School Login Password *</label><input id="regPass" type="password" minlength="6" required placeholder="At least 6 characters"></div>
+          <div class="field"><label for="regType">School Type *</label><select id="regType"><option>Secondary School</option><option>Primary School</option><option>Mixed School</option></select></div>
+          <div class="field"><label for="regUsers">Estimated Total Users *</label><input id="regUsers" type="number" min="1" value="450" required></div>
+        </div>
+      </div>
+
+      <div class="split-2">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <h3 style="font-size:16px">02. Classes &amp; Streams</h3>
+            <button type="button" class="btn-secondary" id="addClassBtn" style="padding:6px 11px;font-size:12px">+ Add Class</button>
+          </div>
+          <div class="field"><label for="regYear">Academic Year *</label><input id="regYear" type="number" min="2000" max="2100" required></div>
+          <div id="classRowsWrap"></div>
+          <p style="font-size:11.5px;color:var(--muted);margin-top:8px">Example: S3 + North becomes S3 North.</p>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+            <h3 style="font-size:16px">03. Subjects Offered (<span id="subCount">0</span> selected)</h3>
+            <div style="display:flex;gap:6px">
+              <button type="button" class="btn-secondary" id="selectAllSubBtn" style="padding:5px 10px;font-size:11.5px">Select All</button>
+              <button type="button" class="btn-secondary" id="clearSubBtn" style="padding:5px 10px;font-size:11.5px">Clear</button>
+              <button type="button" class="btn-secondary" id="refreshSubBtn" style="padding:5px 10px;font-size:11.5px">Refresh</button>
+            </div>
+          </div>
+          <div class="field" style="margin-bottom:8px"><input id="subSearch" type="search" placeholder="Filter subjects..."></div>
+          <div id="subStatus" style="font-size:12px;color:var(--muted)">Loading active subjects catalogue...</div>
+          <div id="subList" class="subject-grid"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 style="font-size:18px;margin-bottom:4px">04. Subscription &amp; Payment Options</h3>
+        <p style="font-size:12px;color:var(--muted)">Start risk-free with a 1-month free trial or preview Mobile Money and Card term billing options.</p>
+        <div class="plan-grid" id="planCards">
+          <button type="button" class="plan-card trial active" data-plan="trial">
+            <div><strong style="font-size:14px">1 Month Free Trial</strong><div class="font-mono" style="font-size:24px;font-weight:800;color:var(--green);margin:8px 0">FREE</div><p style="font-size:12px;color:var(--muted)">Full access for 30 days with zero payment required today.</p></div>
+            <span style="font-size:11.5px;font-weight:700;color:var(--green)">No payment required · Email verified</span>
+          </button>
+          <button type="button" class="plan-card" data-plan="standard">
+            <div><strong style="font-size:14px">Standard · Per Term</strong><div class="font-mono" style="font-size:24px;font-weight:800;color:var(--blue);margin:8px 0">£9.99</div><p style="font-size:12px;color:var(--muted)">For fewer than 1,000 total users. Mobile Money settles in UGX.</p></div>
+            <span style="font-size:11.5px;font-weight:700;color:var(--blue)">Up to 999 users · Card or MoMo</span>
+          </button>
+          <button type="button" class="plan-card" data-plan="large">
+            <div><strong style="font-size:14px">Large School · Per Term</strong><div class="font-mono" style="font-size:24px;font-weight:800;color:var(--blue);margin:8px 0">£19.99</div><p style="font-size:12px;color:var(--muted)">Built for campuses with 1,000 or more learners and staff.</p></div>
+            <span style="font-size:11.5px;font-weight:700;color:var(--blue)">1,000+ users · Card or MoMo</span>
+          </button>
+        </div>
+
+        <div class="payment-studio">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+            <strong id="payStudioTitle" style="font-size:14px">Available Payment Options After Trial (Preview)</strong>
+            <span style="font-size:11.5px;font-weight:700;color:var(--blue)">Flutterwave-Ready Checkout</span>
+          </div>
+          <div class="payment-grid">
+            <div>
+              <div class="method-cards" id="methodCards">
+                <button type="button" class="method-card active" data-method="MTN Mobile Money"><strong style="display:block;font-size:12px">MTN Mobile Money</strong><span style="font-size:11px;color:var(--muted)">UGX MoMo Push</span></button>
+                <button type="button" class="method-card" data-method="Airtel Money"><strong style="display:block;font-size:12px">Airtel Money</strong><span style="font-size:11px;color:var(--muted)">UGX Instant PIN</span></button>
+                <button type="button" class="method-card" data-method="Credit/Debit Card"><strong style="display:block;font-size:12px">Visa / Mastercard</strong><span style="font-size:11px;color:var(--muted)">GBP Card Checkout</span></button>
+              </div>
+              <div id="momoFields" class="field">
+                <label for="momoPhoneInput">Mobile Money Phone Number</label>
+                <input id="momoPhoneInput" type="tel" placeholder="e.g. +256 772 000 000">
+              </div>
+              <div id="cardFields" class="hidden">
+                <div class="reg-grid">
+                  <div class="field"><label for="cardHolderInput">Cardholder Name</label><input id="cardHolderInput" placeholder="Name on card"></div>
+                  <div class="field"><label for="cardNumInput">Card Number</label><input id="cardNumInput" placeholder="•••• •••• •••• ••••"></div>
+                </div>
+              </div>
+            </div>
+            <div class="card" style="padding:16px">
+              <div style="font-size:12px;font-weight:700;border-bottom:1px solid var(--line);padding-bottom:8px;margin-bottom:10px">Registration Billing Summary</div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--muted)">Plan</span><strong id="sumPlan">1 Month Free Trial</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px"><span style="color:var(--muted)">Payment Channel</span><strong id="sumMethod">None required today</strong></div>
+              <div style="display:flex;justify-content:space-between;font-size:14px;border-top:1px solid var(--line);padding-top:10px;margin-top:8px"><strong>Due Today</strong><strong class="font-mono" id="sumTotal">£0.00</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="regNotice" class="notice-box hidden"></div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;flex-wrap:wrap">
+        <button type="button" class="btn-secondary" id="regResetBtn">Clear Form</button>
+        <button type="submit" class="btn-primary" id="regSubmitBtn" style="padding:12px 22px;font-size:14px">Create Account &amp; Send Verification Email →</button>
+      </div>
+    </form>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div><strong>ACCESS UG SCH</strong> · Access. Choose. Succeed. · Designed and developed by Jovan Kaliisa</div>
+    <div class="footer-actions">
+      <button type="button" class="nav-link" data-go-overview="welcome" style="font-size:12px">Welcome</button>
+      <button type="button" class="nav-link" data-go-overview="dashboards" style="font-size:12px">Dashboards</button>
+      <button type="button" class="nav-link" id="footCreateBtn" style="font-size:12px">Create Account</button>
+      <button type="button" class="nav-link" id="footSignInBtn" style="font-size:12px;color:var(--blue)">Sign In</button>
+      <button type="button" class="btn-secondary" id="themeToggleBtn" style="padding:6px 11px;font-size:12px">Dark</button>
+    </div>
+  </div>
+</footer>
+
+<!-- SIGN IN MODAL -->
+<div class="modal-backdrop" id="signInModal" role="dialog" aria-modal="true" aria-labelledby="signInModalTitle">
+  <div class="modal-box">
+    <button type="button" class="modal-close" id="closeSignInBtn" aria-label="Close">✕</button>
+    <div style="text-align:center;margin-bottom:20px">
+      <h2 id="signInModalTitle" style="font-size:22px;margin-bottom:4px">Portal Sign In</h2>
+      <p style="font-size:12px;color:var(--muted)">Enter your ACCESS UG credentials to open your dashboard.</p>
+    </div>
+    <form id="loginForm">
+      <div class="field"><label for="loginIdentifier">Username / Email / Phone</label><input id="loginIdentifier" required placeholder="Username, email, or parent phone" autocomplete="username"></div>
+      <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" required placeholder="Enter your password" autocomplete="current-password"></div>
+      <div class="field">
+        <label for="loginRole">Portal Role</label>
+        <select id="loginRole">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+          <option value="school">School</option>
+          <option value="parent">Parent</option>
+          <option value="auto">Auto-detect Role</option>
+        </select>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:14px">
+        <label style="display:flex;align-items:center;gap:6px;color:var(--muted)"><input type="checkbox" id="rememberChk" checked> Remember me</label>
+        <button type="button" id="toggleForgotBtn" style="background:none;border:0;color:var(--blue);font-weight:700;font-size:12px">Forgot password?</button>
+      </div>
+      <div id="loginErrorBox" class="notice-box notice-error hidden"></div>
+      <button type="submit" class="btn-primary" id="loginSubmitBtn" style="width:100%;justify-content:center;padding:12px;font-size:14px">Sign In to Portal →</button>
+    </form>
+    <form id="forgotForm" class="hidden" style="margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)">
+      <div style="font-size:12px;font-weight:700;margin-bottom:6px">Reset your password</div>
+      <div style="display:flex;gap:8px">
+        <input id="resetEmailInput" type="email" required placeholder="you@school.ac.ug" style="flex:1;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:12px">
+        <button type="submit" class="btn-primary" id="resetSendBtn" style="font-size:12px">Send</button>
+      </div>
+      <div id="resetStatusBox" class="notice-box hidden" style="margin-top:8px"></div>
+    </form>
+    <div style="text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted)">
+      Registering a new school? <button type="button" id="modalSwitchRegBtn" style="background:none;border:0;color:var(--blue);font-weight:700">Create School Account</button>
+    </div>
+  </div>
+</div>
+
+<!-- FIRST-LOGIN ACCOUNT SETUP MODAL -->
+<div class="modal-backdrop" id="setupModal" role="dialog" aria-modal="true" aria-labelledby="setupModalTitle">
+  <div class="modal-box">
+    <h3 id="setupModalTitle" style="font-size:20px;margin-bottom:6px">Secure Your ACCESS UG Account</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Create your personal username and password before continuing to your dashboard.</p>
+    <form id="setupForm">
+      <div class="field"><label for="setupUsername">New Username</label><input id="setupUsername" required maxlength="40" placeholder="3-40 letters, numbers, . _ -"></div>
+      <div class="field"><label for="setupPassword">New Password</label><input id="setupPassword" type="password" required minlength="8" placeholder="At least 8 characters"></div>
+      <div class="field"><label for="setupConfirm">Confirm Password</label><input id="setupConfirm" type="password" required minlength="8" placeholder="Re-enter password"></div>
+      <div id="setupStatusBox" class="notice-box hidden"></div>
+      <button type="submit" class="btn-primary" id="setupSaveBtn" style="width:100%;justify-content:center;padding:12px">Save &amp; Continue</button>
     </form>
   </div>
 </div>
 
-
-<div class="site-background">
-
-    <div class="portal-shell">
-
-        <!-- =====================================================
-             LEFT / WELCOME
-        ====================================================== -->
-
-        <section class="welcome-panel">
-
-            <div class="welcome-curve"></div>
-
-            <div class="welcome-content">
-
-                <a href="#" class="brand" aria-label="ACCESS UG SCH">
-                    <div class="brand-mark">
-                        <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M4 9.5 12 5l8 4.5-8 4.5-8-4.5Z"></path>
-                            <path d="M7 12.2V17l5 2.7 5-2.7v-4.8"></path>
-                            <path d="M20 10v5"></path>
-                            <path d="M10 15.7h4"></path>
-                        </svg>
-                    </div>
-
-                    <div>
-                        <div class="brand-name">ACCESS UG SCH</div>
-                        <div class="brand-tagline">Access. Choose. Succeed.</div>
-                    </div>
-                </a>
-
-
-                <div class="welcome-copy">
-                    <div class="eyebrow-line"></div>
-
-                    <h1>Welcome Back!</h1>
-
-                    <p>
-                        Sign in to access the ACCESS UG platform and
-                        manage your school experience efficiently.
-                    </p>
-                </div>
-
-
-                <div class="features">
-
-                    <div class="feature">
-
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 3 20 6v6c0 5-3.3 8-8 9-4.7-1-8-4-8-9V6l8-3Z"></path>
-                                <path d="m8.5 12 2.2 2.2 4.8-5"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <h3>Secure Access</h3>
-                            <p>Your data is protected with enterprise-grade security.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="feature">
-
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24">
-                                <circle cx="9" cy="8" r="3"></circle>
-                                <circle cx="17" cy="9" r="2.5"></circle>
-                                <path d="M3.5 19c.7-3.3 2.5-5 5.5-5s4.8 1.7 5.5 5"></path>
-                                <path d="M14 14.7c2.7-.2 4.5 1.2 5.2 4.3"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <h3>Admin Control</h3>
-                            <p>Manage schools, users and platform information.</p>
-                        </div>
-
-                    </div>
-
-
-                    <div class="feature">
-
-                        <div class="feature-icon">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M4 19V5"></path>
-                                <path d="M4 19h17"></path>
-                                <path d="m7 15 4-4 3 2 5-6"></path>
-                            </svg>
-                        </div>
-
-                        <div>
-                            <h3>Real-time Insights</h3>
-                            <p>Monitor important education data at a glance.</p>
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="help-box">
-
-                    <div class="help-icon">
-                        <svg viewBox="0 0 24 24">
-                            <circle cx="12" cy="12" r="9"></circle>
-                            <path d="M9.5 9a2.6 2.6 0 1 1 4.6 1.7c-.8.9-2.1 1.2-2.1 2.8"></path>
-                            <path d="M12 17h.01"></path>
-                        </svg>
-                    </div>
-
-                    <div>
-                        <div class="help-title">Need help?</div>
-                        <div class="help-text">
-                            Contact our support team at
-                            <a href="mailto:jkaliisa256@outlook.com">
-                                jkaliisa256@outlook.com
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =====================================================
-             RIGHT / LOGIN
-        ====================================================== -->
-
-        <section class="login-panel" id="login">
-
-            <div class="auth-mode-switch" aria-label="Portal access options">
-    <a href="#login" class="auth-mode active" aria-current="page">Login</a>
-    <a href="./register-school.html" class="auth-mode">Register</a>
-</div>
-
-            <div class="login-wrapper">
-
-                <div class="portal-card">
-
-                    <div class="login-header">
-
-                        <div class="login-icon">
-                            <svg viewBox="0 0 24 24" aria-hidden="true">
-                                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
-                                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-                                <circle cx="12" cy="15" r="1"></circle>
-                                <path d="M12 16v2"></path>
-                            </svg>
-                        </div>
-
-                        <h2>Portal Login</h2>
-
-                        <p>
-                            Enter your credentials to continue.
-                        </p>
-
-                    </div>
-
-
-                    <form id="loginForm">
-
-                        <div class="form-group">
-
-                            <label for="email">
-                                Username / Email / Phone
-                            </label>
-
-                            <div class="input-box">
-
-                                <input
-                                    id="email"
-                                    type="text"
-                                    inputmode="text"
-                                    placeholder="Username, email, or parent phone"
-                                    autocomplete="username"
-                                    required
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="password">
-                                Password
-                            </label>
-
-                            <div class="input-box">
-
-                                <input
-                                    id="password"
-                                    type="password"
-                                    placeholder="Enter your password"
-                                    autocomplete="current-password"
-                                    required
-                                >
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="form-group">
-
-                            <label for="role">
-                                Role
-                            </label>
-
-                            <div class="input-box">
-
-                                <select id="role" required>
-
-                                    <option value="student">
-                                        Student
-                                    </option>
-
-                                    <option value="teacher">
-                                        Teacher
-                                    </option>
-
-                                    <option value="school">
-                                        School
-                                    </option>
-
-                                    <option value="parent">
-                                        Parent
-                                    </option>
-
-                                </select>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="login-options">
-
-                            <label class="remember">
-                                <input type="checkbox" id="rememberMe">
-                                <span>Remember me</span>
-                            </label>
-
-                            <a href="#" class="forgot-link"
-                               onclick="event.preventDefault();">
-                                Forgot password?
-                            </a>
-
-                        </div>
-
-
-                        <button
-                            type="submit"
-                            class="login-button"
-                            id="loginButton"
-                        >
-                            Login to Portal
-                        </button>
-                        <div class="accessug-developer-credit">
-                            Designed and developed by Jovan Kaliisa
-                        </div>
-
-                        
-
-                    </form>
-
-
-                    <div class="login-note">
-                        <span class="security-inline">
-                            <svg viewBox="0 0 24 24">
-                                <rect x="5" y="10" width="14" height="10" rx="2"></rect>
-                                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
-                            </svg>
-                            Your account information is protected through secure authentication.
-                        </span>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-    </div>
-
-</div>
-
-    <!-- =====================================================
-         SUPABASE LIBRARY
-    ===================================================== -->
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
-    <!-- =====================================================
-         SUPABASE + LOGIN
-    ===================================================== -->
-
-    
 <script>
 const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
-
-const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY,
-    {
-        auth: {
-            persistSession: true,
-            autoRefreshToken: true,
-            detectSessionInUrl: true
-        }
-    }
-);
-
-const loginForm = document.getElementById("loginForm");
-const loginButton = document.getElementById("loginButton");
-
-if (loginForm && loginButton) {
-    loginForm.addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const selectedRole =
-            document.getElementById("role").value.trim().toLowerCase();
-
-        if (!email || !password) {
-            alert("Please enter your email and password.");
-            return;
-        }
-
-        loginButton.disabled = true;
-        loginButton.textContent = "Signing in...";
-
-        try {
-            /*
-             * STEP 1 — Authenticate with Supabase Auth.
-             */
-            let loginResult = null;
-            let loginError = null;
-            // Existing email logins use Supabase directly first.
-            if (email.includes("@")) {
-                const direct = await supabaseClient.auth.signInWithPassword({
-                    email: email.toLowerCase(),
-                    password
-                });
-                if (!direct.error && direct.data?.session && direct.data?.user) {
-                    loginResult = {
-                        session: direct.data.session,
-                        user: direct.data.user,
-                        email: direct.data.user.email
-                    };
-                } else {
-                    loginError = direct.error;
-                }
-            }
-            // Usernames and parent phone numbers are resolved by the
-            // identifier function; email also falls back here.
-            if (!loginResult) {
-                const r = await supabaseClient.functions.invoke(
-                    "login-with-identifier",
-                    { body: { identifier: email, password } }
-                );
-                loginError = r.error;
-                loginResult = r.data;
-            }
-            if (loginError) throw new Error(loginError.message || "Login failed. Please check your credentials.");
-            if (loginResult?.error) throw new Error(loginResult.error);
-            if (!loginResult?.session || !loginResult?.user) throw new Error("Login succeeded, but no active session was created.");
-            const { data: sessionData, error: sessionError } = await supabaseClient.auth.setSession({ access_token: loginResult.session.access_token, refresh_token: loginResult.session.refresh_token });
-            if (sessionError || !sessionData?.user) throw new Error(sessionError?.message || "Could not establish the ACCESS UG session.");
-            const user = sessionData.user;
-            const authenticatedEmail = String(loginResult.email || user.email || email).trim().toLowerCase();
-
-            /*
-             * =========================================================
-             * AUTOMATIC ACCOUNT DETECTION
-             * =========================================================
-             * The role selector may be left on Automatic. We identify the
-             * authenticated account by email against the existing ACCESS UG
-             * tables, then route to the correct dashboard.
-             */
-            let detectedRole = selectedRole;
-            if (detectedRole === "auto") {
-                const profileCheckFirst = await supabaseClient
-                    .from("profiles")
-                    .select("id,full_name,role")
-                    .eq("id", user.id)
-                    .maybeSingle();
-                if (!profileCheckFirst.error && profileCheckFirst.data?.role) {
-                    detectedRole = String(profileCheckFirst.data.role).trim().toLowerCase();
-                }
-            }
-            if (detectedRole === "auto") {
-                const schoolCheck = await supabaseClient
-                    .from("schools")
-                    .select("id,name,email,status")
-                    .ilike("email", authenticatedEmail)
-                    .maybeSingle();
-                if (schoolCheck.error) throw new Error("Account detection failed: " + schoolCheck.error.message);
-                if (schoolCheck.data) detectedRole = "school";
-
-                if (detectedRole === "auto") {
-                    const teacherCheck = await supabaseClient
-                        .from("teachers")
-                        .select("id,status")
-                        .ilike("email", authenticatedEmail)
-                        .maybeSingle();
-                    if (teacherCheck.error) throw new Error("Account detection failed: " + teacherCheck.error.message);
-                    if (teacherCheck.data) detectedRole = "teacher";
-                }
-
-                if (detectedRole === "auto") {
-                    const studentCheck = await supabaseClient
-                        .from("students")
-                        .select("id")
-                        .ilike("email", authenticatedEmail)
-                        .limit(2);
-                    if (studentCheck.error) throw new Error("Account detection failed: " + studentCheck.error.message);
-                    if ((studentCheck.data || []).length === 1) detectedRole = "student";
-                    else if ((studentCheck.data || []).length > 1) throw new Error("This email is linked to more than one student record.");
-                }
-
-                if (detectedRole === "auto") {
-                    const parentCheck = await supabaseClient
-                        .from("students")
-                        .select("id")
-                        .ilike("parent_email", authenticatedEmail)
-                        .limit(2);
-
-                    if (parentCheck.error) {
-                        throw new Error("Account detection failed: " + parentCheck.error.message);
-                    }
-
-                    if ((parentCheck.data || []).length > 0) {
-                        detectedRole = "parent";
-                    }
-                }
-
-                if (detectedRole === "auto") {
-                    const profileCheck = await supabaseClient
-                        .from("profiles")
-                        .select("id,full_name,role")
-                        .eq("id", user.id)
-                        .maybeSingle();
-                    if (profileCheck.error) throw new Error("Account detection failed: " + profileCheck.error.message);
-                    if (profileCheck.data?.role) detectedRole = String(profileCheck.data.role).trim().toLowerCase();
-                }
-
-                if (detectedRole === "auto") {
-                    await supabaseClient.auth.signOut();
-                    throw new Error("This authenticated email is not registered as an ACCESS UG Admin, School, Teacher, or Student.");
-                }
-            }
-
-            /*
-             * =========================================================
-             * TEACHER LOGIN
-             * =========================================================
-             *
-             * IMPORTANT:
-             * Teachers are authorized by EMAIL because public.teachers
-             * uses email as the teacher-to-authentication match.
-             *
-             * We deliberately DO NOT require a profiles row for teachers.
-             * This fixes the exact error:
-             * "This account has no ACCESS UG profile."
-             */
-            if (detectedRole === "teacher") {
-
-                const {
-                    data: teacherRows,
-                    error: teacherError
-                } = await supabaseClient
-                    .from("teachers")
-                    .select("id,email,status,school_id")
-                    .ilike("email", authenticatedEmail)
-                    .limit(20);
-
-                if (teacherError) {
-                    console.error("Teacher table lookup failed:", teacherError);
-                    await supabaseClient.auth.signOut();
-                    throw new Error("Teacher verification failed: " + teacherError.message);
-                }
-
-                const activeTeachers = (teacherRows || []).filter(t =>
-                    !t.status || String(t.status).trim().toLowerCase() === "active"
-                );
-                const teacher = activeTeachers[0] || (teacherRows || [])[0] || null;
-
-                if (!teacher) {
-                    await supabaseClient.auth.signOut();
-
-                    throw new Error(
-                        "This email is not registered in the ACCESS UG Teachers table."
-                    );
-                }
-
-                if (
-                    teacher.status &&
-                    String(teacher.status).trim().toLowerCase() !== "active"
-                ) {
-                    await supabaseClient.auth.signOut();
-
-                    throw new Error(
-                        "This teacher account is not active. " +
-                        "Please contact the administrator."
-                    );
-                }
-
-                /*
-                 * Save only non-sensitive routing information.
-                 * The password is never stored.
-                 */
-                localStorage.setItem(
-                    "accessug_selected_role",
-                    "teacher"
-                );
-
-                localStorage.setItem(
-                    "accessug_login_email",
-                    authenticatedEmail
-                );
-
-                sessionStorage.setItem(
-                    "accessug_teacher_email",
-                    authenticatedEmail
-                );
-
-                sessionStorage.setItem(
-                    "accessug_teacher_id",
-                    String(teacher.id)
-                );
-
-                if (
-                    teacher.school_id !== null &&
-                    teacher.school_id !== undefined
-                ) {
-                    sessionStorage.setItem(
-                        "accessug_teacher_school_id",
-                        String(teacher.school_id)
-                    );
-                }
-
-                /*
-                 * Supabase has already persisted the authenticated session.
-                 * Do not append access/refresh tokens to the HTML filename.
-                 */
-                await window.accessugAccountSetupGate("teacher");
-                window.location.replace("./teacher-dashboard.html");
-                return;
-            }
-
-            /*
-             * =========================================================
-             * STUDENT LOGIN
-             * =========================================================
-             *
-             * IMPORTANT: Students in the current ACCESS UG database are
-             * identified through students.parent_email. A student does NOT
-             * need a matching row in public.profiles. Therefore the student
-             * lookup MUST happen before the profiles lookup.
-             */
-            if (detectedRole === "student") {
-                // Clear any parent-view state left in this browser before starting a normal student session.
-                localStorage.removeItem("accessug_parent_mode");
-                localStorage.removeItem("accessug_parent_email");
-                localStorage.removeItem("accessug_parent_id");
-                const { data: linkedStudents, error: studentLinkError } =
-                    await supabaseClient
-                        .from("students")
-                        .select("*")
-                        .ilike("email", authenticatedEmail)
-                        .limit(2);
-
-                if (studentLinkError) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error(
-                        "Student access verification failed: " +
-                        studentLinkError.message
-                    );
-                }
-
-                if (!linkedStudents || linkedStudents.length === 0) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error(
-                        "This email has no student access to ACCESS UG. " +
-                        "Make sure this exact email is saved in students.email."
-                    );
-                }
-
-                if (linkedStudents.length > 1) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error(
-                        "This email is linked to more than one student. " +
-                        "Please ask the administrator to keep one student record for this email."
-                    );
-                }
-
-                const student = linkedStudents[0];
-                const studentName =
-                    student.student_name ||
-                    student.full_name ||
-                    [student.first_name, student.last_name]
-                        .filter(Boolean)
-                        .join(" ") ||
-                    "Student";
-
-                localStorage.setItem("accessug_selected_role", "student");
-                localStorage.setItem("accessug_login_email", authenticatedEmail);
-                localStorage.setItem("accessug_student_id", String(student.id));
-                localStorage.setItem("accessug_student_name", studentName);
-                localStorage.setItem("accessug_full_name", studentName);
-
-                if (student.school_id) {
-                    localStorage.setItem(
-                        "accessug_student_school_id",
-                        String(student.school_id)
-                    );
-                }
-
-                if (student.class_level) {
-                    localStorage.setItem(
-                        "accessug_student_class_level",
-                        String(student.class_level)
-                    );
-                }
-
-                await window.accessugAccountSetupGate("student");
-                window.location.replace("./student-dashboard.html");
-                return;
-            }
-
-            /*
-             * =========================================================
-             * PARENT LOGIN
-             * =========================================================
-             *
-             * A parent is linked to a student through students.parent_email.
-             * Parent login therefore MUST NOT require a profiles row.
-             */
-            if (detectedRole === "parent") {
-                const {
-                    data: linkedStudents,
-                    error: parentError
-                } = await supabaseClient
-                    .from("students")
-                    .select("*")
-                    .ilike("parent_email", authenticatedEmail)
-                    .limit(20);
-
-                if (parentError) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error("Parent access verification failed: " + parentError.message);
-                }
-
-                if (!linkedStudents || linkedStudents.length === 0) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error(
-                        "This parent email is not linked to a student in ACCESS UG. " +
-                        "Ask the school administrator to enter this email in the student's Parent Email field."
-                    );
-                }
-
-                const child = linkedStudents[0];
-                const childName =
-                    child.student_name ||
-                    child.full_name ||
-                    [child.first_name, child.last_name].filter(Boolean).join(" ") ||
-                    "Student";
-
-                localStorage.setItem("accessug_selected_role", "parent");
-                localStorage.setItem("accessug_parent_mode", "true");
-                localStorage.setItem("accessug_parent_email", authenticatedEmail);
-                localStorage.setItem("accessug_login_email", authenticatedEmail);
-                localStorage.setItem("accessug_student_id", String(child.id));
-                localStorage.setItem("accessug_student_name", childName);
-                localStorage.setItem("accessug_full_name", childName);
-
-                if (child.school_id) {
-                    localStorage.setItem("accessug_student_school_id", String(child.school_id));
-                }
-
-                if (child.class_level) {
-                    localStorage.setItem("accessug_student_class_level", String(child.class_level));
-                }
-
-                // Parent opens the same student dashboard, but in read-only parent mode.
-                await window.accessugAccountSetupGate("parent");
-                window.location.replace("./student-dashboard.html");
-                return;
-            }
-
-            /*
-             * =========================================================
-             * SCHOOL LOGIN
-             * =========================================================
-             * School accounts authenticate with Supabase Auth. The school
-             * email is then matched to public.schools.email. The password
-             * is never stored in public.schools.
-             */
-            if (detectedRole === "school") {
-                const { data: school, error: schoolError } =
-                    await supabaseClient
-                        .from("schools")
-                        .select("id,name,email,status")
-                        .ilike("email", authenticatedEmail)
-                        .maybeSingle();
-
-                if (schoolError) {
-                    console.error("School table lookup failed:", schoolError);
-                    await supabaseClient.auth.signOut();
-                    throw new Error(
-                        "School verification failed: " + schoolError.message
-                    );
-                }
-
-                if (!school) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error(
-                        "This email is not registered to a school in ACCESS UG."
-                    );
-                }
-
-                const schoolStatus = String(school.status || "active").trim().toLowerCase();
-                if (["inactive", "disabled", "suspended", "archived"].includes(schoolStatus)) {
-                    await supabaseClient.auth.signOut();
-                    throw new Error("This school account is not active. Please contact ACCESS UG.");
-                }
-
-                localStorage.setItem("accessug_selected_role", "school");
-                localStorage.setItem("accessug_login_email", authenticatedEmail);
-                localStorage.setItem("accessug_school_id", String(school.id));
-                localStorage.setItem("accessug_school_name", school.name || "");
-
-                await window.accessugAccountSetupGate("school");
-                window.location.replace("./school-dashboard.html");
-                return;
-            }
-
-            /*
-             * =========================================================
-             * ADMINISTRATOR / PARENT LOGIN
-             * =========================================================
-             */
-            const {
-                data: profile,
-                error: profileError
-            } = await supabaseClient
-                .from("profiles")
-                .select("id,full_name,role")
-                .eq("id", user.id)
-                .maybeSingle();
-
-            if (profileError) {
-                await supabaseClient.auth.signOut();
-                throw new Error(
-                    "Could not read your ACCESS UG profile: " +
-                    profileError.message
-                );
-            }
-
-            if (!profile) {
-                await supabaseClient.auth.signOut();
-                throw new Error(
-                    "This account has no ACCESS UG profile."
-                );
-            }
-
-            const databaseRole =
-                String(profile.role || "").trim().toLowerCase();
-
-            if (selectedRole !== "auto" && databaseRole !== selectedRole) {
-                await supabaseClient.auth.signOut();
-
-                throw new Error(
-                    "Access denied. Your account role is '" +
-                    databaseRole +
-                    "', but you selected '" +
-                    selectedRole +
-                    "'."
-                );
-            }
-
-            const dashboards = {
-                administrator: "admin-dashboard.html",
-                student: "student-dashboard.html",
-                parent: "parent-dashboard.html"
-            };
-
-            const destination = dashboards[databaseRole];
-
-            if (!destination) {
-                await supabaseClient.auth.signOut();
-
-                throw new Error(
-                    "No dashboard is configured for the role: " +
-                    databaseRole
-                );
-            }
-
-            localStorage.setItem(
-                "accessug_selected_role",
-                databaseRole
-            );
-
-            localStorage.setItem(
-                "accessug_login_email",
-                authenticatedEmail
-            );
-
-            localStorage.setItem(
-                "accessug_full_name",
-                profile.full_name || ""
-            );
-
-            /*
-             * The Supabase session is already persisted by the client.
-             * Navigate using a normal relative filename.
-             */
-            window.location.replace("./" + destination);
-            return;
-
-        } catch (error) {
-            console.error("ACCESS UG login error:", error);
-
-            loginButton.disabled = false;
-            loginButton.textContent = "Login to Portal";
-
-            alert(error.message || "Unable to sign in.");
-        }
-    });
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+
+const GUIDES = [
+  {
+    role: "school",
+    label: "01. School Control",
+    title: "School Control Dashboard",
+    audience: "Headteachers, Principals, Bursars & School Office",
+    headline: "Run admissions, academics, finance, and school-wide communication from one desk.",
+    desc: "Track enrollment and staffing, verify daily attendance with QR codes, manage fee structures and payment codes, generate report cards, and broadcast announcements.",
+    highlights: [
+      ["Executive Overview", "Four-metric summary for learners, teachers, attendance, and fees."],
+      ["Report Card Studio", "Configure terms, subjects, grading scales, and printable reports."],
+      ["Fees & Payment Codes", "Set class fee structures and monitor real-time balance analysis."],
+      ["Bulk Onboarding & Chat", "Import rosters and message teachers, staff, students, or parents."]
+    ],
+    cta: "Sign In to School Portal"
+  },
+  {
+    role: "teacher",
+    label: "02. Teacher Command",
+    title: "Teacher Command Dashboard",
+    audience: "Classroom Teachers, Subject Heads & Form Tutors",
+    headline: "Focus on teaching with fast roll calls, grade entry, schedules, and parent updates.",
+    desc: "Start the day with assigned classes, today’s lesson schedule, and upcoming dates, then record attendance, enter marks, and send targeted class or parent updates.",
+    highlights: [
+      ["Morning Command", "Assigned learners, lessons today, attendance, and unread threads."],
+      ["Six Quick Operations", "Jump straight into roll calls, marks entry, or class broadcasts."],
+      ["Grading Alignment", "Submit subject scores directly into term report cards."],
+      ["Class & Parent Messaging", "Reach classes, learners, or parents with attachments in real time."]
+    ],
+    cta: "Sign In to Teacher Portal"
+  },
+  {
+    role: "student",
+    label: "03. Student Hub",
+    title: "Student Dashboard",
+    audience: "Enrolled Learners Across All Classes",
+    headline: "Stay organized with your daily timetable, recent marks, attendance, and school inbox.",
+    desc: "Check today’s lessons, review recent assessment scores and report card readiness, monitor attendance, view fee payment codes, and message teachers.",
+    highlights: [
+      ["Academic Progress", "Review recent marks, averages, and report card availability."],
+      ["Daily Timetable", "Follow today’s lessons and upcoming calendar events."],
+      ["Attendance & QR", "Track attendance percentage and QR check-in readiness."],
+      ["School Inbox", "Receive announcements and reply directly to teachers."]
+    ],
+    cta: "Sign In to Student Hub"
+  },
+  {
+    role: "parent",
+    label: "04. Parent & Guardian",
+    title: "Parent & Guardian Dashboard",
+    audience: "Parents, Guardians & Family Sponsors",
+    headline: "Follow attendance, academic marks, school fees, and teacher updates with peace of mind.",
+    desc: "Sign in using your registered email or parent phone number to inspect attendance consistency, marks, fee balances with one-click payment code copy, and teacher messages.",
+    highlights: [
+      ["Transparent Fee Ledger", "View exact balances, progress bar, and copy payment codes."],
+      ["Attendance & Marks", "Monitor attendance rate, recent scores, and report readiness."],
+      ["Term Preparedness", "See today’s lessons and upcoming school events."],
+      ["Family Communication", "Receive announcements and message teachers or school office."]
+    ],
+    cta: "Sign In as Parent"
+  }
+];
+
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function $(id){return document.getElementById(id)}
+
+/* THEME */
+(function initTheme(){
+  const saved = localStorage.getItem("accessug_landing_theme")==="dark";
+  if(saved){document.documentElement.classList.add("dark");$("themeToggleBtn").textContent="Light";}
+  $("themeToggleBtn").addEventListener("click",()=>{
+    const dark = document.documentElement.classList.toggle("dark");
+    localStorage.setItem("accessug_landing_theme", dark?"dark":"light");
+    $("themeToggleBtn").textContent = dark?"Light":"Dark";
+  });
+})();
+
+/* NAVIGATION */
+function showPage(mode, sectionId){
+  const isCreate = mode === "create";
+  $("overviewSection").classList.toggle("hidden", isCreate);
+  $("createAccountSection").classList.toggle("hidden", !isCreate);
+  $("mobileDrawer").classList.remove("open");
+  $("mobileMenuBtn")?.setAttribute("aria-expanded", "false");
+  $("navCreateAccountBtn").classList.toggle("active", isCreate);
+  if(isCreate){
+    $("schoolRegForm").classList.remove("hidden");
+    $("verificationSentScreen").classList.add("hidden");
+    $("regNotice").classList.add("hidden");
+    window.scrollTo({top:0,behavior:"smooth"});
+  } else if(sectionId){
+    const el = $(sectionId);
+    if(el) el.scrollIntoView({behavior:"smooth"});
+  }
 }
-</script>
+$("navBrandBtn")?.addEventListener("click",e=>{e.preventDefault();showPage("overview","welcome");});
+document.querySelectorAll("[data-go-overview]").forEach(btn=>btn.addEventListener("click",()=>showPage("overview",btn.dataset.goOverview)));
+["navCreateAccountBtn","mobileCreateBtn","heroCreateBtn","previewRegisterLink","supportCreateBtn","footCreateBtn"].forEach(id=>{
+  $(id)?.addEventListener("click",()=>showPage("create"));
+});
+$("backToOverviewBtn").addEventListener("click",()=>showPage("overview","welcome"));
+$("sentBackHomeBtn").addEventListener("click",()=>showPage("overview","welcome"));
+$("mobileMenuBtn").addEventListener("click",()=>{
+  const opened=$("mobileDrawer").classList.toggle("open");
+  $("mobileMenuBtn").setAttribute("aria-expanded", opened?"true":"false");
+});
 
-<script id="accessug-restore-saved-session">
-/*
- * Reliable PWA session restoration.
- * Listen for Supabase's INITIAL_SESSION event as well as checking getSession().
- * This avoids depending on a single timing-sensitive startup check.
- */
-(function restoreSavedAccessUgSession(){
-  const destinations = {
-    administrator: "./admin-dashboard.html",
-    admin: "./admin-dashboard.html",
-    teacher: "./teacher-dashboard.html",
-    student: "./student-dashboard.html",
-    parent: "./student-dashboard.html",
-    school: "./school-dashboard.html"
+/* PREVIEW + DASHBOARDS */
+function renderPreview(role){
+  const g = GUIDES.find(x=>x.role===role) || GUIDES[0];
+  document.querySelectorAll("#previewTabs .role-tab").forEach(b=>b.classList.toggle("active",b.dataset.preview===role));
+  $("previewAudience").textContent = g.audience;
+  $("previewTitle").textContent = g.title;
+  $("previewHeadline").textContent = g.headline;
+  $("previewList").innerHTML = g.highlights.slice(0,3).map(h=>`<li><strong>${esc(h[0])}:</strong> ${esc(h[1])}</li>`).join("");
+  $("previewSignInBtn").textContent = g.cta + " →";
+  $("previewSignInBtn").onclick = ()=>openSignIn(g.role);
+}
+document.querySelectorAll("#previewTabs .role-tab").forEach(b=>b.addEventListener("click",()=>renderPreview(b.dataset.preview)));
+renderPreview("school");
+
+function renderDashCards(filter){
+  const list = filter==="all" ? GUIDES : GUIDES.filter(g=>g.role===filter);
+  $("dashCardsGrid").innerHTML = list.map(g=>`
+    <article class="card dash-card">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--blue)">${esc(g.label)} · ${esc(g.audience)}</div>
+        <h3 style="font-size:20px;margin:6px 0 10px">${esc(g.title)}</h3>
+        <p style="font-size:13.5px;color:var(--muted)">${esc(g.desc)}</p>
+        <div class="dash-highlights" style="margin-top:16px">
+          ${g.highlights.map(h=>`<div><strong style="font-size:12px;display:block;margin-bottom:2px">${esc(h[0])}</strong><span style="font-size:12px;color:var(--muted)">${esc(h[1])}</span></div>`).join("")}
+        </div>
+      </div>
+      <div class="dash-foot">
+        <span style="font-size:12px;color:var(--muted)">Direct workspace access</span>
+        <button type="button" class="btn-primary" data-signin-role="${esc(g.role)}">${esc(g.cta)} →</button>
+      </div>
+    </article>
+  `).join("");
+  document.querySelectorAll("[data-signin-role]").forEach(btn=>btn.addEventListener("click",()=>openSignIn(btn.dataset.signinRole)));
+}
+document.querySelectorAll("#dashFilters .filter-btn").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("#dashFilters .filter-btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  renderDashCards(b.dataset.filter);
+}));
+renderDashCards("all");
+
+/* SIGN IN MODAL */
+function openSignIn(role="student", emailPrefill){
+  $("loginRole").value = role;
+  if(emailPrefill) $("loginIdentifier").value = emailPrefill;
+  else if(!$("loginIdentifier").value) $("loginIdentifier").value = localStorage.getItem("accessug_remembered_identifier") || "";
+  $("loginErrorBox").classList.add("hidden");
+  $("signInModal").classList.add("show");
+  $("mobileDrawer").classList.remove("open");
+}
+["topSignInBtn","mobileSignInBtn","heroSignInBtn","supportSignInBtn","footSignInBtn","regQuickSignInBtn"].forEach(id=>{
+  $(id)?.addEventListener("click",()=>openSignIn(id==="regQuickSignInBtn"?"school":"student"));
+});
+$("autoDetectLoginBtn").addEventListener("click",()=>openSignIn("auto"));
+$("closeSignInBtn").addEventListener("click",()=>$("signInModal").classList.remove("show"));
+$("signInModal").addEventListener("click",e=>{if(e.target===$("signInModal"))$("signInModal").classList.remove("show");});
+$("modalSwitchRegBtn").addEventListener("click",()=>{$("signInModal").classList.remove("show");showPage("create");});
+$("toggleForgotBtn").addEventListener("click",()=>$("forgotForm").classList.toggle("hidden"));
+
+$("forgotForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const box=$("resetStatusBox"); box.classList.remove("hidden"); box.className="notice-box notice-info"; box.textContent="Sending reset link...";
+  try{
+    const email=$("resetEmailInput").value.trim().toLowerCase();
+    const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
+    if(error) throw error;
+    box.className="notice-box notice-ok"; box.textContent="Password reset instructions sent to "+email;
+  }catch(err){box.className="notice-box notice-error"; box.textContent=err.message||"Could not send reset email.";}
+});
+
+let setupResolve=null;
+async function checkFirstLoginSetup(){
+  const r=await sb.functions.invoke("complete-account-setup-v2",{body:{action:"status"}});
+  if(r.error) throw new Error(r.error.message||"Could not check account setup.");
+  if(!r.data?.needs_setup) return;
+  $("setupModal").classList.add("show");
+  return await new Promise(res=>{setupResolve=res;});
+}
+$("setupForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const st=$("setupStatusBox"); st.classList.remove("hidden");
+  const u=$("setupUsername").value.trim(), p=$("setupPassword").value, c=$("setupConfirm").value;
+  if(!/^[A-Za-z0-9._-]{3,40}$/.test(u)){st.className="notice-box notice-error";st.textContent="Username must be 3-40 characters.";return;}
+  if(p.length<8||p!==c){st.className="notice-box notice-error";st.textContent="Passwords must match and be at least 8 characters.";return;}
+  $("setupSaveBtn").disabled=true; st.className="notice-box notice-info"; st.textContent="Saving...";
+  try{
+    const r=await sb.functions.invoke("complete-account-setup-v2",{body:{action:"complete",username:u,password:p,confirm_password:c}});
+    if(r.error||!r.data?.ok) throw new Error(r.data?.error||r.error?.message||"Setup failed.");
+    $("setupModal").classList.remove("show");
+    if(setupResolve){setupResolve(true);setupResolve=null;}
+  }catch(err){st.className="notice-box notice-error";st.textContent=err.message;$("setupSaveBtn").disabled=false;}
+});
+
+$("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const errBox=$("loginErrorBox"), btn=$("loginSubmitBtn");
+  errBox.classList.add("hidden"); btn.disabled=true; btn.textContent="Signing in...";
+  try{
+    const id=$("loginIdentifier").value.trim(), pw=$("loginPassword").value;
+    let role=$("loginRole").value;
+    if($("rememberChk").checked) localStorage.setItem("accessug_remembered_identifier",id);
+    else localStorage.removeItem("accessug_remembered_identifier");
+
+    let res=null;
+    if(id.includes("@")){
+      const d=await sb.auth.signInWithPassword({email:id.toLowerCase(),password:pw});
+      if(!d.error&&d.data?.session) res={session:d.data.session,user:d.data.user,email:d.data.user.email};
+    }
+    if(!res){
+      const r=await sb.functions.invoke("login-with-identifier",{body:{identifier:id,password:pw}});
+      if(r.error||r.data?.error) throw new Error(r.data?.error||r.error?.message||"Sign in failed.");
+      res=r.data;
+    }
+    const {data:sd,error:se}=await sb.auth.setSession({access_token:res.session.access_token,refresh_token:res.session.refresh_token});
+    if(se||!sd?.user) throw new Error(se?.message||"Could not establish session.");
+    const mail=String(res.email||sd.user.email||id).trim().toLowerCase();
+
+    if(role==="auto"){
+      const sc=await sb.from("schools").select("id").ilike("email",mail).maybeSingle();
+      if(sc.data) role="school";
+      if(role==="auto"){const tc=await sb.from("teachers").select("id").ilike("email",mail).maybeSingle(); if(tc.data) role="teacher";}
+      if(role==="auto"){const st=await sb.from("students").select("id").ilike("email",mail).limit(2); if((st.data||[]).length===1) role="student";}
+      if(role==="auto"){const pr=await sb.from("students").select("id").ilike("parent_email",mail).limit(1); if((pr.data||[]).length>0) role="parent";}
+      if(role==="auto"){await sb.auth.signOut(); throw new Error("No School, Teacher, Student, or Parent profile matched.");}
+    }
+
+    if(role==="teacher"){
+      const {data:rows}=await sb.from("teachers").select("id,status,school_id").ilike("email",mail).limit(20);
+      const t=(rows||[]).find(x=>!x.status||x.status.toLowerCase()==="active")||(rows||[])[0];
+      if(!t){await sb.auth.signOut();throw new Error("Not found in Teachers directory.");}
+      localStorage.setItem("accessug_selected_role","teacher");localStorage.setItem("accessug_login_email",mail);
+      sessionStorage.setItem("accessug_teacher_email",mail);sessionStorage.setItem("accessug_teacher_id",String(t.id));
+      if(t.school_id!=null) sessionStorage.setItem("accessug_teacher_school_id",String(t.school_id));
+      await checkFirstLoginSetup(); location.replace("./teacher-dashboard.html"); return;
+    }
+    if(role==="student"||role==="parent"){
+      const col=role==="parent"?"parent_email":"email";
+      if(role==="student"){localStorage.removeItem("accessug_parent_mode");localStorage.removeItem("accessug_parent_email");}
+      const {data:rows}=await sb.from("students").select("*").ilike(col,mail).limit(5);
+      if(!rows||!rows.length){await sb.auth.signOut();throw new Error("No student record linked to this email.");}
+      const ch=rows[0], nm=ch.student_name||ch.full_name||"Student";
+      localStorage.setItem("accessug_selected_role",role);localStorage.setItem("accessug_login_email",mail);
+      if(role==="parent"){localStorage.setItem("accessug_parent_mode","true");localStorage.setItem("accessug_parent_email",mail);}
+      localStorage.setItem("accessug_student_id",String(ch.id));localStorage.setItem("accessug_student_name",nm);localStorage.setItem("accessug_full_name",nm);
+      if(ch.school_id) localStorage.setItem("accessug_student_school_id",String(ch.school_id));
+      if(ch.class_level) localStorage.setItem("accessug_student_class_level",String(ch.class_level));
+      await checkFirstLoginSetup(); location.replace("./student-dashboard.html"); return;
+    }
+    const {data:sch}=await sb.from("schools").select("id,name,status").ilike("email",mail).maybeSingle();
+    if(!sch){await sb.auth.signOut();throw new Error("School account not found.");}
+    localStorage.setItem("accessug_selected_role","school");localStorage.setItem("accessug_login_email",mail);
+    localStorage.setItem("accessug_school_id",String(sch.id));localStorage.setItem("accessug_school_name",sch.name||"");
+    await checkFirstLoginSetup(); location.replace("./school-dashboard.html");
+  }catch(err){
+    errBox.textContent=err.message||"Unable to sign in.";errBox.classList.remove("hidden");
+    btn.disabled=false;btn.textContent="Sign In to Portal →";
+  }
+});
+
+/* CREATE ACCOUNT + SUBJECTS + PAYMENT OPTIONS + EMAIL VERIFICATION */
+$("regYear").value = String(new Date().getFullYear());
+function addClassRow(){
+  const wrap=$("classRowsWrap"), div=document.createElement("div");
+  div.className="class-row";
+  div.innerHTML='<input class="cls-lvl" placeholder="Level (e.g. S3)" required><input class="cls-str" placeholder="Stream (e.g. North)" required><button type="button" class="btn-secondary cls-del" style="padding:8px 10px">✕</button>';
+  div.querySelector(".cls-del").addEventListener("click",()=>{if(wrap.children.length>1)div.remove();});
+  wrap.appendChild(div);
+}
+addClassRow();
+$("addClassBtn").addEventListener("click",addClassRow);
+
+let allSubjects=[], selectedSubs=new Set();
+async function loadSubjects(){
+  $("subStatus").textContent="Loading active subjects catalogue...";
+  try{
+    const {data,error}=await sb.from("subjects").select("*");
+    if(error) throw error;
+    allSubjects=(data||[]).filter(s=>s.active!==false&&s.is_active!==false&&!["inactive","disabled","archived"].includes(String(s.status||"").toLowerCase()))
+      .map(s=>({id:String(s.id),name:s.name||s.subject_name||s.title||"Subject"}))
+      .sort((a,b)=>a.name.localeCompare(b.name));
+    renderSubjects();
+  }catch(err){$("subStatus").textContent="Could not load subjects: "+(err.message||err);}
+}
+function renderSubjects(){
+  const q=($("subSearch").value||"").trim().toLowerCase();
+  const list=q?allSubjects.filter(s=>s.name.toLowerCase().includes(q)):allSubjects;
+  $("subStatus").textContent=list.length+" subjects available.";
+  $("subCount").textContent=String(selectedSubs.size);
+  $("subList").innerHTML=list.map(s=>`<label class="subject-item"><input type="checkbox" value="${esc(s.id)}" ${selectedSubs.has(s.id)?"checked":""}><span>${esc(s.name)}</span></label>`).join("");
+  $("subList").querySelectorAll("input").forEach(cb=>cb.addEventListener("change",()=>{
+    if(cb.checked) selectedSubs.add(cb.value); else selectedSubs.delete(cb.value);
+    $("subCount").textContent=String(selectedSubs.size);
+  }));
+}
+$("subSearch").addEventListener("input",renderSubjects);
+$("refreshSubBtn").addEventListener("click",loadSubjects);
+$("selectAllSubBtn").addEventListener("click",()=>{allSubjects.forEach(s=>selectedSubs.add(s.id));renderSubjects();});
+$("clearSubBtn").addEventListener("click",()=>{selectedSubs.clear();renderSubjects();});
+loadSubjects();
+
+let currentPlan="trial", currentMethod="MTN Mobile Money";
+function updateBillingSummary(){
+  document.querySelectorAll("#planCards .plan-card").forEach(c=>c.classList.toggle("active",c.dataset.plan===currentPlan));
+  document.querySelectorAll("#methodCards .method-card").forEach(c=>c.classList.toggle("active",c.dataset.method===currentMethod));
+  $("momoFields").classList.toggle("hidden", currentMethod==="Credit/Debit Card");
+  $("cardFields").classList.toggle("hidden", currentMethod!=="Credit/Debit Card");
+  $("payStudioTitle").textContent = currentPlan==="trial" ? "Available Payment Options After Trial (Preview)" : "Complete Payment Method Details";
+  $("sumPlan").textContent = currentPlan==="trial" ? "1 Month Free Trial" : currentPlan==="large" ? "Large School" : "Standard School";
+  $("sumMethod").textContent = currentPlan==="trial" ? "None required today" : currentMethod;
+  $("sumTotal").textContent = currentPlan==="trial" ? "£0.00" : currentPlan==="large" ? "£19.99" : "£9.99";
+  $("regSubmitBtn").textContent = currentPlan==="trial" ? "Create Account & Send Verification Email →" : "Continue to Payment Options →";
+}
+document.querySelectorAll("#planCards .plan-card").forEach(c=>c.addEventListener("click",()=>{currentPlan=c.dataset.plan;updateBillingSummary();}));
+document.querySelectorAll("#methodCards .method-card").forEach(c=>c.addEventListener("click",()=>{currentMethod=c.dataset.method;updateBillingSummary();}));
+updateBillingSummary();
+
+const PENDING_KEY="accessug_pending_school_registration";
+let lastSentEmail="";
+
+$("schoolRegForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const n=$("regNotice"), btn=$("regSubmitBtn");
+  n.classList.add("hidden");
+  const yr=Number($("regYear").value), users=Number($("regUsers").value);
+  const classes=[...document.querySelectorAll("#classRowsWrap .class-row")].map(r=>{
+    const l=r.querySelector(".cls-lvl").value.trim().toUpperCase(), s=r.querySelector(".cls-str").value.trim();
+    return {level:l,stream:s,name:(l+" "+s).trim(),academic_year:yr,status:"Active"};
+  }).filter(x=>x.level&&x.stream);
+
+  if(!classes.length){n.className="notice-box notice-error";n.textContent="Add at least one class/stream.";return;}
+  if(!selectedSubs.size){n.className="notice-box notice-error";n.textContent="Select at least one subject.";return;}
+  if(currentPlan!=="trial"){
+    n.className="notice-box notice-info";
+    n.textContent="Live merchant payment checkout API is awaiting activation. Select the 1-Month Free Trial above to complete registration and email verification immediately.";
+    return;
+  }
+
+  const email=$("regEmail").value.trim().toLowerCase(), pass=$("regPass").value, sName=$("regName").value.trim();
+  const payload={
+    email, school_name:sName, school_code:$("regCode").value.trim().toUpperCase(),
+    district:$("regDistrict").value.trim(), location:$("regLocation").value.trim(),
+    head_teacher:$("regHead").value.trim(), phone:$("regPhone").value.trim(),
+    school_type:$("regType").value, estimated_users:users, academic_year:yr,
+    classes, subject_ids:[...selectedSubs], subscription_plan:"trial"
   };
-  let redirected = false;
 
-  function routeIfAuthenticated(session) {
-    if (redirected || !session?.user) return false;
-    const role = String(localStorage.getItem("accessug_selected_role") || "").trim().toLowerCase();
-    const destination = destinations[role];
-    if (!destination) {
-      console.warn("ACCESS UG has a saved session but no recognized saved role.");
-      return false;
+  btn.disabled=true; btn.textContent="Sending verification email...";
+  localStorage.setItem(PENDING_KEY, JSON.stringify(payload));
+  const redir=location.origin+location.pathname+"?verify=school-account";
+  try{
+    const su=await sb.auth.signUp({email,password:pass,options:{emailRedirectTo:redir,data:{role:"school",school_name:sName,pending_registration:payload}}});
+    if(!su.error && su.data?.user && !su.data?.session){
+      lastSentEmail=email;
+      $("schoolRegForm").classList.add("hidden");
+      $("verificationSentScreen").classList.remove("hidden");
+      $("verificationSentCopy").textContent="We sent a verification link to "+email+" for "+sName+". Open your inbox and click Verify to complete account opening.";
+      return;
     }
-    redirected = true;
-    window.location.replace(destination);
-    return true;
+    if(su.data?.session){
+      const fin=await sb.functions.invoke("complete-school-trial",{headers:{Authorization:"Bearer "+su.data.session.access_token},body:payload});
+      if(fin.error||fin.data?.error) throw new Error(fin.data?.error||fin.error?.message||"Could not finish school registration.");
+      localStorage.removeItem(PENDING_KEY);
+      await sb.auth.signOut();
+      showPage("overview","welcome");
+      $("verifyBannerHost").innerHTML='<div class="status-banner success"><div><strong>Account Opening Successful — You Can Login Now</strong><div style="font-size:13px">Your school account ('+esc(sName)+') is ready.</div></div><button type="button" class="btn-primary" id="verifiedLoginNowBtn">Login to School Portal →</button></div>';
+      $("verifiedLoginNowBtn").addEventListener("click",()=>openSignIn("school",email));
+      return;
+    }
+    throw su.error || new Error("Could not register school.");
+  }catch(err){
+    n.className="notice-box notice-error"; n.textContent=err.message||"Registration failed.";
+  }finally{
+    btn.disabled=false; updateBillingSummary();
   }
+});
 
-  // Supabase emits INITIAL_SESSION once persisted auth storage has been restored.
-  supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === "INITIAL_SESSION" || event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
-      routeIfAuthenticated(session);
-    }
-  });
+$("resendVerificationBtn").addEventListener("click",async()=>{
+  if(!lastSentEmail) return;
+  const m=$("resendMsg"); m.classList.remove("hidden"); m.textContent="Sending...";
+  const {error}=await sb.auth.resend({type:"signup",email:lastSentEmail,options:{emailRedirectTo:location.origin+location.pathname+"?verify=school-account"}});
+  m.textContent=error?error.message:"Verification link resent to "+lastSentEmail;
+});
+$("regResetBtn").addEventListener("click",()=>$("schoolRegForm").reset());
 
-  // Keep getSession as a second path for SDK/browser combinations where the
-  // initial auth event has already fired before this listener is attached.
-  (async () => {
-    for (let attempt = 0; attempt < 4 && !redirected; attempt++) {
-      try {
-        const result = await Promise.race([
-          supabaseClient.auth.getSession(),
-          new Promise((_, reject) => setTimeout(() => reject(new Error("Session restore check timed out")), 7000))
-        ]);
-        if (routeIfAuthenticated(result?.data?.session)) return;
-        if (result?.data?.session?.user) return; // Do not override an unknown role.
-      } catch (error) {
-        console.warn("ACCESS UG session restore attempt", attempt + 1, "did not complete:", error);
-      }
-      if (!redirected && attempt < 3) {
-        await new Promise(resolve => setTimeout(resolve, 1200));
+/* HANDLE VERIFICATION EMAIL REDIRECT */
+(async function handleVerifyCallback(){
+  const sp=new URLSearchParams(location.search), h=location.hash||"";
+  if(sp.get("verify")!=="school-account"&&!sp.has("code")&&!(sp.has("token_hash")&&sp.get("type")==="signup")&&!(h.includes("access_token=")&&h.includes("type=signup"))) return;
+  $("verifyBannerHost").innerHTML='<div class="status-banner"><strong>Verifying your school email and completing account setup...</strong></div>';
+  try{
+    if(sp.get("code")) await sb.auth.exchangeCodeForSession(sp.get("code"));
+    else if(sp.get("token_hash")&&sp.get("type")==="signup") await sb.auth.verifyOtp({token_hash:sp.get("token_hash"),type:"signup"});
+    let ses=(await sb.auth.getSession()).data?.session;
+    if(!ses){await new Promise(r=>setTimeout(r,650)); ses=(await sb.auth.getSession()).data?.session;}
+    if(!ses?.user) throw new Error("Verification session not found. Please sign in with your school email and password.");
+    const mail=String(ses.user.email||"").toLowerCase();
+    let pending=null;
+    try{const raw=localStorage.getItem(PENDING_KEY); if(raw) pending=JSON.parse(raw);}catch(_){}
+    if(!pending && ses.user.user_metadata?.pending_registration) pending=ses.user.user_metadata.pending_registration;
+    if(pending){
+      const ex=await sb.from("schools").select("id").ilike("email",mail).maybeSingle();
+      if(!ex.data){
+        const fin=await sb.functions.invoke("complete-school-trial",{headers:{Authorization:"Bearer "+ses.access_token},body:pending});
+        if(fin.error||fin.data?.error) throw new Error(fin.data?.error||fin.error?.message||"Could not activate school workspace.");
       }
     }
-  })();
+    localStorage.removeItem(PENDING_KEY);
+    await sb.auth.signOut();
+    if(history.replaceState) history.replaceState({},document.title,location.pathname);
+    $("verifyBannerHost").innerHTML='<div class="status-banner success"><div><strong>Account Opening Successful — You Can Login Now</strong><div style="font-size:13px">Email verified for '+esc(mail)+'. Your school account is active.</div></div><button type="button" class="btn-primary" id="verifiedLoginNowBtn">Login to School Portal →</button></div>';
+    $("verifiedLoginNowBtn").addEventListener("click",()=>openSignIn("school",mail));
+  }catch(err){
+    $("verifyBannerHost").innerHTML='<div class="status-banner error"><strong>Verification could not be completed:</strong> '+esc(err.message||err)+'</div>';
+  }
 })();
 </script>
-
-<script id="accessug-account-setup-gate">
-(function(){
-  const modal=document.getElementById("accountSetupModal");
-  const form=document.getElementById("accountSetupForm");
-  const usernameInput=document.getElementById("accountSetupUsername");
-  const passwordInput=document.getElementById("accountSetupPassword");
-  const confirmInput=document.getElementById("accountSetupConfirm");
-  const status=document.getElementById("accountSetupStatus");
-  const button=document.getElementById("accountSetupButton");
-  let active=false;
-  let pendingResolve=null;
-
-  function showStatus(message,ok=false){
-    if(!status)return;
-    status.textContent=message||"";
-    status.className="account-setup-status"+(ok?" ok":"");
-  }
-
-  function openModal(){
-    if(!modal)return;
-    active=true;
-    modal.classList.add("show");
-    modal.setAttribute("aria-hidden","false");
-    showStatus("");
-    usernameInput.value="";
-    passwordInput.value="";
-    confirmInput.value="";
-    setTimeout(()=>usernameInput?.focus(),60);
-  }
-
-  async function gate(role){
-    if(!role || role==="administrator" || role==="admin") return;
-    const check=await supabaseClient.functions.invoke("complete-account-setup-v2",{body:{action:"status"}});
-    if(check.error) throw new Error(check.error.message||"Could not verify your account setup.");
-    if(check.data?.error) throw new Error(check.data.error);
-    if(!check.data?.needs_setup) return;
-
-    openModal();
-    return await new Promise((resolve,reject)=>{
-      pendingResolve={resolve,reject};
-    });
-  }
-
-  form?.addEventListener("submit",async function(e){
-    e.preventDefault();
-    if(!active || !pendingResolve || button.disabled) return;
-    const username=usernameInput.value.trim();
-    const password=passwordInput.value;
-    const confirm=confirmInput.value;
-    if(!username){showStatus("Please enter a new username.");usernameInput.focus();return;}
-    if(!/^[A-Za-z0-9._-]{3,40}$/.test(username)){showStatus("Username must be 3–40 characters and may contain only letters, numbers, dot, underscore or hyphen.");usernameInput.focus();return;}
-    if(password.length<8){showStatus("Password must be at least 8 characters.");passwordInput.focus();return;}
-    if(password!==confirm){showStatus("The new passwords do not match.");confirmInput.focus();return;}
-
-    button.disabled=true;
-    button.textContent="Saving…";
-    showStatus("Updating your secure account…",true);
-    try{
-      const r=await supabaseClient.functions.invoke("complete-account-setup-v2",{body:{action:"complete",username,password,confirm_password:confirm}});
-      if(r.error) throw new Error(r.error.message||"Could not save your new account details.");
-      if(r.data?.error) throw new Error(r.data.error);
-      if(!r.data?.ok) throw new Error("Your account setup could not be completed.");
-      try{await supabaseClient.auth.refreshSession();}catch(_){ }
-      active=false;
-      modal.classList.remove("show");
-      modal.setAttribute("aria-hidden","true");
-      const done=pendingResolve; pendingResolve=null;
-      done?.resolve(true);
-    }catch(err){
-      showStatus(err?.message||"Could not save your new account details.");
-      button.disabled=false;
-      button.textContent="Save & Continue";
-    }
-  });
-
-  window.accessugAccountSetupGate=gate;
-})();
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("./service-worker.js", { scope: "./" })
-      .catch(function (error) {
-        console.error("ACCESS UG offline support could not be registered:", error);
-      });
-  });
-}
-</script>
-
 </body>
 </html>
