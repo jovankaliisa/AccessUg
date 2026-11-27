@@ -1,0 +1,1 @@
+drop index if exists public.proca_events_school_created_idx; drop index if exists public.proca_devices_school_status_idx; drop index if exists public.proca_devices_school_code_uidx; drop index if exists public.proca_policies_school_profile_uidx;
