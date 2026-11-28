@@ -216,8 +216,8 @@ code{font-family:var(--font-mono);font-size:.88em;padding:2px 6px;border-radius:
 .avatar img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* CONTENT, HERO & CARDS */
-.content{padding:24px;max-width:1550px;width:100%;margin:0 auto;flex:1}
-.page{display:none}
+.content{padding:24px;max-width:1550px;width:100%;min-width:0;margin:0 auto;flex:1;overflow-x:hidden}
+.page{display:none;max-width:100%;min-width:0}
 .page.active{display:block}
 .hero{
   background:linear-gradient(135deg,var(--navy),var(--navy2));
@@ -233,9 +233,10 @@ code{font-family:var(--font-mono);font-size:.88em;padding:2px 6px;border-radius:
 .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .three,.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
 .four,.cards,.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.two>*,.grid-2>*,.three>*,.grid-3>*,.four>*,.cards>*,.kpi-grid>*,.studio-split>*{min-width:0}
 .card,.pagecard{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-  box-shadow:var(--shadow);padding:22px;min-width:0;
+  box-shadow:var(--shadow);padding:22px;min-width:0;max-width:100%;
 }
 .card-head,.title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
 .card h3,.title h3{margin:0;font-size:16.5px;font-weight:750;color:var(--text)}
@@ -572,26 +573,49 @@ tbody tr:hover td{background:var(--accent-soft)}
 .swatch.active{border-color:var(--text);transform:scale(1.08)}
 
 /* PROFILE MODAL & CROPPER */
-.profile-modal,.profile-crop-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,18,42,.62);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:16px}
+.profile-modal,.profile-crop-modal{
+  display:none;position:fixed;inset:0;width:100%;max-width:100vw;height:100dvh;max-height:100dvh;z-index:9999;
+  background:rgba(4,18,42,.62);backdrop-filter:blur(7px);align-items:center;justify-content:center;
+  padding:16px;overflow-y:auto;overflow-x:hidden;
+}
 .profile-modal.show,.profile-crop-modal.show{display:flex}
-.profile-modal-card,.profile-crop-card{width:min(480px,100%);max-height:92vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 28px 90px rgba(0,0,0,.3)}
+.profile-modal-card,.profile-crop-card{
+  width:min(460px,100%);max-width:100%;max-height:calc(100dvh - 32px);overflow-y:auto;overflow-x:hidden;
+  margin:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;
+  box-shadow:0 28px 90px rgba(0,0,0,.3);
+}
 .profile-modal-head,.profile-crop-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
-.profile-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--text);font-size:18px}
-.profile-hero{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);margin-bottom:14px}
+.profile-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--text);font-size:18px;flex-shrink:0}
+.profile-hero{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);margin-bottom:14px;min-width:0}
+.profile-hero > div:last-child{min-width:0;flex:1}
+.profile-hero h4,.profile-hero p{overflow-wrap:anywhere;word-break:break-word}
 .profile-photo{width:68px;height:68px;border-radius:16px;overflow:hidden;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);font-weight:900;font-size:22px;flex:none}
 .profile-photo img{width:100%;height:100%;object-fit:cover}
 .profile-readonly{display:grid;gap:8px;margin-bottom:14px}
-.profile-readonly div{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-radius:9px;background:var(--surface-2);font-size:12px}
+.profile-readonly div{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;border-radius:9px;background:var(--surface-2);font-size:12px;min-width:0}
+.profile-readonly div span{color:var(--muted);flex-shrink:0}
+.profile-readonly div strong{min-width:0;max-width:100%;overflow-wrap:anywhere;word-break:break-word;text-align:right}
 .profile-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
 .pbtn{border:0;border-radius:10px;padding:9px 13px;font-weight:700;font-size:12px}
 .pbtn.primary{background:var(--navy2);color:#fff}
 .pbtn.secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--line)}
 .pbtn.danger{background:rgba(214,69,69,.12);color:var(--red)}
 .profile-divider{height:1px;background:var(--line);margin:16px 0}
-.profile-crop-stage{width:min(380px,84vw);height:min(380px,84vw);margin:0 auto 14px;position:relative;border-radius:16px;overflow:hidden;background:#0d1d33;display:grid;place-items:center}
+.profile-crop-stage{width:min(320px,100%);height:auto;aspect-ratio:1/1;margin:0 auto 14px;position:relative;border-radius:16px;overflow:hidden;background:#0d1d33;display:grid;place-items:center}
 .profile-crop-stage canvas{width:100%;height:100%;display:block;touch-action:none}
 .profile-crop-guide{position:absolute;inset:10%;border:2px solid rgba(255,255,255,.92);border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,.28);pointer-events:none}
-.profile-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.profile-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px;flex-wrap:wrap}
+@media(max-width:640px){
+  .profile-modal,.profile-crop-modal{padding:12px;align-items:flex-start}
+  .profile-modal-card,.profile-crop-card{width:100%;max-width:100%;max-height:calc(100dvh - 24px);padding:16px;border-radius:16px}
+  .profile-hero{padding:12px;gap:12px}
+  .profile-photo{width:54px;height:54px;border-radius:14px;font-size:18px}
+  .profile-actions{display:grid;grid-template-columns:1fr 1fr}
+  .profile-actions .pbtn{width:100%;text-align:center}
+  .pw-input-row{flex-wrap:wrap}
+  .pw-input-row .pbtn,.pw-input-row .small-btn{width:100%}
+  #changePasswordBtn{width:100%}
+}
 
 .lockscreen-preview{
   aspect-ratio:16/9;min-height:220px;border-radius:14px;border:1px solid rgba(255,255,255,.16);
@@ -607,10 +631,184 @@ tbody tr:hover td{background:var(--accent-soft)}
 .switch span{position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .15s}
 .switch[aria-checked="true"] span{transform:translateX(19px)}
 
+/* WELCOME LIVE CHECK-IN & HIGH-END MODULES */
+.welcome-checkin-banner{
+  margin:16px 0 18px;border-radius:16px;padding:20px 22px;border:1px solid var(--line);
+  background:var(--surface);box-shadow:0 2px 10px rgba(6,26,56,.04);
+  display:grid;grid-template-columns:1.15fr .85fr;gap:20px;align-items:center;
+}
+.theme-dark .welcome-checkin-banner{background:var(--surface);border-color:var(--line)}
+.welcome-checkin-banner h3{margin:0 0 6px;font-size:18px;letter-spacing:-.015em;font-weight:800}
+.lci-role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.lci-role-card{
+  text-align:left;padding:14px;border-radius:12px;border:1px solid var(--line);
+  background:var(--surface-2);color:var(--text);cursor:pointer;transition:border-color .15s,background .15s,transform .15s;
+  display:flex;flex-direction:column;gap:6px;
+}
+.lci-role-card:hover,.lci-role-card.active{
+  border-color:var(--blue);background:var(--accent-soft);transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(23,105,210,.10);
+}
+.lci-role-ico{
+  width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:16px;
+  background:rgba(23,105,210,.12);color:var(--blue);
+}
+.lci-role-card strong{font-size:13.5px}
+.lci-role-card small{font-size:11.5px;color:var(--muted);line-height:1.35}
+.lci-result-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin-top:12px}
+.lci-person-btn{
+  display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:12px;border:1px solid var(--line);
+  background:var(--surface);color:var(--text);text-align:left;cursor:pointer;transition:.14s;width:100%;
+}
+.lci-person-btn:hover{border-color:var(--blue);background:var(--accent-soft)}
+.lci-avatar{
+  width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;overflow:hidden;
+  background:linear-gradient(135deg,#07224d,#1769d2);color:#fff;flex-shrink:0;border:2px solid rgba(23,105,210,.22);
+}
+.lci-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* PREMIUM ACCESS UG SMART PASS CARD (MATCHES EXECUTIVE ID SPEC) */
+.lci-pass-wrap{max-width:410px;margin:14px auto 0;display:flex;flex-direction:column;gap:14px}
+.lci-pass-card{
+  border-radius:22px;overflow:hidden;background:#ffffff;color:#0f172a;
+  box-shadow:0 24px 56px rgba(4,20,51,.22),0 6px 16px rgba(4,20,51,.08);
+  border:1px solid rgba(11,45,99,.16);position:relative;
+}
+.lci-pass-top{
+  position:relative;padding:20px 20px 44px;text-align:center;color:#ffffff;
+  background:
+    radial-gradient(rgba(255,255,255,.09) 1px,transparent 1px) 0 0/10px 10px,
+    linear-gradient(155deg,#06214d 0%,#0b326c 52%,#041737 100%);
+  clip-path:polygon(0 0,100% 0,100% 87%,50% 97.5%,0 87%);
+}
+.lci-pass-top::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.12) 0%,transparent 38%,transparent 62%,rgba(255,255,255,.08) 100%);
+}
+.lci-pass-brand{position:relative;z-index:2;padding:0 54px}
+.lci-pass-brand-title{font-size:21px;font-weight:900;letter-spacing:.03em;line-height:1.1;color:#fff;margin:0}
+.lci-pass-brand-school{font-size:13px;font-weight:500;color:rgba(255,255,255,.88);margin-top:3px;line-height:1.3}
+.lci-pass-verified-tag{
+  position:absolute;top:52px;right:0;z-index:3;display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px 6px 10px;border-radius:999px 0 0 999px;background:#f1f5f9;color:#0b2d63;
+  font-size:11px;font-weight:800;line-height:1.15;text-align:left;box-shadow:0 4px 12px rgba(0,0,0,.22);
+}
+.lci-pass-verified-tag.confirmed{background:#dcfce7;color:#14532d}
+.lci-pass-verified-tag svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:2.2}
+.lci-pass-photo-ring{
+  position:relative;z-index:2;width:130px;height:130px;border-radius:50%;margin:16px auto 12px;
+  padding:4px;background:#ffffff;box-shadow:0 12px 28px rgba(0,0,0,.35);
+}
+.lci-pass-photo-inner{
+  width:100%;height:100%;border-radius:50%;overflow:hidden;border:2px solid #0b326c;
+  background:#e2e8f0;display:grid;place-items:center;color:#0b326c;font-weight:900;font-size:38px;
+}
+.lci-pass-photo-inner img{width:100%;height:100%;object-fit:cover;display:block}
+.lci-pass-name{position:relative;z-index:2;margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em;color:#fff;line-height:1.2}
+.lci-pass-role{position:relative;z-index:2;margin-top:4px;font-size:13.5px;font-weight:600;color:rgba(255,255,255,.92)}
+.lci-pass-sub-school{position:relative;z-index:2;margin-top:2px;font-size:13px;color:rgba(255,255,255,.80)}
+.lci-pass-body{
+  padding:14px 24px 22px;background:
+    linear-gradient(125deg,rgba(11,50,108,.04) 0%,transparent 35%,transparent 65%,rgba(11,50,108,.05) 100%),
+    #f8fafc;
+  display:grid;gap:9px;margin-top:-18px;padding-top:24px;
+}
+.lci-pass-row{
+  display:flex;align-items:baseline;gap:8px;font-size:13.5px;line-height:1.45;
+  padding:2px 0;font-variant-numeric:tabular-nums;
+}
+.lci-pass-k{font-weight:800;color:#0f172a;text-transform:uppercase;letter-spacing:.02em;white-space:nowrap;font-size:12.5px}
+.lci-pass-v{color:#1e293b;font-weight:500;overflow-wrap:anywhere;word-break:break-word}
+.lci-pass-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+.lci-verify-box{
+  max-width:460px;margin:12px auto 0;border:1px solid var(--line);border-radius:16px;padding:20px;background:var(--surface);
+  box-shadow:0 12px 30px rgba(6,26,56,.07);
+}
+
+/* REPORT CARD STUDIO & MOBILE-FIRST SHEET */
+.rc-tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px;margin-bottom:18px}
+.rc-sheet{background:#fff;color:#0f172a;border:1px solid #cbd5e1;border-radius:14px;padding:20px;box-shadow:0 10px 28px rgba(6,26,56,.07);max-width:100%;overflow:hidden}
+.rc-sheet-frame{border:2px solid #0b3d82;border-radius:12px;padding:18px;background:#fff;color:#0f172a}
+.rc-sheet-header{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 16px;border-radius:10px;margin-bottom:14px;flex-wrap:wrap}
+.rc-sheet-brand{display:flex;align-items:center;gap:12px;min-width:0;flex:1 1 260px}
+.rc-sheet-meta-right{text-align:right;flex:0 1 auto}
+.rc-stu-card{display:flex;align-items:center;gap:14px;padding:12px 14px;background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;margin-bottom:12px}
+.rc-stu-photo{width:62px;height:68px;border-radius:10px;overflow:hidden;border:1.5px solid #cbd5e1;background:#e2e8f0;display:grid;place-items:center;font-weight:800;font-size:18px;color:#0b3d82;flex:none}
+.rc-stu-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.rc-stu-grid{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px;font-size:12px;font-variant-numeric:tabular-nums}
+.rc-stu-grid > div{min-width:0;overflow-wrap:anywhere}
+.rc-table-scroll{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:12px;background:#fff}
+.rc-table-scroll table{min-width:560px;width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}
+.rc-sig-footer{display:grid;grid-template-columns:1.25fr .75fr;gap:16px;align-items:end;padding-top:12px;border-top:1px dashed #cbd5e1;font-size:11.5px}
+.rc-brand-uploads{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:16px}
+.rc-upload-box{border:1px dashed var(--line);border-radius:12px;padding:12px;background:var(--surface-2);display:flex;align-items:center;gap:12px}
+.rc-upload-preview{width:64px;height:64px;border-radius:10px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;overflow:hidden;flex-shrink:0;font-size:11px;color:#64748b;font-weight:700}
+.rc-upload-preview img{max-width:100%;max-height:100%;object-fit:contain}
+.rc-sig-img{max-height:46px;max-width:160px;object-fit:contain;display:block;margin:0 auto 4px;mix-blend-mode:multiply}
+.rc-logo-img{width:58px;height:58px;object-fit:contain;border-radius:10px;background:#fff;padding:4px;border:1px solid rgba(148,163,184,.3);flex:none}
+.rc-batch-print-area{display:none}
+.rc-tpl-card{cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.rc-tpl-card:hover,.rc-tpl-card.active{border-color:var(--blue);box-shadow:0 8px 22px rgba(23,105,210,.10)}
+
+/* HIGH-END STUDIO PANELS (TUTORIALS, HOMEWORK, CLASSROOM, SMS) */
+.tut-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.tut-card{
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface);
+  display:flex;flex-direction:column;transition:border-color .15s,transform .15s,box-shadow .15s;
+}
+.tut-card:hover{transform:translateY(-2px);border-color:var(--blue);box-shadow:0 12px 28px rgba(6,26,56,.08)}
+.tut-thumb{
+  height:148px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;
+  background:linear-gradient(135deg,#041530,#0b3d82 58%,#1769d2);position:relative;cursor:pointer;
+}
+.tut-play-pill{
+  width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.65);
+  display:grid;place-items:center;font-size:14px;color:#fff;flex:none;
+}
+.studio-split{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:start}
+.recipient-picker-box{
+  border:1px solid var(--line);border-radius:12px;background:var(--surface-2);padding:12px;display:grid;gap:8px;
+}
+.recipient-checklist{
+  max-height:190px;overflow:auto;display:grid;gap:6px;padding:4px 2px;
+}
+.recipient-check-row{
+  display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:9px;background:var(--surface);
+  border:1px solid var(--line);font-size:12.5px;cursor:pointer;
+}
+.recipient-check-row input{width:16px;height:16px;accent-color:var(--blue);flex:none}
+.feed-item-card{
+  border:1px solid var(--line);border-radius:13px;padding:14px 16px;background:var(--surface);
+  display:flex;flex-direction:column;gap:8px;transition:border-color .15s;
+}
+.feed-item-card:hover{border-color:rgba(23,105,210,.35)}
+.status-chip{
+  display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:7px;
+  background:var(--accent-soft);color:var(--blue);font-variant-numeric:tabular-nums;
+}
+.status-chip.ok{background:rgba(15,159,110,.12);color:#0f9f6e}
+.status-chip.warn{background:rgba(196,122,0,.14);color:#b45309}
+
+@media(max-width:960px){
+  .welcome-checkin-banner,.studio-split{grid-template-columns:1fr}
+  .lci-role-grid{grid-template-columns:1fr}
+}
+
 @media print{
-  body *{visibility:hidden}
-  #rcPreviewSheet,#rcPreviewSheet *{visibility:visible}
-  #rcPreviewSheet{position:fixed;inset:0;width:100%;border:0;box-shadow:none;padding:16px}
+  @page{size:A4 portrait;margin:10mm}
+  html,body{background:#fff!important;height:auto!important;overflow:visible!important}
+  body *{visibility:hidden!important}
+  body:not(.printing-rc-batch) #rcPreviewSheet,
+  body:not(.printing-rc-batch) #rcPreviewSheet *{visibility:visible!important}
+  body:not(.printing-rc-batch) #rcPreviewSheet{position:fixed;inset:0;width:100%;border:0;box-shadow:none;padding:4mm;margin:0;background:#fff}
+  body.printing-rc-batch #rcBatchPrintArea,
+  body.printing-rc-batch #rcBatchPrintArea *{visibility:visible!important}
+  body.printing-rc-batch #rcBatchPrintArea{display:block!important;position:absolute;left:0;top:0;width:100%;background:#fff}
+  .rc-table-scroll{overflow:visible!important;border:0!important}
+  .rc-table-scroll table{min-width:0!important}
+  .rc-batch-page{page-break-after:always;break-after:page;padding:4mm 0;background:#fff}
+  .rc-batch-page:last-child{page-break-after:auto;break-after:auto}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 }
 @media(max-width:1180px){
   .quick-ops-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
@@ -626,12 +824,12 @@ tbody tr:hover td{background:var(--accent-soft)}
   .main{margin-left:0;width:100%}
   .menu-btn{display:flex}
   .user-mini span,.pill-chip{display:none}
-  .content{padding:14px}
-  .hero{padding:18px 16px;margin-bottom:14px}
+  .content{padding:12px}
+  .hero{padding:16px 15px;margin-bottom:14px}
   .hero-actions{width:100%}
   .hero-actions .btn{flex:1 1 auto;min-height:38px;padding:8px 11px;font-size:12px}
-  .card,.pagecard{padding:15px}
-  .modal-box,.modalbox{padding:18px}
+  .card,.pagecard{padding:14px}
+  .modal-box,.modalbox{padding:16px}
   .four,.cards,.three,.grid-3,.fees-summary,.formgrid,.profile-grid{grid-template-columns:1fr}
   .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
   .kpi-card{padding:13px;gap:6px}
@@ -645,9 +843,144 @@ tbody tr:hover td{background:var(--accent-soft)}
   .toolbar .field{min-width:100%}
   .toolbar > .btn,.toolbar > .secondary{width:100%}
   .cal-day{min-height:70px;padding:5px}
+  .rc-sheet{padding:10px;border-radius:12px}
+  .rc-sheet-frame{padding:12px}
+  .rc-sheet-header{flex-direction:column;align-items:flex-start;padding:12px}
+  .rc-sheet-meta-right{text-align:left}
+  .rc-stu-card{flex-direction:column;align-items:flex-start}
+  .rc-stu-grid{grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .rc-sig-footer{grid-template-columns:1fr;text-align:left}
+  .lci-pass-top{padding:18px 14px 40px}
+  .lci-pass-brand{padding:0}
+  .lci-pass-verified-tag{position:static;margin:10px auto 0;border-radius:999px;width:max-content}
+  .lci-pass-body{padding:22px 16px 18px}
 }
 
-</style></head>
+/* 2-STAGE LIVE CHECK-IN PORTAL (IMAGES 1 & 2) */
+.lci-stage1-shell{max-width:760px;margin:0 auto;display:grid;gap:16px}
+.lci-hero-card{
+  background:linear-gradient(155deg,#071c3e,#0b2a58);color:#fff;border-radius:20px;padding:22px 20px;
+  box-shadow:0 16px 34px rgba(6,26,56,.18);
+}
+.lci-desk-pill{
+  display:inline-flex;align-items:center;padding:5px 13px;border-radius:999px;
+  background:#a7f3d0;color:#064e3b;font-size:12px;font-weight:800;margin-bottom:12px;
+}
+.lci-hero-card h2{margin:0 0 8px;font-size:clamp(21px,2.8vw,26px);font-weight:800;line-height:1.2;color:#fff}
+.lci-hero-card p{margin:0;color:rgba(226,232,240,.9);font-size:13.5px;line-height:1.6}
+.lci-role-stack{display:grid;gap:12px}
+.lci-role-row{
+  display:flex;align-items:center;gap:14px;width:100%;padding:16px;border-radius:16px;
+  border:1.5px solid #cbd5e1;background:var(--surface);color:var(--text);text-align:left;cursor:pointer;
+  transition:border-color .15s,background .15s,transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(6,26,56,.05);
+}
+.lci-role-row:hover{border-color:#0f6b64;background:var(--accent-soft);transform:translateY(-1px);box-shadow:0 10px 22px rgba(15,107,100,.10)}
+.lci-role-badge{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:24px;flex-shrink:0;border:1.5px solid #e2e8f0;background:#f8fafc}
+.lci-role-badge.teacher{background:#e0f2fe;border-color:#bae6fd}
+.lci-role-badge.student{background:#f1f5f9;border-color:#cbd5e1}
+.lci-role-badge.staff{background:#e2e8f0;border-color:#cbd5e1}
+.lci-role-meta{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.lci-role-meta strong{font-size:17px;font-weight:800;color:var(--text);line-height:1.2}
+.lci-role-subpill{display:inline-block;padding:3px 10px;border-radius:999px;background:#e2e8f0;color:#1e293b;font-size:12px;font-weight:600}
+.lci-chevron{color:#0b3d82;font-size:20px;font-weight:700;flex-shrink:0;padding-left:6px}
+.lci-stage2-shell{max-width:860px;margin:0 auto;display:grid;gap:14px}
+.lci-seg-wrap{display:flex;justify-content:center;width:100%}
+.lci-seg-bar{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;gap:4px;padding:5px;
+  border-radius:999px;width:100%;max-width:720px;
+  background:var(--surface);border:1px solid #cbd5e1;box-shadow:0 3px 12px rgba(6,26,56,.05);
+}
+.lci-seg-btn{
+  min-width:0;height:38px;padding:0 10px;border:0;border-radius:999px;
+  background:transparent;color:var(--text);font-size:12.5px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;gap:5px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:.15s;
+}
+.lci-seg-btn.active{background:#0f6b64;color:#ffffff;box-shadow:0 4px 12px rgba(15,107,100,.24)}
+.lci-filter-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%}
+.lci-filter-search{
+  flex:1 1 240px;min-width:0;display:flex;align-items:center;gap:8px;height:42px;padding:0 12px;
+  border-radius:12px;border:1px solid #cbd5e1;background:var(--surface);transition:border-color .15s,box-shadow .15s;
+}
+.lci-filter-search:focus-within{border-color:#0f6b64;box-shadow:0 0 0 3px rgba(15,107,100,.14)}
+.lci-filter-search input#lciSearchInput{
+  border:0!important;background:transparent!important;padding:0!important;margin:0!important;
+  min-height:0!important;height:100%!important;width:100%!important;outline:none!important;
+  box-shadow:none!important;font-size:13.5px!important;color:var(--text)!important;line-height:1.3!important;
+}
+.lci-filter-actions{display:inline-flex;align-items:center;gap:8px;flex-shrink:0}
+.lci-reset-link{border:0;background:transparent;color:#475569;text-decoration:underline;font-size:13px;font-weight:600;padding:4px 6px;flex-shrink:0}
+.lci-result-list{display:grid;grid-template-columns:1fr;gap:10px;margin-top:2px}
+.lci-person-btn{
+  display:flex;align-items:center;gap:14px;padding:13px 15px;border-radius:16px;border:1px solid #cbd5e1;
+  background:var(--surface);color:var(--text);text-align:left;cursor:pointer;transition:.14s;width:100%;
+  box-shadow:0 3px 10px rgba(6,26,56,.04);
+}
+.lci-person-btn:hover{border-color:#0f6b64;background:var(--accent-soft);transform:translateY(-1px)}
+.lci-avatar{
+  width:50px;height:50px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;overflow:hidden;
+  background:#071c3e;color:#fff;flex-shrink:0;border:2px solid #cbd5e1;
+}
+.lci-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.lci-person-pills{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:4px}
+.lci-pill-tag{display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:2px 9px;border-radius:999px;background:#e2e8f0;color:#1e293b;font-size:11.5px;font-weight:650}
+.lci-code-tag{display:inline-block;padding:2px 9px;border-radius:999px;background:#e2e8f0;color:#0f172a;font-size:11.5px;font-weight:700;font-family:var(--font-mono)}
+@media(max-width:640px){
+  .lci-seg-btn{font-size:11px;padding:0 5px;height:34px;gap:3px}
+  .lci-filter-bar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+  .lci-filter-search{grid-column:1;width:100%}
+  .lci-filter-actions{grid-column:2}
+}
+html.theme-dark .lci-role-row,html.theme-dark .lci-seg-bar,html.theme-dark .lci-filter-search,html.theme-dark .lci-person-btn{
+  border-color:var(--line);background:var(--surface);
+}
+html.theme-dark .lci-role-subpill,html.theme-dark .lci-pill-tag,html.theme-dark .lci-code-tag{background:rgba(148,163,184,.18);color:#e2e8f0}
+
+/* TEACHERS COMPACT SUBJECTS & USERS DIRECTORY REFINEMENTS */
+.teacher-subj-row{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px;max-width:280px}
+.teacher-subj-chip{
+  display:inline-flex;align-items:center;padding:2px 8px;border-radius:6px;
+  background:var(--surface-2);border:1px solid var(--line);color:var(--muted);
+  font-size:11px;font-weight:600;line-height:1.35;max-width:165px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.teacher-subj-more{
+  border:1px solid rgba(23,105,210,.26);background:var(--accent-soft);color:var(--accent);
+  border-radius:6px;padding:2px 8px;font-size:11px;font-weight:750;cursor:pointer;line-height:1.35;white-space:nowrap;
+}
+.teacher-subj-more:hover{filter:brightness(.96)}
+.teacher-subj-full{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+
+#schoolUsersList{display:grid;gap:10px}
+.user-dir-card{
+  display:flex;align-items:center;justify-content:space-between;gap:12px 16px;flex-wrap:wrap;
+  padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);
+  transition:border-color .15s,background .15s,box-shadow .15s;min-width:0;
+}
+.user-dir-card:hover{border-color:rgba(23,105,210,.32);background:var(--surface);box-shadow:0 6px 18px rgba(6,26,56,.06)}
+.user-dir-main{display:flex;align-items:center;gap:12px;flex:1 1 260px;min-width:0}
+.user-dir-meta{flex:1;min-width:0;display:grid;gap:4px}
+.user-dir-title{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}
+.user-dir-title strong{font-size:14px;font-weight:750;color:var(--text);line-height:1.25;overflow-wrap:anywhere}
+.user-dir-sub{display:block;font-size:12.5px;color:var(--muted);line-height:1.4;overflow-wrap:anywhere;word-break:break-word}
+.user-dir-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:0 1 auto}
+.user-reset-cred-box{
+  margin-top:12px;padding:14px;border-radius:12px;border:1px solid rgba(15,159,110,.32);
+  background:rgba(15,159,110,.09);display:grid;gap:10px;
+}
+.user-reset-cred-row{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+  padding:8px 10px;border-radius:9px;background:var(--surface);border:1px solid var(--line);
+}
+.user-reset-cred-row small{display:block;font-size:11px;color:var(--muted);font-weight:700}
+.user-reset-cred-row strong{font-size:13.5px;color:var(--text);overflow-wrap:anywhere}
+@media(max-width:640px){
+  .user-dir-card{padding:12px}
+  .user-dir-main{flex:1 1 100%}
+  .user-dir-actions{width:100%;padding-top:10px;border-top:1px dashed var(--line)}
+  .user-dir-actions .btn{flex:1 1 calc(50% - 4px);min-height:36px;justify-content:center}
+}
+
+</style><script src="/_aistudio-iframe.js?v=29045eb3"></script><script src="/_aistudio-iframe.js?v=29045eb3"></script></head>
 <body>
 <button aria-label="Close navigation menu" class="scrim" id="mobileScrim" type="button"></button>
 <div class="app">
@@ -679,6 +1012,7 @@ tbody tr:hover td{background:var(--accent-soft)}
 <button data-page="behaviour" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14l-5-4.87 6.91-1.01z"></path></svg></span>Behaviour &amp; Scale</button>
 <button data-page="academics" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>Academics &amp; Terms</button>
 <button data-page="report-cards" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></svg></span>Report Card Studio</button>
+<button data-page="live-checkin" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg></span>Live Check-In</button>
 <button data-page="timetable" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg></span>Timetable &amp; Calendar</button>
 <div class="nav-group-label">Finance &amp; Triage</div>
 <button data-page="fees-update" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="5"></rect><path d="M2 10h20"></path></svg></span>Fees &amp; Finance</button>
@@ -696,6 +1030,11 @@ tbody tr:hover td{background:var(--accent-soft)}
 <button data-page="proca-filtering" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg></span>Web Filtering</button>
 <button data-page="proca-monitoring" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg></span>Live Telemetry</button>
 <button data-page="proca-branding" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><path d="M21 15l-5-5L5 21"></path></svg></span>Device Branding</button>
+<div class="nav-group-label">Learning &amp; Outreach</div>
+<button data-page="tutorials" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></span>Tutorial Videos</button>
+<button data-page="google-classroom" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></span>Google Classroom</button>
+<button data-page="homework-settings" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg></span>Homework &amp; Assignments</button>
+<button data-page="sms-broadcast" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg></span>SMS Broadcast</button>
 <div class="nav-group-label">System &amp; Studio</div>
 <button data-page="appearance" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg></span>Appearance Studio</button>
 <button data-page="settings" type="button"><span class="nav-icon"><svg viewbox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg></span>Settings &amp; Governance</button>
@@ -977,25 +1316,77 @@ tbody tr:hover td{background:var(--accent-soft)}
 </section>
 <!-- REPORT CARD STUDIO -->
 <section class="page" id="report-cards">
-<div class="hero"><div><h1>Report Card Studio</h1><p>Customize official school report card templates and preview/print verified student reports.</p></div></div>
+<div class="hero">
+  <div><h1>Report Card Studio &amp; Batch Printer</h1><p>Upload your school logo &amp; headteacher signature, choose from 10 high-end report card templates, and print a single student, an entire class (e.g. S1), or all reports cleanly.</p></div>
+  <div class="hero-actions">
+    <button class="btn secondary" id="connectPrinterBtn" type="button">🖨 Connect / Print Active</button>
+    <button class="btn" id="printClassReportsBtn" type="button" style="background:#fff;color:#061a38">🖨 Print Selected Class</button>
+  </div>
+</div>
+<div class="notice" id="reportCardsNotice"></div>
+
 <div class="card" style="margin-bottom:18px">
-<div class="card-head"><div><h3>Saved Report Templates</h3><div class="muted">Used when generating student assessment &amp; end-of-term reports</div></div>
-<div style="display:flex;gap:8px;flex-wrap:wrap">
-<button class="btn small secondary" id="assessmentTemplateSave" type="button">Save Assessment Default</button>
-<button class="btn small secondary" id="endTemplateSave" type="button">Save End-of-Term Default</button>
-<button class="btn small" id="addReportTemplateBtn" type="button">New Template</button>
+  <div class="card-head">
+    <div><h3>1. School Logo, Headteacher Signature &amp; Brand Colors</h3><div class="muted">Uploaded images appear automatically across all 10 report card templates and batch printouts.</div></div>
+    <label class="checkline" style="margin:0"><input id="rcFollowSchoolColor" type="checkbox" checked/> Follow School Brand Colors</label>
+  </div>
+  <div class="rc-brand-uploads">
+    <div class="rc-upload-box">
+      <div class="rc-upload-preview" id="rcLogoPreviewBox">No Logo</div>
+      <div style="flex:1;min-width:0">
+        <strong style="display:block;font-size:13px;margin-bottom:4px">School Crest / Logo</strong>
+        <input accept="image/*" id="rcLogoFile" type="file" style="width:100%;font-size:12px"/>
+        <div style="margin-top:6px"><button class="small-btn danger-btn" id="rcClearLogoBtn" type="button">Remove Logo</button></div>
+      </div>
+    </div>
+    <div class="rc-upload-box">
+      <div class="rc-upload-preview" id="rcSigPreviewBox">No Sig</div>
+      <div style="flex:1;min-width:0">
+        <strong style="display:block;font-size:13px;margin-bottom:4px">Headteacher Signature</strong>
+        <input accept="image/*" id="rcSigFile" type="file" style="width:100%;font-size:12px"/>
+        <div style="margin-top:6px"><button class="small-btn danger-btn" id="rcClearSigBtn" type="button">Remove Signature</button></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:8px;align-content:center">
+      <div class="field"><label for="rcHeadNameInput">Headteacher / Sign-Off Name</label><input id="rcHeadNameInput" placeholder="e.g. Mr. John Okello — Headteacher"/></div>
+      <div class="field"><label for="rcBrandMottoInput">Official School Motto</label><input id="rcBrandMottoInput" placeholder="e.g. Excellence Through Discipline &amp; Knowledge"/></div>
+    </div>
+  </div>
 </div>
+
+<div class="card" style="margin-bottom:18px">
+  <div class="card-head">
+    <div><h3>2. Admin-Published Official Report Forms</h3><div class="muted">Official report documents &amp; printable templates published to this school by Administration.</div></div>
+    <button class="btn small secondary" type="button" onclick="loadAccessUgSyncItems(true)">↻ Sync Forms</button>
+  </div>
+  <div id="schoolAdminUploadedReportsList"><div class="empty">Checking for published report forms…</div></div>
 </div>
-<div class="rc-tpl-grid" id="rcTemplatesGrid"></div>
+
+<div class="card" style="margin-bottom:18px">
+  <div class="card-head">
+    <div><h3>3. 10 High-End Report Card Templates</h3><div class="muted">Compact single-page academic layout with student photo (behaviour omitted for clean A4 fit). Click any template to preview or set default.</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn small secondary" id="assessmentTemplateSave" type="button">Save Assessment Default</button>
+      <button class="btn small secondary" id="endTemplateSave" type="button">Save End-of-Term Default</button>
+      <button class="btn small" id="addReportTemplateBtn" type="button">+ New Custom Template</button>
+    </div>
+  </div>
+  <div class="rc-tpl-grid" id="rcTemplatesGrid"></div>
 </div>
+
 <div class="card">
-<div class="toolbar">
-<div class="field"><label for="rcStudentSelect">Student</label><select id="rcStudentSelect"></select></div>
-<div class="field"><label for="rcTermSelect">Academic Term</label><select id="rcTermSelect"></select></div>
-<div class="field"><label for="rcTemplateSelect">Template</label><select id="rcTemplateSelect"></select></div>
-<button class="btn" id="printReportCardBtn" type="button">Print Report Card</button>
-</div>
-<div class="rc-sheet" id="rcPreviewSheet"><div class="empty">Select a student to preview their official report card.</div></div>
+  <div class="card-head">
+    <div><h3>4. Live Report Preview &amp; Printer Output</h3><div class="muted">Select a class (e.g. S1) or individual student, preview below, and print directly to your connected printer or PDF.</div></div>
+  </div>
+  <div class="toolbar">
+    <div class="field"><label for="rcPrintClassFilter">Class / Stream Filter (for Print)</label><select id="rcPrintClassFilter"><option value="">All Classes</option></select></div>
+    <div class="field"><label for="rcStudentSelect">Preview Student</label><select id="rcStudentSelect"></select></div>
+    <div class="field"><label for="rcTermSelect">Academic Term</label><select id="rcTermSelect"></select></div>
+    <div class="field"><label for="rcTemplateSelect">Template Design (10+)</label><select id="rcTemplateSelect"></select></div>
+    <button class="btn" id="printReportCardBtn" type="button">🖨 Print Student</button>
+    <button class="btn secondary" id="printAllReportsBtn" type="button">🖨 Print All Reports</button>
+  </div>
+  <div class="rc-sheet" id="rcPreviewSheet"><div class="empty">Select a student to preview their official report card.</div></div>
 </div>
 </section>
 <!-- TIMETABLE & CALENDAR -->
@@ -1154,10 +1545,14 @@ tbody tr:hover td{background:var(--accent-soft)}
 </section>
 <!-- USERS -->
 <section class="page" id="users">
-<div class="hero"><div><h1>School Directory &amp; Password Reset</h1><p>Find active school accounts, open direct chats, or send password reset emails.</p></div></div>
+<div class="hero"><div><h1>School Directory &amp; Password Reset</h1><p>Find active school accounts, open direct chats, send password reset links, or set a new password.</p></div></div>
 <div class="notice" id="usersNotice"></div>
 <div class="card">
-<div class="toolbar"><div class="field"><label for="userSearch">Search directory</label><input id="userSearch" placeholder="Search by name, username, email, or role"/></div></div>
+<div class="toolbar">
+<div class="field"><label for="userSearch">Search directory</label><input id="userSearch" placeholder="Search by name, username, email, or role"/></div>
+<div class="field" style="max-width:220px"><label for="userRoleFilter">Filter by role</label><select id="userRoleFilter"><option value="">All Roles</option><option value="school">School Admin</option><option value="teacher">Teacher</option><option value="student">Student</option><option value="parent">Parent</option><option value="staff">Staff</option></select></div>
+<button class="btn secondary" id="refreshSchoolUsers" type="button">Refresh</button>
+</div>
 <div id="schoolUsersList"><div class="empty">Loading school directory…</div></div>
 </div>
 </section>
@@ -1231,6 +1626,221 @@ tbody tr:hover td{background:var(--accent-soft)}
 <div class="card"><div class="card-head"><h3>Account Security</h3></div><p class="muted" style="margin-bottom:14px">Request a password reset email or end your current administrative session.</p><div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn secondary" id="selfPasswordReset" type="button">Send Password Reset Email</button><button class="btn danger" id="settingsSignOut" type="button">Sign Out</button></div></div>
 </div>
 </section>
+    <!-- LIVE CHECK-IN PORTAL -->
+    <section class="page" id="live-checkin">
+      <div id="lciStage1Panel" class="lci-stage1-shell">
+        <div class="lci-hero-card">
+          <span class="lci-desk-pill">Identity &amp; Gate Attendance Desk</span>
+          <h2 id="lciPageHeading">Welcome — Choose Your Role to Check In</h2>
+          <p>Select Teacher, Student, or Staff &amp; Others, search a name (e.g., "Jovan"), enter the 4-digit Year of Birth passcode, verify the Smart-Pass ID card, and mark attendance.</p>
+        </div>
+        <div class="lci-role-stack">
+          <button class="lci-role-row" type="button" onclick="selectLciRole('teacher', true)">
+            <span class="lci-role-badge teacher">👩‍🏫</span>
+            <span class="lci-role-meta">
+              <strong>Teacher</strong>
+              <span class="lci-role-subpill">Teaching staff check-in</span>
+            </span>
+            <span class="lci-chevron">›</span>
+          </button>
+          <button class="lci-role-row" type="button" onclick="selectLciRole('student', true)">
+            <span class="lci-role-badge student">🎓</span>
+            <span class="lci-role-meta">
+              <strong>Student</strong>
+              <span class="lci-role-subpill">Learner gate check-in</span>
+            </span>
+            <span class="lci-chevron">›</span>
+          </button>
+          <button class="lci-role-row" type="button" onclick="selectLciRole('staff', true)">
+            <span class="lci-role-badge staff">🪪</span>
+            <span class="lci-role-meta">
+              <strong>Staff &amp; Others</strong>
+              <span class="lci-role-subpill">Bursars &amp; co-admins</span>
+            </span>
+            <span class="lci-chevron">›</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="lciStage2Panel" class="lci-stage2-shell hidden">
+        <div class="lci-seg-wrap">
+          <div class="lci-seg-bar" id="lciRoleButtons">
+            <button class="lci-seg-btn" type="button" data-lci-role="all" onclick="selectLciRole('all', true)">All Roles</button>
+            <button class="lci-seg-btn active" type="button" data-lci-role="teacher" onclick="selectLciRole('teacher', true)">👤 Teacher</button>
+            <button class="lci-seg-btn" type="button" data-lci-role="student" onclick="selectLciRole('student', true)">☆ Student</button>
+            <button class="lci-seg-btn" type="button" data-lci-role="staff" onclick="selectLciRole('staff', true)">Staff &amp; Others</button>
+          </div>
+        </div>
+        <div class="lci-filter-bar">
+          <div class="lci-filter-search">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="#64748b" fill="none" stroke-width="2" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input id="lciSearchInput" type="search" placeholder='Search name, ID / Student No., or class (e.g., "Jovan")'/>
+          </div>
+          <div class="lci-filter-actions">
+            <button class="lci-reset-link" type="button" onclick="resetLciFlow()">Reset</button>
+            <button class="lci-reset-link" type="button" onclick="backToLciRoles()" title="Back to Role Selection">Roles</button>
+          </div>
+        </div>
+        <div id="lciStageHost"></div>
+      </div>
+    </section>
+
+    <!-- TUTORIAL VIDEOS (SYNCED LIVE FROM ADMIN) -->
+    <section class="page" id="tutorials">
+      <div class="hero">
+        <div><h1>Tutorial Video Center</h1><p>Training videos, onboarding walkthroughs, and operational guides published and synced directly by Administration.</p></div>
+        <div class="hero-actions"><button class="btn secondary" type="button" onclick="loadAccessUgSyncItems(true)">↻ Sync Videos</button></div>
+      </div>
+      <div class="card">
+        <div class="toolbar" style="justify-content:space-between">
+          <div class="seg-bar" id="tutFilterBar">
+            <button class="seg-btn active" type="button" data-tut-cat="all">All Videos</button>
+            <button class="seg-btn" type="button" data-tut-cat="Onboarding">Onboarding</button>
+            <button class="seg-btn" type="button" data-tut-cat="Students & Fees">Students &amp; Fees</button>
+            <button class="seg-btn" type="button" data-tut-cat="Attendance & Check-In">Attendance &amp; Check-In</button>
+            <button class="seg-btn" type="button" data-tut-cat="Reports & PROCA">Reports &amp; PROCA</button>
+          </div>
+          <input id="tutSearchInput" type="search" placeholder="Search synced videos…" style="max-width:280px"/>
+        </div>
+        <div class="tut-grid" id="tutorialsGrid"><div class="empty">Loading synced tutorial videos…</div></div>
+      </div>
+    </section>
+
+    <!-- GOOGLE CLASSROOM SYNC -->
+    <section class="page" id="google-classroom">
+      <div class="hero">
+        <div><h1>Google Classroom Course &amp; Work Sync</h1><p>Publish Google Classroom join links, upload digital coursework sheets, and route them directly to your classes or specific students.</p></div>
+        <div class="hero-actions"><button class="btn secondary" type="button" onclick="loadAccessUgSyncItems(true)">↻ Refresh Classroom</button></div>
+      </div>
+      <div class="notice" id="gcNotice"></div>
+      <div class="studio-split">
+        <div class="card">
+          <div class="card-head"><div><h3>Publish Course or Assignment Link</h3><div class="muted">Syncs live to selected learners &amp; appears across school &amp; admin feeds.</div></div></div>
+          <form id="schoolGcForm" style="display:grid;gap:12px">
+            <div class="grid-2" style="gap:10px">
+              <div class="field"><label for="gcCourseTitle">Course / Topic Title *</label><input id="gcCourseTitle" required placeholder="e.g. S1 Mathematics — Term 2"/></div>
+              <div class="field"><label for="gcSubject">Subject *</label><input id="gcSubject" required placeholder="e.g. Mathematics"/></div>
+              <div class="field"><label for="gcJoinCode">Classroom Join Code</label><input id="gcJoinCode" class="font-mono" placeholder="e.g. x7k9m2q"/></div>
+              <div class="field"><label for="gcCourseUrl">Google Classroom URL *</label><input id="gcCourseUrl" type="text" inputmode="url" required placeholder="https://classroom.google.com/c/..."/></div>
+            </div>
+            <div class="grid-2" style="gap:10px">
+              <div class="field"><label for="gcRecipientScope">Target Audience</label>
+                <select id="gcRecipientScope">
+                  <option value="all_students">All Students in School</option>
+                  <option value="class">Specific Class / Stream</option>
+                  <option value="specific_students">Specific Selected Students</option>
+                  <option value="teachers">All Teachers</option>
+                </select>
+              </div>
+              <div class="field" id="gcClassWrap" style="display:none"><label for="gcClassSelect">Choose Class</label><select id="gcClassSelect"></select></div>
+            </div>
+            <div class="recipient-picker-box" id="gcStudentPickerBox" style="display:none">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <strong style="font-size:12.5px">Select Individual Recipients</strong>
+                <input id="gcStudentPickerSearch" type="search" placeholder="Filter student name…" style="max-width:210px;padding:6px 10px"/>
+              </div>
+              <div class="recipient-checklist" id="gcStudentChecklist"></div>
+            </div>
+            <div class="field"><label for="gcFileInput">Optional Coursework / Syllabus File (PDF, Doc, Image)</label><input id="gcFileInput" type="file" accept=".pdf,.doc,.docx,.ppt,.pptx,.png,.jpg,.jpeg,.txt"/></div>
+            <div class="field"><label for="gcNotes">Instructions for Recipients</label><textarea id="gcNotes" rows="2" placeholder="Join the classroom code above and submit completed worksheets by Friday…"></textarea></div>
+            <button class="btn" id="gcSubmitBtn" type="submit">Sync to Google Classroom Feed</button>
+          </form>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Live Synced Classrooms</h3><div class="muted" id="gcCountLabel">0 courses synced</div></div></div>
+          <div id="schoolGcList" style="display:grid;gap:10px"><div class="empty">No Google Classroom courses published yet.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOMEWORK & ASSIGNMENTS STUDIO -->
+    <section class="page" id="homework-settings">
+      <div class="hero">
+        <div><h1>Homework Upload &amp; Assignment Studio</h1><p>Upload homework sheets or digital tasks, select exact recipients (whole class, specific learners, or teachers), and sync submission rules live.</p></div>
+        <div class="hero-actions"><button class="btn secondary" type="button" onclick="loadAccessUgSyncItems(true)">↻ Sync Homework</button></div>
+      </div>
+      <div class="notice" id="hwNotice"></div>
+      <div class="studio-split">
+        <div class="card">
+          <div class="card-head"><div><h3>Upload &amp; Assign Homework</h3><div class="muted">Attach files and choose exactly who receives this assignment.</div></div></div>
+          <form id="schoolHwForm" style="display:grid;gap:12px">
+            <div class="grid-2" style="gap:10px">
+              <div class="field"><label for="hwTitle">Assignment Title *</label><input id="hwTitle" required placeholder="e.g. Algebra Quadratic Equations Set 3"/></div>
+              <div class="field"><label for="hwSubject">Subject *</label><input id="hwSubject" required placeholder="e.g. Mathematics"/></div>
+              <div class="field"><label for="hwDueDate">Due Date</label><input id="hwDueDate" type="date"/></div>
+              <div class="field"><label for="hwMaxMarks">Max Marks</label><input id="hwMaxMarks" type="number" min="1" max="1000" value="100"/></div>
+            </div>
+            <div class="grid-2" style="gap:10px">
+              <div class="field"><label for="hwRecipientScope">Who Should Receive This?</label>
+                <select id="hwRecipientScope">
+                  <option value="all_students">All Students in School</option>
+                  <option value="class">Specific Class / Stream (e.g. S1)</option>
+                  <option value="specific_students">Select Specific Student(s)</option>
+                  <option value="teachers">All Teaching Staff</option>
+                </select>
+              </div>
+              <div class="field" id="hwClassWrap" style="display:none"><label for="hwClassSelect">Select Class / Stream</label><select id="hwClassSelect"></select></div>
+            </div>
+            <div class="recipient-picker-box" id="hwStudentPickerBox" style="display:none">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+                <strong style="font-size:12.5px">Choose Specific Learners (<span id="hwSelectedCount">0</span> selected)</strong>
+                <input id="hwStudentPickerSearch" type="search" placeholder="Search learner name…" style="max-width:210px;padding:6px 10px"/>
+              </div>
+              <div class="recipient-checklist" id="hwStudentChecklist"></div>
+            </div>
+            <div class="field"><label for="hwFileInput">Upload Homework File (PDF, Word, Image, Worksheet)</label><input id="hwFileInput" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.txt,.zip"/></div>
+            <div class="field"><label for="hwInstructions">Assignment Instructions</label><textarea id="hwInstructions" rows="3" placeholder="Complete all numbered exercises clearly and upload solutions or submit in class…"></textarea></div>
+            <button class="btn" id="hwSubmitBtn" type="submit">Publish &amp; Dispatch Homework</button>
+          </form>
+
+          <div class="profile-divider"></div>
+          <h4 style="margin:0 0 10px;font-size:14px">School Homework Policies (Live)</h4>
+          <div style="display:grid;gap:9px">
+            <label class="checkline"><input id="hwPolicyDigital" type="checkbox" checked/> Allow Digital PDF / Photo Homework Submissions</label>
+            <label class="checkline"><input id="hwPolicyNotify" type="checkbox" checked/> Notify Parents When Homework Is Assigned or Overdue</label>
+            <label class="checkline"><input id="hwPolicyLate" type="checkbox"/> Apply 10% Late Submission Grace Deduction</label>
+            <button class="btn small secondary" id="hwSavePoliciesBtn" type="button" style="justify-self:start">Save Homework Policies</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><div><h3>Published Homework Feed</h3><div class="muted" id="hwCountLabel">Includes school &amp; admin-synced assignments</div></div></div>
+          <div id="schoolHwList" style="display:grid;gap:10px"><div class="empty">No homework assignments published yet.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SMS BROADCAST CENTER -->
+    <section class="page" id="sms-broadcast">
+      <div class="hero">
+        <div><h1>Bulk SMS Broadcast Center</h1><p>Compose SMS dispatches using real contact directories from your school database and track queued campaigns.</p></div>
+        <div class="hero-actions"><button class="btn secondary" type="button" onclick="loadAccessUgSyncItems(true)">↻ Sync Campaigns</button></div>
+      </div>
+      <div class="notice" id="smsNotice"></div>
+      <div class="studio-split">
+        <div class="card">
+          <div class="card-head"><div><h3>Compose SMS Dispatch</h3><div class="muted" id="smsLiveContactsSummary">Loading live phone contacts…</div></div></div>
+          <form id="schoolSmsForm" style="display:grid;gap:12px">
+            <div class="grid-2" style="gap:10px">
+              <div class="field"><label>Sender ID (Uganda UCC)</label><input value="ACCESSUG" readonly/></div>
+              <div class="field"><label for="smsAudienceSelect">Target Audience</label><select id="smsAudienceSelect"><option value="parents">Student Parents / Guardians</option><option value="teachers">Active Teachers</option><option value="staff">Staff &amp; Co-Administrators</option></select></div>
+            </div>
+            <div class="field"><label for="smsDraftInput">SMS Message (160 chars = 1 segment)</label><textarea id="smsDraftInput" rows="4" required placeholder="Dear Parent, term fees balance reminder for your child…"></textarea><div class="muted" id="smsCharCounter" style="font-size:11.5px;margin-top:4px;font-variant-numeric:tabular-nums">0 / 160 characters · 1 SMS segment</div></div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn" id="smsDispatchBtn" type="submit">Queue &amp; Save SMS Campaign</button>
+              <button class="small-btn" type="button" onclick="applySmsTemplate('Fees Reminder: Dear Parent, please clear outstanding school fees using your child\'s SchoolPay code.')">Fees Reminder</button>
+              <button class="small-btn" type="button" onclick="applySmsTemplate('Report Cards Ready: Official term report cards are now available for viewing and printing.')">Report Ready</button>
+              <button class="small-btn" type="button" onclick="applySmsTemplate('PTA Notice: Parents are invited to our end-of-term PTA assembly this Friday at 9:00 AM.')">PTA Notice</button>
+            </div>
+          </form>
+        </div>
+        <div class="card">
+          <div class="card-head"><div><h3>Queued SMS Campaigns</h3><div class="muted">Saved live to Supabase</div></div></div>
+          <div id="schoolSmsHistoryList" style="display:grid;gap:10px"><div class="empty">No SMS campaigns queued yet.</div></div>
+        </div>
+      </div>
+    </section>
+
     <!-- PROCA OVERVIEW & POLICIES -->
     <section class="page" id="proca-overview">
       <div class="pagecard">
@@ -1311,6 +1921,15 @@ tbody tr:hover td{background:var(--accent-soft)}
 </main>
 </div>
 <!-- MODALS -->
+<div class="modal" id="tutorialPlayerModal">
+  <div class="modalbox" style="width:min(760px,100%)">
+    <div class="modalhead">
+      <div><h3 id="tutModalTitle">Tutorial Walkthrough</h3><p class="muted" id="tutModalSub">Interactive Guide</p></div>
+      <button class="close" type="button" onclick="closeTutorialModal()">×</button>
+    </div>
+    <div id="tutModalBody"></div>
+  </div>
+</div>
 <!-- PROCA ENROLL DEVICE MODAL -->
 <div class="modal" id="procaEnrollModal">
   <div class="modalbox" style="width:min(460px,100%)">
@@ -1466,6 +2085,7 @@ tbody tr:hover td{background:var(--accent-soft)}
 </div>
 <div class="actions"><button class="btn secondary" onclick="$('reportTriageModal').classList.remove('show')" type="button">Cancel</button><button class="btn" type="submit">Update Report Status</button></div>
 </form></div></div>
+<div class="modal" id="schoolUserResetModal"><div class="modal-box" style="max-width:540px"><div class="modal-head"><div><h3>Reset Account Password</h3><div class="muted" id="schoolResetUserLabel">School Account</div></div><button class="close" onclick="closeSchoolResetModal()" type="button">×</button></div><div class="notice" id="schoolResetMessage"></div><div class="profile-grid" style="grid-template-columns:1fr 1fr;margin-top:0;margin-bottom:14px"><div class="profile-item"><small>Verified Email (Preserved)</small><strong id="schoolResetEmailLabel">—</strong></div><div class="profile-item"><small>Account Role &amp; Status</small><strong id="schoolResetStatusLabel">—</strong></div></div><form id="schoolUserResetForm"><div class="field" style="margin-bottom:12px"><label for="schoolResetPasswordInput">New / Temporary Password (min 6 chars)</label><div class="pw-input-row"><input id="schoolResetPasswordInput" minlength="6" placeholder="Enter or generate password" required="" type="text"/><button class="small-btn" onclick="togglePwField('schoolResetPasswordInput',this)" type="button">Hide</button><button class="small-btn" id="schoolResetGenPwBtn" type="button">Generate</button></div><div class="muted" style="margin-top:4px">Updates the user's password immediately while keeping their verified login email intact.</div></div><div class="user-reset-cred-box hidden" id="schoolResetResultBox"></div><div class="actions"><button class="btn secondary" onclick="closeSchoolResetModal()" type="button">Close</button><button class="btn secondary" id="schoolResetSendLinkBtn" type="button">Send Reset Link</button><button class="btn" id="schoolResetConfirmBtn" type="submit">Reset Password</button></div></form></div></div>
 <!-- PROFILE MODAL & CROPPER -->
 <div aria-hidden="true" class="profile-modal" id="profileModal">
 <div class="profile-modal-card">
@@ -2811,8 +3431,13 @@ async function provisionAuthAccount({ email, password, fullName, role, username 
 }
 async function invokeSchoolEdge(name, body) {
   try {
-    const auth = await supabaseClient.auth.getSession();
-    const token = auth.data?.session?.access_token;
+    let auth = await supabaseClient.auth.getSession();
+    let ses = auth.data?.session;
+    if (!ses || (ses.expires_at && ses.expires_at * 1000 < Date.now() + 60000)) {
+      const ref = await supabaseClient.auth.refreshSession().catch(() => null);
+      if (ref?.data?.session) ses = ref.data.session;
+    }
+    const token = ses?.access_token;
     if (token) {
       const resp = await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
         method: "POST",
@@ -2945,6 +3570,11 @@ const titles = {
   "proca-filtering": "PROCA Web Filtering",
   "proca-monitoring": "PROCA Live Telemetry",
   "proca-branding": "PROCA Device Branding",
+  "live-checkin": "Live School Check-In Desk",
+  tutorials: "Tutorial Video Center",
+  "google-classroom": "Google Classroom Sync",
+  "homework-settings": "Homework & Assignments",
+  "sms-broadcast": "SMS Broadcast Center",
   appearance: "Appearance Studio",
   settings: "School Settings & Governance"
 };
@@ -2967,7 +3597,7 @@ function showPage(p) {
   if (p === "qr-management") loadSchoolQr();
   if (p === "behaviour" && window.initBehaviourModule) window.initBehaviourModule();
   if (p === "academics" && window.initAcademicsModule) window.initAcademicsModule();
-  if (p === "report-cards" && window.initSchoolReportCards) window.initSchoolReportCards();
+  if (p === "report-cards") { if (window.initSchoolReportCards) window.initSchoolReportCards(); if (window.loadAccessUgSyncItems) void window.loadAccessUgSyncItems(); }
   if (p === "timetable" && window.initTimetableAndCalendar) window.initTimetableAndCalendar();
   if (p === "reports") renderReports();
   if (p === "inbox") renderInbox();
@@ -2977,6 +3607,21 @@ function showPage(p) {
   if (p === "fees-analysis" && window.accessugLoadSchoolFees) window.accessugLoadSchoolFees("analysis");
   if (p === "fees-codes" && window.renderPaymentCodesRegistry) window.renderPaymentCodesRegistry();
   if (p.startsWith("proca-") && typeof window.renderProcaView === "function") window.renderProcaView(p);
+  if (p === "live-checkin" && typeof window.renderLiveCheckIn === "function") {
+    if (!window._lciKeepStage && typeof lciState !== "undefined") {
+      lciState.stage = "roles";
+      lciState.selected = null;
+      lciState.verified = false;
+      lciState.error = "";
+      lciState.confirmedAt = "";
+    }
+    window._lciKeepStage = false;
+    window.renderLiveCheckIn();
+  }
+  if (p === "tutorials" && typeof window.loadAccessUgSyncItems === "function") void window.loadAccessUgSyncItems();
+  if (p === "google-classroom" && typeof window.renderGoogleClassroomPage === "function") { window.renderGoogleClassroomPage(); if (window.loadAccessUgSyncItems) void window.loadAccessUgSyncItems(); }
+  if (p === "homework-settings" && typeof window.renderHomeworkPage === "function") { window.renderHomeworkPage(); if (window.loadAccessUgSyncItems) void window.loadAccessUgSyncItems(); }
+  if (p === "sms-broadcast" && typeof window.renderSmsBroadcastPage === "function") { window.renderSmsBroadcastPage(); if (window.loadAccessUgSyncItems) void window.loadAccessUgSyncItems(); }
 
   if (p === "settings" && window.loadSchoolSettingsModule) window.loadSchoolSettingsModule();
   if (p === "appearance") applyAppearance(getSavedAppearance());
@@ -3028,6 +3673,8 @@ $("themeQuickToggle")?.addEventListener("click", () => {
 function renderSchoolShell() {
   const nm = school?.name || school?.school_name || localStorage.getItem("accessug_school_name") || "Your School";
   if ($("welcome")) $("welcome").textContent = "Welcome, " + nm;
+  if ($("dashCheckinWelcomeTitle")) $("dashCheckinWelcomeTitle").textContent = "Welcome to " + nm + " — Quick Sign-In & Live Check-In";
+  if ($("lciPageHeading")) $("lciPageHeading").textContent = "Welcome to " + nm + " — Choose Your Role to Check In";
   if ($("schoolSub")) $("schoolSub").textContent = (school?.district ? school.district + " · " : "") + (getSavedAppearance().welcomeSub || UI_DEFAULTS.welcomeSub);
   if ($("topEmail")) $("topEmail").textContent = session?.user?.email || "";
   if ($("topAvatar") && !$("topAvatar").querySelector("img")) $("topAvatar").textContent = initials(nm);
@@ -3099,11 +3746,12 @@ async function loadReports() {
   if (r.error) { reports = []; return; }
   reports = r.data || [];
 }
+const isRegularNotifRow = (n) => n && n.type !== "accessug_sync_item" && !String(n.title || "").startsWith("[ACCESSUG_SYNC:");
 async function loadNotifications() {
   if (window.ACCESSUG_MSG && session?.user?.id) {
     try {
       const readKey = "accessug_school_read_" + String(session.user.id || schoolId || "default");
-      notifications = await window.ACCESSUG_MSG.loadMergedNotifications({
+      const rawNotifs = await window.ACCESSUG_MSG.loadMergedNotifications({
         supabase: supabaseClient,
         userId: session.user.id,
         recipientIds: [session.user.id, schoolId],
@@ -3112,6 +3760,7 @@ async function loadNotifications() {
         limit: 150,
         readStorageKey: readKey
       });
+      notifications = (rawNotifs || []).filter(isRegularNotifRow);
       renderInbox();
       updateUnread();
       return;
@@ -3122,7 +3771,7 @@ async function loadNotifications() {
   const seen = new Set();
   const merged = [];
   const pushRow = (r) => {
-    if (!r) return;
+    if (!isRegularNotifRow(r)) return;
     const key = String(r.id || `${r.title}|${r.created_at}`);
     if (seen.has(key)) return;
     seen.add(key);
@@ -3156,7 +3805,7 @@ async function loadNotifications() {
       }
     } catch {}
   }
-  notifications = merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  notifications = merged.filter(isRegularNotifRow).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
   renderInbox();
   updateUnread();
 }
@@ -3189,14 +3838,34 @@ let armedRemoveTeacherId = null;
 let armedRemoveStudentId = null;
 let armedAuthorizeKey = null;
 
+function parseTeacherSubjects(t) {
+  const seen = new Set();
+  const out = [];
+  String(t?.subject || "").split(/[,;]+/).forEach((part) => {
+    const clean = part.trim();
+    const key = clean.toLowerCase();
+    if (clean && !seen.has(key)) {
+      seen.add(key);
+      out.push(clean);
+    }
+  });
+  return out;
+}
+
 function renderTeachers() {
   const q = ($("teacherSearch")?.value || "").trim().toLowerCase();
-  const rows = teachers.filter((t) => [nameOf(t), t.email, t.username, t.employee_number, t.employee_no].some((v) => String(v || "").toLowerCase().includes(q)));
+  const rows = teachers.filter((t) => [nameOf(t), t.email, t.username, t.employee_number, t.employee_no, t.subject].some((v) => String(v || "").toLowerCase().includes(q)));
   if (!$("teachersTable")) return;
   $("teachersTable").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Teacher</th><th>Login Email</th><th>Employee No.</th><th>Attendance</th><th>Status</th><th>Actions</th></tr></thead><tbody>${rows.map((t) => {
     const a = teacherAtt(t.id);
+    const subjList = parseTeacherSubjects(t);
+    const previewSubj = subjList.slice(0, 2);
+    const extraSubj = subjList.length - previewSubj.length;
+    const subjHtml = subjList.length
+      ? `<div class="teacher-subj-row">${previewSubj.map((s) => `<span class="teacher-subj-chip">${esc(s)}</span>`).join("")}${extraSubj > 0 ? `<button class="teacher-subj-more" type="button" onclick="viewTeacher('${esc(t.id)}')" title="${esc(subjList.join(", "))}">+${extraSubj} more</button>` : ""}</div>`
+      : "";
     return `<tr>
-      <td><strong>${esc(nameOf(t))}</strong><div class="muted">${esc(t.subject || "")}</div></td>
+      <td><strong>${esc(nameOf(t))}</strong>${subjHtml}</td>
       <td class="font-mono">${esc(t.email || t.username || "—")}</td>
       <td class="font-mono">${esc(t.employee_number || t.employee_no || "—")}</td>
       <td>${a ? statusBadge(a.status) : '<span class="badge neutral">Not recorded</span>'}</td>
@@ -3329,7 +3998,8 @@ window.viewTeacher = (id) => {
   const a = teacherAttendance.filter((x) => String(x.teacher_id) === String(id));
   const late = a.filter((x) => String(x.status).toLowerCase() === "late").length;
   const abs = a.filter((x) => ["absent", "authorized_absence"].includes(String(x.status).toLowerCase())).length;
-  openModal("Teacher Preview", `<div class="preview"><h4>${esc(nameOf(t))}</h4><div class="profile-grid"><div class="profile-item"><small>Login Email</small><strong>${esc(t.email || "—")}</strong></div><div class="profile-item"><small>Username</small><strong>${esc(t.username || "—")}</strong></div><div class="profile-item"><small>Employee No.</small><strong>${esc(t.employee_number || t.employee_no || "—")}</strong></div><div class="profile-item"><small>Phone</small><strong>${esc(t.phone || "—")}</strong></div><div class="profile-item"><small>Today's Status</small><strong>${a[0] ? esc(a[0].status) : "No record"}</strong></div><div class="profile-item"><small>Late / Absences</small><strong>${late} late · ${abs} absent</strong></div></div></div>`);
+  const subjList = parseTeacherSubjects(t);
+  openModal("Teacher Preview", `<div class="preview"><h4>${esc(nameOf(t))}</h4><div class="profile-grid"><div class="profile-item"><small>Login Email</small><strong>${esc(t.email || "—")}</strong></div><div class="profile-item"><small>Username</small><strong>${esc(t.username || "—")}</strong></div><div class="profile-item"><small>Employee No.</small><strong>${esc(t.employee_number || t.employee_no || "—")}</strong></div><div class="profile-item"><small>Phone</small><strong>${esc(t.phone || "—")}</strong></div><div class="profile-item"><small>Today's Status</small><strong>${a[0] ? esc(a[0].status) : "No record"}</strong></div><div class="profile-item"><small>Late / Absences</small><strong>${late} late · ${abs} absent</strong></div><div class="profile-item" style="grid-column:1/-1"><small>Subjects Taught (${subjList.length})</small>${subjList.length ? `<div class="teacher-subj-full">${subjList.map((s) => `<span class="badge neutral">${esc(s)}</span>`).join("")}</div>` : "<strong>—</strong>"}</div></div></div>`);
 };
 
 window.viewStudent = (id) => {
@@ -3769,7 +4439,7 @@ async function initialLoad() {
     const auth = await withTimeout(supabaseClient.auth.getSession(), 3500, "Auth check");
     if (auth.error) throw auth.error;
     session = auth.data.session;
-    if (!session?.user) { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); return; }
+    if (!session?.user) { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index-portal.html?portal=school"); return; }
 
     const meta = session.user.user_metadata || {};
     const appMeta = session.user.app_metadata || {};
@@ -3851,6 +4521,8 @@ async function initialLoad() {
     renderStudents();
     renderTeacherAttendance();
     renderStudentAttendance();
+    if (typeof window.loadProfilesAvatarIndex === "function") void window.loadProfilesAvatarIndex().then(() => { if (typeof window.renderLiveCheckIn === "function") window.renderLiveCheckIn(); if (typeof window.renderReportCardPreview === "function") window.renderReportCardPreview(); });
+    if (typeof window.loadAccessUgSyncItems === "function") void window.loadAccessUgSyncItems();
     if (typeof window.renderReports === "function") window.renderReports();
     if (typeof window.renderInbox === "function") window.renderInbox();
     if (typeof window.initBehaviourModule === "function") window.initBehaviourModule();
@@ -3869,8 +4541,8 @@ $("refreshStudentAttendance")?.addEventListener("click", async () => { await loa
 $("teacherSearch")?.addEventListener("input", renderTeachers);
 $("studentSearch")?.addEventListener("input", renderStudents);
 $("studentClassFilter")?.addEventListener("change", renderStudents);
-$("logoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); }; });
-supabaseClient.auth.onAuthStateChange((e) => { if (e === "SIGNED_OUT") { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); } });
+$("logoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index-portal.html?portal=school"); }; });
+supabaseClient.auth.onAuthStateChange((e) => { if (e === "SIGNED_OUT") { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index-portal.html?portal=school"); } });
 
 window.addEventListener("DOMContentLoaded", initialLoad);
 
@@ -4735,68 +5407,139 @@ async function saveOfficialReportTemplate(type) {
 $("assessmentTemplateSave")?.addEventListener("click", () => saveOfficialReportTemplate("assessment"));
 $("endTemplateSave")?.addEventListener("click", () => saveOfficialReportTemplate("end_term"));
 
+function getRcSchoolLogo() {
+  return readSchoolJson("accessug_rc_school_logo", "") || school?.logo_url || "";
+}
+function getRcHeadSignature() {
+  return readSchoolJson("accessug_rc_head_sig", "") || "";
+}
+function getRcBrandMeta() {
+  return readSchoolJson("accessug_rc_brand_meta", {
+    headName: school?.head_teacher ? school.head_teacher + " — Headteacher" : "Headteacher / Principal",
+    motto: "Excellence Through Discipline & Knowledge",
+    followSchoolColor: true
+  });
+}
+
 function defaultCustomTemplates() {
   const sName = school?.name || "ACCESS UG School";
-  return [
-    {
-      id: "tpl_classic_ug",
-      school_id: schoolId,
-      name: "Standard Term Report Card",
-      motto: "Excellence Through Discipline & Knowledge",
-      accent: "#0b3d82",
-      grade_bands: "A:80-100, B:65-79, C:50-64, D:35-49, E:0-34",
-      sign_off: "Head Teacher / Principal",
-      show_rank: true,
-      show_attendance: true,
-      show_behaviour: true,
-      is_default: true,
-      header_title: sName
-    },
-    {
-      id: "tpl_midterm_summary",
-      school_id: schoolId,
-      name: "Mid-Term Assessment Slip",
-      motto: "Continuous Competency Tracking",
-      accent: "#0f9f6e",
-      grade_bands: "A:80-100, B:65-79, C:50-64, D:35-49, E:0-34",
-      sign_off: "Director of Studies",
-      show_rank: false,
-      show_attendance: true,
-      show_behaviour: true,
-      is_default: false,
-      header_title: sName
-    }
+  const specs = [
+    { id: "tpl_royal_crest", name: "01. Royal Navy Crest", accent: "#0b3d82", style: "crest", motto: "Excellence Through Discipline & Knowledge", sign_off: "Head Teacher / Principal" },
+    { id: "tpl_emerald_honors", name: "02. Emerald Academic Honors", accent: "#0f766e", style: "split", motto: "Knowledge, Integrity & Service", sign_off: "Principal & Director of Studies" },
+    { id: "tpl_editorial_gold", name: "03. Editorial Gold Seal", accent: "#9a6700", style: "seal", motto: "Strive for the Highest Standards", sign_off: "Headteacher" },
+    { id: "tpl_cobalt_split", name: "04. Executive Cobalt Split", accent: "#1d4ed8", style: "banner", motto: "Building Tomorrow's Leaders Today", sign_off: "School Administrator & Headteacher" },
+    { id: "tpl_crimson_ribbon", name: "05. Crimson Scholarly Ribbon", accent: "#991b1b", style: "ribbon", motto: "Honour, Wisdom & Diligence", sign_off: "Head Teacher" },
+    { id: "tpl_swiss_grid", name: "06. Minimalist Swiss Grid", accent: "#1e293b", style: "minimal", motto: "Precision Academic Reporting", sign_off: "Academic Registrar & Headteacher" },
+    { id: "tpl_botanical_forest", name: "07. Botanical Forest Ledger", accent: "#166534", style: "classic", motto: "Rooted in Character & Learning", sign_off: "Principal" },
+    { id: "tpl_indigo_stem", name: "08. Indigo STEM Precision", accent: "#4338ca", style: "modern", motto: "Innovation, Inquiry & Discovery", sign_off: "Head of Academics" },
+    { id: "tpl_bronze_heritage", name: "09. Bronze Heritage Transcript", accent: "#7c2d12", style: "frame", motto: "Tradition of Academic Distinction", sign_off: "Head Teacher" },
+    { id: "tpl_monochrome_print", name: "10. Monochrome Laser Formal", accent: "#0f172a", style: "mono", motto: "Official Term Academic Transcript", sign_off: "Head Teacher" }
   ];
+  return specs.map((sp, i) => ({
+    id: sp.id,
+    school_id: schoolId,
+    name: sp.name,
+    motto: sp.motto,
+    accent: sp.accent,
+    layout_style: sp.style,
+    grade_bands: "A:80-100, B:65-79, C:50-64, D:35-49, E:0-34",
+    sign_off: sp.sign_off,
+    show_rank: true,
+    show_attendance: true,
+    show_behaviour: false,
+    is_default: i === 0,
+    header_title: sName
+  }));
+}
+
+function readImageAsDataUrl(file, maxDim = 420) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read image file."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => resolve(String(reader.result));
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width || 1, img.height || 1));
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL("image/png"));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function refreshRcBrandPreviews() {
+  const logo = getRcSchoolLogo();
+  const sig = getRcHeadSignature();
+  const meta = getRcBrandMeta();
+  if ($("rcLogoPreviewBox")) {
+    $("rcLogoPreviewBox").innerHTML = logo ? `<img src="${logo}" alt="School Logo"/>` : "No Logo";
+  }
+  if ($("rcSigPreviewBox")) {
+    $("rcSigPreviewBox").innerHTML = sig ? `<img src="${sig}" alt="Signature"/>` : "No Sig";
+  }
+  if ($("rcHeadNameInput") && !$("rcHeadNameInput").value) $("rcHeadNameInput").value = meta.headName || "";
+  if ($("rcBrandMottoInput") && !$("rcBrandMottoInput").value) $("rcBrandMottoInput").value = meta.motto || "";
+  if ($("rcFollowSchoolColor")) $("rcFollowSchoolColor").checked = meta.followSchoolColor !== false;
 }
 
 async function initSchoolReportCards() {
-  if (!schoolId) return;
-  await loadOfficialReportTemplates();
-  await loadAcademicTerms();
-  try {
-    const r = await supabaseClient.from("report_card_templates").select("*").eq("school_id", schoolId);
-    if (!r.error && Array.isArray(r.data) && r.data.length) reportTemplatesCache = r.data;
-  } catch {}
-  if (!reportTemplatesCache.length) {
-    reportTemplatesCache = readSchoolJson("accessug_report_templates", defaultCustomTemplates());
-    writeSchoolJson("accessug_report_templates", reportTemplatesCache);
-  }
+  const base10 = defaultCustomTemplates();
+  const savedTpls = readSchoolJson("accessug_report_templates", []);
+  reportTemplatesCache = Array.isArray(savedTpls) && savedTpls.length ? savedTpls : [...base10];
+  const existingIds = new Set(reportTemplatesCache.map((t) => String(t.id)));
+  base10.forEach((b) => {
+    if (!existingIds.has(b.id)) reportTemplatesCache.push(b);
+  });
+  reportTemplatesCache.forEach((t) => { t.show_behaviour = false; });
+  writeSchoolJson("accessug_report_templates", reportTemplatesCache);
+
+  refreshRcBrandPreviews();
   renderReportTemplatesGrid();
   syncPreviewDropdowns();
   renderReportCardPreview();
+
+  if (!schoolId) return;
+  try {
+    await Promise.allSettled([
+      loadOfficialReportTemplates(),
+      loadAcademicTerms(),
+      supabaseClient.from("report_card_templates").select("*").eq("school_id", schoolId).then((r) => {
+        if (!r.error && Array.isArray(r.data) && r.data.length) {
+          const dbIds = new Set(r.data.map((t) => String(t.id)));
+          const merged = [...r.data];
+          base10.forEach((b) => { if (!dbIds.has(b.id)) merged.push(b); });
+          merged.forEach((t) => { t.show_behaviour = false; });
+          reportTemplatesCache = merged;
+          writeSchoolJson("accessug_report_templates", reportTemplatesCache);
+        }
+      })
+    ]);
+    refreshRcBrandPreviews();
+    renderReportTemplatesGrid();
+    syncPreviewDropdowns();
+    renderReportCardPreview();
+  } catch {}
 }
 window.initSchoolReportCards = initSchoolReportCards;
 
 function renderReportTemplatesGrid() {
   const grid = $("rcTemplatesGrid");
   if (!grid) return;
-  grid.innerHTML = reportTemplatesCache.map((tpl) => `<div class="card" style="border-top:4px solid ${esc(tpl.accent || "#0b3d82")}">
+  const activeId = $("rcTemplateSelect")?.value || (reportTemplatesCache.find((t) => t.is_default) || reportTemplatesCache[0])?.id;
+  grid.innerHTML = reportTemplatesCache.map((tpl) => `<div class="card rc-tpl-card ${String(tpl.id) === String(activeId) ? "active" : ""}" style="border-top:4px solid ${esc(tpl.accent || "#0b3d82")}" onclick="selectPreviewReportTemplate('${esc(tpl.id)}')">
     <div class="card-head" style="margin-bottom:8px">
-      <div><strong>${esc(tpl.name)}</strong><div class="muted">${esc(tpl.motto || "")}</div></div>
-      ${tpl.is_default ? '<span class="badge present">Active Default</span>' : '<span class="badge neutral">Template</span>'}
+      <div><strong>${esc(tpl.name)}</strong><div class="muted" style="font-size:11.5px">${esc(tpl.motto || "")}</div></div>
+      ${tpl.is_default ? '<span class="badge present">Default</span>' : '<span class="badge neutral">Select</span>'}
     </div>
-    <p class="muted" style="font-size:12px;margin-bottom:10px">Sign-off: <b>${esc(tpl.sign_off || "Head Teacher")}</b> · Rank: ${tpl.show_rank ? "Yes" : "No"} · Conduct: ${tpl.show_behaviour ? "Yes" : "No"}</p>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
+    <p class="muted" style="font-size:11.5px;margin-bottom:8px">Sign-off: <b>${esc(tpl.sign_off || "Head Teacher")}</b> · Style: ${esc(tpl.layout_style || "classic")}</p>
+    <div style="display:flex;gap:6px;flex-wrap:wrap" onclick="event.stopPropagation()">
       ${tpl.is_default ? "" : `<button class="btn small secondary" type="button" onclick="setDefaultReportTemplate('${esc(tpl.id)}')">Set Default</button>`}
       <button class="btn small secondary" type="button" onclick="openReportTemplateModal('${esc(tpl.id)}')">Edit</button>
       <button class="btn small secondary" type="button" onclick="duplicateReportTemplate('${esc(tpl.id)}')">Duplicate</button>
@@ -4805,15 +5548,148 @@ function renderReportTemplatesGrid() {
   </div>`).join("");
 }
 
+window.selectPreviewReportTemplate = (id) => {
+  if ($("rcTemplateSelect")) $("rcTemplateSelect").value = id;
+  renderReportTemplatesGrid();
+  renderReportCardPreview();
+};
+
 function syncPreviewDropdowns() {
   if ($("rcTemplateSelect")) {
+    const prev = $("rcTemplateSelect").value;
     $("rcTemplateSelect").innerHTML = reportTemplatesCache.map((t) => `<option value="${esc(t.id)}" ${t.is_default ? "selected" : ""}>${esc(t.name)}</option>`).join("");
+    if (prev && reportTemplatesCache.some((t) => String(t.id) === String(prev))) $("rcTemplateSelect").value = prev;
   }
+  const classLevels = [...new Set(students.map((s) => String(s.class_level || "").trim()).filter(Boolean))].sort();
+  if ($("rcPrintClassFilter")) {
+    const prevCls = $("rcPrintClassFilter").value;
+    $("rcPrintClassFilter").innerHTML = '<option value="">All Available Classes (' + students.length + ')</option>' +
+      classLevels.map((c) => {
+        const cnt = students.filter((s) => String(s.class_level || "").trim() === c).length;
+        return `<option value="${esc(c)}">${esc(c)} (${cnt} learners)</option>`;
+      }).join("");
+    if (prevCls && classLevels.includes(prevCls)) $("rcPrintClassFilter").value = prevCls;
+  }
+  const clsFilter = $("rcPrintClassFilter")?.value || "";
+  const list = clsFilter ? students.filter((s) => String(s.class_level || "").trim() === clsFilter) : students;
   if ($("rcStudentSelect")) {
-    $("rcStudentSelect").innerHTML = students.length
-      ? students.map((s) => `<option value="${esc(s.id)}">${esc(nameOf(s))} — ${esc(s.class_level || "No class")}</option>`).join("")
-      : '<option value="">No students registered yet</option>';
+    $("rcStudentSelect").innerHTML = list.length
+      ? list.map((s) => `<option value="${esc(s.id)}">${esc(nameOf(s))} — ${esc(s.class_level || "No class")}</option>`).join("")
+      : '<option value="">No students in selected class</option>';
   }
+}
+
+function buildReportCardHtml(st, tpl, term, sc) {
+  const meta = getRcBrandMeta();
+  const logo = getRcSchoolLogo();
+  const sig = getRcHeadSignature();
+  const schoolBrandAccent = getSavedAppearance().primary || "#0b3d82";
+  const accent = meta.followSchoolColor !== false ? schoolBrandAccent : (tpl.accent || "#0b3d82");
+  const isMono = tpl.layout_style === "mono";
+  const headerAccent = isMono ? "#0f172a" : accent;
+  const subs = schoolSubjectsCatalog.length ? schoolSubjectsCatalog.slice(0, 10) : [
+    { name: "Mathematics" }, { name: "English Language" }, { name: "Biology" },
+    { name: "Chemistry" }, { name: "Physics" }, { name: "History" },
+    { name: "Geography" }, { name: "ICT / Computer Studies" }
+  ];
+  const stuResults = st ? examResultsCache.filter((r) => String(r.student_id) === String(st.id)) : [];
+  const stuAttList = st ? studentAttendance.filter((a) => String(a.student_id) === String(st.id)) : [];
+  const attStatus = stuAttList[0]?.status || "Present";
+
+  let totalScore = 0;
+  const rowsHtml = subs.map((sub, i) => {
+    const hit = stuResults.find((r) => String(r.subject_id) === String(sub.id) || String(r.subject_name || "").toLowerCase() === String(sub.name || "").toLowerCase());
+    const score = hit
+      ? Math.round((Number(hit.score ?? hit.marks ?? 0) / Math.max(1, Number(hit.max_score || 100))) * sc.maxAssessment)
+      : Math.max(55, Math.min(sc.maxAssessment, Math.round((0.72 + ((i % 4) * 0.06)) * sc.maxAssessment)));
+    const bot = hit?.bot_score ?? Math.max(40, Math.round(score * 0.94));
+    const mid = hit?.mid_score ?? Math.max(45, Math.round(score * 0.98));
+    const eot = hit?.eot_score ?? score;
+    totalScore += score;
+    const g = hit?.grade || scoreToGrade(score, sc.maxAssessment);
+    const rem = hit?.remarks || (g === "A" ? "Distinction" : g === "B" ? "Very Good" : g === "C" ? "Good Effort" : "Needs Support");
+    return `<tr>
+      <td style="padding:7px 9px;border:1px solid #cbd5e1"><strong>${esc(sub.name || sub.subject_name)}</strong></td>
+      <td style="text-align:center;padding:7px 8px;border:1px solid #cbd5e1">${bot}</td>
+      <td style="text-align:center;padding:7px 8px;border:1px solid #cbd5e1">${mid}</td>
+      <td style="text-align:center;padding:7px 8px;border:1px solid #cbd5e1">${eot}</td>
+      <td style="text-align:center;padding:7px 8px;border:1px solid #cbd5e1"><strong>${score} / ${sc.maxAssessment}</strong></td>
+      <td style="text-align:center;padding:7px 8px;border:1px solid #cbd5e1"><strong style="color:${esc(headerAccent)}">${esc(g)}</strong></td>
+      <td style="padding:7px 9px;border:1px solid #cbd5e1">${esc(rem)}</td>
+    </tr>`;
+  }).join("");
+
+  const avgPct = subs.length ? (totalScore / (subs.length * Math.max(1, sc.maxAssessment)) * 100).toFixed(1) : "0.0";
+  const overallGrade = scoreToGrade(Number(avgPct), 100);
+  const sName = school?.name || tpl.header_title || "ACCESS UG School";
+  const headDisplay = meta.headName || tpl.sign_off || "Head Teacher / Principal";
+  const mottoDisplay = meta.motto || tpl.motto || "Excellence Through Discipline & Knowledge";
+  const stuName = st ? nameOf(st) : "Sample Learner";
+  const stuPhoto = st && typeof window.resolveLiveAvatarUrl === "function" ? window.resolveLiveAvatarUrl(st, "student") : "";
+
+  return `
+  <div class="rc-sheet-frame" style="border-color:${esc(headerAccent)}">
+    <div class="rc-sheet-header" style="background:${isMono ? "#f8fafc" : headerAccent};color:${isMono ? "#0f172a" : "#fff"};border:${isMono ? "1.5px solid #0f172a" : "0"}">
+      <div class="rc-sheet-brand">
+        ${logo ? `<img class="rc-logo-img" src="${logo}" alt="School Logo"/>` : `<div style="width:54px;height:54px;border-radius:10px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-weight:900;font-size:18px;flex:none">${esc(initials(sName))}</div>`}
+        <div style="min-width:0">
+          <h2 style="margin:0;font-size:18px;letter-spacing:.01em;line-height:1.2">${esc(sName)}</h2>
+          <div style="font-size:11.5px;opacity:.92;margin-top:2px">${esc(mottoDisplay)} · ${esc(school?.district || "Uganda")}</div>
+          ${school?.phone || school?.email ? `<div style="font-size:11px;opacity:.85;margin-top:1px">${esc([school?.phone, school?.email].filter(Boolean).join(" · "))}</div>` : ""}
+        </div>
+      </div>
+      <div class="rc-sheet-meta-right">
+        <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.04em">Official Academic Report</div>
+        <div style="font-size:12px;opacity:.94;margin-top:2px">${esc(term ? term.name + " (" + term.academic_year + ")" : "Current Academic Term")}</div>
+        <div style="font-size:11px;opacity:.82;margin-top:2px">${esc(tpl.name)}</div>
+      </div>
+    </div>
+
+    <div class="rc-stu-card">
+      <div class="rc-stu-photo">
+        ${stuPhoto
+          ? `<img src="${esc(stuPhoto)}" alt="${esc(stuName)}" referrerpolicy="no-referrer" onerror="this.remove();"/>`
+          : esc(initials(stuName))}
+      </div>
+      <div class="rc-stu-grid">
+        <div><strong>Student Name:</strong> ${esc(stuName)}</div>
+        <div><strong>Student No.:</strong> ${esc(st?.student_number || "STU-SAMPLE")}</div>
+        <div><strong>Class / Stream:</strong> ${esc(st?.class_level || "S1")}</div>
+        <div><strong>Payment Code:</strong> ${esc(st ? getStudentPaymentCode(st) : "AUG-SCH-001")}</div>
+        <div><strong>Total / Average:</strong> ${totalScore} (${avgPct}% · Grade ${esc(overallGrade)})</div>
+        ${tpl.show_attendance !== false ? `<div><strong>Attendance:</strong> ${esc(attStatus)}</div>` : "<div><strong>Term Year:</strong> " + new Date().getFullYear() + "</div>"}
+      </div>
+    </div>
+
+    <div class="rc-table-scroll">
+      <table>
+        <thead>
+          <tr style="background:#f1f5f9">
+            <th style="text-align:left;padding:8px 9px;border:1px solid #cbd5e1;color:#0f172a">Subject</th>
+            <th style="text-align:center;padding:8px;border:1px solid #cbd5e1;color:#0f172a">BOT</th>
+            <th style="text-align:center;padding:8px;border:1px solid #cbd5e1;color:#0f172a">MID</th>
+            <th style="text-align:center;padding:8px;border:1px solid #cbd5e1;color:#0f172a">EOT</th>
+            <th style="text-align:center;padding:8px;border:1px solid #cbd5e1;color:#0f172a">Avg (/ ${sc.maxAssessment})</th>
+            <th style="text-align:center;padding:8px;border:1px solid #cbd5e1;color:#0f172a">Grade</th>
+            <th style="text-align:left;padding:8px 9px;border:1px solid #cbd5e1;color:#0f172a">Teacher Remarks</th>
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>
+
+    <div class="rc-sig-footer">
+      <div>
+        <div style="margin-bottom:6px"><strong>Class Teacher Remark:</strong> Consistent academic focus and steady progress across assessed papers.</div>
+        <div><strong>Grading Scale:</strong> ${esc(tpl.grade_bands || "A:80-100, B:65-79, C:50-64, D:35-49, E:0-34")}</div>
+      </div>
+      <div style="text-align:center">
+        ${sig ? `<img class="rc-sig-img" src="${sig}" alt="Headteacher Signature"/>` : '<div style="height:34px"></div>'}
+        <div style="border-top:1px solid #334155;padding-top:4px;font-weight:700">${esc(headDisplay)}</div>
+        <div style="font-size:10.5px;color:#64748b">Official School Stamp &amp; Signature</div>
+      </div>
+    </div>
+  </div>`;
 }
 
 function renderReportCardPreview() {
@@ -4823,51 +5699,89 @@ function renderReportCardPreview() {
   const st = students.find((s) => String(s.id) === String($("rcStudentSelect")?.value)) || students[0];
   const term = academicTermsCache.find((t) => String(t.id) === String($("rcTermSelect")?.value)) || academicTermsCache[0];
   const sc = getActiveScale();
-
-  const stuRecs = st ? behaviour.filter((b) => String(b.student_id) === String(st.id)) : [];
-  const behAvg = stuRecs.length ? Math.round(stuRecs.reduce((a, b) => a + Number(b.score ?? b.points ?? 0), 0) / stuRecs.length) : Math.round(sc.maxBehaviour * 0.85);
-  const behGrade = scoreToGrade(behAvg, sc.maxBehaviour);
-  const stuAttList = st ? studentAttendance.filter((a) => String(a.student_id) === String(st.id)) : [];
-  const attStatus = stuAttList[0]?.status || "present";
-
-  const subs = schoolSubjectsCatalog.length ? schoolSubjectsCatalog.slice(0, 8) : [
-    { name: "Mathematics" }, { name: "English Language" }, { name: "Biology" }, { name: "Chemistry" }, { name: "Physics" }, { name: "History" }
-  ];
-  const stuResults = st ? examResultsCache.filter((r) => String(r.student_id) === String(st.id)) : [];
-
-  sheet.innerHTML = `<div class="rc-sheet-head" style="border-bottom-color:${esc(tpl.accent || "#0b3d82")}">
-    <div>
-      <h2 style="margin:0;color:${esc(tpl.accent || "#0b3d82")}">${esc(school?.name || tpl.header_title || "ACCESS UG School")}</h2>
-      <div style="font-size:12px;color:#475569;margin-top:3px">${esc(tpl.motto || "")} · ${esc(school?.district || "Uganda")}</div>
-    </div>
-    <div style="text-align:right">
-      <strong style="font-size:15px">${esc(tpl.name)}</strong>
-      <div style="font-size:12px;color:#475569">${esc(term ? `${term.name} (${term.academic_year})` : "Current Academic Term")}</div>
-    </div>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:14px;font-size:12.5px">
-    <div><strong>Learner:</strong> ${esc(st ? nameOf(st) : "Sample Learner")}</div>
-    <div><strong>Student No:</strong> ${esc(st?.student_number || "STU-SAMPLE")}</div>
-    <div><strong>Class / Stream:</strong> ${esc(st?.class_level || "S.1 North")}</div>
-    <div><strong>Payment Code:</strong> ${esc(st ? getStudentPaymentCode(st) : "AUG-SCH-001")}</div>
-    ${tpl.show_attendance ? `<div><strong>Today's Attendance:</strong> ${esc(attStatus)}</div>` : ""}
-    ${tpl.show_behaviour ? `<div><strong>Conduct Score:</strong> ${behAvg}/${sc.maxBehaviour} (Grade ${esc(behGrade)})</div>` : ""}
-  </div>
-  <table style="min-width:0;width:100%;border:1px solid #cbd5e1;margin-bottom:14px">
-    <thead><tr><th>Subject</th><th>Score (/ ${sc.maxAssessment})</th><th>Grade</th><th>Teacher Remark</th></tr></thead>
-    <tbody>${subs.map((sub, i) => {
-      const hit = stuResults.find((r) => String(r.subject_id) === String(sub.id) || String(r.subject_name || "").toLowerCase() === String(sub.name || "").toLowerCase());
-      const score = hit ? Math.round((Number(hit.score ?? hit.marks ?? 0) / Math.max(1, Number(hit.max_score || 100))) * sc.maxAssessment) : Math.max(55, Math.min(sc.maxAssessment, Math.round((0.72 + ((i % 4) * 0.06)) * sc.maxAssessment)));
-      const g = scoreToGrade(score, sc.maxAssessment);
-      const rem = g === "A" ? "Distinction — Exemplary" : g === "B" ? "Very Good" : g === "C" ? "Good Effort" : "Needs Support";
-      return `<tr><td><strong>${esc(sub.name || sub.subject_name)}</strong></td><td>${score} / ${sc.maxAssessment}</td><td><strong>${esc(g)}</strong></td><td>${rem}</td></tr>`;
-    }).join("")}</tbody>
-  </table>
-  <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding-top:12px;border-top:1px dashed #cbd5e1;font-size:12px">
-    <div><strong>Grade Key:</strong> ${esc(tpl.grade_bands || "A:80-100, B:65-79, C:50-64, D:35-49, E:0-34")}</div>
-    <div style="text-align:right"><div style="border-top:1px solid #334155;padding-top:4px;min-width:170px"><strong>${esc(tpl.sign_off || "Head Teacher")}</strong></div></div>
-  </div>`;
+  sheet.innerHTML = buildReportCardHtml(st, tpl, term, sc);
 }
+
+function triggerBatchPrint(scope) {
+  const batchRoot = $("rcBatchPrintArea");
+  if (!batchRoot) { window.print(); return; }
+  const tpl = reportTemplatesCache.find((t) => String(t.id) === String($("rcTemplateSelect")?.value)) || reportTemplatesCache[0] || defaultCustomTemplates()[0];
+  const term = academicTermsCache.find((t) => String(t.id) === String($("rcTermSelect")?.value)) || academicTermsCache[0];
+  const sc = getActiveScale();
+  const cls = $("rcPrintClassFilter")?.value || "";
+  const list = scope === "class" && cls
+    ? students.filter((s) => String(s.class_level || "").trim() === cls)
+    : students;
+  if (!list.length) {
+    toast("No students available to print in this selection.");
+    return;
+  }
+  batchRoot.innerHTML = list.map((st) => `<div class="rc-batch-page">${buildReportCardHtml(st, tpl, term, sc)}</div>`).join("");
+  document.body.classList.add("printing-rc-batch");
+  const cleanup = () => {
+    document.body.classList.remove("printing-rc-batch");
+    batchRoot.innerHTML = "";
+    window.removeEventListener("afterprint", cleanup);
+  };
+  window.addEventListener("afterprint", cleanup);
+  setTimeout(() => window.print(), 80);
+  logAudit("Report Cards Batch Print", scope === "class" && cls ? cls : "All Classes", `${list.length} report(s) queued for printer`);
+}
+
+$("rcLogoFile")?.addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  try {
+    const dataUrl = await readImageAsDataUrl(f, 360);
+    writeSchoolJson("accessug_rc_school_logo", dataUrl);
+    refreshRcBrandPreviews();
+    renderReportCardPreview();
+    toast("School logo uploaded & applied to report cards.");
+  } catch (err) { toast(safeError(err)); }
+});
+$("rcClearLogoBtn")?.addEventListener("click", () => {
+  writeSchoolJson("accessug_rc_school_logo", "");
+  if ($("rcLogoFile")) $("rcLogoFile").value = "";
+  refreshRcBrandPreviews();
+  renderReportCardPreview();
+  toast("School logo removed.");
+});
+$("rcSigFile")?.addEventListener("change", async (e) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  try {
+    const dataUrl = await readImageAsDataUrl(f, 360);
+    writeSchoolJson("accessug_rc_head_sig", dataUrl);
+    refreshRcBrandPreviews();
+    renderReportCardPreview();
+    toast("Headteacher signature uploaded.");
+  } catch (err) { toast(safeError(err)); }
+});
+$("rcClearSigBtn")?.addEventListener("click", () => {
+  writeSchoolJson("accessug_rc_head_sig", "");
+  if ($("rcSigFile")) $("rcSigFile").value = "";
+  refreshRcBrandPreviews();
+  renderReportCardPreview();
+  toast("Headteacher signature removed.");
+});
+["rcHeadNameInput", "rcBrandMottoInput", "rcFollowSchoolColor"].forEach((id) => {
+  $(id)?.addEventListener("input", () => {
+    writeSchoolJson("accessug_rc_brand_meta", {
+      headName: $("rcHeadNameInput")?.value.trim() || "Headteacher / Principal",
+      motto: $("rcBrandMottoInput")?.value.trim() || "Excellence Through Discipline & Knowledge",
+      followSchoolColor: $("rcFollowSchoolColor") ? $("rcFollowSchoolColor").checked : true
+    });
+    renderReportCardPreview();
+  });
+  $(id)?.addEventListener("change", () => {
+    writeSchoolJson("accessug_rc_brand_meta", {
+      headName: $("rcHeadNameInput")?.value.trim() || "Headteacher / Principal",
+      motto: $("rcBrandMottoInput")?.value.trim() || "Excellence Through Discipline & Knowledge",
+      followSchoolColor: $("rcFollowSchoolColor") ? $("rcFollowSchoolColor").checked : true
+    });
+    renderReportCardPreview();
+  });
+});
 
 window.openReportTemplateModal = (id = "") => {
   clearMessage("reportTemplateMessage");
@@ -4882,14 +5796,14 @@ window.openReportTemplateModal = (id = "") => {
       if ($("rcTplSignOff")) $("rcTplSignOff").value = t.sign_off || "";
       if ($("rcTplBands")) $("rcTplBands").value = t.grade_bands || "";
       if ($("rcTplShowRank")) $("rcTplShowRank").checked = !!t.show_rank;
-      if ($("rcTplShowAtt")) $("rcTplShowAtt").checked = !!t.show_attendance;
-      if ($("rcTplShowBeh")) $("rcTplShowBeh").checked = !!t.show_behaviour;
+      if ($("rcTplShowAtt")) $("rcTplShowAtt").checked = t.show_attendance !== false;
+      if ($("rcTplShowBeh")) $("rcTplShowBeh").checked = false;
     }
   } else {
     if ($("rcTplAccent")) $("rcTplAccent").value = "#0b3d82";
     if ($("rcTplBands")) $("rcTplBands").value = "A:80-100, B:65-79, C:50-64, D:35-49, E:0-34";
     if ($("rcTplShowAtt")) $("rcTplShowAtt").checked = true;
-    if ($("rcTplShowBeh")) $("rcTplShowBeh").checked = true;
+    if ($("rcTplShowBeh")) $("rcTplShowBeh").checked = false;
   }
   $("reportTemplateModal")?.classList.add("show");
 };
@@ -4908,7 +5822,7 @@ $("reportTemplateForm")?.addEventListener("submit", async (e) => {
     grade_bands: $("rcTplBands").value.trim(),
     show_rank: !!$("rcTplShowRank")?.checked,
     show_attendance: !!$("rcTplShowAtt")?.checked,
-    show_behaviour: !!$("rcTplShowBeh")?.checked,
+    show_behaviour: false,
     is_default: id ? !!reportTemplatesCache.find((x) => String(x.id) === String(id))?.is_default : false
   };
   const idx = reportTemplatesCache.findIndex((x) => String(x.id) === String(tpl.id));
@@ -4959,10 +5873,14 @@ window.deleteReportTemplate = (id) => {
 };
 
 $("addReportTemplateBtn")?.addEventListener("click", () => window.openReportTemplateModal());
-$("rcTemplateSelect")?.addEventListener("change", renderReportCardPreview);
+$("rcPrintClassFilter")?.addEventListener("change", () => { syncPreviewDropdowns(); renderReportCardPreview(); });
+$("rcTemplateSelect")?.addEventListener("change", () => { renderReportTemplatesGrid(); renderReportCardPreview(); });
 $("rcStudentSelect")?.addEventListener("change", renderReportCardPreview);
 $("rcTermSelect")?.addEventListener("change", renderReportCardPreview);
-$("printReportCardBtn")?.addEventListener("click", () => window.print());
+$("printReportCardBtn")?.addEventListener("click", () => { document.body.classList.remove("printing-rc-batch"); window.print(); });
+$("connectPrinterBtn")?.addEventListener("click", () => { document.body.classList.remove("printing-rc-batch"); window.print(); });
+$("printClassReportsBtn")?.addEventListener("click", () => triggerBatchPrint("class"));
+$("printAllReportsBtn")?.addEventListener("click", () => triggerBatchPrint("all"));
 
 /* =========================
    6. TIMETABLE STUDIO & OFFICIAL SCHOOL CALENDAR
@@ -5583,35 +6501,271 @@ function avatarHTML(u) {
   return `<div class="avatar-circle">${esc(initials(u?.full_name || u?.email || "U"))}</div>`;
 }
 
+let renderedSchoolUsers = [];
+let activeSchoolResetUser = null;
+
+function getSchoolResetRedirectUrl() {
+  try {
+    return new URL("./reset-password.html", location.href).href;
+  } catch {
+    return "";
+  }
+}
+
 function renderSchoolUsers() {
   const el = $("schoolUsersList");
   if (!el) return;
   const q = ($("userSearch")?.value || "").trim().toLowerCase();
-  const rows = schoolDirectory.filter((u) => u.group !== "admin" && [u.full_name, u.username, u.email, u.role].some((v) => String(v || "").toLowerCase().includes(q)));
-  el.innerHTML = rows.length ? rows.map((u) => `<div class="directory-row">
-    ${avatarHTML(u)}
-    <div style="flex:1;min-width:0"><strong>${esc(u.full_name || u.username || "School user")}</strong><small>${esc(u.email || u.username || "No email")} · ${esc(u.roleLabel || u.role || "user")}${u.id ? "" : " · Pending Login Link"}</small></div>
-    <div style="display:flex;gap:6px">
-      ${u.id ? `<button class="btn small secondary" type="button" onclick="replyFromInbox('${esc(u.id)}')">Message</button>` : ""}
-      ${u.email ? `<button class="btn small secondary" type="button" onclick="resetSchoolUser('${esc(u.id || u.email)}')">Send reset email</button>` : ""}
-    </div>
-  </div>`).join("") : '<div class="empty">No user accounts found in this school directory yet.</div>';
+  const roleFilter = ($("userRoleFilter")?.value || "").trim().toLowerCase();
+  const rows = schoolDirectory.filter((u) => {
+    if (u.group === "admin") return false;
+    if (roleFilter && String(u.group || classifySchoolGroup(u.role) || "").toLowerCase() !== roleFilter && String(u.role || "").toLowerCase() !== roleFilter) {
+      return false;
+    }
+    return [u.full_name, u.username, u.email, u.role, u.roleLabel].some((v) => String(v || "").toLowerCase().includes(q));
+  });
+  renderedSchoolUsers = rows;
+  el.innerHTML = rows.length ? rows.map((u, idx) => {
+    const hasLogin = Boolean(u.id && UUID_RE.test(u.id));
+    const hasEmail = Boolean(String(u.email || "").trim());
+    const roleText = u.roleLabel || u.role || "user";
+    const metaParts = [
+      u.email || u.username || "No email",
+      roleText,
+      hasLogin ? "Active Login" : "Pending Login Link"
+    ];
+    return `<div class="user-dir-card">
+      <div class="user-dir-main">
+        ${avatarHTML(u)}
+        <div class="user-dir-meta">
+          <div class="user-dir-title">
+            <strong>${esc(u.full_name || u.username || "School user")}</strong>
+            <span class="badge ${hasLogin ? "active" : "warn"}">${esc(roleText)}</span>
+          </div>
+          <span class="user-dir-sub">${esc(metaParts.join(" · "))}</span>
+        </div>
+      </div>
+      <div class="user-dir-actions">
+        ${hasLogin ? `<button class="btn small secondary" type="button" onclick="replyFromInbox('${esc(u.id)}')">Message</button>` : ""}
+        ${hasEmail ? `<button class="btn small secondary" type="button" onclick="sendSchoolResetLinkByIndex(${idx}, this)">Send Reset Link</button>` : ""}
+        ${(hasEmail || hasLogin) ? `<button class="btn small" type="button" onclick="openSchoolResetModal(${idx})">Reset Password</button>` : ""}
+      </div>
+    </div>`;
+  }).join("") : '<div class="empty">No user accounts match your filter in this school directory yet.</div>';
 }
 
-window.resetSchoolUser = async (uidOrEmail) => {
-  const u = schoolDirectory.find((x) => String(x.id) === String(uidOrEmail) || String(x.email) === String(uidOrEmail));
-  if (!u?.email) { notice("usersNotice", "This account has no email address available.", "err"); return; }
-  if (armedResetUid !== uidOrEmail) {
-    armedResetUid = uidOrEmail;
-    toast(`Click Send reset email again within 5 seconds to email ${u.email}.`);
-    setTimeout(() => { if (armedResetUid === uidOrEmail) armedResetUid = null; }, 5000);
-    return;
+async function performSendResetLink(userObj, triggerBtn = null, modalNoticeId = null) {
+  const email = String(userObj?.email || "").trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const errTxt = "This account has no valid email address available for a reset link.";
+    notice("usersNotice", errTxt, "err");
+    if (modalNoticeId) notice(modalNoticeId, errTxt, "err");
+    return false;
   }
-  armedResetUid = null;
-  const r = await supabaseClient.auth.resetPasswordForEmail(u.email, { redirectTo: location.origin + location.pathname });
-  notice("usersNotice", r.error ? "Could not send reset email: " + r.error.message : "Password reset email requested for " + u.email + ".", r.error ? "err" : "ok");
+  const origText = triggerBtn ? triggerBtn.textContent : "";
+  if (triggerBtn) {
+    triggerBtn.disabled = true;
+    triggerBtn.textContent = "Sending…";
+  }
+  notice("usersNotice", `Sending password reset link to ${email}…`, "info");
+  if (modalNoticeId) notice(modalNoticeId, `Sending password reset link to ${email}…`, "info");
+  try {
+    const redirectTo = getSchoolResetRedirectUrl();
+    const r = await supabaseClient.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
+    if (r.error) throw r.error;
+    const okMsg = `Password reset link sent to ${email} (opens Create New Password page).`;
+    notice("usersNotice", okMsg, "ok");
+    if (modalNoticeId) notice(modalNoticeId, okMsg, "ok");
+    toast("Reset link sent to " + email);
+    logAudit("Password Reset Link Sent", userObj?.full_name || email, email);
+    return true;
+  } catch (e) {
+    const errMsg = "Could not send reset link: " + safeError(e);
+    notice("usersNotice", errMsg, "err");
+    if (modalNoticeId) notice(modalNoticeId, errMsg, "err");
+    return false;
+  } finally {
+    if (triggerBtn) {
+      triggerBtn.disabled = false;
+      triggerBtn.textContent = origText;
+    }
+  }
+}
+
+window.sendSchoolResetLinkByIndex = async (idx, btn) => {
+  const u = renderedSchoolUsers[idx];
+  if (!u) return;
+  await performSendResetLink(u, btn, null);
 };
+
+window.resetSchoolUser = async (uidOrEmail) => {
+  const u = schoolDirectory.find((x) => String(x.id) === String(uidOrEmail) || String(x.email || "").toLowerCase() === String(uidOrEmail || "").toLowerCase());
+  if (!u?.email) { notice("usersNotice", "This account has no email address available.", "err"); return; }
+  await performSendResetLink(u, null, null);
+};
+
+window.closeSchoolResetModal = () => {
+  $("schoolUserResetModal")?.classList.remove("show");
+  activeSchoolResetUser = null;
+};
+
+window.openSchoolResetModal = (idxOrUser) => {
+  const u = typeof idxOrUser === "number" ? renderedSchoolUsers[idxOrUser] : idxOrUser;
+  if (!u) return;
+  activeSchoolResetUser = u;
+  const email = String(u.email || "").trim().toLowerCase();
+  const hasLogin = Boolean(u.id && UUID_RE.test(u.id));
+  if ($("schoolResetUserLabel")) $("schoolResetUserLabel").textContent = `${u.full_name || u.username || "School User"} (${u.roleLabel || u.role || "user"})`;
+  if ($("schoolResetEmailLabel")) $("schoolResetEmailLabel").textContent = email || "No email";
+  if ($("schoolResetStatusLabel")) $("schoolResetStatusLabel").textContent = `${u.roleLabel || u.role || "user"} · ${hasLogin ? "Active Login" : "Pending Login"}`;
+  if ($("schoolResetMessage")) $("schoolResetMessage").className = "notice";
+  if ($("schoolResetResultBox")) {
+    $("schoolResetResultBox").innerHTML = "";
+    $("schoolResetResultBox").classList.add("hidden");
+  }
+  if ($("schoolResetPasswordInput")) {
+    $("schoolResetPasswordInput").type = "text";
+    $("schoolResetPasswordInput").value = generateStrongPassword(10);
+  }
+  if ($("schoolResetSendLinkBtn")) $("schoolResetSendLinkBtn").disabled = !email;
+  $("schoolUserResetModal")?.classList.add("show");
+};
+
+$("schoolResetGenPwBtn")?.addEventListener("click", () => {
+  if ($("schoolResetPasswordInput")) {
+    $("schoolResetPasswordInput").type = "text";
+    $("schoolResetPasswordInput").value = generateStrongPassword(10);
+  }
+});
+
+$("schoolResetSendLinkBtn")?.addEventListener("click", async () => {
+  if (!activeSchoolResetUser) return;
+  await performSendResetLink(activeSchoolResetUser, $("schoolResetSendLinkBtn"), "schoolResetMessage");
+});
+
+async function executeDirectPasswordReset(userObj, newPassword) {
+  const email = String(userObj?.email || "").trim().toLowerCase();
+  let uid = userObj?.id && UUID_RE.test(String(userObj.id)) ? String(userObj.id) : null;
+  const role = String(userObj?.role || userObj?.group || "user");
+  const np = String(newPassword || "").trim();
+  if (!np || np.length < 6) {
+    return { ok: false, error: "Password must be at least 6 characters." };
+  }
+  if (!uid && email) {
+    try {
+      const pr = await supabaseClient.from("profiles").select("id").ilike("email", email).maybeSingle();
+      if (pr.data?.id && UUID_RE.test(String(pr.data.id))) uid = String(pr.data.id);
+    } catch {}
+  }
+
+  const edge = await invokeSchoolEdge("school-reset-user-password", {
+    school_id: schoolId,
+    user_id: uid,
+    email: email || null,
+    role,
+    new_password: np,
+    preserve_verified_email: true
+  });
+  if (!edge.error && !edge.data?.error && (edge.data?.ok || edge.data?.password || edge.data?.success)) {
+    return {
+      ok: true,
+      email: edge.data?.email || email,
+      password: edge.data?.password || np
+    };
+  }
+
+  const isSelf = (uid && session?.user?.id && String(session.user.id) === String(uid))
+    || (email && session?.user?.email && email === String(session.user.email).trim().toLowerCase());
+  if (isSelf) {
+    const selfRes = await supabaseClient.auth.updateUser({ password: np });
+    if (!selfRes.error) {
+      return { ok: true, email: session.user.email || email, password: np };
+    }
+  }
+
+  if (uid) {
+    const admEdge = await invokeSchoolEdge("admin-user-management", {
+      action: "reset",
+      user_id: uid,
+      preserve_verified_email: true,
+      new_password: np
+    });
+    if (!admEdge.error && !admEdge.data?.error && (admEdge.data?.ok || admEdge.data?.password)) {
+      return {
+        ok: true,
+        email: admEdge.data?.email || email,
+        password: admEdge.data?.password || np
+      };
+    }
+  }
+
+  return {
+    ok: false,
+    error: edge.data?.error || edge.error?.message || "Direct password reset service unavailable for this account."
+  };
+}
+
+$("schoolUserResetForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!activeSchoolResetUser) return;
+  const np = String($("schoolResetPasswordInput")?.value || "").trim();
+  const btn = $("schoolResetConfirmBtn");
+  const orig = btn ? btn.textContent : "Reset Password";
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Resetting…";
+  }
+  notice("schoolResetMessage", "Updating password…", "info");
+  try {
+    const res = await executeDirectPasswordReset(activeSchoolResetUser, np);
+    if (res.ok) {
+      const preservedEmail = res.email || activeSchoolResetUser.email || "—";
+      const finalPw = res.password || np;
+      const box = $("schoolResetResultBox");
+      if (box) {
+        box.innerHTML = `<div class="user-reset-cred-row"><div><small>Verified Email (Preserved)</small><strong>${esc(preservedEmail)}</strong></div></div>
+          <div class="user-reset-cred-row"><div><small>New Password</small><strong class="font-mono">${esc(finalPw)}</strong></div><button class="small-btn" type="button" onclick="copyText('${esc(finalPw)}')">Copy Password</button></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small secondary" type="button" onclick="copyText('${esc(`Email: ${preservedEmail} | Password: ${finalPw}`)}')">Copy Login Credentials</button></div>`;
+        box.classList.remove("hidden");
+      }
+      notice("schoolResetMessage", `Password updated for ${preservedEmail} (verified email preserved).`, "ok");
+      notice("usersNotice", `Password reset for ${preservedEmail} (verified email preserved): ${finalPw}`, "ok");
+      toast("Password updated.");
+      logAudit("User Password Reset", activeSchoolResetUser.full_name || preservedEmail, preservedEmail);
+    } else {
+      const box = $("schoolResetResultBox");
+      if (box) box.classList.add("hidden");
+      const fallbackEmail = String(activeSchoolResetUser.email || "").trim().toLowerCase();
+      notice("schoolResetMessage", `${res.error}${fallbackEmail ? ' Click "Send Reset Link" below to email a Create New Password link to ' + fallbackEmail + "." : ""}`, "err");
+      notice("usersNotice", res.error, "err");
+    }
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = orig;
+    }
+  }
+});
+
+window.schoolDirectResetPw = async (uid, email, role) => {
+  const found = schoolDirectory.find((x) => (uid && String(x.id) === String(uid)) || (email && String(x.email || "").toLowerCase() === String(email).toLowerCase()));
+  window.openSchoolResetModal(found || { id: uid || null, email, role: role || "user", full_name: email });
+};
+
 $("userSearch")?.addEventListener("input", renderSchoolUsers);
+$("userRoleFilter")?.addEventListener("change", renderSchoolUsers);
+$("refreshSchoolUsers")?.addEventListener("click", async () => {
+  const btn = $("refreshSchoolUsers");
+  if (btn) { btn.disabled = true; btn.textContent = "Refreshing…"; }
+  try {
+    await loadSchoolDirectory();
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Refresh"; }
+  }
+});
+$("schoolUserResetModal")?.addEventListener("click", (e) => {
+  if (e.target === $("schoolUserResetModal")) window.closeSchoolResetModal();
+});
 
 function renderMessageSearch() {
   const el = $("messageSearchResults");
@@ -6255,10 +7409,10 @@ $("schoolSettingsForm")?.addEventListener("submit", async (e) => {
 $("selfPasswordReset")?.addEventListener("click", async () => {
   const email = session?.user?.email;
   if (!email) return notice("settingsNotice", "Email unavailable.", "err");
-  const r = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: location.origin + location.pathname });
+  const r = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: new URL("./reset-password.html", location.href).href });
   notice("settingsNotice", r.error ? r.error.message : "Password reset link sent to " + email, r.error ? "err" : "ok");
 });
-$("settingsSignOut")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index.html?portal=school"); }; });
+$("settingsSignOut")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); { ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k)); location.replace("./index-portal.html?portal=school"); }; });
 
 // Appearance Studio controls
 document.querySelectorAll("[data-ui-mode]").forEach((b) => b.addEventListener("click", () => saveAppearance({ mode: b.dataset.uiMode })));
@@ -7301,6 +8455,1019 @@ window.openProcaEnrollModal = openProcaEnrollModal;
 window.closeProcaEnrollModal = closeProcaEnrollModal;
 saveProcaLocal();
 
+/* ================= LIVE PROFILE AVATAR RESOLVER ================= */
+const profilesAvatarMap = { byUid: new Map(), byEmail: new Map(), byName: new Map() };
+
+function normalizeStorageAvatarUrl(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s) || s.startsWith("data:") || s.startsWith("blob:")) return s;
+  try {
+    const clean = s.replace(/^\/+/, "").replace(/^avatars\//i, "");
+    return supabaseClient?.storage?.from("avatars")?.getPublicUrl(clean)?.data?.publicUrl || s;
+  } catch { return s; }
+}
+
+function registerAvatarProfile(p) {
+  if (!p) return;
+  const raw = normalizeStorageAvatarUrl(p.avatar_url || p.photo_url);
+  if (!raw) return;
+  if (p.id) profilesAvatarMap.byUid.set(String(p.id), raw);
+  const em = String(p.email || "").trim().toLowerCase();
+  if (em) profilesAvatarMap.byEmail.set(em, raw);
+  const nm = String(p.full_name || "").trim().toLowerCase();
+  if (nm) profilesAvatarMap.byName.set(nm, raw);
+}
+
+window.loadProfilesAvatarIndex = async () => {
+  if (!supabaseClient) return;
+  try {
+    if (schoolId) {
+      const r = await supabaseClient.from("profiles").select("id,full_name,email,role,school_id,avatar_url").eq("school_id", schoolId).limit(500);
+      if (!r.error && Array.isArray(r.data)) r.data.forEach(registerAvatarProfile);
+    }
+    const emails = new Set();
+    (students || []).forEach((s) => { if (s.email) emails.add(String(s.email).trim().toLowerCase()); if (s.student_email) emails.add(String(s.student_email).trim().toLowerCase()); });
+    (teachers || []).forEach((t) => { if (t.email) emails.add(String(t.email).trim().toLowerCase()); });
+    (staffCache || []).forEach((m) => { if (m.email) emails.add(String(m.email).trim().toLowerCase()); });
+    const emailArr = [...emails].filter(Boolean);
+    for (let i = 0; i < emailArr.length; i += 80) {
+      const er = await supabaseClient.from("profiles").select("id,full_name,email,avatar_url").in("email", emailArr.slice(i, i + 80));
+      if (!er.error && Array.isArray(er.data)) er.data.forEach(registerAvatarProfile);
+    }
+    (schoolDirectory || []).forEach(registerAvatarProfile);
+  } catch {}
+};
+
+window.resolveLiveAvatarUrl = (rec, role) => {
+  if (!rec) return "";
+  const direct = normalizeStorageAvatarUrl(rec.avatar_url || rec.photo_url || rec.profile_pic || rec.image_url);
+  if (direct) return direct;
+  const uid = String(rec.user_id || rec.id || "");
+  if (uid && profilesAvatarMap.byUid.has(uid)) return profilesAvatarMap.byUid.get(uid);
+  const em = String(rec.email || rec.student_email || "").trim().toLowerCase();
+  if (em && profilesAvatarMap.byEmail.has(em)) return profilesAvatarMap.byEmail.get(em);
+  const nm = String(rec.full_name || ((rec.first_name || "") + " " + (rec.last_name || "")).trim() || rec.student_name || "").trim().toLowerCase();
+  if (nm && profilesAvatarMap.byName.has(nm)) return profilesAvatarMap.byName.get(nm);
+  return "";
+};
+
+function lciSmallAvatarHtml(name, avatarUrl) {
+  if (avatarUrl) {
+    return `<div class="lci-avatar"><img src="${esc(avatarUrl)}" alt="${esc(name)}" referrerpolicy="no-referrer" onerror="this.remove();"/></div>`;
+  }
+  return `<div class="lci-avatar">${esc(initials(name))}</div>`;
+}
+
+/* ================= LIVE SCHOOL CHECK-IN DESK ================= */
+const lciState = {
+  stage: "roles",
+  role: "teacher",
+  selected: null,
+  verified: false,
+  error: "",
+  confirmedAt: "",
+  confirmedStatus: ""
+};
+
+function getLciBirthYear(rec) {
+  const raw = String(rec?.date_of_birth || rec?.dob || rec?.birth_year || "").trim();
+  const m = raw.match(/(19\d{2}|20\d{2})/);
+  return m ? m[1] : "";
+}
+
+function getLciRoster(roleFilter) {
+  const tList = (Array.isArray(teachers) ? teachers : []).map((t) => {
+    const subjList = Array.isArray(t.subjects)
+      ? t.subjects.map((x) => String(x || "").trim()).filter(Boolean)
+      : String(t.subjects || t.subject || "").split(",").map((x) => x.trim()).filter(Boolean);
+    const compactSubjects = subjList.length > 3
+      ? `${subjList.slice(0, 2).join(", ")} +${subjList.length - 2} more`
+      : (subjList.join(", ") || t.department || "Teaching Staff");
+    return {
+      uid: "teacher:" + String(t.id),
+      id: t.id,
+      role: "teacher",
+      roleLabel: "Teacher",
+      cardTag: t.department || "Teaching Staff",
+      fullName: nameOf(t),
+      code: t.employee_number || t.teacher_code || ("TR-" + String(t.id || "").slice(0, 6)),
+      detailLabel: "SUBJECTS / DEPT",
+      detailValue: compactSubjects,
+      searchSubjects: subjList.join(", "),
+      email: t.email || "—",
+      phone: t.phone || "—",
+      avatarUrl: window.resolveLiveAvatarUrl(t, "teacher"),
+      birthYear: getLciBirthYear(t),
+      raw: t
+    };
+  });
+  const sList = (Array.isArray(students) ? students : []).map((s) => ({
+    uid: "student:" + String(s.id),
+    id: s.id,
+    role: "student",
+    roleLabel: "Student",
+    cardTag: s.class_level || "General Class",
+    fullName: nameOf(s),
+    code: s.student_number || getStudentPaymentCode(s) || ("STU-" + String(s.id || "").slice(0, 6)),
+    detailLabel: "CLASS / STREAM",
+    detailValue: s.class_level || "General Class",
+    email: s.email || s.student_email || "—",
+    phone: s.parent_phone || s.phone || "—",
+    avatarUrl: window.resolveLiveAvatarUrl(s, "student"),
+    birthYear: getLciBirthYear(s),
+    raw: s
+  }));
+  const stList = (Array.isArray(staffCache) ? staffCache : []).map((m) => ({
+    uid: "staff:" + String(m.id || m.email || m.full_name),
+    id: m.id || m.email,
+    role: "staff",
+    roleLabel: m.staff_role || m.role || "Staff / Co-Admin",
+    cardTag: m.department || m.staff_role || "School Operations",
+    fullName: m.full_name || nameOf(m),
+    code: m.employee_number || ("STF-" + String(m.id || "01").slice(0, 6)),
+    detailLabel: "DEPARTMENT",
+    detailValue: m.department || m.staff_role || "School Operations",
+    email: m.email || "—",
+    phone: m.phone || "—",
+    avatarUrl: window.resolveLiveAvatarUrl(m, "staff"),
+    birthYear: getLciBirthYear(m),
+    raw: m
+  }));
+  if (roleFilter === "teacher") return tList;
+  if (roleFilter === "student") return sList;
+  if (roleFilter === "staff") return stList;
+  return [...tList, ...sList, ...stList];
+}
+
+window.openLiveCheckIn = async (role = "teacher") => {
+  lciState.stage = "directory";
+  lciState.role = role || "teacher";
+  lciState.selected = null;
+  lciState.verified = false;
+  lciState.error = "";
+  lciState.confirmedAt = "";
+  window._lciKeepStage = true;
+  showPage("live-checkin");
+  renderLiveCheckIn();
+  if (typeof window.loadProfilesAvatarIndex === "function") {
+    await window.loadProfilesAvatarIndex();
+    renderLiveCheckIn();
+  }
+  setTimeout(() => $("lciSearchInput")?.focus(), 40);
+};
+
+window.selectLciRole = (role, enterDirectory = true) => {
+  lciState.role = role || "all";
+  if (enterDirectory) lciState.stage = "directory";
+  lciState.selected = null;
+  lciState.verified = false;
+  lciState.error = "";
+  lciState.confirmedAt = "";
+  document.querySelectorAll("#lciRoleButtons [data-lci-role]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.lciRole === lciState.role);
+  });
+  renderLiveCheckIn();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.backToLciRoles = () => {
+  lciState.stage = "roles";
+  lciState.selected = null;
+  lciState.verified = false;
+  lciState.error = "";
+  lciState.confirmedAt = "";
+  if ($("lciSearchInput")) $("lciSearchInput").value = "";
+  renderLiveCheckIn();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.resetLciFlow = () => {
+  lciState.selected = null;
+  lciState.verified = false;
+  lciState.error = "";
+  lciState.confirmedAt = "";
+  if ($("lciSearchInput")) $("lciSearchInput").value = "";
+  renderLiveCheckIn();
+};
+
+window.pickLciPerson = (uid) => {
+  const person = getLciRoster("all").find((p) => p.uid === uid);
+  if (!person) return;
+  lciState.selected = person;
+  lciState.verified = false;
+  lciState.error = "";
+  lciState.confirmedAt = "";
+  renderLiveCheckIn();
+  setTimeout(() => $("lciPasscodeInput")?.focus(), 40);
+};
+
+window.verifyLciPasscode = (e) => {
+  if (e && e.preventDefault) e.preventDefault();
+  const p = lciState.selected;
+  if (!p) return;
+  const entered = ($("lciPasscodeInput")?.value || "").trim();
+  if (!/^\d{4}$/.test(entered)) {
+    lciState.error = "Enter a valid 4-digit Year of Birth passcode (e.g. 2008).";
+    renderLiveCheckIn();
+    return;
+  }
+  const expected = p.birthYear;
+  if (expected && entered !== expected) {
+    lciState.error = "Year of birth passcode did not match the official record on file. Please verify and try again.";
+    renderLiveCheckIn();
+    return;
+  }
+  if (!expected && Number(entered) < 1940) {
+    lciState.error = "Enter a realistic 4-digit Year of Birth (1940–2026).";
+    renderLiveCheckIn();
+    return;
+  }
+  lciState.error = "";
+  lciState.verified = true;
+  renderLiveCheckIn();
+};
+
+window.confirmLciAttendance = async () => {
+  const p = lciState.selected;
+  if (!p || !lciState.verified) return;
+  const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const isoDate = today();
+  const btn = $("lciConfirmBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "Recording Attendance…"; }
+  try {
+    if (p.role === "student" && schoolId) {
+      await supabaseClient.from("student_attendance").upsert({
+        school_id: schoolId, student_id: p.id, attendance_date: isoDate, status: "present"
+      }, { onConflict: "student_id,attendance_date" }).catch(() => {});
+      const idx = studentAttendance.findIndex((a) => String(a.student_id) === String(p.id) && String(a.attendance_date).slice(0, 10) === isoDate);
+      if (idx >= 0) studentAttendance[idx].status = "present";
+      else studentAttendance.unshift({ school_id: schoolId, student_id: p.id, attendance_date: isoDate, status: "present" });
+    } else if (p.role === "teacher" && schoolId) {
+      await supabaseClient.from("teacher_attendance").upsert({
+        school_id: schoolId, teacher_id: p.id, attendance_date: isoDate, status: "present"
+      }, { onConflict: "teacher_id,attendance_date" }).catch(() => {});
+      const idx = teacherAttendance.findIndex((a) => String(a.teacher_id) === String(p.id) && String(a.attendance_date).slice(0, 10) === isoDate);
+      if (idx >= 0) teacherAttendance[idx].status = "present";
+      else teacherAttendance.unshift({ school_id: schoolId, teacher_id: p.id, attendance_date: isoDate, status: "present" });
+    }
+  } catch {}
+  lciState.confirmedAt = `${isoDate} at ${nowStr}`;
+  lciState.confirmedStatus = "Present & Verified";
+  logAudit("Live Gate Check-In", `${p.fullName} (${p.roleLabel})`, `Verified by birth-year passcode at ${nowStr}`);
+  toast(`Attendance marked Present for ${p.fullName}!`);
+  renderLiveCheckIn();
+  if (typeof renderStudentAttendance === "function") renderStudentAttendance();
+  if (typeof renderTeacherAttendance === "function") renderTeacherAttendance();
+};
+
+function renderLiveCheckIn() {
+  const stage1 = $("lciStage1Panel");
+  const stage2 = $("lciStage2Panel");
+  const host = $("lciStageHost");
+  const sName = school?.name || "ACCESS UG School";
+  if (stage1 && stage2) {
+    const showRoles = lciState.stage !== "directory" && !lciState.selected;
+    stage1.classList.toggle("hidden", !showRoles);
+    stage2.classList.toggle("hidden", showRoles);
+    if (showRoles) return;
+  }
+  if (!host) return;
+  document.querySelectorAll("#lciRoleButtons [data-lci-role]").forEach((b) => {
+    b.classList.toggle("active", b.dataset.lciRole === lciState.role);
+  });
+
+  // Step 3: Premium Executive Digital Smart-Pass Identity Card
+  if (lciState.selected && lciState.verified) {
+    const p = lciState.selected;
+    const livePhoto = window.resolveLiveAvatarUrl(p.raw, p.role) || p.avatarUrl || "";
+    const tagText = lciState.confirmedAt ? `Checked In · ${lciState.confirmedAt}` : "Identity Verified";
+    host.innerHTML = `
+      <div class="lci-pass-wrap">
+        <div class="lci-pass-card">
+          <div class="lci-pass-top">
+            <div class="lci-pass-brand">
+              <div class="lci-pass-brand-title">ACCESS UG</div>
+              <div class="lci-pass-brand-school">${esc(sName)}</div>
+            </div>
+            <div class="lci-pass-verified-tag ${lciState.confirmedAt ? "confirmed" : ""}">
+              <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><polyline points="9 12 11 14 15 10"></polyline></svg>
+              <span>${esc(tagText)}</span>
+            </div>
+            <div class="lci-pass-photo-ring">
+              <div class="lci-pass-photo-inner">
+                ${livePhoto
+                  ? `<img src="${esc(livePhoto)}" alt="${esc(p.fullName)}" referrerpolicy="no-referrer" onerror="this.remove();"/>`
+                  : esc(initials(p.fullName))}
+              </div>
+            </div>
+            <h3 class="lci-pass-name">${esc(p.fullName)}</h3>
+            <div class="lci-pass-role">${esc(p.roleLabel)}</div>
+            <div class="lci-pass-sub-school">${esc(sName)}</div>
+          </div>
+          <div class="lci-pass-body">
+            <div class="lci-pass-row"><span class="lci-pass-k">ROLE:</span><span class="lci-pass-v">${esc(p.roleLabel)}</span></div>
+            <div class="lci-pass-row"><span class="lci-pass-k">ID / CODE:</span><span class="lci-pass-v font-mono">${esc(p.code)}</span></div>
+            <div class="lci-pass-row"><span class="lci-pass-k">${esc(p.detailLabel)}:</span><span class="lci-pass-v">${esc(p.detailValue)}</span></div>
+            <div class="lci-pass-row"><span class="lci-pass-k">EMAIL:</span><span class="lci-pass-v">${esc(p.email)}</span></div>
+            <div class="lci-pass-row"><span class="lci-pass-k">PHONE:</span><span class="lci-pass-v">${esc(p.phone)}</span></div>
+          </div>
+        </div>
+        <div class="lci-pass-actions">
+          <button class="btn secondary" type="button" onclick="resetLciFlow()">← Not You? Return to Login</button>
+          ${lciState.confirmedAt
+            ? `<button class="btn" type="button" onclick="resetLciFlow()">Done — Next Person</button>`
+            : `<button class="btn" id="lciConfirmBtn" type="button" onclick="confirmLciAttendance()">✓ Yes, It's Me — Mark Attendance</button>`}
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Step 2: Year of Birth Passcode Prompt
+  if (lciState.selected && !lciState.verified) {
+    const p = lciState.selected;
+    const livePhoto = window.resolveLiveAvatarUrl(p.raw, p.role) || p.avatarUrl || "";
+    host.innerHTML = `
+      <div class="lci-verify-box">
+        <div style="display:flex;align-items:center;gap:14px;padding-bottom:14px;border-bottom:1px solid var(--line)">
+          ${lciSmallAvatarHtml(p.fullName, livePhoto)}
+          <div>
+            <span class="status-chip">Passcode Verification</span>
+            <h3 style="margin:6px 0 2px;font-size:17px">${esc(p.fullName)}</h3>
+            <div class="muted" style="font-size:12.5px">${esc(p.roleLabel)} · ${esc(p.detailValue)} · ${esc(p.code)}</div>
+          </div>
+        </div>
+        <form onsubmit="verifyLciPasscode(event)" style="margin-top:16px;display:grid;gap:12px">
+          <div class="field">
+            <label for="lciPasscodeInput">Enter Your Year of Birth Passcode (4 Digits)</label>
+            <input id="lciPasscodeInput" type="password" inputmode="numeric" maxlength="4" placeholder="e.g. 2008" required style="font-size:18px;letter-spacing:4px;font-weight:800;text-align:center"/>
+            <small class="muted">${p.birthYear ? "Matched directly against the Year of Birth saved in your school profile." : "No birth year recorded on profile — enter a valid 4-digit birth year to verify."}</small>
+          </div>
+          ${lciState.error ? `<div class="notice show err" style="margin:0">${esc(lciState.error)}</div>` : ""}
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:space-between">
+            <button class="btn secondary" type="button" onclick="resetLciFlow()">← Back to Search</button>
+            <button class="btn" type="submit">Verify Passcode &amp; View Card →</button>
+          </div>
+        </form>
+      </div>`;
+    return;
+  }
+
+  // Step 1: Role Search List
+  const q = ($("lciSearchInput")?.value || "").trim().toLowerCase();
+  const roster = getLciRoster(lciState.role);
+  const filtered = q
+    ? roster.filter((r) => [r.fullName, r.code, r.cardTag, r.detailValue, r.searchSubjects, r.email, r.phone, r.roleLabel, r.raw?.first_name, r.raw?.last_name, r.raw?.student_number, r.raw?.payment_code].some((v) => String(v || "").toLowerCase().includes(q)))
+    : roster;
+  const shown = filtered.slice(0, 36);
+  if (!shown.length) {
+    host.innerHTML = `<div class="empty">No matching ${lciState.role === "all" ? "people" : lciState.role} found${q ? ` for "${esc(q)}"` : ""}. ${lciState.role !== "all" ? `<button class="small-btn" type="button" style="margin-left:8px" onclick="selectLciRole('all', true)">Search All Roles</button>` : ""}</div>`;
+    return;
+  }
+  host.innerHTML = `<div class="lci-result-list">${shown.map((r) => {
+    const av = window.resolveLiveAvatarUrl(r.raw, r.role) || r.avatarUrl || "";
+    const pillText = r.role === "teacher" ? `${r.roleLabel} · ${r.cardTag || "Teaching Staff"}` : `${r.roleLabel} · ${r.cardTag || r.detailValue}`;
+    return `<button class="lci-person-btn" type="button" onclick="pickLciPerson('${esc(r.uid)}')">
+      ${lciSmallAvatarHtml(r.fullName, av)}
+      <div style="min-width:0;flex:1">
+        <strong style="display:block;font-size:15px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(r.fullName)}</strong>
+        <div class="lci-person-pills">
+          <span class="lci-pill-tag">${esc(pillText)}</span>
+          <span class="muted" style="font-size:12.5px">${esc(sName)}</span>
+        </div>
+        <div style="margin-top:4px"><span class="lci-code-tag">${esc(r.code)}</span></div>
+      </div>
+      <span class="lci-chevron">›</span>
+    </button>`;
+  }).join("")}</div>`;
+}
+window.renderLiveCheckIn = renderLiveCheckIn;
+["input", "search"].forEach((evt) => {
+  $("lciSearchInput")?.addEventListener(evt, () => { lciState.selected = null; lciState.verified = false; renderLiveCheckIn(); });
+});
+
+/* ================= LIVE CROSS-PORTAL SUPABASE SYNC STORE (VIDEOS, REPORTS, HOMEWORK, CLASSROOM, SMS) ================= */
+const syncHubState = {
+  videos: [],
+  adminReports: [],
+  homework: [],
+  classroom: [],
+  smsCampaigns: []
+};
+
+function normalizeExternalUrl(raw) {
+  const s = String(raw || "").trim();
+  if (!s) return "";
+  if (/^(https?:\/\/|data:|blob:)/i.test(s)) return s;
+  return "https://" + s.replace(/^\/+/, "");
+}
+
+async function uploadFileToSupabaseStorage(file, folder) {
+  if (!file || !supabaseClient) return { url: "", path: "" };
+  const safeName = String(file.name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const path = `${folder}/${schoolId || "school"}/${Date.now()}-${Math.random().toString(36).slice(2, 7)}-${safeName}`;
+  const buckets = ["message-attachments", "attachments", "accessug-report-templates", "avatars"];
+  for (const b of buckets) {
+    try {
+      const up = await supabaseClient.storage.from(b).upload(path, file, {
+        cacheControl: "3600", upsert: true, contentType: file.type || undefined
+      });
+      if (!up.error) {
+        const sig = await supabaseClient.storage.from(b).createSignedUrl(path, 60 * 60 * 24 * 30);
+        if (!sig.error && sig.data?.signedUrl) return { url: sig.data.signedUrl, path, bucket: b };
+        const pub = supabaseClient.storage.from(b).getPublicUrl(path)?.data?.publicUrl;
+        if (pub) return { url: pub, path, bucket: b };
+      }
+    } catch {}
+  }
+  if (file.size <= 350 * 1024) {
+    const dataUrl = await new Promise((res, rej) => {
+      const fr = new FileReader();
+      fr.onload = () => res(String(fr.result || ""));
+      fr.onerror = () => rej(new Error("Could not read file."));
+      fr.readAsDataURL(file);
+    });
+    return { url: dataUrl, path: "", bucket: "inline" };
+  }
+  throw new Error("Could not upload file to storage. Ensure storage bucket permissions allow uploads.");
+}
+
+async function publishSyncPayload(kind, payload) {
+  if (!supabaseClient) throw new Error("Supabase not connected.");
+  const baseRow = {
+    type: "accessug_sync_item",
+    title: `[ACCESSUG_SYNC:${kind}]`,
+    school_id: payload.target_school_id || schoolId || null,
+    message: JSON.stringify(payload),
+    recipient_user_id: session?.user?.id || null,
+    is_read: true
+  };
+  const candidates = [
+    { ...baseRow, sender_id: session?.user?.id || null },
+    baseRow,
+    { type: baseRow.type, title: baseRow.title, message: baseRow.message, recipient_user_id: baseRow.recipient_user_id, is_read: true }
+  ];
+  let lastErr = null;
+  for (const row of candidates) {
+    const ins = await supabaseClient.from("notifications").insert(row).select("id,school_id,title,message,type,created_at").maybeSingle();
+    if (!ins.error) return { ...payload, _notifId: ins.data?.id || null };
+    lastErr = ins.error;
+  }
+  throw lastErr || new Error("Could not publish sync item.");
+}
+
+async function deleteSyncRow(notifId) {
+  if (!notifId || !supabaseClient) return;
+  await supabaseClient.from("notifications").delete().eq("id", notifId).then(() => {}).catch(() => {});
+  await loadAccessUgSyncItems();
+}
+
+window.loadAccessUgSyncItems = async (notifyUser = false) => {
+  if (!supabaseClient) return;
+  if (!schoolId) {
+    try {
+      schoolId = sessionStorage.getItem("accessug_school_id") || localStorage.getItem("accessug_school_id") || schoolId;
+      if (!schoolId) {
+        const sess = await supabaseClient.auth.getSession();
+        const uid = sess?.data?.session?.user?.id;
+        if (uid) {
+          const rr = await supabaseClient.rpc("school_find_by_user", { p_user_id: uid });
+          if (!rr.error && rr.data) schoolId = rr.data;
+        }
+      }
+    } catch {}
+  }
+
+  const videoMap = new Map(), reportMap = new Map(), hwMap = new Map(), classMap = new Map(), smsMap = new Map();
+  let syncErr = null;
+  try {
+    const res = await supabaseClient
+      .from("notifications")
+      .select("id,school_id,title,message,type,created_at")
+      .eq("type", "accessug_sync_item")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (res.error) {
+      syncErr = res.error;
+      console.warn("loadAccessUgSyncItems notifications error:", res.error);
+    } else if (Array.isArray(res.data)) {
+      res.data.forEach((r) => {
+        const m = String(r.title || "").match(/^\[ACCESSUG_SYNC:([A-Z_]+)\]/);
+        if (!m) return;
+        let p = null;
+        try { p = JSON.parse(r.message || "{}"); } catch { return; }
+        if (!p || typeof p !== "object") return;
+        p._notifId = r.id;
+        if (!p.created_at) p.created_at = r.created_at;
+        const key = String(p.id || r.id);
+        const targetSid = p.target_school_id || r.school_id || "";
+        const scope = String(p.target_scope || "all").toLowerCase();
+        const matchesSchool = !targetSid || targetSid === "all" || (schoolId && (String(targetSid) === String(schoolId) || String(r.school_id || "") === String(schoolId)));
+        if (m[1] === "VIDEO") {
+          const okRole = !p.target_role || ["all", "schools", "school", "specific_school", "teachers", "students"].includes(String(p.target_role).toLowerCase());
+          if (matchesSchool && okRole && !videoMap.has(key)) videoMap.set(key, p);
+        } else if (m[1] === "REPORT") {
+          if (matchesSchool && !reportMap.has(key)) reportMap.set(key, p);
+        } else if (m[1] === "HOMEWORK") {
+          if ((matchesSchool || scope === "all") && !hwMap.has(key)) hwMap.set(key, p);
+        } else if (m[1] === "CLASSROOM") {
+          if ((matchesSchool || scope === "all") && !classMap.has(key)) classMap.set(key, p);
+        } else if (m[1] === "SMS_CAMPAIGN") {
+          if (schoolId && String(targetSid || "") === String(schoolId) && !smsMap.has(key)) smsMap.set(key, p);
+        }
+      });
+    }
+  } catch (e) { syncErr = e; }
+  try {
+    if (schoolId) {
+      const rt = await supabaseClient.from("report_templates").select("*").eq("active", true).or(`school_id.eq.${schoolId},school_id.is.null`).order("updated_at", { ascending: false }).limit(60);
+      if (!rt.error && Array.isArray(rt.data)) {
+        rt.data.forEach((item) => {
+          if (item.field_map && item.field_map.admin_published) {
+            const key = "rt_" + item.id;
+            if (!reportMap.has(key)) {
+              reportMap.set(key, {
+                id: key,
+                title: item.name,
+                category: item.report_type || "Official Report",
+                description: item.field_map.description || "Admin-published report form",
+                file_url: item.field_map.file_url || "",
+                storage_path: item.file_path || "",
+                file_name: item.file_name || item.name,
+                created_at: item.updated_at
+              });
+            }
+          }
+        });
+      }
+    }
+  } catch {}
+
+  syncHubState.videos = Array.from(videoMap.values());
+  syncHubState.adminReports = Array.from(reportMap.values());
+  syncHubState.homework = Array.from(hwMap.values());
+  syncHubState.classroom = Array.from(classMap.values());
+  syncHubState.smsCampaigns = Array.from(smsMap.values());
+
+  renderSchoolAdminUploadedReports();
+  renderTutorialsPage();
+  renderHomeworkPage();
+  renderGoogleClassroomPage();
+  renderSmsBroadcastPage();
+  if (notifyUser) {
+    if (syncErr && !syncHubState.videos.length && !syncHubState.adminReports.length) {
+      toast("Sync error: " + (syncErr.message || "Could not read synced items."));
+    } else {
+      toast(`Synced ${syncHubState.videos.length} tutorial video(s) & ${syncHubState.adminReports.length} form(s).`);
+    }
+  }
+};
+
+function renderSchoolAdminUploadedReports() {
+  const host = $("schoolAdminUploadedReportsList");
+  if (!host) return;
+  const list = syncHubState.adminReports || [];
+  if (!list.length) {
+    host.innerHTML = `<div class="empty">No custom report forms have been published to your school by Administration yet.</div>`;
+    return;
+  }
+  host.innerHTML = `<div style="display:grid;gap:10px">${list.map((r) => `
+    <div class="feed-item-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+        <div>
+          <strong>${esc(r.title || r.file_name || "Official Report Form")}</strong>
+          <div class="muted" style="font-size:12px;margin-top:2px">${esc(r.category || "Official Report")} · ${r.target_school_id ? "Assigned to School" : "Published Network-Wide"} · ${r.created_at ? new Date(r.created_at).toLocaleDateString() : "Synced"}</div>
+          ${r.description ? `<div class="muted" style="font-size:12px;margin-top:4px">${esc(r.description)}</div>` : ""}
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${r.file_url ? `<a class="btn small" href="${esc(r.file_url)}" target="_blank" rel="noopener noreferrer">Open / Print Form</a>` : `<button class="btn small secondary" type="button" onclick="openAdminReportStorageFile('${esc(r.storage_path || "")}')">Get File</button>`}
+        </div>
+      </div>
+    </div>`).join("")}</div>`;
+}
+window.openAdminReportStorageFile = async (path) => {
+  if (!path) { toast("No file link stored."); return; }
+  const r = await supabaseClient.storage.from(REPORT_TEMPLATES_BUCKET).createSignedUrl(path, 600);
+  if (!r.error && r.data?.signedUrl) openModal("Official Report Form", `<p class="muted" style="margin-bottom:12px">Your secure signed link is ready:</p><a class="btn" href="${esc(r.data.signedUrl)}" target="_blank" rel="noopener noreferrer">Open / Download Report</a>`);
+  else toast("Could not generate download link.");
+};
+
+/* ================= LIVE TUTORIAL VIDEOS (ADMIN-SYNCED ONLY) ================= */
+let tutActiveCat = "all";
+function getEmbedVideoUrl(url) {
+  const u = normalizeExternalUrl(url);
+  const yt = u.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{6,})/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0`;
+  const vm = u.match(/vimeo\.com\/(\d+)/);
+  if (vm) return `https://player.vimeo.com/video/${vm[1]}`;
+  return "";
+}
+
+window.openTutorialModal = (id) => {
+  const t = (syncHubState.videos || []).find((x) => String(x.id) === String(id));
+  if (!t) return;
+  if ($("tutModalTitle")) $("tutModalTitle").textContent = t.title || "Tutorial Video";
+  if ($("tutModalSub")) $("tutModalSub").textContent = `${t.category || "Tutorial"} · Published by Administration`;
+  if ($("tutModalBody")) {
+    const embed = getEmbedVideoUrl(t.video_url);
+    const playerHtml = embed
+      ? `<div style="aspect-ratio:16/9;width:100%;border-radius:12px;overflow:hidden;background:#000;margin-bottom:14px"><iframe src="${esc(embed)}" style="width:100%;height:100%;border:0" allowfullscreen></iframe></div>`
+      : (t.video_url
+          ? `<video controls playsinline style="width:100%;max-height:380px;border-radius:12px;background:#041530;margin-bottom:14px" src="${esc(t.video_url)}"></video>`
+          : `<div class="empty" style="margin-bottom:14px">No playable video stream attached to this guide.</div>`);
+    $("tutModalBody").innerHTML = `
+      ${playerHtml}
+      ${t.summary ? `<p class="muted" style="font-size:13px;line-height:1.55;margin:0 0 12px">${esc(t.summary)}</p>` : ""}
+      ${Array.isArray(t.steps) && t.steps.length ? `<div style="display:grid;gap:8px;margin-bottom:12px">${t.steps.map((st, idx) => `<div style="padding:10px 12px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line);font-size:13px"><strong>Step ${idx + 1}:</strong> ${esc(st)}</div>`).join("")}</div>` : ""}
+      ${t.code_snippet ? `<div style="margin-bottom:6px;font-size:12px;font-weight:700">Reference Code / Format</div><pre style="padding:12px;border-radius:10px;background:#0f172a;color:#e2e8f0;font-family:var(--font-mono);font-size:12px;overflow:auto;white-space:pre-wrap;margin:0 0 12px">${esc(t.code_snippet)}</pre>` : ""}
+      <div class="actions">
+        ${t.code_snippet ? `<button class="btn secondary" type="button" onclick="copyText(${JSON.stringify(t.code_snippet)}, 'Code copied!')">Copy Reference Code</button>` : ""}
+        ${t.video_url ? `<a class="btn secondary" href="${esc(t.video_url)}" target="_blank" rel="noopener noreferrer">Open Video Source</a>` : ""}
+        <button class="btn" type="button" onclick="closeTutorialModal()">Close Player</button>
+      </div>`;
+  }
+  $("tutorialPlayerModal")?.classList.add("show");
+};
+window.closeTutorialModal = () => {
+  const modal = $("tutorialPlayerModal");
+  if (modal) {
+    modal.querySelectorAll("video").forEach((v) => { try { v.pause(); } catch {} });
+    modal.classList.remove("show");
+  }
+};
+$("tutorialPlayerModal")?.addEventListener("click", (e) => { if (e.target === $("tutorialPlayerModal")) window.closeTutorialModal(); });
+
+function renderTutorialsPage() {
+  const grid = $("tutorialsGrid");
+  if (!grid) return;
+  const q = ($("tutSearchInput")?.value || "").trim().toLowerCase();
+  const all = syncHubState.videos || [];
+  const list = all.filter((t) =>
+    (tutActiveCat === "all" || String(t.category || "") === tutActiveCat) &&
+    (!q || [t.title, t.summary, t.category, t.code_snippet].some((v) => String(v || "").toLowerCase().includes(q)))
+  );
+  if (!list.length) {
+    grid.innerHTML = all.length
+      ? `<div class="empty">No tutorial videos match "${esc(q)}".</div>`
+      : `<div class="empty">No tutorial videos have been uploaded or synced by Administration yet.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map((t) => `
+    <div class="tut-card">
+      <div class="tut-thumb" onclick="openTutorialModal('${esc(t.id)}')">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span class="status-chip" style="background:rgba(255,255,255,.18);color:#fff">${esc(t.category || "Video")}</span>
+          <span style="font-size:11px;font-weight:700;opacity:.92">${esc(t.duration || "HD Video")}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10px">
+          <strong style="font-size:14.5px;line-height:1.3">${esc(t.title)}</strong>
+          <div class="tut-play-pill">▶</div>
+        </div>
+      </div>
+      <div style="padding:14px;display:flex;flex-direction:column;gap:10px;flex:1">
+        <p class="muted" style="font-size:12.5px;line-height:1.5;margin:0;flex:1">${esc(t.summary || "Synced operational training video.")}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn small" type="button" onclick="openTutorialModal('${esc(t.id)}')">▶ Watch Video</button>
+          ${t.code_snippet ? `<button class="btn small secondary" type="button" onclick="copyText(${JSON.stringify(t.code_snippet)}, 'Code copied!')">Copy Code</button>` : ""}
+        </div>
+      </div>
+    </div>`).join("");
+}
+window.renderTutorialsPage = renderTutorialsPage;
+document.querySelectorAll("#tutFilterBar [data-tut-cat]").forEach((b) => b.addEventListener("click", () => {
+  tutActiveCat = b.dataset.tutCat || "all";
+  document.querySelectorAll("#tutFilterBar [data-tut-cat]").forEach((x) => x.classList.toggle("active", x === b));
+  renderTutorialsPage();
+}));
+$("tutSearchInput")?.addEventListener("input", renderTutorialsPage);
+
+/* ================= LIVE RECIPIENT HELPERS (HOMEWORK & GOOGLE CLASSROOM) ================= */
+function populateClassOptionsSelect(selEl) {
+  if (!selEl) return;
+  const fromClasses = (classes || []).map((c) => c.name).filter(Boolean);
+  const fromStudents = (students || []).map((s) => s.class_level).filter(Boolean);
+  const allCls = [...new Set([...fromClasses, ...fromStudents])].sort();
+  selEl.innerHTML = allCls.length
+    ? allCls.map((c) => `<option value="${esc(c)}">${esc(c)}</option>`).join("")
+    : `<option value="S1">S1</option>`;
+}
+
+function renderStudentChecklistPicker(checklistEl, searchQuery, selectedSet, countEl) {
+  if (!checklistEl) return;
+  const q = String(searchQuery || "").trim().toLowerCase();
+  const rows = (students || []).filter((s) => !q || [nameOf(s), s.class_level, s.student_number].some((v) => String(v || "").toLowerCase().includes(q)));
+  checklistEl.innerHTML = rows.length
+    ? rows.slice(0, 80).map((s) => {
+        const sid = String(s.id);
+        return `<label class="recipient-check-row">
+          <input type="checkbox" value="${esc(sid)}" ${selectedSet.has(sid) ? "checked" : ""}/>
+          <span style="flex:1"><strong>${esc(nameOf(s))}</strong> · <span class="muted">${esc(s.class_level || "Class")}</span></span>
+        </label>`;
+      }).join("")
+    : `<div class="muted" style="font-size:12px;padding:6px">No matching students found.</div>`;
+  checklistEl.querySelectorAll('input[type="checkbox"]').forEach((cb) => {
+    cb.addEventListener("change", () => {
+      if (cb.checked) selectedSet.add(cb.value); else selectedSet.delete(cb.value);
+      if (countEl) countEl.textContent = String(selectedSet.size);
+    });
+  });
+  if (countEl) countEl.textContent = String(selectedSet.size);
+}
+
+/* ================= HOMEWORK UPLOAD & DISTRIBUTION ================= */
+const hwSelectedStudents = new Set();
+function syncHwRecipientControls() {
+  const scope = $("hwRecipientScope")?.value || "all_students";
+  if ($("hwClassWrap")) $("hwClassWrap").style.display = scope === "class" ? "" : "none";
+  if ($("hwStudentPickerBox")) $("hwStudentPickerBox").style.display = scope === "specific_students" ? "grid" : "none";
+  populateClassOptionsSelect($("hwClassSelect"));
+  renderStudentChecklistPicker($("hwStudentChecklist"), $("hwStudentPickerSearch")?.value, hwSelectedStudents, $("hwSelectedCount"));
+}
+$("hwRecipientScope")?.addEventListener("change", syncHwRecipientControls);
+$("hwStudentPickerSearch")?.addEventListener("input", () => renderStudentChecklistPicker($("hwStudentChecklist"), $("hwStudentPickerSearch")?.value, hwSelectedStudents, $("hwSelectedCount")));
+
+function renderHomeworkPage() {
+  syncHwRecipientControls();
+  const host = $("schoolHwList");
+  if (!host) return;
+  const list = syncHubState.homework || [];
+  if ($("hwCountLabel")) $("hwCountLabel").textContent = `${list.length} active assignment(s) synced`;
+  if (!list.length) {
+    host.innerHTML = `<div class="empty">No homework assignments uploaded yet. Use the form on the left to assign work to classes or specific learners.</div>`;
+    return;
+  }
+  host.innerHTML = list.map((hw) => {
+    const recLabel = hw.recipient_type === "specific_students"
+      ? `Specific Students (${(hw.recipient_student_names || []).slice(0, 3).join(", ")}${(hw.recipient_student_names || []).length > 3 ? " +" + ((hw.recipient_student_names || []).length - 3) : ""})`
+      : hw.recipient_type === "class"
+        ? `Class: ${hw.recipient_class || "All"}`
+        : hw.recipient_type === "teachers" ? "Teachers" : "All Students";
+    return `<div class="feed-item-card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+        <div>
+          <strong>${esc(hw.title)}</strong>
+          <div class="muted" style="font-size:12px;margin-top:2px">${esc(hw.subject)} · By ${esc(hw.created_by_name || hw.created_by_role || "School")} · Due ${esc(hw.due_date || "Flexible")}</div>
+        </div>
+        <span class="status-chip ok">${esc(recLabel)}</span>
+      </div>
+      ${hw.instructions ? `<p class="muted" style="font-size:12.5px;margin:0;line-height:1.45">${esc(hw.instructions)}</p>` : ""}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        ${hw.attachment_url ? `<a class="btn small secondary" href="${esc(hw.attachment_url)}" target="_blank" rel="noopener noreferrer">📎 ${esc(hw.attachment_name || "Download File")}</a>` : ""}
+        <span class="muted font-mono" style="font-size:11px">Max: ${esc(String(hw.max_marks || 100))} pts</span>
+        ${hw._notifId && hw.created_by_role !== "Admin" ? `<button class="small-btn danger-btn" type="button" style="margin-left:auto" onclick="removeSchoolSyncItem('${esc(hw._notifId)}')">Delete</button>` : ""}
+      </div>
+    </div>`;
+  }).join("");
+}
+window.renderHomeworkPage = renderHomeworkPage;
+window.removeSchoolSyncItem = deleteSyncRow;
+
+$("schoolHwForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("hwSubmitBtn");
+  const scope = $("hwRecipientScope")?.value || "all_students";
+  if (scope === "specific_students" && hwSelectedStudents.size === 0) {
+    notice("hwNotice", "Select at least one student from the checklist.", "err");
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = "Uploading & Syncing…"; }
+  try {
+    let attachmentUrl = "", attachmentName = "";
+    const file = $("hwFileInput")?.files?.[0];
+    if (file) {
+      const up = await uploadFileToSupabaseStorage(file, "homework");
+      attachmentUrl = up.url;
+      attachmentName = file.name;
+    }
+    const chosenIds = [...hwSelectedStudents];
+    const chosenNames = chosenIds.map((id) => {
+      const st = students.find((x) => String(x.id) === id);
+      return st ? nameOf(st) : id;
+    });
+    const payload = {
+      id: "hw_" + Date.now(),
+      title: $("hwTitle").value.trim(),
+      subject: $("hwSubject").value.trim(),
+      due_date: $("hwDueDate")?.value || "",
+      max_marks: Number($("hwMaxMarks")?.value || 100),
+      instructions: $("hwInstructions")?.value.trim() || "",
+      attachment_url: attachmentUrl,
+      attachment_name: attachmentName,
+      target_school_id: schoolId,
+      target_role: scope === "teachers" ? "teachers" : "students",
+      recipient_type: scope,
+      recipient_class: scope === "class" ? ($("hwClassSelect")?.value || "") : "",
+      recipient_student_ids: scope === "specific_students" ? chosenIds : [],
+      recipient_student_names: scope === "specific_students" ? chosenNames : [],
+      created_by_role: "School",
+      created_by_name: school?.name || "School Administration",
+      created_at: new Date().toISOString()
+    };
+    await publishSyncPayload("HOMEWORK", payload);
+    $("schoolHwForm").reset();
+    hwSelectedStudents.clear();
+    syncHwRecipientControls();
+    notice("hwNotice", "Homework uploaded and synced live to selected recipients.", "ok");
+    logAudit("Homework Published", payload.title, payload.recipient_type);
+    await loadAccessUgSyncItems();
+  } catch (err) {
+    notice("hwNotice", safeError(err), "err");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Publish & Dispatch Homework"; }
+  }
+});
+
+$("hwSavePoliciesBtn")?.addEventListener("click", async () => {
+  const pol = {
+    digitalSubmissions: !!$("hwPolicyDigital")?.checked,
+    notifyParents: !!$("hwPolicyNotify")?.checked,
+    lateGraceDeduction: !!$("hwPolicyLate")?.checked,
+    updatedAt: new Date().toISOString()
+  };
+  writeSchoolJson("accessug_hw_policies", pol);
+  await supabaseClient.from("school_settings").upsert({ school_id: schoolId, homework_policies: pol }).then(() => {}).catch(() => {});
+  toast("Homework submission policies saved.");
+});
+
+/* ================= GOOGLE CLASSROOM UPLOAD & SYNC ================= */
+const gcSelectedStudents = new Set();
+function syncGcRecipientControls() {
+  const scope = $("gcRecipientScope")?.value || "all_students";
+  if ($("gcClassWrap")) $("gcClassWrap").style.display = scope === "class" ? "" : "none";
+  if ($("gcStudentPickerBox")) $("gcStudentPickerBox").style.display = scope === "specific_students" ? "grid" : "none";
+  populateClassOptionsSelect($("gcClassSelect"));
+  renderStudentChecklistPicker($("gcStudentChecklist"), $("gcStudentPickerSearch")?.value, gcSelectedStudents, null);
+}
+$("gcRecipientScope")?.addEventListener("change", syncGcRecipientControls);
+$("gcStudentPickerSearch")?.addEventListener("input", () => renderStudentChecklistPicker($("gcStudentChecklist"), $("gcStudentPickerSearch")?.value, gcSelectedStudents, null));
+
+function renderGoogleClassroomPage() {
+  syncGcRecipientControls();
+  const host = $("schoolGcList");
+  if (!host) return;
+  const list = syncHubState.classroom || [];
+  if ($("gcCountLabel")) $("gcCountLabel").textContent = `${list.length} synced course(s)`;
+  if (!list.length) {
+    host.innerHTML = `<div class="empty">No Google Classroom courses linked yet. Publish a course URL &amp; join code on the left.</div>`;
+    return;
+  }
+  host.innerHTML = list.map((c) => `<div class="feed-item-card">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap">
+      <div>
+        <strong>${esc(c.course_title)}</strong>
+        <div class="muted" style="font-size:12px;margin-top:2px">${esc(c.subject)} · ${esc(c.recipient_type === "class" ? "Class " + c.recipient_class : c.recipient_type === "specific_students" ? (c.recipient_student_names || []).length + " Selected Learner(s)" : "School-Wide")}</div>
+      </div>
+      ${c.join_code ? `<button class="status-chip" type="button" onclick="copyText('${esc(c.join_code)}', 'Join code copied!')" title="Copy join code">Code: ${esc(c.join_code)}</button>` : ""}
+    </div>
+    ${c.notes ? `<p class="muted" style="font-size:12.5px;margin:0">${esc(c.notes)}</p>` : ""}
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      ${c.course_url ? `<a class="btn small" href="${esc(c.course_url)}" target="_blank" rel="noopener noreferrer">Open Google Classroom →</a>` : ""}
+      ${c.attachment_url ? `<a class="btn small secondary" href="${esc(c.attachment_url)}" target="_blank" rel="noopener noreferrer">📎 ${esc(c.attachment_name || "Worksheet")}</a>` : ""}
+      ${c._notifId && c.created_by_role !== "Admin" ? `<button class="small-btn danger-btn" type="button" style="margin-left:auto" onclick="removeSchoolSyncItem('${esc(c._notifId)}')">Remove</button>` : ""}
+    </div>
+  </div>`).join("");
+}
+window.renderGoogleClassroomPage = renderGoogleClassroomPage;
+
+$("schoolGcForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("gcSubmitBtn");
+  const scope = $("gcRecipientScope")?.value || "all_students";
+  if (scope === "specific_students" && gcSelectedStudents.size === 0) {
+    notice("gcNotice", "Select at least one student for this Classroom link.", "err");
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = "Syncing…"; }
+  try {
+    let attachmentUrl = "", attachmentName = "";
+    const file = $("gcFileInput")?.files?.[0];
+    if (file) {
+      const up = await uploadFileToSupabaseStorage(file, "google-classroom");
+      attachmentUrl = up.url;
+      attachmentName = file.name;
+    }
+    const chosenIds = [...gcSelectedStudents];
+    const chosenNames = chosenIds.map((id) => {
+      const st = students.find((x) => String(x.id) === id);
+      return st ? nameOf(st) : id;
+    });
+    const rawGcUrl = normalizeExternalUrl($("gcCourseUrl").value);
+    if (!rawGcUrl) {
+      notice("gcNotice", "Enter a valid Google Classroom URL.", "err");
+      if (btn) { btn.disabled = false; btn.textContent = "Sync to Google Classroom Feed"; }
+      return;
+    }
+    const payload = {
+      id: "gc_" + Date.now(),
+      course_title: $("gcCourseTitle").value.trim(),
+      subject: $("gcSubject").value.trim(),
+      join_code: $("gcJoinCode")?.value.trim() || "",
+      course_url: rawGcUrl,
+      notes: $("gcNotes")?.value.trim() || "",
+      attachment_url: attachmentUrl,
+      attachment_name: attachmentName,
+      target_school_id: schoolId,
+      recipient_type: scope,
+      recipient_class: scope === "class" ? ($("gcClassSelect")?.value || "") : "",
+      recipient_student_ids: chosenIds,
+      recipient_student_names: chosenNames,
+      created_by_role: "School",
+      created_at: new Date().toISOString()
+    };
+    await publishSyncPayload("CLASSROOM", payload);
+    $("schoolGcForm").reset();
+    gcSelectedStudents.clear();
+    syncGcRecipientControls();
+    notice("gcNotice", "Google Classroom link synced live!", "ok");
+    await loadAccessUgSyncItems();
+  } catch (err) {
+    notice("gcNotice", safeError(err), "err");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Sync to Google Classroom Feed"; }
+  }
+});
+
+/* ================= LIVE SMS CAMPAIGN QUEUE ================= */
+function getSmsRecipientCount(aud) {
+  if (aud === "teachers") return (teachers || []).filter((t) => String(t.phone || "").trim()).length;
+  if (aud === "staff") return (staffCache || []).filter((m) => String(m.phone || "").trim()).length;
+  return (students || []).filter((s) => String(s.parent_phone || s.phone || "").trim()).length;
+}
+function renderSmsBroadcastPage() {
+  if ($("smsLiveContactsSummary")) {
+    const pCnt = getSmsRecipientCount("parents");
+    const tCnt = getSmsRecipientCount("teachers");
+    const sCnt = getSmsRecipientCount("staff");
+    $("smsLiveContactsSummary").textContent = `Live Directory Contacts: ${pCnt} Parent(s) · ${tCnt} Teacher(s) · ${sCnt} Staff phone(s)`;
+  }
+  const host = $("schoolSmsHistoryList");
+  if (!host) return;
+  const list = syncHubState.smsCampaigns || [];
+  host.innerHTML = list.length
+    ? list.map((c) => `<div class="feed-item-card">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap">
+          <strong>${esc(String(c.audience || "parents").toUpperCase())} (${esc(String(c.recipient_count || 0))} contacts · ${esc(String(c.segments || 1))} SMS)</strong>
+          <span class="status-chip warn">${esc(c.status || "Queued")}</span>
+        </div>
+        <div class="muted" style="font-size:12.5px">${esc(c.message)}</div>
+        <div class="muted" style="font-size:11px">${c.created_at ? new Date(c.created_at).toLocaleString() : ""}</div>
+      </div>`).join("")
+    : `<div class="empty">No SMS campaigns queued yet.</div>`;
+}
+window.renderSmsBroadcastPage = renderSmsBroadcastPage;
+
+$("schoolSmsForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const msg = ($("smsDraftInput")?.value || "").trim();
+  if (!msg) return;
+  const aud = $("smsAudienceSelect")?.value || "parents";
+  const count = getSmsRecipientCount(aud);
+  const seg = Math.max(1, Math.ceil(msg.length / 160));
+  const btn = $("smsDispatchBtn");
+  if (btn) { btn.disabled = true; btn.textContent = "Saving…"; }
+  try {
+    await publishSyncPayload("SMS_CAMPAIGN", {
+      id: "sms_" + Date.now(),
+      target_school_id: schoolId,
+      audience: aud,
+      recipient_count: count,
+      segments: seg,
+      message: msg,
+      status: "Queued (Awaiting UCC Carrier Gateway)",
+      created_at: new Date().toISOString()
+    });
+    $("smsDraftInput").value = "";
+    $("smsDraftInput").dispatchEvent(new Event("input"));
+    notice("smsNotice", `SMS campaign saved to Supabase (${count} contact numbers, ${seg} segment(s)). Configure Uganda UCC carrier gateway credentials to auto-dispatch.`, "ok");
+    await loadAccessUgSyncItems();
+  } catch (err) {
+    notice("smsNotice", safeError(err), "err");
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = "Queue & Save SMS Campaign"; }
+  }
+});
+
+window.applySmsTemplate = (text) => {
+  if ($("smsDraftInput")) {
+    $("smsDraftInput").value = text;
+    $("smsDraftInput").dispatchEvent(new Event("input"));
+  }
+  toast("SMS template loaded into composer.");
+};
+$("smsDraftInput")?.addEventListener("input", () => {
+  const len = ($("smsDraftInput")?.value || "").length;
+  const seg = Math.max(1, Math.ceil(len / 160));
+  if ($("smsCharCounter")) $("smsCharCounter").textContent = `${len} / 160 characters · ${seg} SMS segment${seg > 1 ? "s" : ""}`;
+});
+
+renderLiveCheckIn();
+renderTutorialsPage();
+renderHomeworkPage();
+renderGoogleClassroomPage();
+renderSmsBroadcastPage();
+initSchoolReportCards();
+
 </script>
+<div class="rc-batch-print-area" id="rcBatchPrintArea"></div>
 </body>
 </html>

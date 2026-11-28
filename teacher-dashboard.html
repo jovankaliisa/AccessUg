@@ -1100,6 +1100,14 @@ tbody tr:hover td{background:var(--accent-soft)}
 </div>
 <div class="teaching-grid" id="assignedClasses"><div class="teaching-empty">Loading your assignments…</div></div>
 </div>
+<div class="card" style="margin-top:18px" id="teacherStudentsResetCard">
+  <div class="card-head">
+    <div><h3>Assigned Students — Account &amp; Password Reset</h3><div class="muted">Help learners in your classes regain portal access safely</div></div>
+    <input id="teacherStuResetSearch" placeholder="Search student name or ID…" style="max-width:260px">
+  </div>
+  <div class="notice" id="teacherStuResetNotice"></div>
+  <div id="teacherStuResetList"><div class="empty">Loading your assigned students…</div></div>
+</div>
 </section>
 <!-- ATTENDANCE -->
 <section class="page" id="attendance">
@@ -2612,7 +2620,7 @@ function fail(msg) {
 }
 function redirectLogin() {
   ["accessug_selected_role","accessug_school_id","accessug_school_name","accessug_student_id","accessug_student_name","accessug_student_school_id","accessug_student_class_level","accessug_parent_mode","accessug_parent_email"].forEach(k=>localStorage.removeItem(k));["accessug_school_id","accessug_school_name","accessug_teacher_id","accessug_teacher_email","accessug_teacher_school_id"].forEach(k=>sessionStorage.removeItem(k));
-  location.replace("./index.html?portal=teacher");
+  location.replace("./index-portal.html?portal=teacher");
 }
 function normClass(v) {
   return String(v ?? "").trim().toLowerCase().replace(/\s+/g, " ");
@@ -2999,6 +3007,7 @@ function renderIdentity() {
   }
   if ($("classCount")) $("classCount").textContent = classes.length;
   if ($("navClassCount")) $("navClassCount").textContent = classes.length;
+  renderTeacherStudentResets();
   if ($("assignedStudentsSub")) {
     $("assignedStudentsSub").textContent = `${subjects.length} subject${subjects.length === 1 ? "" : "s"} · ${teacherStudentsCache.length} learner${teacherStudentsCache.length === 1 ? "" : "s"}`;
   }
@@ -3018,6 +3027,41 @@ function renderIdentity() {
   }
 }
 
+function renderTeacherStudentResets() {
+  const host = $("teacherStuResetList");
+  if (!host) return;
+  const q = ($("teacherStuResetSearch")?.value || "").trim().toLowerCase();
+  const rows = (teacherStudentsCache || []).filter((s) => !q || [studentName(s), s.student_number, s.email, s.class_level].some((v) => String(v || "").toLowerCase().includes(q))).slice(0, 60);
+  host.innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Student</th><th>Student No.</th><th>Class</th><th>Email</th><th>Action</th></tr></thead><tbody>${rows.map((s) => `<tr><td><strong>${esc(studentName(s))}</strong></td><td class="font-mono">${esc(s.student_number || "—")}</td><td>${esc(s.class_level || "—")}</td><td>${esc(s.email || "No email")}</td><td>${s.email ? `<button class="btn small secondary" type="button" onclick="resetMyStudentPw('${esc(s.id)}','${esc(s.email)}')">Reset Password</button>` : '<span class="muted">No login email</span>'}</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">No matching assigned students.</div>';
+}
+$("teacherStuResetSearch")?.addEventListener("input", renderTeacherStudentResets);
+window.resetMyStudentPw = async (studentId, email) => {
+  const np = "STU-" + Math.floor(100000 + Math.random() * 899999);
+  const el = $("teacherStuResetNotice");
+  if (el) { el.className = "notice show info"; el.textContent = "Resetting password for " + email + "…"; }
+  try {
+    let { data: sd } = await supabaseClient.auth.getSession();
+    let ses = sd?.session;
+    if (!ses || (ses.expires_at && ses.expires_at * 1000 < Date.now() + 60000)) {
+      const ref = await supabaseClient.auth.refreshSession().catch(() => null);
+      if (ref?.data?.session) ses = ref.data.session;
+    }
+    const headers = ses?.access_token ? { Authorization: "Bearer " + ses.access_token } : {};
+    const edge = await supabaseClient.functions.invoke("teacher-reset-student-password", {
+      headers,
+      body: { student_id: studentId, email, school_id: teacherSchoolId, new_password: np }
+    });
+    if (!edge.error && edge.data?.ok) {
+      if (el) { el.className = "notice show ok"; el.textContent = "Student temporary password set for " + email + ": " + (edge.data.password || np); }
+      return;
+    }
+  } catch {}
+  const r = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: new URL("./reset-password.html", location.href).href });
+  if (el) {
+    el.className = "notice show " + (r.error ? "err" : "ok");
+    el.textContent = r.error ? r.error.message : "Password reset link sent to " + email + " (opens Create New Password page).";
+  }
+};
 async function getStudents(classId) {
   if (!classId) throw new Error("Select a class.");
   const selected = classes.find((c) => String(c.id) === String(classId));
