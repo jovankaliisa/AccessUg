@@ -1,0 +1,2940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ACCESS UG — Bursar & Accountant Portal</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style data-embedded-from="school-dashboard.css">
+:root{
+  --navy:#061a38;
+  --navy2:#0b3d82;
+  --blue:#1769d2;
+  --blue2:#1457a6;
+  --accent:#0b3d82;
+  --accent-soft:#edf4fd;
+  --cyan:#12c7f5;
+  --bg:#f2f5fa;
+  --surface:#ffffff;
+  --surface-2:#f8fafd;
+  --white:#ffffff;
+  --line:#d8e2ef;
+  --border:#d8e2ef;
+  --input-bg:#ffffff;
+  --input-border:#cbd5e1;
+  --input-border-hover:#94a3b8;
+  --input-shadow:0 1px 2px rgba(15,23,42,.05);
+  --text:#0f172a;
+  --muted:#475569;
+  --green:#0f9f6e;
+  --success:#15966b;
+  --amber:#b45309;
+  --warning:#d99419;
+  --red:#dc2626;
+  --danger:#d9534f;
+  --radius:14px;
+  --sidebar-w:268px;
+  --sidebar-bg:linear-gradient(180deg,#061a38,#092d63,#0b3d82);
+  --sidebar-text:#dbeafe;
+  --font-sans:"Inter",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-display:"Plus Jakarta Sans","Inter",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --shadow:0 8px 24px rgba(6,26,56,.06);
+}
+html.theme-dark{
+  --bg:#060c1a;
+  --surface:#0c162d;
+  --surface-2:#111f3d;
+  --white:#0c162d;
+  --line:rgba(148,163,184,.2);
+  --border:rgba(148,163,184,.2);
+  --input-bg:#0f1c38;
+  --input-border:rgba(148,163,184,.3);
+  --input-border-hover:rgba(148,163,184,.52);
+  --input-shadow:inset 0 1px 2px rgba(0,0,0,.22);
+  --text:#f1f5f9;
+  --muted:#9fb0c7;
+  --accent:#12c7f5;
+  --accent-soft:rgba(18,199,245,.12);
+  --sidebar-bg:linear-gradient(180deg,#040914,#081226,#0b1936);
+  --shadow:0 12px 32px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;width:100%;max-width:100%;overflow-x:hidden}
+body{
+  font-family:var(--font-sans);background:var(--bg);color:var(--text);
+  font-size:14px;line-height:1.55;letter-spacing:-.006em;
+  min-height:100vh;width:100%;max-width:100%;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3,h4{font-family:var(--font-display);letter-spacing:-.02em;line-height:1.25;color:var(--text)}
+h4{font-size:14.5px;font-weight:750}
+p{line-height:1.55}
+code{font-family:var(--font-mono);font-size:.88em;padding:2px 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.font-mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.hidden{display:none!important}
+
+/* APP SHELL & FIXED-BOTTOM SIDEBAR */
+.app{min-height:100vh;display:flex}
+.sidebar{
+  width:var(--sidebar-w);
+  height:100vh;
+  height:100dvh;
+  position:fixed;
+  inset:0 auto 0 0;
+  z-index:1000;
+  background:var(--sidebar-bg);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  padding:16px 12px 14px;
+  transition:transform .25s ease;
+  overflow:hidden;
+  border-right:1px solid rgba(255,255,255,.1);
+}
+.brand{
+  display:flex;align-items:center;gap:11px;
+  padding:4px 8px 14px;
+  border-bottom:1px solid rgba(255,255,255,.14);
+  margin-bottom:10px;
+  flex-shrink:0;
+}
+.logo{
+  width:42px;height:42px;border-radius:12px;
+  background:#fff;color:var(--navy2);
+  display:grid;place-items:center;font-weight:900;font-size:15px;flex-shrink:0;
+  box-shadow:0 6px 16px rgba(0,0,0,.22);
+}
+.brand h1{font-size:17px;letter-spacing:-.02em;color:#fff;margin:0}
+.brand small{display:block;font-size:11px;color:#bcd2f5;margin-top:2px;font-weight:500}
+.nav-filter-box{margin:2px 4px 10px;flex-shrink:0}
+.nav-filter{
+  width:100%;height:36px;border-radius:10px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.09);
+  color:#fff;padding:0 11px;font-size:12.5px;font-weight:500;outline:none;
+  transition:border-color .16s,background-color .16s;
+}
+.nav-filter:focus{border-color:#12c7f5;background:rgba(255,255,255,.14)}
+.nav-filter::placeholder{color:rgba(219,234,254,.65)}
+.nav{
+  display:flex;flex-direction:column;gap:2px;
+  flex:1 1 0%;min-height:0;
+  overflow-y:auto;overflow-x:hidden;
+  padding-right:4px;
+  scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.22) transparent;
+}
+.nav::-webkit-scrollbar{width:5px}
+.nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.22);border-radius:99px}
+.nav-group-label{
+  font-size:10px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:rgba(191,219,254,.62);
+  padding:12px 10px 5px;flex-shrink:0;
+}
+.nav button{
+  width:100%;border:0;background:transparent;color:var(--sidebar-text);
+  padding:9px 11px;border-radius:9px;text-align:left;font-size:13px;font-weight:550;
+  display:flex;align-items:center;gap:10px;transition:.15s;flex:0 0 auto;line-height:1.3;
+}
+.nav button:hover{background:rgba(255,255,255,.11);color:#fff}
+.nav button.active{
+  background:rgba(255,255,255,.16);color:#fff;font-weight:700;
+  box-shadow:inset 3px 0 #12c7f5;
+}
+.nav-icon{width:18px;height:18px;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center}
+.nav-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-badge,.pill{
+  margin-left:auto;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:700;
+  background:rgba(18,199,245,.22);color:#bae6fd;font-family:var(--font-mono);
+}
+.fees-subnav{margin:2px 0 6px 12px;padding-left:10px;border-left:1px solid rgba(255,255,255,.18);display:grid;gap:2px;flex:0 0 auto}
+.fees-subnav button{padding:7px 10px;font-size:12px}
+.sidebar-bottom{
+  margin-top:auto;padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.16);
+  flex:0 0 auto;background:transparent;
+}
+.logout{
+  width:100%;border:1px solid rgba(248,113,113,.34);background:rgba(220,38,38,.15);
+  color:#fecaca;padding:10px 12px;border-radius:10px;font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:8px;min-height:40px;transition:.16s;
+}
+.logout:hover{background:rgba(220,38,38,.28);border-color:rgba(248,113,113,.6);color:#fff}
+.scrim{display:none;position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.55);border:0}
+.scrim.show{display:block}
+
+/* TOPBAR & MAIN */
+.main{margin-left:var(--sidebar-w);width:calc(100% - var(--sidebar-w));min-width:0;min-height:100vh;display:flex;flex-direction:column}
+.top{
+  height:68px;background:var(--surface);border-bottom:1px solid var(--line);
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  position:sticky;top:0;z-index:500;gap:12px;width:100%;min-width:0;
+}
+.title-wrap{display:flex;align-items:center;gap:12px;min-width:0}
+.top h2{font-size:18.5px;font-weight:750;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu-btn{
+  display:none;border:1px solid var(--line);background:var(--surface-2);color:var(--text);
+  width:38px;height:38px;border-radius:9px;align-items:center;justify-content:center;flex-shrink:0;
+}
+.menu-btn svg,.bell svg,.icon-btn svg,.logout svg{
+  width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;
+}
+.top-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.pill-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border-radius:999px;
+  background:var(--accent-soft);color:var(--accent);font-size:11px;font-weight:700;border:1px solid var(--line);
+}
+.pill-chip i{width:7px;height:7px;border-radius:50%;background:var(--green);display:inline-block}
+.bell,.icon-btn{
+  position:relative;border:1px solid var(--line);background:var(--surface-2);color:var(--accent);
+  width:38px;height:38px;border-radius:10px;display:grid;place-items:center;flex-shrink:0;transition:.15s;
+}
+.bell:hover,.icon-btn:hover,.menu-btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.bell-badge{
+  position:absolute;right:-4px;top:-4px;background:#dc2626;color:#fff;border-radius:999px;
+  min-width:18px;height:18px;font-size:10px;font-weight:800;display:none;place-items:center;
+  border:2px solid var(--surface);padding:0 4px;
+}
+.user-mini{display:flex;align-items:center;gap:10px}
+.user-mini span{font-size:12.5px;font-weight:500;color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profile-trigger{border:0;background:transparent;padding:0;display:flex;align-items:center;gap:10px;cursor:pointer;color:inherit;text-align:left}
+.avatar{
+  width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);
+  border:1px solid var(--line);display:grid;place-items:center;font-weight:800;overflow:hidden;flex-shrink:0;
+}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* CONTENT, HERO & CARDS */
+.content{padding:24px;max-width:1550px;width:100%;margin:0 auto;flex:1}
+.page{display:none}
+.page.active{display:block}
+.hero{
+  background:linear-gradient(135deg,var(--navy),var(--navy2));
+  color:#fff;border-radius:var(--radius);padding:24px;margin-bottom:20px;
+  box-shadow:0 12px 28px rgba(6,26,56,.18);
+  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+}
+.hero h1{margin:0 0 6px;font-size:clamp(20px,2.4vw,25px);font-weight:800;color:#fff}
+.hero p{margin:0;color:#dbeafe;font-size:13.5px;max-width:720px;line-height:1.55}
+.hero-actions{display:flex;gap:8px;flex-wrap:wrap}
+.grid{display:grid;gap:18px}
+.two{grid-template-columns:1.25fr .95fr}
+.grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.three,.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.four,.cards,.kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.card,.pagecard{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:22px;min-width:0;
+}
+.card-head,.title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.card h3,.title h3{margin:0;font-size:16.5px;font-weight:750;color:var(--text)}
+.muted{color:var(--muted);font-size:12.5px;line-height:1.5}
+.stat{padding:18px;transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease}
+.kpi-card{cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;gap:10px}
+.kpi-card:hover{transform:translateY(-2px);border-color:rgba(23,105,210,.4);box-shadow:0 12px 26px rgba(6,26,56,.1)}
+.kpi-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.stat .label{font-size:12.5px;color:var(--muted);font-weight:650;letter-spacing:.01em}
+.stat .value{font-family:var(--font-display);font-variant-numeric:tabular-nums;font-size:clamp(22px,2.2vw,29px);font-weight:800;margin-top:2px;color:var(--text);letter-spacing:-.025em;line-height:1.15}
+.stat .sub{font-size:12px;color:var(--muted);margin-top:0;line-height:1.35}
+.kpi-icon{
+  width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;flex-shrink:0;border:1px solid rgba(11,61,130,.1);
+}
+.kpi-icon svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.kpi-icon.kpi-blue{background:rgba(23,105,210,.12);color:#1769d2;border-color:rgba(23,105,210,.2)}
+.kpi-icon.kpi-teal{background:rgba(13,148,136,.12);color:#0f766e;border-color:rgba(13,148,136,.2)}
+.kpi-icon.kpi-green{background:rgba(15,159,110,.12);color:#0f9f6e;border-color:rgba(15,159,110,.22)}
+.kpi-icon.kpi-amber{background:rgba(217,119,6,.12);color:#b45309;border-color:rgba(217,119,6,.2)}
+html.theme-dark .kpi-icon.kpi-blue{background:rgba(56,189,248,.14);color:#38bdf8;border-color:rgba(56,189,248,.24)}
+html.theme-dark .kpi-icon.kpi-teal{background:rgba(45,212,191,.14);color:#2dd4bf;border-color:rgba(45,212,191,.24)}
+html.theme-dark .kpi-icon.kpi-green{background:rgba(52,211,153,.14);color:#34d399;border-color:rgba(52,211,153,.24)}
+html.theme-dark .kpi-icon.kpi-amber{background:rgba(251,191,36,.14);color:#fbbf24;border-color:rgba(251,191,36,.24)}
+.btn svg,.seg-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.quick-ops-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-top:16px}
+.quick-op-tile{
+  border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 10px;
+  display:flex;align-items:center;gap:10px;text-align:left;transition:.16s;box-shadow:var(--shadow);min-width:0;
+}
+.quick-op-tile:hover{border-color:var(--blue);background:var(--accent-soft);transform:translateY(-1px)}
+.quick-op-tile .qo-ico{
+  width:34px;height:34px;border-radius:9px;background:var(--accent-soft);color:var(--accent);
+  display:grid;place-items:center;flex-shrink:0;
+}
+.quick-op-tile .qo-ico.qo-blue{background:rgba(23,105,210,.12);color:#1769d2}
+.quick-op-tile .qo-ico.qo-teal{background:rgba(13,148,136,.12);color:#0f766e}
+.quick-op-tile .qo-ico.qo-green{background:rgba(15,159,110,.12);color:#0f9f6e}
+.quick-op-tile .qo-ico.qo-amber{background:rgba(217,119,6,.12);color:#b45309}
+.quick-op-tile .qo-ico.qo-indigo{background:rgba(67,56,202,.12);color:#4338ca}
+html.theme-dark .quick-op-tile .qo-ico.qo-blue{background:rgba(56,189,248,.16);color:#38bdf8}
+html.theme-dark .quick-op-tile .qo-ico.qo-teal{background:rgba(45,212,191,.16);color:#2dd4bf}
+html.theme-dark .quick-op-tile .qo-ico.qo-green{background:rgba(52,211,153,.16);color:#34d399}
+html.theme-dark .quick-op-tile .qo-ico.qo-amber{background:rgba(251,191,36,.16);color:#fbbf24}
+html.theme-dark .quick-op-tile .qo-ico.qo-indigo{background:rgba(129,140,248,.16);color:#818cf8}
+.quick-op-tile .qo-ico svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.quick-op-tile > span:last-child,.quick-op-tile > div{min-width:0;flex:1}
+.quick-op-tile strong{display:block;font-size:12.5px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.quick-op-tile small{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-wrap{height:240px;position:relative}
+.chart-empty-note{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:16px;pointer-events:none;color:var(--muted);font-size:12.5px;gap:4px;
+}
+.chart-empty-note strong{color:var(--text);font-size:13px}
+
+/* OVERVIEW SCHEDULE, CHIPS & FEES STRIPS */
+.overview-schedule-list{display:grid;gap:8px}
+.overview-schedule-row{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);
+}
+.overview-schedule-row strong{display:block;font-size:13px;color:var(--text)}
+.overview-schedule-row small{display:block;font-size:11.5px;color:var(--muted)}
+.overview-schedule-time{
+  font-family:var(--font-mono);font-size:11.5px;font-weight:700;color:var(--accent);
+  background:var(--accent-soft);padding:4px 9px;border-radius:7px;white-space:nowrap;flex-shrink:0;
+}
+.overview-chip-row{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.overview-chip{
+  display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:8px;
+  background:var(--surface-2);border:1px solid var(--line);font-size:12px;font-weight:650;color:var(--text);
+}
+.overview-fees-bar{margin-top:14px;padding:12px 14px;border-radius:11px;background:var(--surface-2);border:1px solid var(--line)}
+.overview-fees-bar-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12px;margin-bottom:7px}
+.overview-fees-track{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.overview-fees-fill{height:100%;border-radius:99px;background:var(--green);transition:width .35s ease}
+.msg-unread-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;display:inline-block}
+
+/* HIGH-END UNIFIED FORM INPUTS, LABELS & BUTTONS */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:end;margin-bottom:18px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:170px;flex:1}
+.field label{
+  display:flex;align-items:center;gap:4px;
+  font-size:12px;font-weight:700;color:var(--text);opacity:.88;letter-spacing:.01em;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="hidden"]):not(.nav-filter),
+select,textarea,.input{
+  width:100%;min-height:44px;
+  border:1.5px solid var(--input-border);border-radius:11px;
+  padding:10px 14px;background:var(--input-bg);color:var(--text);
+  font-size:14px;font-weight:500;line-height:1.45;outline:none;
+  box-shadow:var(--input-shadow);
+  transition:border-color .18s ease,box-shadow .18s ease,background-color .18s ease;
+}
+textarea{min-height:96px;resize:vertical;line-height:1.55}
+select{
+  cursor:pointer;appearance:none;-webkit-appearance:none;padding-right:38px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;background-size:15px;
+}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="hidden"]):not(.nav-filter)::placeholder,
+textarea::placeholder{color:#94a3b8;opacity:1;font-weight:400}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="hidden"]):not(.nav-filter):hover,
+select:hover,textarea:hover{border-color:var(--input-border-hover)}
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="hidden"]):not(.nav-filter):focus,
+select:focus,textarea:focus{
+  border-color:var(--blue);background:var(--input-bg);
+  box-shadow:0 0 0 4px rgba(23,105,210,.15),var(--input-shadow);
+}
+input[type="file"]{
+  width:100%;min-height:44px;padding:7px 10px;
+  border:1.5px dashed var(--input-border);border-radius:11px;
+  background:var(--surface-2);color:var(--muted);font-size:12.5px;cursor:pointer;
+}
+input[type="file"]::file-selector-button{
+  border:1px solid var(--line);background:var(--surface);color:var(--text);
+  padding:6px 12px;margin-right:10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;
+}
+input[type="color"]{
+  width:100%;height:44px;padding:4px 6px;
+  border:1.5px solid var(--input-border);border-radius:11px;
+  background:var(--input-bg);cursor:pointer;
+}
+input:disabled,select:disabled,textarea:disabled{opacity:.65;cursor:not-allowed}
+.pw-input-row{display:flex;gap:8px;align-items:center}
+.pw-input-row input{flex:1;min-width:0}
+.pw-input-row .small-btn,.pw-input-row .pbtn{min-height:44px;padding:0 14px;display:inline-flex;align-items:center;justify-content:center}
+
+.btn{
+  border:0;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;
+  padding:10px 16px;min-height:42px;border-radius:10px;font-size:13px;font-weight:700;
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:.15s;
+  box-shadow:0 6px 14px rgba(6,26,56,.14);white-space:nowrap;
+}
+.toolbar > .btn,.toolbar > .secondary{min-height:44px}
+.btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn.secondary,.secondary,.small-btn{
+  border:1.5px solid var(--input-border);background:var(--surface);color:var(--text);
+  box-shadow:0 1px 2px rgba(15,23,42,.04);font-weight:650;
+}
+.btn.secondary:hover,.secondary:hover,.small-btn:hover{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.btn.success{background:linear-gradient(135deg,#0f9f6e,#0b7a54);color:#fff}
+.btn.danger,.danger-btn{
+  border:1.5px solid rgba(220,38,38,.35)!important;
+  background:rgba(220,38,38,.1)!important;color:var(--red)!important;box-shadow:none!important;
+}
+.btn.small,.small-btn{padding:6px 12px;min-height:32px;font-size:11.5px;border-radius:8px}
+.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;flex-wrap:wrap}
+
+/* TABLES, BADGES, NOTICES */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;min-width:680px}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;vertical-align:middle}
+th{background:var(--surface-2);color:var(--muted);font-size:11px;font-weight:750;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:var(--accent-soft)}
+.badge{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;
+  font-size:11px;font-weight:750;background:var(--accent-soft);color:var(--accent);white-space:nowrap;
+}
+.badge.present,.badge.active,.badge.ok{background:rgba(15,159,110,.14);color:var(--green)}
+.badge.absent,.badge.err{background:rgba(214,69,69,.14);color:var(--red)}
+.badge.auth,.badge.late,.badge.warn{background:rgba(196,122,0,.15);color:var(--amber)}
+.badge.neutral{background:rgba(148,163,184,.16);color:var(--muted)}
+.empty{text-align:center;padding:34px 16px;color:var(--muted);font-size:13px}
+.notice,.db-message{
+  display:none;padding:12px 14px;border-radius:10px;margin:10px 0 14px;font-size:13px;
+  line-height:1.45;white-space:pre-line;
+}
+.notice.show,.db-message.show{display:block}
+.notice.ok,.db-message.ok{background:rgba(15,159,110,.12);color:var(--green);border:1px solid rgba(15,159,110,.3)}
+.notice.err,.db-message.error{background:rgba(214,69,69,.12);color:var(--red);border:1px solid rgba(214,69,69,.3)}
+.notice.info,.db-message.info{background:var(--accent-soft);color:var(--accent);border:1px solid var(--line)}
+
+/* SEGMENTED, SWITCHES & QUICK CARDS */
+.seg-bar{display:inline-flex;flex-wrap:wrap;gap:4px;padding:4px;border-radius:10px;background:var(--surface-2);border:1px solid var(--line)}
+.seg-btn{height:32px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--muted);font-size:12px;font-weight:650;display:inline-flex;align-items:center;gap:6px}
+.seg-btn.active{background:var(--surface);color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.switch{position:relative;width:42px;height:23px;border-radius:999px;border:0;background:rgba(148,163,184,.38);padding:0;flex-shrink:0}
+.switch[aria-checked="true"]{background:var(--accent)}
+.switch span{position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch[aria-checked="true"] span{transform:translateX(19px)}
+
+/* MODALS & TOAST */
+.modal{display:none;position:fixed;inset:0;z-index:2500;background:rgba(3,14,34,.68);backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modal-box,.modalbox{
+  width:min(880px,100%);max-height:92vh;overflow:auto;background:var(--surface);
+  border:1px solid var(--line);border-radius:18px;box-shadow:0 25px 70px rgba(0,0,0,.3);padding:24px;
+}
+.modal-head,.modalhead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.modal-head h3,.modalhead h3{margin:0;font-size:20px;color:var(--text)}
+.close{border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:10px;width:36px;height:36px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.formgrid .field{min-width:0}
+.toast{
+  position:fixed;right:20px;bottom:20px;z-index:3500;background:var(--navy);color:#fff;
+  padding:12px 16px;border-radius:11px;box-shadow:0 12px 30px rgba(0,0,0,.3);display:none;
+  max-width:390px;font-size:13px;font-weight:600;
+}
+.toast.show{display:block}
+
+/* ASSIGNMENT BUILDER & PAYMENT BOXES */
+.assignment-builder,.payment-code-box{
+  margin-top:16px;padding:16px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);
+}
+.assignment-builder-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.assignment-status{padding:11px 13px;border-radius:10px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--line);font-size:12.5px}
+.teacher-assignments{display:grid;gap:10px;margin-top:12px}
+.teacher-assignment-row{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:12px}
+.teacher-assignment-row.selected{border-color:var(--blue);box-shadow:0 0 0 2px rgba(23,105,210,.1)}
+.assignment-class-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.assignment-class-check{display:flex;align-items:center;gap:8px;font-weight:750}
+.assignment-class-check input,.subject-check input{width:16px;height:16px;accent-color:var(--blue)}
+.subject-checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.subject-check{display:flex;align-items:center;gap:7px;padding:7px 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);font-size:12px}
+.assignment-select-all{border:0;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:750}
+
+/* REPORTS, INBOX, MESSENGER */
+.report-summary-grid,.report-groups{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}
+.report-summary-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.report-summary-card span{display:block;color:var(--muted);font-size:12px;font-weight:700}
+.report-summary-card strong{display:block;color:var(--text);font-size:26px;margin-top:4px}
+.report-filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.report-filter{border:1px solid var(--line);background:var(--surface-2);color:var(--text);border-radius:999px;padding:7px 14px;font-weight:750;font-size:12px}
+.report-filter.active,.report-filter:hover{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-color:var(--navy)}
+
+.inbox-list,.msg-inbox-list{display:grid;gap:10px}
+.notice-row,.msg-inbox-card{
+  border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;gap:12px;
+  align-items:flex-start;justify-content:space-between;flex-wrap:wrap;background:var(--surface-2);
+}
+.notice-row.unread,.msg-inbox-card.unread{background:var(--surface);border-color:var(--blue);box-shadow:0 4px 14px rgba(23,105,210,.08)}
+.dot,.unread-dot{width:9px;height:9px;border-radius:50%;background:var(--blue);margin-top:6px;flex:none;display:inline-block}
+.notice-row.read .dot{background:#94a3b8}
+.notice-main{min-width:200px;flex:1}
+.notice-main strong{display:block;margin-bottom:4px;color:var(--text)}
+.notice-main p{margin:0;color:var(--muted);font-size:13px;white-space:pre-wrap}
+.notice-meta{font-size:11px;color:var(--muted);margin-top:6px}
+
+.messenger{display:grid;grid-template-columns:minmax(250px,33%) 1fr;min-height:520px;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.messenger-side{padding:14px;border-right:1px solid var(--line);background:var(--surface-2);display:flex;flex-direction:column;gap:10px;min-width:0}
+.messenger-chat{display:flex;flex-direction:column;min-width:0}
+.chat-header{padding:14px 16px;border-bottom:1px solid var(--line);font-weight:750;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.chat-messages{padding:16px;flex:1;min-height:290px;max-height:430px;overflow:auto;display:flex;flex-direction:column;gap:9px}
+.chat-compose{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--surface-2);align-items:center}
+.attach-btn{padding:9px 13px;background:var(--accent-soft);color:var(--accent);border-radius:9px;cursor:pointer;font-weight:700}
+.message-bubble{max-width:78%;padding:10px 13px;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);align-self:flex-start;font-size:13px;overflow-wrap:anywhere;color:var(--text)}
+.message-bubble.mine{background:var(--accent-soft);border-color:var(--accent);align-self:flex-end}
+.message-bubble img{display:block;max-width:220px;max-height:220px;border-radius:9px;margin-top:6px}
+.directory-row,.conversation-row{display:flex;align-items:center;gap:10px;padding:9px;border-radius:9px;cursor:pointer;border:1px solid transparent}
+.directory-row:hover,.directory-row.active,.conversation-row:hover{background:var(--accent-soft);border-color:rgba(23,105,210,.2)}
+.avatar-circle{width:36px;height:36px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:800;flex-shrink:0}
+
+/* FEES & PREVIEW */
+.fees-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}
+.fees-kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:var(--shadow)}
+.fees-kpi small{display:block;color:var(--muted);font-size:12px}
+.fees-kpi strong{display:block;font-size:22px;margin-top:5px;color:var(--text)}
+.fees-paid{color:var(--green);font-weight:800}
+.fees-due{color:var(--red);font-weight:800}
+.fees-balance{font-weight:900}
+.fees-class-row{cursor:pointer}
+.fees-inline{display:flex;gap:8px;align-items:center}
+.fees-inline input{max-width:180px}
+.fees-student-panel{margin-top:10px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2)}
+.fees-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.fees-tabs button{border:1px solid var(--line);background:var(--surface-2);color:var(--accent);padding:8px 12px;border-radius:9px;font-weight:700}
+.fees-tabs button.active{background:var(--navy2);color:#fff;border-color:var(--navy2)}
+.fees-help{padding:12px 14px;border-radius:11px;background:var(--accent-soft);border:1px solid var(--line);color:var(--accent);font-size:12.5px;line-height:1.5}
+.preview{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;padding:16px}
+.profile-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px}
+.profile-item{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.profile-item small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.profile-item strong{font-size:13px;word-break:break-word}
+
+/* QR */
+.school-qr-card{display:grid;gap:14px}
+.school-qr-image{width:min(320px,100%);aspect-ratio:1/1;margin:0 auto;display:grid;place-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;overflow:hidden}
+.school-qr-image img{display:block;width:100%;height:100%;object-fit:contain}
+.school-qr-token{font-family:var(--font-mono);word-break:break-all;background:var(--surface-2);border:1px dashed var(--line);border-radius:11px;padding:12px;font-size:12px}
+
+/* TIMETABLE GRID */
+.tt-grid-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+.tt-grid{width:100%;min-width:860px;border-collapse:collapse}
+.tt-grid th{background:var(--surface-2);padding:11px 10px;text-align:center;font-size:11px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.tt-grid th:first-child{width:125px;text-align:left;padding-left:14px}
+.tt-grid td{border-bottom:1px solid var(--line);border-right:1px solid var(--line);padding:7px;vertical-align:top;min-height:82px;height:84px;background:var(--surface)}
+.tt-grid td:first-child{background:var(--surface-2);font-family:var(--font-mono);font-size:11px;font-weight:700;vertical-align:middle;padding:10px 12px;color:var(--muted)}
+.tt-break-row td{height:38px!important;min-height:38px!important;background:rgba(148,163,184,.09)!important;text-align:center;font-size:11px;font-weight:700;color:var(--muted);vertical-align:middle!important}
+.tt-cell-empty{width:100%;height:100%;min-height:68px;border:1.5px dashed transparent;border-radius:9px;background:transparent;color:var(--muted);font-size:11px;display:grid;place-items:center;opacity:.45}
+.tt-grid td:hover .tt-cell-empty{border-color:var(--line);opacity:1;background:var(--surface-2)}
+.tt-slot-card{padding:8px 10px;border-radius:9px;border-left:4px solid var(--blue);background:var(--accent-soft);text-align:left;width:100%;display:grid;gap:3px;border-top:0;border-right:0;border-bottom:0}
+.tt-slot-card strong{font-size:12px;color:var(--text)}
+.tt-slot-card small{font-size:10.5px;color:var(--muted)}
+.tt-slot-card.c-green{border-left-color:var(--green);background:rgba(15,159,110,.11)}
+.tt-slot-card.c-amber{border-left-color:var(--amber);background:rgba(196,122,0,.11)}
+.tt-slot-card.c-cyan{border-left-color:#0891b2;background:rgba(18,199,245,.12)}
+.tt-slot-card.c-violet{border-left-color:#7c3aed;background:rgba(124,58,237,.11)}
+
+/* OFFICIAL CALENDAR */
+.cal-header-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--surface)}
+.cal-dow{background:var(--surface-2);padding:10px 6px;text-align:center;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.cal-dow:nth-child(7n){border-right:0}
+.cal-day{min-height:96px;padding:8px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);background:var(--surface);cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.cal-day:nth-child(7n){border-right:0}
+.cal-day:hover{background:var(--accent-soft)}
+.cal-day.outside{opacity:.45;background:var(--surface-2)}
+.cal-day.today{box-shadow:inset 0 0 0 2px var(--blue);background:var(--accent-soft)}
+.cal-day-num{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700}
+.cal-pill{padding:3px 6px;border-radius:6px;font-size:10.5px;font-weight:700;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(23,105,210,.13);color:var(--blue);border:0;border-left:3px solid var(--blue);text-align:left}
+.cal-pill.holiday{background:rgba(214,69,69,.13);color:var(--red);border-left-color:var(--red)}
+.cal-pill.exam{background:rgba(196,122,0,.15);color:var(--amber);border-left-color:var(--amber)}
+.cal-pill.event{background:rgba(15,159,110,.14);color:var(--green);border-left-color:var(--green)}
+.cal-pill.meeting{background:rgba(124,58,237,.13);color:#7c3aed;border-left-color:#7c3aed}
+
+/* REPORT CARD STUDIO */
+.rc-tpl-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:14px;margin-bottom:18px}
+.rc-sheet{background:#fff;color:#0f172a;border:1px solid #cbd5e1;border-radius:14px;padding:24px;box-shadow:0 12px 32px rgba(6,26,56,.08)}
+.rc-sheet-head{display:flex;justify-content:space-between;align-items:center;gap:14px;padding-bottom:14px;border-bottom:3px solid var(--navy2);margin-bottom:14px;flex-wrap:wrap}
+
+/* SCALE, GOVERNANCE, APPEARANCE */
+.scale-config-box{padding:16px;border:1px solid var(--line);border-radius:13px;background:var(--surface-2);margin-bottom:16px}
+.scale-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.scale-pill{border:1px solid var(--line);background:var(--surface);color:var(--text);padding:5px 11px;border-radius:8px;font-size:11.5px;font-weight:700;font-family:var(--font-mono)}
+.scale-pill.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+.sys-lock-banner{padding:14px 16px;border-radius:12px;border:1px solid rgba(214,69,69,.35);background:rgba(214,69,69,.09);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.sys-ctrl-card{border:1px solid var(--line);border-radius:12px;padding:15px;background:var(--surface-2);display:flex;flex-direction:column;gap:8px}
+.swatch-row{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:32px;height:32px;border-radius:9px;border:2px solid transparent}
+.swatch.active{border-color:var(--text);transform:scale(1.08)}
+
+/* PROFILE MODAL & CROPPER */
+.profile-modal,.profile-crop-modal{display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,18,42,.62);backdrop-filter:blur(7px);align-items:center;justify-content:center;padding:16px}
+.profile-modal.show,.profile-crop-modal.show{display:flex}
+.profile-modal-card,.profile-crop-card{width:min(480px,100%);max-height:92vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 28px 90px rgba(0,0,0,.3)}
+.profile-modal-head,.profile-crop-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.profile-close{width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--text);font-size:18px}
+.profile-hero{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);margin-bottom:14px}
+.profile-photo{width:68px;height:68px;border-radius:16px;overflow:hidden;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent);font-weight:900;font-size:22px;flex:none}
+.profile-photo img{width:100%;height:100%;object-fit:cover}
+.profile-readonly{display:grid;gap:8px;margin-bottom:14px}
+.profile-readonly div{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-radius:9px;background:var(--surface-2);font-size:12px}
+.profile-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pbtn{border:0;border-radius:10px;padding:9px 13px;font-weight:700;font-size:12px}
+.pbtn.primary{background:var(--navy2);color:#fff}
+.pbtn.secondary{background:var(--surface-2);color:var(--text);border:1px solid var(--line)}
+.pbtn.danger{background:rgba(214,69,69,.12);color:var(--red)}
+.profile-divider{height:1px;background:var(--line);margin:16px 0}
+.profile-crop-stage{width:min(380px,84vw);height:min(380px,84vw);margin:0 auto 14px;position:relative;border-radius:16px;overflow:hidden;background:#0d1d33;display:grid;place-items:center}
+.profile-crop-stage canvas{width:100%;height:100%;display:block;touch-action:none}
+.profile-crop-guide{position:absolute;inset:10%;border:2px solid rgba(255,255,255,.92);border-radius:50%;box-shadow:0 0 0 999px rgba(0,0,0,.28);pointer-events:none}
+.profile-crop-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+
+.lockscreen-preview{
+  aspect-ratio:16/9;min-height:220px;border-radius:14px;border:1px solid rgba(255,255,255,.16);
+  padding:22px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;
+  background:radial-gradient(circle at 75% 20%,#0648ef,#041d59 55%,#040d21);
+  box-shadow:0 16px 36px rgba(4,13,33,.28);
+}
+.checkline{display:flex!important;align-items:center;gap:10px;font-size:13px;font-weight:600;color:var(--text);cursor:pointer}
+.checkline input{width:18px;height:18px;accent-color:var(--blue);flex-shrink:0}
+
+@media print{
+  body *{visibility:hidden}
+  #rcPreviewSheet,#rcPreviewSheet *{visibility:visible}
+  #rcPreviewSheet{position:fixed;inset:0;width:100%;border:0;box-shadow:none;padding:16px}
+}
+@media(max-width:1180px){
+  .quick-ops-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media(max-width:1050px){
+  .four,.cards,.kpi-grid,.fees-summary,.grid-3,.three{grid-template-columns:repeat(2,1fr)}
+  .two,.grid-2,.messenger,.report-summary-grid{grid-template-columns:1fr}
+  .profile-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:780px){
+  .sidebar{transform:translateX(-100%);height:100dvh;max-height:100dvh}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;width:100%}
+  .menu-btn{display:flex}
+  .user-mini span,.pill-chip{display:none}
+  .content{padding:14px}
+  .hero{padding:18px 16px;margin-bottom:14px}
+  .hero-actions{width:100%}
+  .hero-actions .btn{flex:1 1 auto;min-height:38px;padding:8px 11px;font-size:12px}
+  .card,.pagecard{padding:15px}
+  .modal-box,.modalbox{padding:18px}
+  .four,.cards,.three,.grid-3,.fees-summary,.formgrid,.profile-grid{grid-template-columns:1fr}
+  .kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .kpi-card{padding:13px;gap:6px}
+  .kpi-card .label{font-size:11.5px}
+  .kpi-card .value{font-size:21px}
+  .kpi-card .sub{font-size:11px}
+  .kpi-icon{width:32px;height:32px;border-radius:9px}
+  .kpi-icon svg{width:16px;height:16px}
+  .quick-ops-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}
+  .quick-op-tile{padding:10px}
+  .toolbar .field{min-width:100%}
+  .toolbar > .btn,.toolbar > .secondary{width:100%}
+  .cal-day{min-height:70px;padding:5px}
+}
+
+</style>
+<script src="/_aistudio-iframe.js?v=29045eb3"></script></head>
+<body>
+<button aria-label="Close navigation menu" class="scrim" id="mobileScrim" type="button"></button>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo" id="brandLogoMark">AU</div>
+      <div>
+        <h1 id="brandTitleText">ACCESS UG</h1>
+        <small id="brandSubText">Bursar & Accounts</small>
+      </div>
+    </div>
+    <div class="nav-filter-box">
+      <input aria-label="Filter menu" class="nav-filter" id="navSearchInput" placeholder="Quick filter menu…" type="search"/>
+    </div>
+    <nav class="nav" id="sidebarNav">
+      <div class="nav-group-label">Command Center</div>
+      <button class="active" data-page="home" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect height="7" width="7" x="3" y="3"></rect><rect height="7" width="7" x="14" y="3"></rect><rect height="7" width="7" x="3" y="14"></rect><rect height="7" width="7" x="14" y="14"></rect></svg></span>Dashboard</button>
+      <button data-page="inbox" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><path d="m22 6-10 7L2 6"></path></svg></span>Inbox <span class="nav-badge" id="inboxMenuBadge" style="display:none">0</span></button>
+      <button data-page="messages" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>Messages</button>
+      <div class="nav-group-label">Finance & Accounts</div>
+      
+    <button data-page="fee-structures" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="5"></rect><path d="M2 10h20"></path></svg></span>Fee Structures & Collections</button>
+    <button data-page="fee-analysis" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg></span>Fees Analysis</button>
+    <button data-page="pay-codes" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></svg></span>Payment Codes Registry</button>
+    <button data-page="expenses" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></span>Expense & Petty Cash Ledger</button>
+      <button data-page="calendar" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><rect height="18" rx="2" width="18" x="3" y="4"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg></span>School Calendar</button>
+      <div class="nav-group-label">Support &amp; Account</div>
+      <button data-page="reports" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4M12 17h.01"></path></svg></span>Report an Issue</button>
+      <button data-page="profile" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M5 21c.6-4 3.2-6 7-6s6.4 2 7 6"></path></svg></span>My Profile</button>
+      <button data-page="appearance" type="button"><span class="nav-icon"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"></circle><circle cx="17.5" cy="10.5" r=".5"></circle><circle cx="8.5" cy="7.5" r=".5"></circle><circle cx="6.5" cy="12.5" r=".5"></circle><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"></path></svg></span>Appearance Studio</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="logout" id="logoutBtn" type="button">
+        <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" viewBox="0 0 24 24" width="16"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" x2="9" y1="12" y2="12"></line></svg>
+        Log out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div class="title-wrap">
+        <button aria-label="Open menu" class="menu-btn" id="menuBtn" type="button"><svg viewBox="0 0 24 24"><line x1="3" x2="21" y1="6" y2="6"></line><line x1="3" x2="21" y1="12" y2="12"></line><line x1="3" x2="21" y1="18" y2="18"></line></svg></button>
+        <h2 id="pageTitle">Bursar & Accounts Dashboard</h2>
+      </div>
+      <div class="top-right">
+        <span class="pill-chip"><i></i> <span id="schoolScopeChip">Bursar / Accountant</span></span>
+        <button aria-label="Toggle Theme" class="icon-btn" id="themeQuickToggle" title="Toggle Dark/Light Mode" type="button">◐</button>
+        <div class="notification-wrap">
+          <button aria-label="Inbox Notifications" class="bell" id="bellBtn" title="Inbox Notifications" type="button">
+            <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span class="bell-badge" id="bellBadge">0</span>
+          </button>
+          <div class="notification-popover" id="bellPopover">
+            <div class="notification-popover-head">
+              <h4>Notifications</h4>
+              <button class="btn small secondary" id="bellMarkAllBtn" type="button">Mark all read</button>
+            </div>
+            <div class="notification-list" id="bellList"><div class="notification-empty">No notifications yet.</div></div>
+          </div>
+        </div>
+        <div class="user-mini">
+          <span id="topEmail">Loading…</span>
+          <button aria-label="Open profile" class="profile-trigger" id="profileTrigger" type="button">
+            <div class="avatar" id="topAvatar">S</div>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="content">
+      <!-- DASHBOARD OVERVIEW -->
+      <section class="page active" id="home">
+        <div class="hero student-welcome-hero">
+          <div>
+            <h1 id="welcome">Welcome</h1>
+            <p id="welcomeSub">Manage student fee structures, payment codes, fee receipts, and the school expense ledger.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="btn secondary" id="dashSyncBtn" type="button">↻ Refresh Workspace</button>
+            <button class="btn secondary" data-go="fee-analysis" type="button">Fees Analysis</button><button class="btn secondary" data-go="expenses" type="button">Expense Ledger</button>
+          </div>
+        </div>
+        <div class="notice" id="homeNotice"></div>
+        <div class="kpi-grid">
+    <div class="card stat kpi-card" data-go="fee-analysis" role="button" tabindex="0">
+      <div class="kpi-head">
+        <div><div class="label">Billed Students</div><div class="value font-mono" id="kpiVal1">—</div></div>
+        <div class="kpi-icon kpi-blue"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
+      </div>
+      <div class="sub" id="kpiSub1">Active fee records</div>
+    </div>
+    <div class="card stat kpi-card" data-go="fee-analysis" role="button" tabindex="0">
+      <div class="kpi-head">
+        <div><div class="label">Cleared Full Fees</div><div class="value font-mono" id="kpiVal2">—</div></div>
+        <div class="kpi-icon kpi-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg></div>
+      </div>
+      <div class="sub" id="kpiSub2">Paid in full</div>
+    </div>
+    <div class="card stat kpi-card" data-go="fee-structures" role="button" tabindex="0">
+      <div class="kpi-head">
+        <div><div class="label">Outstanding Balance</div><div class="value font-mono" id="kpiVal3">—</div></div>
+        <div class="kpi-icon kpi-amber"><svg viewBox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="5"></rect><path d="M2 10h20"></path></svg></div>
+      </div>
+      <div class="sub" id="kpiSub3">Total fees balance due</div>
+    </div>
+    <div class="card stat kpi-card" data-go="expenses" role="button" tabindex="0">
+      <div class="kpi-head">
+        <div><div class="label">Logged Expenses</div><div class="value font-mono" id="kpiVal4">—</div></div>
+        <div class="kpi-icon kpi-teal"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></svg></div>
+      </div>
+      <div class="sub" id="kpiSub4">Recorded expenditure</div>
+    </div></div>
+        <div class="quick-ops-grid">
+    <button class="quick-op-tile" data-go="fee-structures" type="button">
+      <span class="qo-ico qo-blue"><svg viewBox="0 0 24 24"><rect height="14" rx="2" width="20" x="2" y="5"></rect><path d="M2 10h20"></path></svg></span>
+      <div><strong>Fee Structures</strong><small>Set class fees & pay</small></div>
+    </button>
+    <button class="quick-op-tile" data-go="fee-analysis" type="button">
+      <span class="qo-ico qo-green"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M9 12l2 2 4-4"></path></svg></span>
+      <div><strong>Fees Analysis</strong><small>Paid vs balances due</small></div>
+    </button>
+    <button class="quick-op-tile" data-go="pay-codes" type="button">
+      <span class="qo-ico qo-teal"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6M8 13h8M8 17h6"></path></svg></span>
+      <div><strong>Payment Codes</strong><small>SchoolPay & Bank refs</small></div>
+    </button>
+    <button class="quick-op-tile" data-go="expenses" type="button">
+      <span class="qo-ico qo-amber"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg></span>
+      <div><strong>Expense Ledger</strong><small>Vouchers & petty cash</small></div>
+    </button>
+    <button class="quick-op-tile" data-go="reports" type="button">
+      <span class="qo-ico qo-indigo"><svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><path d="M12 9v4M12 17h.01"></path></svg></span>
+      <div><strong>Finance Reports</strong><small>Escalations to admin</small></div>
+    </button>
+    <button class="quick-op-tile" data-go="messages" type="button">
+      <span class="qo-ico qo-blue"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></span>
+      <div><strong>Direct Messages</strong><small>Parents & school admin</small></div>
+    </button></div>
+
+        <div class="grid two" style="margin-top:18px">
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Staff Identity &amp; Duty Overview</h3><div class="muted">Verified school role &amp; operational readiness</div></div>
+              <button class="btn small secondary" data-go="profile" type="button">Profile &amp; Photo</button>
+            </div>
+            <div aria-label="Open profile settings" class="profile-card-wrap" id="profileCardClick" role="button" tabindex="0">
+              <div class="profile-avatar" id="profileAvatar">S</div>
+              <div class="profile-info">
+                <h2 id="staffDisplayName">Loading…</h2>
+                <p id="staffRoleLine">Role: Bursar / Accountant</p>
+                <p id="staffSchoolLine">School: —</p>
+                <p id="staffEmailLine">Email: —</p>
+                <p class="font-mono" id="staffDeptLine">Department: —</p>
+              </div>
+            </div>
+            <div class="overview-fees-bar">
+              <div class="overview-fees-bar-top">
+                <span class="muted">School fees clearance rate</span>
+                <strong class="font-mono" id="overviewProgressPct">0%</strong>
+              </div>
+              <div class="overview-fees-track">
+                <div class="overview-fees-fill" id="overviewProgressBar" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Fees & Accounts Breakdown</h3><div class="muted">Cleared vs balance due students & recorded vouchers</div></div>
+              <button class="btn small secondary" data-go="fee-analysis" type="button">Open Analysis</button>
+            </div>
+            <div class="chart-wrap chart-small"><canvas id="overviewRoleChart"></canvas></div>
+            <div class="att-mini-strip" id="overviewMiniStrip">
+              <div class="att-mini-item"><span id="stripLbl0">—</span><strong id="stripVal0">0</strong></div>
+              <div class="att-mini-item"><span id="stripLbl1">—</span><strong id="stripVal1">0</strong></div>
+              <div class="att-mini-item"><span id="stripLbl2">—</span><strong id="stripVal2">0</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid two" style="margin-top:18px">
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Operational Highlights &amp; School Dates</h3><div class="muted">Active items and upcoming official calendar</div></div>
+              <button class="btn small secondary" data-go="calendar" type="button">Full Calendar</button>
+            </div>
+            <div class="overview-schedule-list" id="overviewHighlightList"><div class="empty">Loading highlights…</div></div>
+            <div class="dash-calendar-mini" id="homeUpcomingCalendar"></div>
+          </div>
+          <div class="card">
+            <div class="card-head">
+              <div><h3>Recent Inbox &amp; Broadcasts</h3><div class="muted">School administration notices &amp; direct messages</div></div>
+              <button class="btn small secondary" data-go="inbox" type="button">Open Inbox</button>
+            </div>
+            <div class="inbox-list" id="homeInbox"><div class="empty">Loading updates…</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- INBOX -->
+      <section class="page" id="inbox">
+        <div class="hero"><div><h1>Staff Inbox</h1><p>Notifications, school broadcasts, and direct messages from school administration and colleagues.</p></div></div>
+        <div class="notice" id="inboxNotice"></div>
+        <div class="card">
+          <div class="toolbar">
+            <div class="field"><label for="inboxSearch">Search Inbox</label><input id="inboxSearch" placeholder="Search announcement or notification…"/></div>
+            <div class="field"><label for="inboxFilter">Filter Status</label><select id="inboxFilter"><option value="all">All Notifications</option><option value="unread">Unread Only</option><option value="read">Read</option></select></div>
+            <button class="btn secondary" id="markAllRead" type="button">Mark all as read</button>
+          </div>
+          <div class="inbox-list" id="inboxList"><div class="notification-empty">Loading notifications…</div></div>
+        </div>
+      </section>
+
+      <!-- DIRECT MESSAGES -->
+      <section class="page" id="messages">
+        <div class="hero"><div><h1>School Messages</h1><p>Message school administrators, teachers, support staff, or parents directly.</p></div></div>
+        <div class="notice" id="messagesNotice"></div>
+        <div class="messenger">
+          <aside class="messenger-side">
+            <input id="messageSearch" placeholder="Search admin, teacher, or staff…"/>
+            <div id="messageSearchResults" style="max-height:220px;overflow:auto"></div>
+            <hr style="border:0;border-top:1px solid var(--line)"/>
+            <h4 style="font-size:12px;color:var(--muted)">Recent Conversations</h4>
+            <div id="conversationList" style="overflow:auto"></div>
+          </aside>
+          <section class="messenger-chat">
+            <div class="chat-header" id="chatHeader">Select a school contact to start messaging</div>
+            <div class="chat-messages" id="chatMessages"><div class="empty">Choose a recipient from the directory on the left.</div></div>
+            <form class="chat-compose" id="sendMessageForm">
+              <input autocomplete="off" id="messageText" placeholder="Write a message…"/>
+              <label class="attach-btn" title="Attach image">＋<input accept="image/*" hidden="" id="messageImage" type="file"/></label>
+              <button class="btn" id="sendMessageBtn" type="submit">Send</button>
+            </form>
+            <div class="muted" id="attachmentLabel" style="padding:0 12px 8px"></div>
+          </section>
+        </div>
+      </section>
+
+      
+<!-- FEE STRUCTURES -->
+<section class="page" id="fee-structures">
+  <div class="hero">
+    <div><h1>Fee Structures &amp; Student Collections</h1><p>Manage term/annual class fee structures and record incoming school fee payments directly in Supabase.</p></div>
+    <div class="hero-actions">
+      <select id="bursarFeesYear" style="width:auto;min-width:120px;background:rgba(255,255,255,.15);color:#fff;border-color:rgba(255,255,255,.3)"></select>
+      <button class="btn secondary" id="bursarFeesRefresh" type="button">↻ Refresh Fees</button>
+    </div>
+  </div>
+  <div class="notice" id="feesNotice"></div>
+  <div class="card">
+    <div class="card-head"><div><h3>Class Fee Structures</h3><div class="muted">Click any class row to expand learners and record payments</div></div></div>
+    <div id="schoolFeesClasses"><div class="empty">Loading class fee structures…</div></div>
+  </div>
+</section>
+<!-- FEES ANALYSIS -->
+<section class="page" id="fee-analysis">
+  <div class="hero"><div><h1>School Fees Analysis</h1><p>Track paid students, balance due accounts, and outstanding balances across the school.</p></div></div>
+  <div class="notice" id="feesAnalysisNotice"></div>
+  <div class="fees-summary">
+    <div class="fees-kpi"><small>Billed Students</small><strong id="schoolFeesCount">0</strong></div>
+    <div class="fees-kpi"><small>Paid in Full</small><strong class="fees-paid" id="schoolFeesPaidCount">0</strong></div>
+    <div class="fees-kpi"><small>Balance Due</small><strong class="fees-due" id="schoolFeesDueCount">0</strong></div>
+    <div class="fees-kpi"><small>Total Balance Due</small><strong id="schoolFeesBalanceTotal">UGX 0</strong></div>
+  </div>
+  <div class="card">
+    <div class="card-head">
+      <div><h3>Student Fee Standing</h3><div class="muted">Filter by payment completion status</div></div>
+      <div class="fees-tabs">
+        <button class="active" data-fees-filter="all" type="button">All</button>
+        <button data-fees-filter="paid" type="button">Paid</button>
+        <button data-fees-filter="due" type="button">Balance Due</button>
+        <button data-fees-filter="none" type="button">No Fee Set</button>
+      </div>
+    </div>
+    <div class="toolbar"><div class="field"><label for="feeAnalysisSearch">Search Student or Class</label><input id="feeAnalysisSearch" placeholder="Filter student name or class…"/></div></div>
+    <div id="schoolFeesAnalysis"><div class="empty">Loading fees analysis…</div></div>
+  </div>
+</section>
+<!-- PAYMENT CODES -->
+<section class="page" id="pay-codes">
+  <div class="hero"><div><h1>Student Payment Codes Registry</h1><p>Copy SchoolPay / PegPay / Bank payment codes and post student receipts.</p></div></div>
+  <div class="card">
+    <div class="toolbar"><div class="field"><label for="payCodeSearchInput">Search Learner or Code</label><input id="payCodeSearchInput" placeholder="Name, student no., class, or AUG code…"/></div></div>
+    <div id="paymentCodesTable"><div class="empty">Loading payment codes…</div></div>
+  </div>
+</section>
+<!-- EXPENSE LEDGER -->
+<section class="page" id="expenses">
+  <div class="hero">
+    <div><h1>Accountant Expense &amp; Petty Cash Ledger</h1><p>Record school expenditures, supplier payments, utilities, and export accounts CSV.</p></div>
+    <div class="hero-actions"><button class="btn secondary" id="exportExpensesCsvBtn" type="button">Export CSV</button></div>
+  </div>
+  <div class="notice" id="expenseNotice"></div>
+  <div class="grid two">
+    <div class="card">
+      <div class="card-head"><div><h3>Record Expense / Voucher</h3><div class="muted">Saved to school bursar ledger</div></div></div>
+      <form id="expenseForm" style="display:grid;gap:12px">
+        <div class="grid-2">
+          <div class="field"><label for="expTitle">Description *</label><input id="expTitle" required placeholder="e.g., Posho &amp; Beans Invoice #204"/></div>
+          <div class="field"><label for="expCategory">Category</label><select id="expCategory"><option value="Food & Kitchen">Food &amp; Kitchen</option><option value="Utilities & Water">Utilities &amp; Water</option><option value="Staff & Allowances">Staff &amp; Allowances</option><option value="Stationery & Exams">Stationery &amp; Exams</option><option value="Maintenance">Maintenance &amp; Fuel</option><option value="Other">Other</option></select></div>
+          <div class="field"><label for="expAmount">Amount (UGX) *</label><input id="expAmount" type="number" min="1" required placeholder="150000"/></div>
+          <div class="field"><label for="expDate">Date</label><input id="expDate" type="date"/></div>
+        </div>
+        <div class="field"><label for="expVoucher">Voucher / Receipt Ref</label><input id="expVoucher" placeholder="e.g., PV-2026-019"/></div>
+        <button class="btn" type="submit">Add Expense Entry</button>
+      </form>
+    </div>
+    <div class="card">
+      <div class="card-head"><div><h3>Expense Summary</h3><div class="muted">Recorded vouchers &amp; total spend</div></div></div>
+      <div class="fees-kpi" style="margin-bottom:12px"><small>Total Recorded Expenses</small><strong id="expenseTotalUgx">UGX 0</strong></div>
+      <div class="toolbar"><div class="field"><label for="expFilterCat">Filter Category</label><select id="expFilterCat"><option value="">All Categories</option><option value="Food & Kitchen">Food &amp; Kitchen</option><option value="Utilities & Water">Utilities &amp; Water</option><option value="Staff & Allowances">Staff &amp; Allowances</option><option value="Stationery & Exams">Stationery &amp; Exams</option><option value="Maintenance">Maintenance &amp; Fuel</option><option value="Other">Other</option></select></div></div>
+      <div id="expenseTable"><div class="empty">No expenses recorded yet.</div></div>
+    </div>
+  </div>
+</section>
+
+      <!-- OFFICIAL CALENDAR -->
+      <section class="page" id="calendar">
+        <div class="hero"><div><h1>Official School Calendar</h1><p>School holidays, exam weeks, sports days, and key events published by administration.</p></div></div>
+        <div class="card">
+          <div class="cal-header-bar">
+            <div><h3>School Calendar</h3><div class="muted">Official school schedule</div></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button class="btn small secondary" id="calPrevBtn" type="button">Prev</button>
+              <strong id="calMonthLabel" style="min-width:140px;text-align:center">Month</strong>
+              <button class="btn small secondary" id="calNextBtn" type="button">Next</button>
+              <button class="btn small secondary" id="calTodayBtn" type="button">Today</button>
+            </div>
+          </div>
+          <div class="cal-grid" id="staffCalGrid"></div>
+          <h4 style="margin:18px 0 10px">Upcoming Official School Days</h4>
+          <div class="inbox-list" id="staffCalUpcoming"></div>
+        </div>
+      </section>
+
+      <!-- REPORT AN ISSUE -->
+      <section class="page" id="reports">
+        <div class="hero"><div><h1>Report an Issue</h1><p>Send operational, supply, or maintenance reports directly to school administration.</p></div></div>
+        <div class="notice" id="reportNotice"></div>
+        <div class="card">
+          <div class="grid-2">
+            <div class="field"><label for="reportType">Issue Type</label><select id="reportType"><option value="fee_discrepancy">Fee / Payment discrepancy</option><option value="bank_reconciliation">Bank / SchoolPay issue</option><option value="budget_request">Budget / Procurement request</option><option value="other">Other finance issue</option></select></div>
+            <div class="field"><label for="reportSubject">Subject / Short Title</label><input id="reportSubject" placeholder="e.g., Duplicate SchoolPay reference check for S2 East"/></div>
+          </div>
+          <div class="field" style="margin-top:14px"><label for="reportDescription">Message *</label><textarea id="reportDescription" placeholder="Explain the situation clearly…"></textarea></div>
+          <div class="actions"><button class="btn" id="submitReport" type="button">Send Report</button></div>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <div class="card-head"><div><h3>My Submitted Reports</h3><div class="muted">History of reports sent from your account</div></div></div>
+          <div class="empty" id="reportsTable">Loading…</div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
+      <section class="page" id="profile">
+        <div class="hero"><div><h1>My Profile &amp; Account Security</h1><p>Manage your staff profile photo and account password.</p></div></div>
+        <div class="notice" id="profilePageNotice"></div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-head"><div><h3>Staff Identity</h3><div class="muted">Linked to your school directory profile</div></div></div>
+            <div class="profile-hero">
+              <div class="profile-photo" id="profilePageAvatar">S</div>
+              <div><h4 id="profilePageDisplayName">Staff</h4><p class="muted" id="profilePageEmail">—</p><p class="muted" id="profilePageSchool">—</p></div>
+            </div>
+            <div class="profile-readonly">
+              <div><span>Full Name</span><strong id="profilePageReadName">—</strong></div>
+              <div><span>Role</span><strong id="profilePageReadRole">Bursar / Accountant</strong></div>
+              <div><span>Department / Shift</span><strong id="profilePageReadDept">—</strong></div>
+            </div>
+            <div class="profile-actions">
+              <button class="pbtn primary" id="profilePageUploadBtn" type="button">Upload / Crop Photo</button>
+              <button class="pbtn secondary" id="profilePageRemovePhotoBtn" type="button">Remove Photo</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h3>Change Login Password</h3><div class="muted">Minimum 8 characters required</div></div></div>
+            <div class="field" style="margin-bottom:12px"><label for="pageNewPassword">New Password</label><input autocomplete="new-password" id="pageNewPassword" minlength="8" placeholder="Enter new password" type="password"/></div>
+            <div class="field" style="margin-bottom:14px"><label for="pageConfirmPassword">Confirm New Password</label><input autocomplete="new-password" id="pageConfirmPassword" minlength="8" placeholder="Repeat new password" type="password"/></div>
+            <button class="btn" id="pageChangePasswordBtn" type="button">Update Password</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- APPEARANCE STUDIO -->
+      <section class="page" id="appearance">
+        <div class="hero"><div><h1>Appearance Studio</h1><p>Customize theme mode, colors, typography, and corner geometry.</p></div></div>
+        <div class="grid two">
+          <div class="card">
+            <div class="card-head"><h3>Theme &amp; Palette</h3></div>
+            <div class="field" style="margin-bottom:14px"><label>Color Mode</label><div class="seg-bar"><button class="seg-btn" data-ui-mode="light" type="button">Light Mode</button><button class="seg-btn" data-ui-mode="dark" type="button">Dark Mode</button></div></div>
+            <div class="field" style="margin-bottom:14px"><label>Curated Presets</label>
+              <div class="swatch-row">
+                <button class="swatch" data-ui-preset="#0b3d82" data-ui-sidebar="#061a38" style="background:#0b3d82" title="Access Blue" type="button"></button>
+                <button class="swatch" data-ui-preset="#0f766e" data-ui-sidebar="#042f2e" style="background:#0f766e" title="Emerald Slate" type="button"></button>
+                <button class="swatch" data-ui-preset="#4338ca" data-ui-sidebar="#1e1b4b" style="background:#4338ca" title="Indigo Royal" type="button"></button>
+                <button class="swatch" data-ui-preset="#9a3412" data-ui-sidebar="#431407" style="background:#9a3412" title="Amber Terracotta" type="button"></button>
+                <button class="swatch" data-ui-preset="#1e293b" data-ui-sidebar="#090d16" style="background:#1e293b" title="Obsidian" type="button"></button>
+              </div>
+            </div>
+            <div class="grid-2">
+              <div class="field"><label for="uiPrimaryColor">Primary Accent</label><input id="uiPrimaryColor" type="color" value="#0b3d82"/></div>
+              <div class="field"><label for="uiSidebarColor">Sidebar Navy</label><input id="uiSidebarColor" type="color" value="#061a38"/></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Typography &amp; Surface Geometry</h3></div>
+            <div class="field" style="margin-bottom:12px"><label for="uiFontFamily">Interface Font</label><select id="uiFontFamily"><option value='"DM Sans",system-ui,-apple-system,sans-serif'>DM Sans (Editorial Clean)</option><option value='"Plus Jakarta Sans",system-ui,-apple-system,sans-serif'>Plus Jakarta Sans (Geometric)</option><option value="system-ui,-apple-system,Segoe UI,sans-serif">System Native</option></select></div>
+            <div class="field" style="margin-bottom:16px"><label for="uiRadius">Corner Radius</label><select id="uiRadius"><option value="8px">Sharp (8px)</option><option selected="" value="14px">Balanced (14px)</option><option value="20px">Rounded (20px)</option></select></div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn" id="uiSaveAppearanceBtn" type="button">Save Appearance</button><button class="btn secondary" id="uiResetAppearanceBtn" type="button">Reset Default</button></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+
+<div class="modal" id="feePaymentModal">
+  <div class="modal-box" style="max-width:520px">
+    <div class="modal-head"><div><h3>Record Fees Payment</h3><p class="muted" id="feePaymentStudentLabel">Student</p></div><button class="close" id="feePaymentClose" type="button">×</button></div>
+    <div class="notice" id="feePaymentMessage"></div>
+    <form id="feePaymentForm">
+      <input id="feePaymentStudentId" type="hidden"/><input id="feePaymentYear" type="hidden"/>
+      <div class="field" style="margin-bottom:12px"><label for="feePaymentAmount">Amount Paid (UGX) *</label><input id="feePaymentAmount" min="1" required="" step="0.01" type="number"/></div>
+      <div class="field" style="margin-bottom:12px"><label for="feePaymentDate">Payment Date</label><input id="feePaymentDate" type="date"/></div>
+      <div class="field" style="margin-bottom:12px"><label for="feePaymentReference">Reference / Receipt No.</label><input id="feePaymentReference"/></div>
+      <div class="field"><label for="feePaymentNote">Note</label><textarea id="feePaymentNote" placeholder="Optional note"></textarea></div>
+      <div class="actions"><button class="btn secondary" id="feePaymentCancel" type="button">Cancel</button><button class="btn" id="feePaymentSave" type="submit">Save Payment</button></div>
+    </form>
+  </div>
+</div>
+
+<!-- PROFILE QUICK MODAL -->
+<div aria-hidden="true" class="profile-modal" id="profileModal">
+  <div aria-labelledby="profileModalTitle" aria-modal="true" class="profile-modal-card" role="dialog">
+    <div class="profile-modal-head"><h3 id="profileModalTitle">My Profile</h3><button aria-label="Close" class="profile-close" id="profileClose" type="button">×</button></div>
+    <div class="profile-hero"><div class="profile-photo" id="profilePhoto">S</div><div><h4 id="profileModalName">Loading…</h4><p class="muted" id="profileModalEmail">Loading…</p><p class="muted" id="profileModalSchool">Loading…</p></div></div>
+    <div class="profile-readonly"><div><span>Name</span><strong id="profileReadName">—</strong></div><div><span>School</span><strong id="profileReadSchool">—</strong></div><div><span>Email</span><strong id="profileReadEmail">—</strong></div></div>
+    <div class="profile-actions"><button class="pbtn primary" id="uploadProfileBtn" type="button">Upload / Crop Photo</button><button class="pbtn secondary" id="removeProfileBtn" type="button">Remove Photo</button><input accept="image/jpeg,image/png,image/webp" hidden="" id="profileFileInput" type="file"/></div>
+    <div class="profile-divider"></div>
+    <div class="field" style="margin-bottom:10px"><label for="newPassword">New Password</label><input autocomplete="new-password" id="newPassword" minlength="8" placeholder="Enter new password" type="password"/></div>
+    <div class="field" style="margin-bottom:12px"><label for="confirmPassword">Confirm Password</label><input autocomplete="new-password" id="confirmPassword" minlength="8" placeholder="Confirm new password" type="password"/></div>
+    <button class="pbtn primary" id="changePasswordBtn" type="button">Update Password</button>
+    <div class="profile-status" id="profileStatus" role="status"></div>
+  </div>
+</div>
+<!-- PHOTO CROP MODAL -->
+<div aria-hidden="true" class="profile-crop-modal" id="profileCropModal">
+  <div aria-labelledby="profileCropTitle" aria-modal="true" class="profile-crop-card" role="dialog">
+    <div class="profile-crop-head"><h3 id="profileCropTitle">Position Your Profile Photo</h3><button aria-label="Close" class="profile-close" id="profileCropClose" type="button">×</button></div>
+    <div class="profile-crop-stage" id="profileCropStage"><canvas height="420" id="profileCropCanvas" width="420"></canvas><div class="profile-crop-guide"></div></div>
+    <div class="field"><label for="profileZoom">Zoom — drag the photo inside the circle</label><input id="profileZoom" max="3.5" min="0.5" step="0.01" type="range" value="1"/></div>
+    <div class="profile-crop-actions"><button class="pbtn secondary" id="profileCropCancel" type="button">Cancel</button><button class="pbtn primary" id="profileCropSave" type="button">Save Photo</button></div>
+  </div>
+</div>
+<div class="modal" id="errorModal"><div class="modal-box" style="max-width:460px"><div class="modal-head"><h3>Portal Notice</h3><button class="close" id="closeError" type="button">×</button></div><p class="muted" id="errorText" style="margin-bottom:14px"></p><div class="actions"><button class="btn" id="errorLogout" type="button">Return to Login</button></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script data-embedded-from="accessug-messaging.js">
+(function (global) {
+  "use strict";
+
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const BUS_NAME = "accessug_messaging_bus";
+  const PING_KEY = "accessug_messaging_ping";
+  const attachmentCache = new Map();
+
+  function isUuid(val) {
+    return typeof val === "string" && UUID_RE.test(val.trim());
+  }
+
+  function cleanId(val) {
+    return isUuid(val) ? val.trim() : "";
+  }
+
+  function extractText(row) {
+    if (!row || typeof row !== "object") return "";
+    const txt = row.body ?? row.message ?? row.content ?? row.text ?? "";
+    return typeof txt === "string" ? txt : String(txt || "");
+  }
+
+  function extractAttachmentRaw(row) {
+    if (!row || typeof row !== "object") return "";
+    const raw = row.attachment_url ?? row.image_url ?? row.file_url ?? "";
+    return typeof raw === "string" ? raw.trim() : "";
+  }
+
+  function formatRoleLabel(role) {
+    const r = String(role || "").trim().toLowerCase();
+    if (!r) return "User";
+    if (["administrator", "platform_admin", "super_admin", "admin"].includes(r)) return "Platform Admin";
+    if (["school", "school_admin", "headteacher", "principal"].includes(r)) return "School Administration";
+    if (r === "teacher") return "Teacher";
+    if (r === "student") return "Student";
+    if (r === "parent" || r === "guardian") return "Parent / Guardian";
+    if (r === "bursar" || r === "accountant") return "Bursar";
+    return r.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+  }
+
+  function emitBusEvent(payload) {
+    const evt = Object.assign({ ts: Date.now() }, payload || {});
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        const ch = new BroadcastChannel(BUS_NAME);
+        ch.postMessage(evt);
+        ch.close();
+      }
+    } catch (_) {}
+    try {
+      localStorage.setItem(PING_KEY, JSON.stringify(evt));
+    } catch (_) {}
+  }
+
+  async function resolveAttachment(supabase, rawPath) {
+    const raw = String(rawPath || "").trim();
+    if (!raw) return "";
+    if (/^https?:\/\//i.test(raw) || raw.startsWith("data:") || raw.startsWith("blob:")) {
+      return raw;
+    }
+    if (attachmentCache.has(raw)) return attachmentCache.get(raw);
+    if (!supabase || !supabase.storage) return raw;
+
+    const clean = raw.replace(/^\/+/, "");
+    const candidates = ["message-attachments", "attachments", "avatars"];
+    for (const bucket of candidates) {
+      try {
+        const { data, error } = await supabase.storage.from(bucket).createSignedUrl(clean, 3600);
+        if (!error && data && data.signedUrl) {
+          attachmentCache.set(raw, data.signedUrl);
+          return data.signedUrl;
+        }
+      } catch (_) {}
+    }
+    try {
+      const { data } = supabase.storage.from("message-attachments").getPublicUrl(clean);
+      if (data && data.publicUrl) {
+        attachmentCache.set(raw, data.publicUrl);
+        return data.publicUrl;
+      }
+    } catch (_) {}
+    return raw;
+  }
+
+  async function uploadAttachment(supabase, file, folderPrefix) {
+    if (!supabase || !file) return { path: "", url: "" };
+    const safeName = String(file.name || "file").replace(/[^a-zA-Z0-9._-]/g, "_");
+    const prefix = String(folderPrefix || "dm").replace(/[^a-zA-Z0-9_-]/g, "_");
+    const objectPath = `${prefix}/${Date.now()}_${Math.random().toString(36).slice(2, 7)}_${safeName}`;
+
+    const buckets = ["message-attachments", "attachments", "avatars"];
+    for (const bucket of buckets) {
+      try {
+        const { error } = await supabase.storage.from(bucket).upload(objectPath, file, {
+          cacheControl: "3600",
+          upsert: false,
+          contentType: file.type || undefined
+        });
+        if (!error) {
+          const url = await resolveAttachment(supabase, objectPath);
+          return { path: objectPath, url: url || objectPath };
+        }
+      } catch (_) {}
+    }
+    throw new Error("Could not upload attachment to storage.");
+  }
+
+  function getReadSet(storageKey) {
+    const set = new Set();
+    if (!storageKey) return set;
+    try {
+      const arr = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      if (Array.isArray(arr)) arr.forEach((id) => set.add(String(id)));
+    } catch (_) {}
+    return set;
+  }
+
+  function saveReadSet(storageKey, set) {
+    if (!storageKey) return;
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(Array.from(set).slice(-400)));
+    } catch (_) {}
+  }
+
+  async function safeSelect(buildFn) {
+    try {
+      const res = await buildFn();
+      if (res && !res.error && Array.isArray(res.data)) return res.data;
+    } catch (_) {}
+    return [];
+  }
+
+  async function resolveCrossPortalDirectory(opts) {
+    const {
+      supabase,
+      myUid,
+      schoolId,
+      excludeSelf = true,
+      includeAdmins = true
+    } = opts || {};
+    if (!supabase) return [];
+
+    const byUid = new Map();
+    const emailToProfile = new Map();
+
+    const addOrMerge = (uid, patch) => {
+      const id = cleanId(uid);
+      if (!id) return;
+      if (excludeSelf && myUid && id === myUid) return;
+      const existing = byUid.get(id) || {
+        id,
+        name: "",
+        full_name: "",
+        username: "",
+        email: "",
+        role: "",
+        roleLabel: "User",
+        subtitle: "",
+        avatar_url: "",
+        school_id: schoolId || ""
+      };
+      const name = (patch.name || patch.full_name || existing.name || "").trim();
+      const email = (patch.email || existing.email || "").trim();
+      const role = (patch.role || existing.role || "").trim();
+      const subtitle = (patch.subtitle || existing.subtitle || "").trim();
+      const avatar_url = (patch.avatar_url || existing.avatar_url || "").trim();
+      const username = (patch.username || existing.username || "").trim();
+      const sid = patch.school_id || existing.school_id || "";
+      const finalName = name || email || "ACCESS UG User";
+      byUid.set(id, {
+        id,
+        name: finalName,
+        full_name: finalName,
+        username,
+        email,
+        role,
+        roleLabel: patch.roleLabel || (role ? formatRoleLabel(role) : existing.roleLabel),
+        subtitle,
+        avatar_url,
+        school_id: sid
+      });
+    };
+
+    const queries = [];
+    if (isUuid(schoolId)) {
+      queries.push(
+        safeSelect(() =>
+          supabase
+            .from("profiles")
+            .select("id, full_name, username, email, role, avatar_url, school_id")
+            .eq("school_id", schoolId)
+            .limit(400)
+        )
+      );
+      queries.push(
+        safeSelect(() =>
+          supabase.from("schools").select("*").eq("id", schoolId).limit(5)
+        )
+      );
+      queries.push(
+        safeSelect(() =>
+          supabase
+            .from("teachers")
+            .select("id, user_id, first_name, last_name, full_name, email, username, phone, school_id")
+            .eq("school_id", schoolId)
+            .limit(300)
+        )
+      );
+      queries.push(
+        safeSelect(() =>
+          supabase
+            .from("students")
+            .select("id, user_id, parent_user_id, first_name, last_name, full_name, email, student_email, parent_name, parent_email, parent_username, class_level, class_name, school_id")
+            .eq("school_id", schoolId)
+            .limit(600)
+        )
+      );
+      queries.push(
+        safeSelect(() =>
+          supabase
+            .from("staff")
+            .select("*")
+            .eq("school_id", schoolId)
+            .limit(300)
+        )
+      );
+    } else {
+      queries.push(
+        safeSelect(() =>
+          supabase
+            .from("profiles")
+            .select("id, full_name, username, email, role, avatar_url, school_id")
+            .limit(500)
+        )
+      );
+      queries.push(safeSelect(() => supabase.from("schools").select("*").limit(200)));
+      queries.push(Promise.resolve([]));
+      queries.push(Promise.resolve([]));
+      queries.push(Promise.resolve([]));
+    }
+
+    if (includeAdmins) {
+      queries.push(
+        safeSelect(() =>
+          supabase
+            .from("profiles")
+            .select("id, full_name, username, email, role, avatar_url, school_id")
+            .in("role", ["administrator", "platform_admin", "super_admin", "admin"])
+            .limit(60)
+        )
+      );
+    } else {
+      queries.push(Promise.resolve([]));
+    }
+
+    const dmPartnersPromise = isUuid(myUid)
+      ? safeSelect(() =>
+          supabase
+            .from("direct_messages")
+            .select("sender_id, recipient_id, created_at")
+            .or(`sender_id.eq.${myUid},recipient_id.eq.${myUid}`)
+            .order("created_at", { ascending: false })
+            .limit(120)
+        )
+      : Promise.resolve([]);
+
+    const [
+      schoolProfiles,
+      schoolsRows,
+      teachersRows,
+      studentsRows,
+      staffRows,
+      adminProfiles,
+      recentDmRows
+    ] = await Promise.all([...queries, dmPartnersPromise]);
+
+    const registerProfile = (p) => {
+      if (!p || !isUuid(p.id)) return;
+      if (p.email) emailToProfile.set(String(p.email).trim().toLowerCase(), p);
+      addOrMerge(p.id, {
+        name: p.full_name || p.username,
+        username: p.username,
+        email: p.email,
+        role: p.role,
+        avatar_url: p.avatar_url,
+        school_id: p.school_id
+      });
+    };
+
+    schoolProfiles.forEach(registerProfile);
+    adminProfiles.forEach((p) => {
+      if (!p || !isUuid(p.id)) return;
+      if (p.email) emailToProfile.set(String(p.email).trim().toLowerCase(), p);
+      addOrMerge(p.id, {
+        name: p.full_name || "ACCESS UG Admin",
+        username: p.username,
+        email: p.email,
+        role: p.role || "administrator",
+        roleLabel: "Platform Admin",
+        subtitle: "ACCESS UG Platform Administration",
+        avatar_url: p.avatar_url,
+        school_id: p.school_id
+      });
+    });
+
+    const emailsToLookup = new Set();
+    schoolsRows.forEach((s) => {
+      const em = String(s.email || "").trim().toLowerCase();
+      if (em && !emailToProfile.has(em)) emailsToLookup.add(em);
+    });
+    teachersRows.forEach((t) => {
+      const em = String(t.email || "").trim().toLowerCase();
+      if (!isUuid(t.user_id) && em && !emailToProfile.has(em)) emailsToLookup.add(em);
+    });
+    staffRows.forEach((st) => {
+      const em = String(st.email || "").trim().toLowerCase();
+      if (!isUuid(st.user_id) && em && !emailToProfile.has(em)) emailsToLookup.add(em);
+    });
+    studentsRows.forEach((st) => {
+      [st.email, st.student_email, st.parent_email].forEach((raw) => {
+        const em = String(raw || "").trim().toLowerCase();
+        if (em && !emailToProfile.has(em)) emailsToLookup.add(em);
+      });
+    });
+
+    const emailArr = Array.from(emailsToLookup);
+    for (let i = 0; i < emailArr.length; i += 80) {
+      const extraProfiles = await safeSelect(() =>
+        supabase
+          .from("profiles")
+          .select("id, full_name, username, email, role, avatar_url, school_id")
+          .in("email", emailArr.slice(i, i + 80))
+          .limit(100)
+      );
+      extraProfiles.forEach(registerProfile);
+    }
+
+    const partnerIds = new Set();
+    recentDmRows.forEach((m) => {
+      const other = m.sender_id === myUid ? m.recipient_id : m.sender_id;
+      if (isUuid(other) && !byUid.has(other) && (!excludeSelf || other !== myUid)) {
+        partnerIds.add(other);
+      }
+    });
+    if (partnerIds.size > 0) {
+      const partnerProfiles = await safeSelect(() =>
+        supabase
+          .from("profiles")
+          .select("id, full_name, username, email, role, avatar_url, school_id")
+          .in("id", Array.from(partnerIds).slice(0, 80))
+      );
+      partnerProfiles.forEach(registerProfile);
+    }
+
+    schoolsRows.forEach((s) => {
+      const emailKey = String(s.email || "").trim().toLowerCase();
+      const matched = emailToProfile.get(emailKey);
+      const ownerUid = cleanId(s.user_id) || cleanId(s.owner_id) || (matched && cleanId(matched.id)) || "";
+      if (ownerUid) {
+        addOrMerge(ownerUid, {
+          name: (matched && matched.full_name) || s.name || s.school_name || "School Administration",
+          email: s.email || (matched && matched.email) || "",
+          role: "school",
+          roleLabel: "School Administration",
+          subtitle: s.name || s.school_name || "School Administration",
+          avatar_url: matched && matched.avatar_url,
+          school_id: s.id
+        });
+      }
+    });
+
+    teachersRows.forEach((t) => {
+      const emailKey = String(t.email || "").trim().toLowerCase();
+      const matched = emailToProfile.get(emailKey);
+      const uid = cleanId(t.user_id) || (matched && cleanId(matched.id)) || "";
+      if (!uid) return;
+      const fullName = t.full_name || `${t.first_name || ""} ${t.last_name || ""}`.trim();
+      addOrMerge(uid, {
+        name: fullName || (matched && matched.full_name) || t.email,
+        username: t.username || (matched && matched.username) || "",
+        email: t.email || (matched && matched.email) || "",
+        role: "teacher",
+        roleLabel: "Teacher",
+        subtitle: "Teaching Staff",
+        school_id: t.school_id || schoolId
+      });
+    });
+
+    staffRows.forEach((st) => {
+      const emailKey = String(st.email || "").trim().toLowerCase();
+      const matched = emailToProfile.get(emailKey);
+      const uid = cleanId(st.user_id) || (matched && cleanId(matched.id)) || "";
+      if (!uid) return;
+      const fullName = st.full_name || `${st.first_name || ""} ${st.last_name || ""}`.trim();
+      const rVal = st.role || st.staff_role || "staff";
+      addOrMerge(uid, {
+        name: fullName || (matched && matched.full_name) || st.email,
+        email: st.email || (matched && matched.email) || "",
+        role: rVal,
+        roleLabel: formatRoleLabel(rVal),
+        subtitle: st.department || formatRoleLabel(rVal),
+        school_id: st.school_id || schoolId
+      });
+    });
+
+    studentsRows.forEach((st) => {
+      const sEmail = st.email || st.student_email || "";
+      const emailKey = String(sEmail).trim().toLowerCase();
+      const matchedStu = emailToProfile.get(emailKey);
+      const stuUid = cleanId(st.user_id) || (matchedStu && cleanId(matchedStu.id)) || "";
+      const fullName = st.full_name || `${st.first_name || ""} ${st.last_name || ""}`.trim() || "Student";
+      const clsTxt = st.class_level || st.class_name || "";
+      if (stuUid) {
+        addOrMerge(stuUid, {
+          name: fullName,
+          email: sEmail || (matchedStu && matchedStu.email) || "",
+          role: "student",
+          roleLabel: "Student",
+          subtitle: clsTxt ? `Class: ${clsTxt}` : "Student",
+          school_id: st.school_id || schoolId
+        });
+      }
+      const pEmailKey = String(st.parent_email || "").trim().toLowerCase();
+      const matchedPar = emailToProfile.get(pEmailKey);
+      const parUid = cleanId(st.parent_user_id) || (matchedPar && cleanId(matchedPar.id)) || "";
+      if (parUid) {
+        addOrMerge(parUid, {
+          name: st.parent_name || (matchedPar && matchedPar.full_name) || `Parent of ${fullName}`,
+          email: st.parent_email || (matchedPar && matchedPar.email) || "",
+          role: "parent",
+          roleLabel: "Parent / Guardian",
+          subtitle: `Parent of ${fullName}${clsTxt ? ` (${clsTxt})` : ""}`,
+          school_id: st.school_id || schoolId
+        });
+      }
+    });
+
+    schoolProfiles.forEach((p) => {
+      if (p.role === "school" && byUid.has(p.id)) {
+        byUid.get(p.id).roleLabel = "School Administration";
+      }
+    });
+
+    const priority = {
+      administrator: 1,
+      platform_admin: 1,
+      super_admin: 1,
+      admin: 1,
+      school: 2,
+      school_admin: 2,
+      headteacher: 2,
+      principal: 2,
+      bursar: 3,
+      staff: 3,
+      teacher: 4,
+      parent: 5,
+      student: 6
+    };
+
+    return Array.from(byUid.values()).sort((a, b) => {
+      const pa = priority[String(a.role || "").toLowerCase()] || 8;
+      const pb = priority[String(b.role || "").toLowerCase()] || 8;
+      if (pa !== pb) return pa - pb;
+      return String(a.name || "").localeCompare(String(b.name || ""));
+    });
+  }
+
+  async function hydrateMessagesAttachments(supabase, rows) {
+    return Promise.all(
+      (rows || []).map(async (m) => {
+        const rawAtt = extractAttachmentRaw(m);
+        const resolved = rawAtt ? await resolveAttachment(supabase, rawAtt) : "";
+        return Object.assign({}, m, {
+          _text: extractText(m),
+          _attachmentRaw: rawAtt,
+          _attachmentUrl: resolved
+        });
+      })
+    );
+  }
+
+  async function fetchConversation(supabase, myUid, otherUid, limit = 180) {
+    if (!supabase || !isUuid(myUid) || !isUuid(otherUid)) return [];
+    const { data, error } = await supabase
+      .from("direct_messages")
+      .select("*")
+      .or(`and(sender_id.eq.${myUid},recipient_id.eq.${otherUid}),and(sender_id.eq.${otherUid},recipient_id.eq.${myUid})`)
+      .order("created_at", { ascending: true })
+      .limit(limit);
+    if (error) throw error;
+    return hydrateMessagesAttachments(supabase, data || []);
+  }
+
+  async function fetchConversations(supabase, myUid, directoryMap) {
+    if (!supabase || !isUuid(myUid)) return [];
+    const { data, error } = await supabase
+      .from("direct_messages")
+      .select("*")
+      .or(`sender_id.eq.${myUid},recipient_id.eq.${myUid}`)
+      .order("created_at", { ascending: false })
+      .limit(250);
+    if (error) return [];
+
+    const threads = new Map();
+    const missingProfileIds = new Set();
+
+    (data || []).forEach((m) => {
+      const other = m.sender_id === myUid ? m.recipient_id : m.sender_id;
+      if (!isUuid(other)) return;
+      const existing = threads.get(other);
+      const text = extractText(m);
+      const hasAtt = Boolean(extractAttachmentRaw(m));
+      const isUnread = m.recipient_id === myUid && !m.read_at && !m.is_read;
+
+      if (!existing) {
+        threads.set(other, {
+          partnerId: other,
+          lastText: text || (hasAtt ? "Attachment" : ""),
+          lastAt: m.created_at,
+          unreadCount: isUnread ? 1 : 0,
+          senderId: m.sender_id
+        });
+        if (!directoryMap || !directoryMap.has(other)) missingProfileIds.add(other);
+      } else if (isUnread) {
+        existing.unreadCount += 1;
+      }
+    });
+
+    if (missingProfileIds.size > 0) {
+      const profs = await safeSelect(() =>
+        supabase
+          .from("profiles")
+          .select("id, full_name, username, email, role, avatar_url, school_id")
+          .in("id", Array.from(missingProfileIds).slice(0, 80))
+      );
+      profs.forEach((p) => {
+        if (directoryMap && p && isUuid(p.id)) {
+          const nm = p.full_name || p.username || p.email || "ACCESS UG User";
+          directoryMap.set(p.id, {
+            id: p.id,
+            name: nm,
+            full_name: nm,
+            username: p.username || "",
+            email: p.email || "",
+            role: p.role || "",
+            roleLabel: formatRoleLabel(p.role),
+            subtitle: formatRoleLabel(p.role),
+            avatar_url: p.avatar_url || "",
+            school_id: p.school_id || ""
+          });
+        }
+      });
+    }
+
+    return Array.from(threads.values()).map((t) => {
+      const profile = directoryMap && directoryMap.get(t.partnerId);
+      return Object.assign({}, t, {
+        name: (profile && (profile.full_name || profile.name)) || "ACCESS UG User",
+        role: (profile && profile.role) || "",
+        roleLabel: (profile && profile.roleLabel) || "User",
+        email: (profile && profile.email) || "",
+        avatar_url: (profile && profile.avatar_url) || ""
+      });
+    });
+  }
+
+  async function markThreadRead(supabase, myUid, otherUid) {
+    if (!supabase || !isUuid(myUid) || !isUuid(otherUid)) return;
+    try {
+      await supabase
+        .from("direct_messages")
+        .update({ read_at: new Date().toISOString() })
+        .eq("sender_id", otherUid)
+        .eq("recipient_id", myUid)
+        .is("read_at", null);
+    } catch (_) {}
+  }
+
+  async function insertNotificationAlert(supabase, recipientId, schoolId, title, message, type) {
+    const candidates = [
+      {
+        recipient_user_id: recipientId,
+        school_id: isUuid(schoolId) ? schoolId : null,
+        title,
+        message,
+        type: type || "direct_message",
+        is_read: false
+      },
+      {
+        recipient_user_id: recipientId,
+        title,
+        message,
+        type: type || "direct_message",
+        is_read: false
+      },
+      {
+        recipient_user_id: recipientId,
+        title,
+        message,
+        type: "info",
+        is_read: false
+      }
+    ];
+    for (const np of candidates) {
+      try {
+        const { error } = await supabase.from("notifications").insert(np);
+        if (!error) return true;
+      } catch (_) {}
+    }
+    return false;
+  }
+
+  async function sendDirectMessage(opts) {
+    const {
+      supabase,
+      senderId,
+      senderName,
+      recipientId,
+      schoolId,
+      text,
+      attachmentUrl,
+      skipNotification = false
+    } = opts || {};
+
+    if (!supabase) throw new Error("Database client unavailable.");
+    if (!isUuid(senderId)) throw new Error("Your session ID is missing.");
+    if (!isUuid(recipientId)) throw new Error("Selected recipient does not have an active user account.");
+
+    const cleanText = String(text || "").trim();
+    const cleanAtt = String(attachmentUrl || "").trim() || null;
+    if (!cleanText && !cleanAtt) throw new Error("Message cannot be empty.");
+
+    const payloads = [];
+    const base = { sender_id: senderId, recipient_id: recipientId };
+    if (isUuid(schoolId)) {
+      payloads.push(Object.assign({}, base, { school_id: schoolId, body: cleanText || null, attachment_url: cleanAtt }));
+      payloads.push(Object.assign({}, base, { school_id: schoolId, message: cleanText || "(Attachment)", attachment_url: cleanAtt }));
+    }
+    payloads.push(Object.assign({}, base, { body: cleanText || null, attachment_url: cleanAtt }));
+    payloads.push(Object.assign({}, base, { message: cleanText || "(Attachment)", attachment_url: cleanAtt }));
+    payloads.push(Object.assign({}, base, { content: cleanText || "(Attachment)", image_url: cleanAtt }));
+    payloads.push(Object.assign({}, base, { content: cleanText || "(Attachment)" }));
+
+    let inserted = null;
+    let lastError = null;
+    for (const payload of payloads) {
+      const { data, error } = await supabase.from("direct_messages").insert(payload).select("*").maybeSingle();
+      if (!error) {
+        inserted = data || payload;
+        lastError = null;
+        break;
+      }
+      lastError = error;
+    }
+    if (lastError && !inserted) throw lastError;
+
+    if (!skipNotification) {
+      const snippet = cleanText ? cleanText.slice(0, 140) : "Sent an image or file attachment.";
+      const notifTitle = `Message from ${senderName || "ACCESS UG User"}`;
+      await insertNotificationAlert(supabase, recipientId, schoolId, notifTitle, snippet, "direct_message");
+    }
+
+    emitBusEvent({
+      kind: "direct_message",
+      senderId,
+      recipientId,
+      schoolId: schoolId || null
+    });
+
+    return inserted;
+  }
+
+  async function dispatchBroadcastNotifications(opts) {
+    const {
+      supabase,
+      schoolId,
+      senderId,
+      senderName,
+      recipientIds = [],
+      title,
+      body,
+      priority = "normal",
+      audience = "all",
+      targets = []
+    } = opts || {};
+
+    if (!supabase) throw new Error("Database client unavailable.");
+    const cleanTitle = String(title || "School Announcement").trim();
+    const cleanBody = String(body || "").trim();
+    const validIds = Array.from(new Set((recipientIds || []).filter(isUuid)));
+    const deliveredSet = new Set();
+    let dmDelivered = 0;
+
+    const variants = [
+      (uid) => ({ recipient_user_id: uid, school_id: isUuid(schoolId) ? schoolId : null, type: priority === "urgent" ? "urgent" : "announcement", title: cleanTitle, message: cleanBody, is_read: false }),
+      (uid) => ({ recipient_user_id: uid, type: "announcement", title: cleanTitle, message: cleanBody, is_read: false }),
+      (uid) => ({ recipient_user_id: uid, type: "info", title: cleanTitle, message: cleanBody, is_read: false })
+    ];
+
+    if (validIds.length > 0) {
+      let workingVariant = null;
+      for (const buildRow of variants) {
+        const test = await supabase.from("notifications").insert(validIds.slice(0, 80).map(buildRow));
+        if (!test.error) {
+          workingVariant = buildRow;
+          validIds.slice(0, 80).forEach((id) => deliveredSet.add(id));
+          for (let i = 80; i < validIds.length; i += 80) {
+            const chunk = validIds.slice(i, i + 80);
+            const cr = await supabase.from("notifications").insert(chunk.map(buildRow));
+            if (!cr.error) chunk.forEach((id) => deliveredSet.add(id));
+          }
+          break;
+        }
+        const msg = String(test.error?.message || "").toLowerCase();
+        if ((msg.includes("foreign key") || msg.includes("row-level") || msg.includes("violates")) && !msg.includes("column") && !msg.includes("check constraint")) {
+          workingVariant = buildRow;
+          break;
+        }
+      }
+
+      const remaining = validIds.filter((id) => !deliveredSet.has(id));
+      if (remaining.length > 0) {
+        const builder = workingVariant || variants[1];
+        await Promise.allSettled(
+          remaining.map(async (uid) => {
+            const r = await supabase.from("notifications").insert(builder(uid));
+            if (!r.error) deliveredSet.add(uid);
+          })
+        );
+      }
+
+      const undelivered = validIds.filter((id) => !deliveredSet.has(id));
+      if (undelivered.length > 0 && isUuid(senderId)) {
+        const dmText = `📢 [${priority === "urgent" ? "URGENT " : ""}${cleanTitle}]\n${cleanBody}`;
+        await Promise.allSettled(
+          undelivered.map(async (uid) => {
+            try {
+              await sendDirectMessage({
+                supabase,
+                senderId,
+                senderName: senderName || "Administration",
+                recipientId: uid,
+                schoolId,
+                text: dmText,
+                skipNotification: true
+              });
+              dmDelivered++;
+            } catch (_) {}
+          })
+        );
+      }
+    }
+
+    const bcPayload = {
+      id: `local_bc_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+      school_id: schoolId || null,
+      sender_id: senderId || null,
+      sender_name: senderName || "Administration",
+      title: cleanTitle,
+      message: cleanBody,
+      body: cleanBody,
+      priority,
+      audience,
+      targets,
+      created_at: new Date().toISOString()
+    };
+
+    const key = isUuid(schoolId)
+      ? `accessug_shared_broadcasts_school_${schoolId}`
+      : "accessug_shared_broadcasts_all";
+    try {
+      const list = JSON.parse(localStorage.getItem(key) || "[]");
+      list.unshift(bcPayload);
+      localStorage.setItem(key, JSON.stringify(list.slice(0, 60)));
+    } catch (_) {}
+
+    emitBusEvent({
+      kind: "broadcast",
+      senderId: senderId || null,
+      schoolId: schoolId || null,
+      audience
+    });
+
+    return {
+      insertedCount: deliveredSet.size,
+      dmCount: dmDelivered,
+      totalDelivered: deliveredSet.size + dmDelivered,
+      recipientCount: validIds.length
+    };
+  }
+
+  function matchesLocalBroadcastAudience(bc, role, studentName, studentClass) {
+    const aud = String(bc.audience || "all").toLowerCase();
+    const r = String(role || "").toLowerCase();
+    if (aud === "all" || aud === "everyone") return true;
+    if (["school", "school_admin", "administrator", "platform_admin", "super_admin", "admin"].includes(r)) return true;
+    if (aud === "teachers" || aud === "teacher" || aud === "staff") return r === "teacher" || r === "staff";
+    if (aud === "students" || aud === "student" || aud === "learners" || aud === "all_my_students") return r === "student" || r === "parent";
+    if (aud === "parents" || aud === "parent" || aud === "parents_all") return r === "parent" || r === "student";
+    if (aud === "specific_classes" || aud === "class" || aud === "parents_class") {
+      const cls = String(studentClass || "").trim().toLowerCase();
+      return Boolean(cls && Array.isArray(bc.targets) && bc.targets.some((t) => String(t).trim().toLowerCase() === cls));
+    }
+    if (aud === "specific_students" || aud === "individual" || aud === "selected_students") {
+      const nm = String(studentName || "").trim().toLowerCase();
+      return Boolean(nm && Array.isArray(bc.targets) && bc.targets.some((t) => String(t).trim().toLowerCase() === nm));
+    }
+    return true;
+  }
+
+  async function loadMergedNotifications(opts) {
+    const {
+      supabase,
+      userId,
+      recipientIds,
+      schoolId,
+      role,
+      studentName,
+      studentClass,
+      limit = 80,
+      readStorageKey
+    } = opts || {};
+
+    const localReadSet = getReadSet(readStorageKey);
+    const items = [];
+    const seenIds = new Set();
+    const targetIds = Array.from(new Set([userId, ...(recipientIds || [])].filter(isUuid)));
+
+    // 1. Notifications table (recipient_user_id)
+    if (supabase && targetIds.length > 0) {
+      const notifRows = await safeSelect(() =>
+        supabase
+          .from("notifications")
+          .select("*")
+          .in("recipient_user_id", targetIds)
+          .order("created_at", { ascending: false })
+          .limit(limit)
+      );
+      notifRows.forEach((n) => {
+        const id = String(n.id);
+        if (seenIds.has(id)) return;
+        seenIds.add(id);
+        const isRead = Boolean(n.is_read || n.read || localReadSet.has(id));
+        items.push({
+          id,
+          db_id: n.id,
+          title: n.title || "Notification",
+          message: n.message || n.body || n.content || "",
+          body: n.body || n.message || n.content || "",
+          type: n.type || "info",
+          is_read: isRead,
+          created_at: n.created_at,
+          sender_id: n.sender_id || null,
+          source: "notifications"
+        });
+      });
+    }
+
+    // 2. Incoming Direct Messages (broadcasts + regular DMs without duplicate notif rows)
+    if (supabase && isUuid(userId)) {
+      const dmRows = await safeSelect(() =>
+        supabase
+          .from("direct_messages")
+          .select("*")
+          .eq("recipient_id", userId)
+          .order("created_at", { ascending: false })
+          .limit(60)
+      );
+
+      const senderIds = Array.from(new Set(dmRows.map((d) => d.sender_id).filter(isUuid)));
+      const senderNames = new Map();
+      if (senderIds.length > 0) {
+        const profs = await safeSelect(() =>
+          supabase.from("profiles").select("id, full_name, username, email, role").in("id", senderIds.slice(0, 80))
+        );
+        profs.forEach((p) => {
+          senderNames.set(p.id, p.full_name || p.username || p.email || formatRoleLabel(p.role));
+        });
+      }
+
+      dmRows.forEach((dm) => {
+        const rawText = extractText(dm);
+        const att = extractAttachmentRaw(dm);
+        if (!rawText && !att) return;
+
+        const isBroadcastCopy = /^📢|\[.*broadcast|\[announcement/i.test(rawText);
+        const dmTs = new Date(dm.created_at || 0).getTime();
+        const senderLabel = senderNames.get(dm.sender_id) || "ACCESS UG User";
+
+        const snippet = rawText.replace(/^📢\s*/, "").slice(0, 35).toLowerCase();
+        const alreadyInNotifs = items.some((existing) => {
+          const exTs = new Date(existing.created_at || 0).getTime();
+          if (Math.abs(exTs - dmTs) > 25000) return false;
+          const exBody = String(existing.message || existing.body || "").toLowerCase();
+          return (snippet && exBody.includes(snippet)) || existing.title === `Message from ${senderLabel}`;
+        });
+        if (alreadyInNotifs) return;
+
+        const syntheticId = `${isBroadcastCopy ? "dm_bc_" : "dm_msg_"}${dm.id}`;
+        if (seenIds.has(syntheticId)) return;
+        seenIds.add(syntheticId);
+
+        let title = `Message from ${senderLabel}`;
+        let bodyText = rawText || "Sent an image or file attachment";
+        if (isBroadcastCopy) {
+          const lines = rawText.replace(/^📢\s*/, "").split("\n");
+          title = lines[0] ? lines[0].slice(0, 90) : "School Broadcast";
+          bodyText = lines.slice(1).join("\n").trim() || rawText;
+        }
+
+        const isRead = Boolean(dm.read_at || dm.is_read || localReadSet.has(syntheticId));
+        items.push({
+          id: syntheticId,
+          db_id: null,
+          dm_id: dm.id,
+          sender_id: dm.sender_id,
+          sender_name: senderLabel,
+          title,
+          message: bodyText,
+          body: bodyText,
+          type: isBroadcastCopy ? "announcement" : "direct_message",
+          is_read: isRead,
+          created_at: dm.created_at,
+          source: "direct_messages"
+        });
+      });
+    }
+
+    // 3. Shared local cross-portal broadcasts
+    const localKeys = ["accessug_shared_broadcasts_all"];
+    if (isUuid(schoolId)) localKeys.push(`accessug_shared_broadcasts_school_${schoolId}`);
+    localKeys.forEach((key) => {
+      try {
+        const list = JSON.parse(localStorage.getItem(key) || "[]");
+        if (!Array.isArray(list)) return;
+        list.forEach((bc) => {
+          if (!bc || !bc.title) return;
+          if (!matchesLocalBroadcastAudience(bc, role, studentName, studentClass)) return;
+          const bcTs = new Date(bc.created_at || 0).getTime();
+          const already = items.some(
+            (ex) => ex.title === bc.title && Math.abs(new Date(ex.created_at || 0).getTime() - bcTs) < 60000
+          );
+          if (already) return;
+          const sid = String(bc.id || `local_bc_${bcTs}`);
+          if (seenIds.has(sid)) return;
+          seenIds.add(sid);
+          items.push({
+            id: sid,
+            db_id: null,
+            sender_id: bc.sender_id || null,
+            sender_name: bc.sender_name || "Administration",
+            title: bc.title,
+            message: bc.message || bc.body || "",
+            body: bc.body || bc.message || "",
+            type: bc.priority === "urgent" ? "urgent" : "announcement",
+            is_read: localReadSet.has(sid),
+            created_at: bc.created_at,
+            source: "local_broadcast"
+          });
+        });
+      } catch (_) {}
+    });
+
+    items.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    return items.slice(0, limit);
+  }
+
+  async function markNotificationRead(opts) {
+    const { supabase, id, readStorageKey, dmId } = opts || {};
+    const strId = String(id || "");
+    if (!strId) return;
+    const set = getReadSet(readStorageKey);
+    set.add(strId);
+    saveReadSet(readStorageKey, set);
+
+    if (supabase) {
+      if (!strId.startsWith("dm_") && !strId.startsWith("local_")) {
+        try {
+          await supabase.from("notifications").update({ is_read: true }).eq("id", strId);
+        } catch (_) {}
+      }
+      const resolvedDmId =
+        dmId ||
+        (strId.startsWith("dm_msg_")
+          ? strId.replace("dm_msg_", "")
+          : strId.startsWith("dm_bc_")
+          ? strId.replace("dm_bc_", "")
+          : "");
+      if (resolvedDmId) {
+        try {
+          await supabase.from("direct_messages").update({ read_at: new Date().toISOString() }).eq("id", resolvedDmId);
+        } catch (_) {}
+      }
+    }
+    emitBusEvent({ kind: "notif_read", id: strId });
+  }
+
+  async function markAllNotificationsRead(opts) {
+    const { supabase, userId, recipientIds, items = [], readStorageKey } = opts || {};
+    const set = getReadSet(readStorageKey);
+    (items || []).forEach((it) => {
+      if (it && it.id != null) set.add(String(it.id));
+    });
+    saveReadSet(readStorageKey, set);
+
+    const targetIds = Array.from(new Set([userId, ...(recipientIds || [])].filter(isUuid)));
+    if (supabase && targetIds.length > 0) {
+      try {
+        await supabase.from("notifications").update({ is_read: true }).in("recipient_user_id", targetIds).eq("is_read", false);
+      } catch (_) {}
+    }
+    if (supabase && isUuid(userId)) {
+      try {
+        await supabase.from("direct_messages").update({ read_at: new Date().toISOString() }).eq("recipient_id", userId).is("read_at", null);
+      } catch (_) {}
+    }
+    emitBusEvent({ kind: "notif_read_all", userId: userId || null });
+  }
+
+  function subscribeLiveMessaging(opts) {
+    const {
+      supabase,
+      userId,
+      onDirectMessage,
+      onNotification,
+      onAnyChange
+    } = opts || {};
+
+    const cleanups = [];
+
+    if (supabase && isUuid(userId)) {
+      const suffix = `${userId.slice(0, 8)}_${Math.random().toString(36).slice(2, 6)}`;
+      const dmChannel = supabase
+        .channel(`accessug_dm_live_${suffix}`)
+        .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages" }, (payload) => {
+          const row = payload && payload.new;
+          if (!row) return;
+          if (row.sender_id === userId || row.recipient_id === userId) {
+            if (typeof onDirectMessage === "function") onDirectMessage(row);
+            if (typeof onAnyChange === "function") onAnyChange("direct_message", row);
+          }
+        })
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "direct_messages" }, (payload) => {
+          const row = payload && payload.new;
+          if (!row) return;
+          if (row.sender_id === userId || row.recipient_id === userId) {
+            if (typeof onDirectMessage === "function") onDirectMessage(row);
+          }
+        })
+        .subscribe();
+
+      const notifChannel = supabase
+        .channel(`accessug_notif_live_${suffix}`)
+        .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `recipient_user_id=eq.${userId}` }, (payload) => {
+          if (typeof onNotification === "function") onNotification(payload);
+          if (typeof onAnyChange === "function") onAnyChange("notification", payload && payload.new);
+        })
+        .subscribe();
+
+      cleanups.push(() => {
+        try { supabase.removeChannel(dmChannel); } catch (_) {}
+        try { supabase.removeChannel(notifChannel); } catch (_) {}
+      });
+    }
+
+    try {
+      if (typeof BroadcastChannel !== "undefined") {
+        const bc = new BroadcastChannel(BUS_NAME);
+        bc.onmessage = (ev) => {
+          const d = ev && ev.data;
+          if (!d) return;
+          if (d.kind === "direct_message" && typeof onDirectMessage === "function") onDirectMessage(d);
+          if ((d.kind === "broadcast" || d.kind === "notif_read" || d.kind === "notif_read_all") && typeof onNotification === "function") onNotification(d);
+          if (typeof onAnyChange === "function") onAnyChange(d.kind || "bus", d);
+        };
+        cleanups.push(() => {
+          try { bc.close(); } catch (_) {}
+        });
+      }
+    } catch (_) {}
+
+    const onStorage = (ev) => {
+      if (!ev || ev.key !== PING_KEY || !ev.newValue) return;
+      try {
+        const d = JSON.parse(ev.newValue);
+        if (d.kind === "direct_message" && typeof onDirectMessage === "function") onDirectMessage(d);
+        if ((d.kind === "broadcast" || d.kind === "notif_read" || d.kind === "notif_read_all") && typeof onNotification === "function") onNotification(d);
+        if (typeof onAnyChange === "function") onAnyChange(d.kind || "storage", d);
+      } catch (_) {}
+    };
+    window.addEventListener("storage", onStorage);
+    cleanups.push(() => window.removeEventListener("storage", onStorage));
+
+    return () => cleanups.forEach((fn) => fn());
+  }
+
+  global.ACCESSUG_MSG = {
+    UUID_RE,
+    isUuid,
+    formatRoleLabel,
+    extractText,
+    extractAttachmentRaw,
+    resolveAttachment,
+    uploadAttachment,
+    resolveCrossPortalDirectory,
+    fetchConversation,
+    fetchConversations,
+    markThreadRead,
+    sendDirectMessage,
+    dispatchBroadcastNotifications,
+    loadMergedNotifications,
+    markNotificationRead,
+    markAllNotificationsRead,
+    subscribeLiveMessaging,
+    emitBusEvent
+  };
+})(window);
+
+</script>
+<script>
+const SUPABASE_URL = "https://iotmozwesvmieqvsonov.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_4dKiWSMcl6wCe5Nn6m0mcQ_Vi8HiSZZ";
+const ROLE_KEY = "bursar";
+const ROLE_LABEL = "Bursar / Accountant";
+const ROLE_KEYWORDS = ["bursar","accountant","accounts","finance"];
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+});
+window.supabaseClient = supabaseClient;
+window.accessUgSupabaseClient = supabaseClient;
+
+let session = null, authUser = null, staffMember = null, school = null, schoolId = null;
+let students = [], teachers = [], classes = [], staffList = [];
+let notificationsCache = [], schoolDirectory = [], activeChat = null, chatChannel = null, notificationChannel = null;
+let officialCalendarEvents = [], calViewDate = new Date(), overviewChart = null;
+let isPreviewMode = false;
+
+const $ = (id) => document.getElementById(id);
+const val = (id) => String($(id)?.value ?? "").trim();
+const esc = (v) => String(v ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[m]));
+const today = () => new Date().toISOString().slice(0, 10);
+function errorMessage(e) { return e?.message || String(e || "Unknown error"); }
+function nameOf(r) { return [r?.first_name, r?.last_name].filter(Boolean).join(" ").trim() || r?.full_name || r?.name || r?.email || "Staff Member"; }
+function initials(s) { return String(s || "S").split(/\s+/).filter(Boolean).map((x) => x[0]).join("").slice(0, 2).toUpperCase() || "S"; }
+function notice(id, text, type = "info") { const e = $(id); if (!e) return; e.textContent = text; e.className = "notice show " + type; }
+function clearNotice(id) { const e = $(id); if (e) e.className = "notice"; }
+function toast(text) { const e = $("toast"); if (!e) return; e.textContent = text; e.classList.add("show"); setTimeout(() => e.classList.remove("show"), 3200); }
+function copyText(txt) { if (!txt || txt === "—") return; navigator.clipboard?.writeText(txt).then(() => toast("Copied: " + txt)).catch(() => toast(txt)); }
+function downloadCsv(filename, text) { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "text/csv;charset=utf-8;" })); a.download = filename; a.click(); }
+function readLocalJson(key, fallback) { try { return JSON.parse(localStorage.getItem(key) || "null") ?? fallback; } catch { return fallback; } }
+function writeLocalJson(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
+function safeFileName(name) { return String(name || "file").replace(/[^A-Za-z0-9._-]+/g, "_").replace(/^\.+/, "") || "file"; }
+function redirectLogin() {
+  ["accessug_selected_role","accessug_school_id","accessug_school_name"].forEach((k) => localStorage.removeItem(k));
+  location.replace("./index-portal.html?portal=" + encodeURIComponent(ROLE_KEY));
+}
+function populateStudentSelect(selectId) {
+  const el = $(selectId);
+  if (!el) return;
+  el.innerHTML = students.length
+    ? students.map((s) => `<option value="${esc(s.id)}">${esc(nameOf(s))}${s.class_level ? " (" + esc(s.class_level) + ")" : ""}</option>`).join("")
+    : '<option value="walkin">General Student</option>';
+}
+
+/* APPEARANCE STUDIO */
+const UI_DEFAULTS = { mode: "light", primary: "#0b3d82", sidebar: "#061a38", font: '"DM Sans",system-ui,-apple-system,sans-serif', radius: "14px" };
+const appearanceKey = () => "accessug_" + ROLE_KEY + "_appearance_" + (authUser?.id || "default");
+const getSavedAppearance = () => readLocalJson(appearanceKey(), {});
+function applyAppearance(cfg) {
+  const c = { ...UI_DEFAULTS, ...cfg };
+  document.documentElement.classList.toggle("theme-dark", c.mode === "dark");
+  document.documentElement.style.setProperty("--navy2", c.primary);
+  document.documentElement.style.setProperty("--blue", c.primary);
+  document.documentElement.style.setProperty("--navy", c.sidebar);
+  document.documentElement.style.setProperty("--sidebar-bg", `linear-gradient(180deg, ${c.sidebar}, ${c.primary})`);
+  document.documentElement.style.setProperty("--font-sans", c.font);
+  document.documentElement.style.setProperty("--radius", c.radius);
+  if (c.mode === "light") document.documentElement.style.setProperty("--accent", c.primary);
+  if ($("uiPrimaryColor")) $("uiPrimaryColor").value = c.primary;
+  if ($("uiSidebarColor")) $("uiSidebarColor").value = c.sidebar;
+  if ($("uiFontFamily")) $("uiFontFamily").value = c.font;
+  if ($("uiRadius")) $("uiRadius").value = c.radius;
+  document.querySelectorAll("[data-ui-mode]").forEach((b) => b.classList.toggle("active", b.dataset.uiMode === c.mode));
+}
+function saveAppearance(patch) {
+  const next = { ...UI_DEFAULTS, ...getSavedAppearance(), ...patch };
+  writeLocalJson(appearanceKey(), next);
+  applyAppearance(next);
+}
+
+/* NAVIGATION */
+const pageTitles = {"home":"Bursar & Accounts Dashboard","inbox":"Staff Inbox","messages":"School Messages","fee-structures":"Fee Structures & Collections","fee-analysis":"Fees Analysis","pay-codes":"Payment Codes Registry","expenses":"Expense & Petty Cash Ledger","calendar":"Official School Calendar","reports":"Report an Issue","profile":"My Profile & Account Security","appearance":"Appearance Studio"};
+function showPage(id) {
+  const target = $(id);
+  if (!target) return;
+  document.querySelectorAll(".page").forEach((p) => p.classList.remove("active"));
+  target.classList.add("active");
+  document.querySelectorAll("[data-page]").forEach((b) => b.classList.toggle("active", b.dataset.page === id));
+  if ($("pageTitle")) $("pageTitle").textContent = pageTitles[id] || ROLE_LABEL;
+  $("sidebar")?.classList.remove("open");
+  $("mobileScrim")?.classList.remove("show");
+  if (id === "inbox") renderInbox();
+  if (id === "messages") initMessagesPage();
+  if (id === "calendar") renderCalendar();
+  if (id === "reports") loadReports();
+  if (id === "profile") syncProfileUI();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+window.showPage = showPage;
+document.querySelectorAll("[data-page]").forEach((b) => b.addEventListener("click", () => showPage(b.dataset.page)));
+document.querySelectorAll("[data-go]").forEach((b) => b.addEventListener("click", () => showPage(b.dataset.go)));
+$("menuBtn")?.addEventListener("click", (e) => { e.preventDefault(); $("sidebar")?.classList.toggle("open"); $("mobileScrim")?.classList.toggle("show"); });
+$("mobileScrim")?.addEventListener("click", () => { $("sidebar")?.classList.remove("open"); $("mobileScrim")?.classList.remove("show"); });
+$("navSearchInput")?.addEventListener("input", (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll("#sidebarNav [data-page]").forEach((b) => { b.style.display = !q || b.textContent.toLowerCase().includes(q) ? "" : "none"; });
+});
+$("themeQuickToggle")?.addEventListener("click", () => saveAppearance({ mode: getSavedAppearance().mode === "dark" ? "light" : "dark" }));
+document.querySelectorAll("[data-ui-mode]").forEach((b) => b.addEventListener("click", () => saveAppearance({ mode: b.dataset.uiMode })));
+document.querySelectorAll("[data-ui-preset]").forEach((b) => b.addEventListener("click", () => saveAppearance({ primary: b.dataset.uiPreset, sidebar: b.dataset.uiSidebar || "#061a38" })));
+$("uiSaveAppearanceBtn")?.addEventListener("click", () => { saveAppearance({ primary: val("uiPrimaryColor") || UI_DEFAULTS.primary, sidebar: val("uiSidebarColor") || UI_DEFAULTS.sidebar, font: val("uiFontFamily") || UI_DEFAULTS.font, radius: val("uiRadius") || UI_DEFAULTS.radius }); toast("Appearance saved."); });
+$("uiResetAppearanceBtn")?.addEventListener("click", () => { localStorage.removeItem(appearanceKey()); applyAppearance(UI_DEFAULTS); toast("Appearance reset."); });
+
+/* SHARED OVERVIEW CHART & KPI UPDATER */
+function setOverviewMetrics(vals, subs, pct, chartLabels, chartData, chartColors, highlights) {
+  vals.forEach((v, i) => {
+    if ($("kpiVal" + (i + 1))) $("kpiVal" + (i + 1)).textContent = String(v ?? "0");
+    if ($("kpiSub" + (i + 1)) && subs[i] !== undefined) $("kpiSub" + (i + 1)).textContent = subs[i];
+  });
+  const clamped = Math.max(0, Math.min(100, Number(pct) || 0));
+  if ($("overviewProgressPct")) $("overviewProgressPct").textContent = clamped + "%";
+  if ($("overviewProgressBar")) $("overviewProgressBar").style.width = clamped + "%";
+  chartLabels.forEach((lbl, i) => {
+    if ($("stripLbl" + i)) $("stripLbl" + i).textContent = lbl;
+    if ($("stripVal" + i)) $("stripVal" + i).textContent = String(chartData[i] ?? 0);
+  });
+  const canvas = $("overviewRoleChart");
+  if (canvas && window.Chart) {
+    if (overviewChart) overviewChart.destroy();
+    const sum = chartData.reduce((a, b) => a + Number(b || 0), 0);
+    overviewChart = new Chart(canvas, {
+      type: "doughnut",
+      data: {
+        labels: sum ? chartLabels : ["No data yet"],
+        datasets: [{ data: sum ? chartData : [1], backgroundColor: sum ? chartColors : ["#cbd5e1"], borderWidth: 0 }]
+      },
+      options: { responsive: true, maintainAspectRatio: false, cutout: "66%", plugins: { legend: { position: "bottom", labels: { color: getComputedStyle(document.documentElement).getPropertyValue("--muted").trim() || "#475569", boxWidth: 12 } } } }
+    });
+  }
+  const hlEl = $("overviewHighlightList");
+  if (hlEl) {
+    hlEl.innerHTML = highlights.length
+      ? highlights.map((h) => `<div class="overview-schedule-row"><div><strong>${esc(h.title)}</strong><small>${esc(h.sub)}</small></div><span class="overview-schedule-time">${esc(h.tag)}</span></div>`).join("")
+      : '<div class="empty">No active highlights recorded yet.</div>';
+  }
+}
+
+/* INBOX & MESSAGES */
+const notifReadKey = () => "accessug_staff_read_" + (authUser?.id || "default");
+async function loadInbox() {
+  try {
+    if (window.ACCESSUG_MSG && authUser?.id) {
+      notificationsCache = await window.ACCESSUG_MSG.loadMergedNotifications({
+        supabase: supabaseClient, userId: authUser.id, recipientIds: [authUser.id, staffMember?.id, schoolId].filter(Boolean),
+        schoolId, role: ROLE_KEY, limit: 80, readStorageKey: notifReadKey()
+      });
+    } else {
+      const r = await supabaseClient.from("notifications").select("*").eq("school_id", schoolId).order("created_at", { ascending: false }).limit(50);
+      notificationsCache = r.data || [];
+    }
+  } catch { notificationsCache = []; }
+  renderInbox();
+}
+function renderInbox() {
+  const unread = notificationsCache.filter((n) => !n.is_read).length;
+  if ($("bellBadge")) { $("bellBadge").textContent = unread > 99 ? "99+" : String(unread); $("bellBadge").style.display = unread ? "grid" : "none"; }
+  if ($("inboxMenuBadge")) { $("inboxMenuBadge").textContent = unread > 99 ? "99+" : String(unread); $("inboxMenuBadge").style.display = unread ? "inline-flex" : "none"; }
+  if ($("homeInbox")) {
+    $("homeInbox").innerHTML = notificationsCache.length
+      ? notificationsCache.slice(0, 4).map((n) => `<div class="notice-row ${n.is_read ? "read" : "unread"}"><span class="dot"></span><div class="notice-main"><strong>${esc(n.title || "Update")}</strong><p>${esc(n.message || "")}</p><div class="notice-meta">${esc((n.created_at || "").slice(0, 10))}</div></div></div>`).join("")
+      : '<div class="empty">No announcements or inbox updates yet.</div>';
+  }
+  if ($("bellList")) {
+    $("bellList").innerHTML = notificationsCache.length
+      ? notificationsCache.slice(0, 10).map((n) => `<div class="notification-item ${n.is_read ? "" : "unread"}" onclick="showPage('inbox')"><strong>${esc(n.title || "Update")}</strong><p>${esc(n.message || "")}</p></div>`).join("")
+      : '<div class="notification-empty">No notifications yet.</div>';
+  }
+  const q = ($("inboxSearch")?.value || "").trim().toLowerCase();
+  const f = $("inboxFilter")?.value || "all";
+  const rows = notificationsCache.filter((n) => (f === "all" || (f === "unread" ? !n.is_read : n.is_read)) && (!q || [n.title, n.message].some((v) => String(v || "").toLowerCase().includes(q))));
+  if ($("inboxList")) {
+    $("inboxList").innerHTML = rows.length ? rows.map((n) => `<div class="notice-row ${n.is_read ? "read" : "unread"}"><span class="dot"></span><div class="notice-main"><strong>${esc(n.title || "Notification")}</strong><p>${esc(n.message || "")}</p><div class="notice-meta">${esc(new Date(n.created_at || Date.now()).toLocaleString())}</div></div></div>`).join("") : '<div class="notification-empty">No matching notifications.</div>';
+  }
+}
+$("inboxSearch")?.addEventListener("input", renderInbox);
+$("inboxFilter")?.addEventListener("change", renderInbox);
+$("bellBtn")?.addEventListener("click", (e) => { e.stopPropagation(); $("bellPopover")?.classList.toggle("show"); });
+document.addEventListener("click", (e) => { if (!e.target.closest(".notification-wrap")) $("bellPopover")?.classList.remove("show"); });
+const markAllReadAction = async () => {
+  if (window.ACCESSUG_MSG && authUser?.id) await window.ACCESSUG_MSG.markAllNotificationsRead(supabaseClient, authUser.id, notificationsCache, notifReadKey());
+  notificationsCache.forEach((n) => { n.is_read = true; }); renderInbox(); toast("All notifications marked read.");
+};
+$("markAllRead")?.addEventListener("click", markAllReadAction);
+$("bellMarkAllBtn")?.addEventListener("click", markAllReadAction);
+
+async function initMessagesPage() {
+  if (window.ACCESSUG_MSG && authUser?.id) {
+    try {
+      schoolDirectory = await window.ACCESSUG_MSG.resolveCrossPortalDirectory({ supabase: supabaseClient, myUid: authUser.id, schoolId, excludeSelf: true, includeAdmins: true });
+    } catch { schoolDirectory = []; }
+  }
+  renderDirectoryResults();
+  await loadConversations();
+}
+function renderDirectoryResults() {
+  const wrap = $("messageSearchResults");
+  if (!wrap) return;
+  const q = ($("messageSearch")?.value || "").trim().toLowerCase();
+  const rows = schoolDirectory.filter((u) => !q || [u.name, u.email, u.roleLabel, u.subtitle].some((v) => String(v || "").toLowerCase().includes(q))).slice(0, 30);
+  wrap.innerHTML = rows.length ? rows.map((u) => {
+    const uid = String(u.user_id || u.id || "");
+    return `<div class="directory-row ${String(activeChat?.id) === uid ? "active" : ""}" data-pick-uid="${esc(uid)}"><div class="avatar-circle">${esc(initials(u.name))}</div><div style="flex:1;min-width:0"><strong>${esc(u.name)}</strong><small style="display:block;color:var(--muted)">${esc(u.roleLabel || u.role || "Member")}</small></div></div>`;
+  }).join("") : '<div class="empty" style="padding:12px">No contacts found.</div>';
+  wrap.querySelectorAll("[data-pick-uid]").forEach((el) => el.addEventListener("click", () => {
+    const target = schoolDirectory.find((x) => String(x.user_id || x.id) === String(el.dataset.pickUid));
+    if (target) openChatWith(target);
+  }));
+}
+async function loadConversations() {
+  const wrap = $("conversationList");
+  if (!wrap || !authUser?.id || !window.ACCESSUG_MSG) return;
+  const dirMap = new Map(schoolDirectory.filter((u) => u.user_id || u.id).map((u) => [String(u.user_id || u.id), u]));
+  const threads = await window.ACCESSUG_MSG.fetchConversations(supabaseClient, authUser.id, dirMap).catch(() => []);
+  wrap.innerHTML = threads.length ? threads.map((t) => `<div class="conversation-row ${String(activeChat?.id) === String(t.partnerId) ? "active" : ""}" data-conv-uid="${esc(t.partnerId)}"><div class="avatar-circle">${esc(initials(t.name))}</div><div style="flex:1;min-width:0"><strong>${esc(t.name)}</strong><small style="display:block;color:var(--muted)">${esc(t.lastText || "Attachment")}</small></div>${t.unreadCount > 0 ? '<span class="msg-unread-dot"></span>' : ""}</div>`).join("") : '<div class="empty" style="padding:12px">No conversations yet.</div>';
+  wrap.querySelectorAll("[data-conv-uid]").forEach((el) => el.addEventListener("click", () => {
+    const target = dirMap.get(String(el.dataset.convUid)) || { id: el.dataset.convUid, name: "Contact", roleLabel: "Member" };
+    openChatWith(target);
+  }));
+}
+async function openChatWith(userObj) {
+  const uid = userObj?.user_id || userObj?.id;
+  if (!uid) return;
+  activeChat = { ...userObj, id: uid, user_id: uid };
+  if ($("chatHeader")) $("chatHeader").textContent = `${userObj.name || "Contact"} · ${userObj.roleLabel || userObj.role || "Member"}`;
+  await loadChatMessages();
+  if (window.ACCESSUG_MSG && authUser?.id) await window.ACCESSUG_MSG.markThreadRead(supabaseClient, authUser.id, uid);
+  renderDirectoryResults(); loadConversations();
+}
+async function loadChatMessages() {
+  const wrap = $("chatMessages");
+  const partnerId = activeChat?.id;
+  if (!wrap || !partnerId || !authUser?.id) return;
+  try {
+    const msgs = window.ACCESSUG_MSG ? await window.ACCESSUG_MSG.fetchConversation(supabaseClient, authUser.id, partnerId, 120) : [];
+    const rendered = await Promise.all(msgs.map(async (m) => {
+      const mine = String(m.sender_id) === String(authUser.id);
+      const txt = m._text ?? (m.message || m.body || m.content || "");
+      return `<div class="message-bubble ${mine ? "mine" : ""}">${txt ? `<div>${esc(txt)}</div>` : ""}<small class="muted">${esc(new Date(m.created_at).toLocaleString())}</small></div>`;
+    }));
+    wrap.innerHTML = rendered.length ? rendered.join("") : '<div class="empty">No messages yet. Say hello!</div>';
+    wrap.scrollTop = wrap.scrollHeight;
+  } catch (e) { wrap.innerHTML = `<div class="empty">${esc(errorMessage(e))}</div>`; }
+}
+$("messageSearch")?.addEventListener("input", renderDirectoryResults);
+$("sendMessageForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!activeChat?.id || !authUser?.id) return toast("Select a recipient first.");
+  const text = val("messageText");
+  if (!text) return;
+  try {
+    if (window.ACCESSUG_MSG) {
+      await window.ACCESSUG_MSG.sendDirectMessage({ supabase: supabaseClient, senderId: authUser.id, senderName: nameOf(staffMember), recipientId: activeChat.id, schoolId, text });
+    }
+    if ($("messageText")) $("messageText").value = "";
+    await Promise.allSettled([loadChatMessages(), loadConversations()]);
+  } catch (err) { notice("messagesNotice", errorMessage(err), "err"); }
+});
+
+/* CALENDAR */
+async function loadCalendarEvents() {
+  officialCalendarEvents = readLocalJson("accessug_official_calendar_school_" + schoolId, []);
+  try {
+    const r = await supabaseClient.from("school_calendar_events").select("*").eq("school_id", schoolId).order("event_date", { ascending: true });
+    if (!r.error && Array.isArray(r.data) && r.data.length) officialCalendarEvents = r.data;
+  } catch {}
+  renderCalendar();
+}
+function renderCalendar() {
+  const calEl = $("homeUpcomingCalendar");
+  const todayStr = today();
+  const upcoming = [...officialCalendarEvents].filter((e) => String(e.event_date || e.date || "") >= todayStr).slice(0, 3);
+  if (calEl) {
+    calEl.innerHTML = '<div class="dash-alloc-title" style="margin-bottom:8px">Upcoming School Dates</div>' + (upcoming.length ? upcoming.map((ev) => `<div class="mini-cal-row"><div><strong>${esc(ev.title)}</strong><small>${esc(ev.category || "Official Day")}</small></div><span class="badge neutral font-mono">${esc(String(ev.event_date || ev.date || "").slice(0, 10))}</span></div>`).join("") : '<div class="muted" style="font-size:12px">No upcoming events published.</div>');
+  }
+  const grid = $("staffCalGrid"), label = $("calMonthLabel"), up = $("staffCalUpcoming");
+  if (!grid || !label) return;
+  const yr = calViewDate.getFullYear(), mo = calViewDate.getMonth();
+  label.textContent = calViewDate.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  const firstDay = new Date(yr, mo, 1).getDay(), daysInMonth = new Date(yr, mo + 1, 0).getDate();
+  const byDate = new Map();
+  officialCalendarEvents.forEach((ev) => { const d = String(ev.event_date || ev.date || "").slice(0, 10); if (d) { if (!byDate.has(d)) byDate.set(d, []); byDate.get(d).push(ev); } });
+  const headers = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => `<div class="cal-dow">${d}</div>`).join("");
+  const blanks = Array(firstDay).fill('<div class="cal-day outside"></div>').join("");
+  const cells = Array.from({ length: daysInMonth }, (_, i) => {
+    const dStr = `${yr}-${String(mo + 1).padStart(2, "0")}-${String(i + 1).padStart(2, "0")}`;
+    const evs = byDate.get(dStr) || [];
+    return `<div class="cal-day ${dStr === todayStr ? "today" : ""}"><div class="cal-day-num">${i + 1}</div>${evs.map((e) => `<div class="cal-pill ${esc(e.category || "event")}">${esc(e.title)}</div>`).join("")}</div>`;
+  }).join("");
+  grid.innerHTML = headers + blanks + cells;
+  if (up) up.innerHTML = upcoming.length ? upcoming.map((e) => `<div class="notice-row"><div class="notice-main"><strong>${esc(e.title)}</strong><p>${esc(e.description || e.category || "Official school event")}</p><div class="notice-meta font-mono">${esc(String(e.event_date || e.date || "").slice(0, 10))}</div></div></div>`).join("") : '<div class="empty">No upcoming school events.</div>';
+}
+$("calPrevBtn")?.addEventListener("click", () => { calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() - 1, 1); renderCalendar(); });
+$("calNextBtn")?.addEventListener("click", () => { calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() + 1, 1); renderCalendar(); });
+$("calTodayBtn")?.addEventListener("click", () => { calViewDate = new Date(); renderCalendar(); });
+
+/* REPORTS */
+async function loadReports() {
+  const wrap = $("reportsTable");
+  if (!wrap) return;
+  const uid = staffMember?.id || authUser?.id;
+  if (!uid) { wrap.innerHTML = '<div class="empty">Sign in to view submitted reports.</div>'; return; }
+  try {
+    const r = await supabaseClient.from("reports").select("*").eq("reported_by", uid).order("created_at", { ascending: false });
+    if (r.error) throw r.error;
+    wrap.className = "";
+    wrap.innerHTML = (r.data || []).length ? `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Type</th><th>Subject</th><th>Status</th><th>Message</th></tr></thead><tbody>${r.data.map((x) => `<tr><td class="font-mono">${esc((x.created_at || "").slice(0, 10))}</td><td>${esc((x.report_type || "other").replace(/_/g, " "))}</td><td>${esc(x.subject || "—")}</td><td><span class="badge neutral">${esc(x.status || "open")}</span></td><td>${esc(x.description || x.message || "—")}</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">No reports submitted yet.</div>';
+  } catch { wrap.innerHTML = '<div class="empty">Reports unavailable right now.</div>'; }
+}
+$("submitReport")?.addEventListener("click", async () => {
+  const description = val("reportDescription");
+  if (!description) return notice("reportNotice", "Please describe the issue before sending.", "err");
+  const uid = staffMember?.id || authUser?.id;
+  const { error } = await supabaseClient.from("reports").insert({ school_id: schoolId, reported_by: uid, report_type: val("reportType"), subject: val("reportSubject") || null, description, status: "open" });
+  if (error) return notice("reportNotice", "Could not submit report: " + error.message, "err");
+  notice("reportNotice", "Report submitted to school administration.", "ok");
+  if ($("reportSubject")) $("reportSubject").value = "";
+  if ($("reportDescription")) $("reportDescription").value = "";
+  toast("Report submitted."); await loadReports();
+});
+
+/* PROFILE & PHOTO CROPPER */
+function syncProfileUI() {
+  const nm = nameOf(staffMember);
+  const em = authUser?.email || staffMember?.email || "—";
+  const sch = school?.name || "ACCESS UG School";
+  const dept = staffMember?.department || staffMember?.staff_role || ROLE_LABEL;
+  const roleTxt = staffMember?.staff_role || staffMember?.role || ROLE_LABEL;
+  const avatarUrl = String(staffMember?.avatar_url || authUser?.user_metadata?.avatar_url || "");
+  const ini = initials(nm);
+  [["welcome", "Welcome, " + nm], ["staffDisplayName", nm], ["staffRoleLine", "Role: " + roleTxt], ["staffSchoolLine", "School: " + sch], ["staffEmailLine", "Email: " + em], ["staffDeptLine", "Department: " + dept], ["topEmail", em], ["profilePageDisplayName", nm], ["profilePageEmail", em], ["profilePageSchool", sch], ["profilePageReadName", nm], ["profilePageReadRole", roleTxt], ["profilePageReadDept", dept], ["profileModalName", nm], ["profileModalEmail", em], ["profileModalSchool", sch], ["profileReadName", nm], ["profileReadSchool", sch], ["profileReadEmail", em]].forEach(([id, txt]) => { if ($(id)) $(id).textContent = txt; });
+  [$("profilePageAvatar"), $("profilePhoto"), $("topAvatar"), $("profileAvatar")].forEach((el) => {
+    if (!el) return;
+    if (avatarUrl) el.innerHTML = `<img src="${esc(avatarUrl)}" alt="Profile photo">`; else el.textContent = ini;
+  });
+}
+async function updatePassword(pw, confirmPw, statusEl, noticeId) {
+  if (pw.length < 8) throw new Error("Password must be at least 8 characters.");
+  if (pw !== confirmPw) throw new Error("Passwords do not match.");
+  const r = await supabaseClient.auth.updateUser({ password: pw });
+  if (r.error) throw r.error;
+  if (noticeId) notice(noticeId, "Password updated successfully.", "ok");
+  if (statusEl) { statusEl.textContent = "Password updated."; statusEl.className = "profile-status ok"; }
+  toast("Password updated.");
+}
+$("pageChangePasswordBtn")?.addEventListener("click", async () => { try { await updatePassword($("pageNewPassword")?.value || "", $("pageConfirmPassword")?.value || "", null, "profilePageNotice"); $("pageNewPassword").value = ""; $("pageConfirmPassword").value = ""; } catch (e) { notice("profilePageNotice", errorMessage(e), "err"); } });
+$("changePasswordBtn")?.addEventListener("click", async () => { try { await updatePassword($("newPassword")?.value || "", $("confirmPassword")?.value || "", $("profileStatus"), null); $("newPassword").value = ""; $("confirmPassword").value = ""; } catch (e) { if ($("profileStatus")) { $("profileStatus").textContent = errorMessage(e); $("profileStatus").className = "profile-status error"; } } });
+(function initCropper() {
+  const modal = $("profileModal"), cropModal = $("profileCropModal"), canvas = $("profileCropCanvas"), stage = $("profileCropStage"), zoom = $("profileZoom");
+  if (!modal || !cropModal || !canvas) return;
+  const ctx = canvas.getContext("2d");
+  let cropImage = null, cropScale = 1, cropX = 0, cropY = 0, dragging = false, lastX = 0, lastY = 0;
+  const openModal = () => { modal.classList.add("show"); syncProfileUI(); };
+  $("profileTrigger")?.addEventListener("click", openModal);
+  $("profileCardClick")?.addEventListener("click", openModal);
+  $("profileClose")?.addEventListener("click", () => modal.classList.remove("show"));
+  modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("show"); });
+  function drawCrop() {
+    if (!ctx || !cropImage) return;
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h); ctx.fillStyle = "#0d1d33"; ctx.fillRect(0, 0, w, h);
+    const base = Math.max(w / cropImage.width, h / cropImage.height), s = base * cropScale;
+    ctx.drawImage(cropImage, (w - cropImage.width * s) / 2 + cropX, (h - cropImage.height * s) / 2 + cropY, cropImage.width * s, cropImage.height * s);
+  }
+  [$("uploadProfileBtn"), $("profilePageUploadBtn")].forEach((b) => b?.addEventListener("click", () => $("profileFileInput")?.click()));
+  $("profileFileInput")?.addEventListener("change", (e) => {
+    const file = e.target.files?.[0]; e.target.value = ""; if (!file) return;
+    const r = new FileReader(); r.onload = () => { const img = new Image(); img.onload = () => { cropImage = img; cropScale = 1; cropX = 0; cropY = 0; if (zoom) zoom.value = 1; drawCrop(); cropModal.classList.add("show"); }; img.src = r.result; }; r.readAsDataURL(file);
+  });
+  zoom?.addEventListener("input", () => { cropScale = parseFloat(zoom.value); drawCrop(); });
+  stage?.addEventListener("pointerdown", (e) => { if (!cropImage) return; dragging = true; lastX = e.clientX; lastY = e.clientY; });
+  stage?.addEventListener("pointermove", (e) => { if (!dragging) return; cropX += e.clientX - lastX; cropY += e.clientY - lastY; lastX = e.clientX; lastY = e.clientY; drawCrop(); });
+  stage?.addEventListener("pointerup", () => { dragging = false; });
+  $("profileCropClose")?.addEventListener("click", () => cropModal.classList.remove("show"));
+  $("profileCropCancel")?.addEventListener("click", () => cropModal.classList.remove("show"));
+  $("profileCropSave")?.addEventListener("click", async () => {
+    if (!authUser || !cropImage) return;
+    const out = document.createElement("canvas"); out.width = 720; out.height = 720;
+    const c = out.getContext("2d"); c.beginPath(); c.arc(360, 360, 360, 0, Math.PI * 2); c.clip();
+    const sc = 720 / canvas.width, base = Math.max(canvas.width / cropImage.width, canvas.height / cropImage.height), s = base * cropScale * sc;
+    c.drawImage(cropImage, (720 - cropImage.width * s) / 2 + cropX * sc, (720 - cropImage.height * s) / 2 + cropY * sc, cropImage.width * s, cropImage.height * s);
+    const blob = await new Promise((res) => out.toBlob(res, "image/webp", 0.88));
+    const path = `${authUser.id}/avatar-${Date.now()}.webp`;
+    const up = await supabaseClient.storage.from("avatars").upload(path, blob, { contentType: "image/webp" });
+    const finalUrl = !up.error ? (supabaseClient.storage.from("avatars").getPublicUrl(path).data?.publicUrl + "?v=" + Date.now()) : out.toDataURL("image/webp", 0.72);
+    await supabaseClient.auth.updateUser({ data: { ...(authUser.user_metadata || {}), avatar_url: finalUrl } });
+    authUser.user_metadata = { ...(authUser.user_metadata || {}), avatar_url: finalUrl };
+    cropModal.classList.remove("show"); syncProfileUI(); toast("Photo updated.");
+  });
+  async function removePhoto() {
+    if (!authUser) return;
+    await supabaseClient.auth.updateUser({ data: { ...(authUser.user_metadata || {}), avatar_url: null } });
+    authUser.user_metadata = { ...(authUser.user_metadata || {}), avatar_url: null };
+    syncProfileUI(); toast("Photo removed.");
+  }
+  $("removeProfileBtn")?.addEventListener("click", removePhoto);
+  $("profilePageRemovePhotoBtn")?.addEventListener("click", removePhoto);
+})();
+
+
+let feeClasses = [], feeAnalysis = [], feeFilter = "all", expenses = [];
+function money(v) { return "UGX " + Number(v || 0).toLocaleString(); }
+function classLabel(c) { return c ? (c.level || c.name || "Class") + (c.stream ? " — " + c.stream : "") : "Class"; }
+function getStudentPaymentCode(s) {
+  const map = readLocalJson("accessug_payment_codes_school_" + schoolId, {});
+  return s?.payment_code || s?.schoolpay_code || map[String(s?.id || "")]?.code || "—";
+}
+function getStudentPaymentChannel(s) {
+  const map = readLocalJson("accessug_payment_codes_school_" + schoolId, {});
+  return s?.payment_provider || map[String(s?.id || "")]?.provider || "SchoolPay";
+}
+function yearOptions() {
+  const y = $("bursarFeesYear");
+  if (!y) return;
+  const years = [...new Set(classes.map((c) => Number(c.academic_year)).filter(Boolean))].sort((a, b) => b - a);
+  if (!years.includes(new Date().getFullYear())) years.unshift(new Date().getFullYear());
+  if (!y.options.length) y.innerHTML = years.map((x) => `<option value="${x}">${x}</option>`).join("");
+}
+
+async function loadRoleWorkspace() {
+  expenses = readLocalJson("accessug_bursar_expenses_" + schoolId, []);
+  yearOptions();
+  await Promise.allSettled([loadFeeClasses(), loadFeeAnalysis()]);
+  renderPaymentCodesRegistry();
+  renderExpenses();
+  renderOverviewStats();
+}
+
+async function loadFeeClasses() {
+  if (!$("schoolFeesClasses")) return;
+  yearOptions();
+  const yr = Number($("bursarFeesYear")?.value || new Date().getFullYear());
+  const cls = classes.filter((c) => (!c.academic_year || Number(c.academic_year) === yr) && String(c.status || "active").toLowerCase() !== "inactive");
+  if (!cls.length) { $("schoolFeesClasses").innerHTML = '<div class="empty">No classes/streams registered for this academic year.</div>'; return; }
+  let fmap = new Map();
+  try {
+    const fr = await supabaseClient.from("fee_structures").select("id,class_id,total_amount,academic_year,active").in("class_id", cls.map((c) => c.id)).eq("academic_year", yr);
+    fmap = new Map((fr.data || []).map((f) => [String(f.class_id), f]));
+  } catch {}
+  feeClasses = cls.map((c) => ({ ...c, fee: fmap.get(String(c.id)) || null }));
+  $("schoolFeesClasses").innerHTML = `<div class="table-wrap"><table><thead><tr><th>Class</th><th>Stream</th><th>Fee (UGX)</th><th>Action</th></tr></thead><tbody>${feeClasses.map((c) => `<tr class="fees-class-row" data-fee-class="${esc(c.id)}">
+    <td><strong>${esc(c.level || c.name || "—")}</strong></td><td>${esc(c.stream || "—")}</td>
+    <td><div class="fees-inline"><input class="fee-amount-input" data-class-id="${esc(c.id)}" type="number" min="0" step="0.01" value="${esc(c.fee?.total_amount ?? "")}" placeholder="Not set"></div></td>
+    <td><button class="btn small fee-save-btn" data-class-id="${esc(c.id)}" type="button">Save Fee</button></td>
+  </tr><tr><td colspan="4"><div id="feeStudents-${esc(c.id)}" class="fees-student-panel" style="display:none"></div></td></tr>`).join("")}</tbody></table></div>`;
+
+  document.querySelectorAll(".fee-save-btn").forEach((b) => {
+    b.onclick = async (e) => {
+      e.stopPropagation();
+      const id = b.dataset.classId;
+      const amount = Number(document.querySelector(`.fee-amount-input[data-class-id="${CSS.escape(id)}"]`)?.value);
+      if (!Number.isFinite(amount) || amount < 0) return notice("feesNotice", "Enter a valid non-negative fee amount.", "err");
+      b.disabled = true;
+      try {
+        const r = await supabaseClient.rpc("set_fee_structure", { p_class_id: id, p_academic_year: yr, p_total_amount: amount });
+        if (r.error) throw r.error;
+        notice("feesNotice", `Fee updated for ${classLabel(feeClasses.find((x) => String(x.id) === String(id)))}: ${money(amount)}.`, "ok");
+        await loadFeeClasses(); await loadFeeAnalysis(); renderOverviewStats();
+      } catch (err) {
+        notice("feesNotice", "Could not update fee: " + errorMessage(err), "err");
+      } finally { b.disabled = false; }
+    };
+  });
+  document.querySelectorAll(".fees-class-row").forEach((row) => {
+    row.onclick = (e) => { if (!e.target.closest("button") && !e.target.closest("input")) openFeeStudents(row.dataset.feeClass, yr); };
+  });
+}
+
+async function openFeeStudents(classId, yr) {
+  const box = $("feeStudents-" + classId);
+  if (!box) return;
+  document.querySelectorAll(".fees-student-panel").forEach((x) => { x.style.display = "none"; });
+  box.style.display = "block"; box.innerHTML = '<div class="empty">Loading students…</div>';
+  try {
+    const r = await supabaseClient.rpc("get_school_fee_students", { p_class_id: classId, p_academic_year: yr });
+    if (r.error) throw r.error;
+    const rows = r.data || [];
+    box.innerHTML = `<div class="card-head"><div><h3>${esc(classLabel(feeClasses.find((x) => String(x.id) === String(classId))))}</h3><div class="muted">${rows.length} student(s)</div></div></div>` + (rows.length ? `<div class="table-wrap"><table><thead><tr><th>Student</th><th>Student No.</th><th>Total Fees</th><th>Paid</th><th>Balance</th><th>Status</th><th></th></tr></thead><tbody>${rows.map((x) => {
+      const badge = x.status === "Paid" ? '<span class="badge present">Paid</span>' : x.status === "No fee set" ? '<span class="badge neutral">No fee set</span>' : '<span class="badge absent">Balance due</span>';
+      const action = Number(x.balance) > 0 ? `<button class="btn small" type="button" onclick="openFeePayment('${esc(x.student_id)}','${esc(x.student_name)}',${yr})">Record Payment</button>` : "";
+      return `<tr><td><strong>${esc(x.student_name)}</strong></td><td>${esc(x.student_number || "—")}</td><td>${money(x.total_fees)}</td><td class="fees-paid">${money(x.paid)}</td><td class="fees-balance ${Number(x.balance) > 0 ? "fees-due" : "fees-paid"}">${money(x.balance)}</td><td>${badge}</td><td>${action}</td></tr>`;
+    }).join("")}</tbody></table></div>` : '<div class="empty">No active students in this class/stream.</div>');
+  } catch (err) {
+    box.innerHTML = `<div class="notice show err">Could not load students: ${esc(errorMessage(err))}</div>`;
+  }
+}
+
+async function loadFeeAnalysis() {
+  if (!schoolId) return;
+  const yr = Number($("bursarFeesYear")?.value || new Date().getFullYear());
+  try {
+    const r = await supabaseClient.rpc("get_fee_analysis", { p_school_id: schoolId, p_academic_year: yr });
+    if (r.error) throw r.error;
+    feeAnalysis = r.data || [];
+  } catch { feeAnalysis = []; }
+  renderFeeAnalysis();
+}
+
+function renderFeeAnalysis() {
+  const q = ($("feeAnalysisSearch")?.value || "").trim().toLowerCase();
+  const rows = feeAnalysis.filter((x) => {
+    if (feeFilter === "paid" && x.status !== "Paid") return false;
+    if (feeFilter === "due" && x.status !== "Balance due") return false;
+    if (feeFilter === "none" && x.status !== "No fee set") return false;
+    return !q || [x.student_name, x.class_name].some((v) => String(v || "").toLowerCase().includes(q));
+  });
+  const paid = feeAnalysis.filter((x) => x.status === "Paid").length;
+  const due = feeAnalysis.filter((x) => x.status === "Balance due").length;
+  const totalBal = feeAnalysis.reduce((n, x) => n + Number(x.balance || 0), 0);
+  if ($("schoolFeesCount")) $("schoolFeesCount").textContent = feeAnalysis.length;
+  if ($("schoolFeesPaidCount")) $("schoolFeesPaidCount").textContent = paid;
+  if ($("schoolFeesDueCount")) $("schoolFeesDueCount").textContent = due;
+  if ($("schoolFeesBalanceTotal")) $("schoolFeesBalanceTotal").textContent = money(totalBal);
+  if ($("schoolFeesAnalysis")) {
+    $("schoolFeesAnalysis").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Student</th><th>Class / Stream</th><th>Total Fees</th><th>Paid</th><th>Balance</th><th>Status</th></tr></thead><tbody>${rows.map((x) => `<tr>
+      <td><strong>${esc(x.student_name)}</strong></td><td>${esc(x.class_name || "—")}</td><td>${money(x.total_fees)}</td>
+      <td class="fees-paid">${money(x.paid)}</td>
+      <td class="fees-balance ${Number(x.balance) > 0 ? "fees-due" : "fees-paid"}">${money(x.balance)}</td>
+      <td>${x.status === "Paid" ? '<span class="badge present">Paid</span>' : x.status === "No fee set" ? '<span class="badge neutral">No fee set</span>' : '<span class="badge absent">Balance due</span>'}</td>
+    </tr>`).join("")}</tbody></table></div>` : '<div class="empty">No matching fee records yet.</div>';
+  }
+}
+
+window.openFeePayment = (id, name, yr = new Date().getFullYear(), codeRef = "") => {
+  $("feePaymentStudentId").value = id;
+  $("feePaymentYear").value = yr;
+  $("feePaymentStudentLabel").textContent = name + (codeRef ? ` (${codeRef})` : "");
+  $("feePaymentDate").value = today();
+  $("feePaymentAmount").value = "";
+  $("feePaymentReference").value = codeRef || "";
+  $("feePaymentNote").value = "";
+  clearNotice("feePaymentMessage");
+  $("feePaymentModal").classList.add("show");
+};
+const closeFeePayment = () => $("feePaymentModal")?.classList.remove("show");
+$("feePaymentClose")?.addEventListener("click", closeFeePayment);
+$("feePaymentCancel")?.addEventListener("click", closeFeePayment);
+$("feePaymentForm")?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const b = $("feePaymentSave");
+  b.disabled = true; b.textContent = "Saving…";
+  try {
+    const r = await supabaseClient.rpc("record_fee_payment", {
+      p_student_id: $("feePaymentStudentId").value,
+      p_academic_year: Number($("feePaymentYear").value),
+      p_amount: Number($("feePaymentAmount").value),
+      p_payment_date: $("feePaymentDate").value || null,
+      p_reference: $("feePaymentReference").value.trim() || null,
+      p_note: $("feePaymentNote").value.trim() || null
+    });
+    if (r.error) throw r.error;
+    closeFeePayment();
+    notice("feesNotice", "Payment recorded. Student and parent have been notified.", "ok");
+    await Promise.allSettled([loadFeeAnalysis(), loadFeeClasses()]);
+    renderOverviewStats();
+  } catch (err) {
+    notice("feePaymentMessage", errorMessage(err), "err");
+  } finally { b.disabled = false; b.textContent = "Save Payment"; }
+});
+
+function renderPaymentCodesRegistry() {
+  const box = $("paymentCodesTable");
+  if (!box) return;
+  const q = ($("payCodeSearchInput")?.value || "").trim().toLowerCase();
+  const rows = students.filter((s) => [nameOf(s), s.student_number, s.class_level, getStudentPaymentCode(s)].some((v) => String(v || "").toLowerCase().includes(q)));
+  box.innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Student</th><th>Class</th><th>Payment Code</th><th>Channel</th><th>Actions</th></tr></thead><tbody>${rows.map((s) => {
+    const code = getStudentPaymentCode(s);
+    return `<tr><td><strong>${esc(nameOf(s))}</strong><div class="muted">${esc(s.student_number || "—")}</div></td><td>${esc(s.class_level || "—")}</td><td class="font-mono">${code !== "—" ? `<span class="badge">${esc(code)}</span>` : '<span class="badge neutral">Not assigned</span>'}</td><td>${esc(getStudentPaymentChannel(s))}</td><td><div style="display:flex;gap:6px;flex-wrap:wrap">${code !== "—" ? `<button class="btn small secondary" type="button" onclick="copyText('${esc(code)}')">Copy</button>` : ""}<button class="btn small" type="button" onclick="openFeePayment('${esc(s.id)}','${esc(nameOf(s))}',new Date().getFullYear(),'${esc(code !== "—" ? code : "")}')">Record Payment</button></div></td></tr>`;
+  }).join("")}</tbody></table></div>` : '<div class="empty">No students found in this school.</div>';
+}
+
+function renderExpenses() {
+  const cat = $("expFilterCat")?.value || "";
+  const rows = expenses.filter((x) => !cat || x.category === cat);
+  const total = expenses.reduce((n, x) => n + Number(x.amount || 0), 0);
+  if ($("expenseTotalUgx")) $("expenseTotalUgx").textContent = money(total);
+  if ($("expenseTable")) {
+    $("expenseTable").innerHTML = rows.length ? `<div class="table-wrap"><table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th><th></th></tr></thead><tbody>${rows.map((x) => `<tr><td class="font-mono">${esc(x.date)}</td><td><strong>${esc(x.title)}</strong><div class="muted">${esc(x.voucher || "—")}</div></td><td><span class="badge neutral">${esc(x.category)}</span></td><td class="font-mono">${money(x.amount)}</td><td><button class="btn small danger" type="button" onclick="deleteExpense('${esc(x.id)}')">Delete</button></td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">No expense entries recorded yet.</div>';
+  }
+}
+window.deleteExpense = (id) => {
+  expenses = expenses.filter((x) => x.id !== id);
+  writeLocalJson("accessug_bursar_expenses_" + schoolId, expenses);
+  renderExpenses(); renderOverviewStats();
+};
+$("expenseForm")?.addEventListener("submit", (e) => {
+  e.preventDefault();
+  expenses.unshift({
+    id: "exp_" + Date.now(),
+    title: val("expTitle"),
+    category: val("expCategory"),
+    amount: Number($("expAmount").value || 0),
+    date: $("expDate").value || today(),
+    voucher: val("expVoucher")
+  });
+  writeLocalJson("accessug_bursar_expenses_" + schoolId, expenses);
+  e.target.reset();
+  if ($("expDate")) $("expDate").value = today();
+  toast("Expense recorded.");
+  renderExpenses(); renderOverviewStats();
+});
+$("expFilterCat")?.addEventListener("change", renderExpenses);
+$("payCodeSearchInput")?.addEventListener("input", renderPaymentCodesRegistry);
+$("feeAnalysisSearch")?.addEventListener("input", renderFeeAnalysis);
+$("bursarFeesRefresh")?.addEventListener("click", () => Promise.allSettled([loadFeeClasses(), loadFeeAnalysis()]));
+$("bursarFeesYear")?.addEventListener("change", () => Promise.allSettled([loadFeeClasses(), loadFeeAnalysis()]));
+document.querySelectorAll("[data-fees-filter]").forEach((b) => b.onclick = () => {
+  document.querySelectorAll("[data-fees-filter]").forEach((x) => x.classList.remove("active"));
+  b.classList.add("active"); feeFilter = b.dataset.feesFilter; renderFeeAnalysis();
+});
+$("exportExpensesCsvBtn")?.addEventListener("click", () => {
+  const csv = ["Date,Description,Category,Voucher,Amount"].concat(expenses.map((x) => [x.date, x.title, x.category, x.voucher, x.amount].map((v) => `"${String(v || "").replace(/"/g, '""')}"`).join(","))).join("\n");
+  downloadCsv("school-expenses-" + today() + ".csv", csv);
+});
+
+function renderOverviewStats() {
+  const paid = feeAnalysis.filter((x) => x.status === "Paid").length;
+  const due = feeAnalysis.filter((x) => x.status === "Balance due").length;
+  const none = feeAnalysis.filter((x) => x.status === "No fee set").length;
+  const totalBal = feeAnalysis.reduce((n, x) => n + Number(x.balance || 0), 0);
+  const expTotal = expenses.reduce((n, x) => n + Number(x.amount || 0), 0);
+  const pct = feeAnalysis.length ? Math.round((paid / feeAnalysis.length) * 100) : 0;
+  setOverviewMetrics(
+    [feeAnalysis.length || students.length, paid, money(totalBal), money(expTotal)],
+    ["Active students billed", `${pct}% cleared in full`, `${due} students with balance`, `${expenses.length} voucher(s)`],
+    pct,
+    ["Paid in Full", "Balance Due", "No Fee Set"],
+    [paid, due, none],
+    ["#0f9f6e", "#dc2626", "#94a3b8"],
+    expenses.slice(0, 4).map((x) => ({ title: x.title, sub: x.category + " · " + (x.voucher || "Voucher"), tag: money(x.amount) }))
+      .concat(feeAnalysis.filter((x) => Number(x.balance) > 0).slice(0, 3).map((x) => ({ title: x.student_name, sub: x.class_name || "Fee Balance", tag: money(x.balance) })))
+  );
+}
+if ($("expDate")) $("expDate").value = today();
+
+
+/* BOOT & AUTH */
+async function init() {
+  try {
+    const authRes = await supabaseClient.auth.getSession();
+    session = authRes.data?.session;
+    if (!session?.user) {
+      if (window.__ACCESSUG_PREVIEW__) {
+        isPreviewMode = true;
+        schoolId = "preview_school";
+        school = { id: "preview_school", name: "ACCESS UG Model School" };
+        staffMember = { id: "preview_staff", full_name: ROLE_LABEL + " (Preview)", email: "staff@accessug.ac.ug", staff_role: ROLE_LABEL, department: ROLE_LABEL };
+        applyAppearance(getSavedAppearance());
+        syncProfileUI();
+        await loadRoleWorkspace();
+        renderCalendar();
+        notice("homeNotice", "Preview Mode — sign in through ACCESS UG Portal to sync live school data from Supabase.", "info");
+        return;
+      }
+      redirectLogin(); return;
+    }
+    authUser = session.user;
+    applyAppearance(getSavedAppearance());
+    const email = (authUser.email || "").trim().toLowerCase();
+    const meta = authUser.user_metadata || {};
+
+    let stRows = [];
+    try {
+      const r1 = await supabaseClient.from("staff").select("*").ilike("email", email).limit(5);
+      if (!r1.error && r1.data?.length) stRows = r1.data;
+      if (!stRows.length) {
+        const r2 = await supabaseClient.from("staff").select("*").eq("user_id", authUser.id).limit(5);
+        if (!r2.error && r2.data?.length) stRows = r2.data;
+      }
+    } catch {}
+    staffMember = stRows[0] || { id: authUser.id, full_name: meta.full_name || email.split("@")[0], email, staff_role: meta.staff_role || ROLE_LABEL, department: meta.staff_role || ROLE_LABEL, school_id: meta.school_id || null };
+    schoolId = staffMember.school_id || sessionStorage.getItem("accessug_school_id") || localStorage.getItem("accessug_school_id") || meta.school_id || null;
+
+    if (!schoolId) {
+      try {
+        const pr = await supabaseClient.from("profiles").select("school_id,role,full_name").eq("id", authUser.id).maybeSingle();
+        if (pr.data?.school_id) schoolId = pr.data.school_id;
+      } catch {}
+    }
+    if (!schoolId) {
+      try {
+        const rr = await supabaseClient.rpc("school_find_by_user", { p_user_id: authUser.id });
+        if (!rr.error && rr.data) schoolId = rr.data;
+      } catch {}
+    }
+    if (!schoolId) {
+      try {
+        const sr = await supabaseClient.from("schools").select("id,name").order("name").limit(1);
+        if (!sr.error && sr.data?.[0]) { school = sr.data[0]; schoolId = sr.data[0].id; isPreviewMode = true; }
+      } catch {}
+    }
+    if (schoolId && !school) {
+      try { const sr = await supabaseClient.from("schools").select("*").eq("id", schoolId).maybeSingle(); if (sr.data) school = sr.data; } catch {}
+    }
+
+    if (schoolId) {
+      await Promise.allSettled([
+        supabaseClient.from("students").select("*").eq("school_id", schoolId).order("last_name").then((r) => { if (!r.error && r.data) students = r.data.filter((x) => String(x.status || "active").toLowerCase() !== "inactive"); }),
+        supabaseClient.from("teachers").select("*").eq("school_id", schoolId).order("last_name").then((r) => { if (!r.error && r.data) teachers = r.data.filter((x) => String(x.status || "active").toLowerCase() !== "inactive"); }),
+        supabaseClient.from("classes").select("*").eq("school_id", schoolId).order("name").then((r) => { if (!r.error && r.data) classes = r.data; }),
+        supabaseClient.from("staff").select("*").eq("school_id", schoolId).then((r) => { if (!r.error && r.data) staffList = r.data.filter((x) => String(x.status || "active").toLowerCase() !== "inactive"); })
+      ]);
+    }
+    syncProfileUI();
+    await Promise.allSettled([loadRoleWorkspace(), loadInbox(), loadCalendarEvents(), loadReports()]);
+  } catch (e) {
+    if ($("errorText")) $("errorText").textContent = "Workspace could not finish loading: " + errorMessage(e);
+    $("errorModal")?.classList.add("show");
+  }
+}
+
+$("dashSyncBtn")?.addEventListener("click", async () => { toast("Refreshing workspace…"); await init(); toast("Workspace synchronized."); });
+$("logoutBtn")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); redirectLogin(); });
+$("errorLogout")?.addEventListener("click", async () => { await supabaseClient.auth.signOut(); redirectLogin(); });
+$("closeError")?.addEventListener("click", () => $("errorModal")?.classList.remove("show"));
+supabaseClient.auth.onAuthStateChange((ev) => { if (ev === "SIGNED_OUT") redirectLogin(); });
+init();
+</script>
+</body>
+</html>
